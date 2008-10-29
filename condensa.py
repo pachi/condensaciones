@@ -90,6 +90,7 @@ def calculapresvap(Espesor_aire_capas, pext, pint, S_total):
     return pres
 
 if __name__ == "__main__":
+    from pylab import *
     #Datos climáticos Sevilla
     T_e_med = [10.7, 11.9, 14.0, 16.0, 19.6, 23.4, 26.8, 26.8, 24.4, 19.5, 14.3, 11.1]
     HR_med = [79, 75, 68, 65, 59, 56, 51, 52, 58, 67, 76, 79]
@@ -119,6 +120,7 @@ if __name__ == "__main__":
             ("Enlucido_de_yeso_1000<d<1300", 0.01, 6.0, 0.57),]
 
     capas_propiedades = [(str(n), e / K, e * mu) for n, (nombre, e, mu, K) in enumerate(capas)] # (n, Ri, Si)
+    capas_espesores = [capa[1] for capa in capas]
     capas_R = [prop[1] for prop in capas_propiedades]
     capas_S = [prop[2] for prop in capas_propiedades]
 
@@ -146,8 +148,28 @@ if __name__ == "__main__":
             print "Se supera la presión de saturación"
     # Representar Presiones de saturación vs. Presiones de vapor y temperaturas
     # en un diagrama capa/Presion de vapor y capa/Temp
+    capas_e = [-0.025, 0.0]
+    for elemento in capas_espesores:
+        nuevo = capas_e[-1] + elemento
+        capas_e.append(nuevo)
+    rotulos = capas_e + [capas_e[-1] +0.025]
+    print rotulos
+    title(u"Presión de vapor efectiva y de saturación")
+    ylabel(u"Presión de vapor [Pa]")
+    xlabel(u"Distancia [m]")
+    axvline(rotulos[1], linewidth=2, color='k')
+    for rotulo in rotulos[2:-2]:
+        axvline(rotulo, color='0.5')
+    axvline(rotulos[-2], linewidth=2, color='k')
+    axvspan(rotulos[1], rotulos[-2], facecolor='#fff600', alpha=0.25)
+    plot(rotulos, presiones, 'b-', label='presiones')
+    plot(rotulos, presiones_sat, 'r-', label='presiones_sat')
+    legend(loc=0)
+    savefig('presionesplot.png')
+    show()
 
     # Se puede calcular la humedad relativa interior para casos en los que no se trate
     # de zonas de baja carga interna.
     # Hay que generalizar el cálculo de la presión exterior para la localidad concreta?
     # Calcular exceso de humedad condensado si se da el caso.
+
