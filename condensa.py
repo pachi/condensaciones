@@ -1,6 +1,7 @@
-#/usr/bin/env python
+#!/usr/bin/env python
 #encoding: iso-8859-15
 import math
+from pylab import *
 
 def psat(temp):
     """Presión de saturación - temp en ºC"""
@@ -89,8 +90,43 @@ def calculapresvap(Espesor_aire_capas, pext, pint, S_total):
         pres.append(presj)
     return pres
 
+def dibujagrafica(capas, temperaturas, presiones, presiones_sat):
+    # Representar Presiones de saturación vs. Presiones de vapor y temperaturas
+    # en un diagrama capa/Presion de vapor y capa/Temp
+    capas_e = [-0.025, 0.0]
+    for elemento in capas_espesores:
+        nuevo = capas_e[-1] + elemento
+        capas_e.append(nuevo)
+    rotulos = capas_e + [capas_e[-1] +0.025]
+
+    sp1 = subplot(211) # 2 filas, 1 columnas, primer dibujo (arriba)
+    title(u"Presión de vapor efectiva y de saturación")
+    xlabel(u"Distancia [m]")
+    ylabel(u"Presión de vapor [Pa]")
+    axvline(rotulos[1], linewidth=2, color='k')
+    for rotulo in rotulos[2:-2]:
+        axvline(rotulo, color='0.5')
+    axvline(rotulos[-2], linewidth=2, color='k')
+    axvspan(rotulos[1], rotulos[-2], facecolor='#fff600', alpha=0.25)
+    plot(rotulos, presiones, 'b-', label='presiones')
+    plot(rotulos, presiones_sat, 'r-', label='presiones_sat')
+    legend(loc=0)
+    text(0.01, -0.15, 'U=%.2f W/m2K' % (1/R_total,), fontsize=12, bbox=dict(facecolor='red', alpha=0.5), transform=sp1.transAxes)
+
+    sp2 = subplot(212) # 2 filas, 1 columnas, segundo dibujo (abajo)
+    plot(rotulos, temperaturas, 'b-', label='temperaturas')
+    xlabel(u"Distancia [m]")
+    ylabel(u"Temperatura [ºC]")
+    axvline(rotulos[1], linewidth=2, color='k', label='Tsi=%.2f W/m2K' % (1.22,))
+    for rotulo in rotulos[2:-2]:
+        axvline(rotulo, color='0.5')
+    axvline(rotulos[-2], linewidth=2, color='k', label='Tse=%.2f W/m2K' % (2.22,))
+    axvspan(rotulos[1], rotulos[-2], facecolor='#fff600', alpha=0.25)
+    legend(loc=0)
+    #savefig('presionesplot.png')
+    show()
+
 if __name__ == "__main__":
-    from pylab import *
     #Datos climáticos Sevilla
     T_e_med = [10.7, 11.9, 14.0, 16.0, 19.6, 23.4, 26.8, 26.8, 24.4, 19.5, 14.3, 11.1]
     HR_med = [79, 75, 68, 65, 59, 56, 51, 52, 58, 67, 76, 79]
@@ -146,30 +182,8 @@ if __name__ == "__main__":
             continue
         else:
             print "Se supera la presión de saturación"
-    # Representar Presiones de saturación vs. Presiones de vapor y temperaturas
-    # en un diagrama capa/Presion de vapor y capa/Temp
-    capas_e = [-0.025, 0.0]
-    for elemento in capas_espesores:
-        nuevo = capas_e[-1] + elemento
-        capas_e.append(nuevo)
-    rotulos = capas_e + [capas_e[-1] +0.025]
-    print rotulos
-    title(u"Presión de vapor efectiva y de saturación")
-    ylabel(u"Presión de vapor [Pa]")
-    xlabel(u"Distancia [m]")
-    axvline(rotulos[1], linewidth=2, color='k')
-    for rotulo in rotulos[2:-2]:
-        axvline(rotulo, color='0.5')
-    axvline(rotulos[-2], linewidth=2, color='k')
-    axvspan(rotulos[1], rotulos[-2], facecolor='#fff600', alpha=0.25)
-    plot(rotulos, presiones, 'b-', label='presiones')
-    plot(rotulos, presiones_sat, 'r-', label='presiones_sat')
-    legend(loc=0)
-    savefig('presionesplot.png')
-    show()
-
     # Se puede calcular la humedad relativa interior para casos en los que no se trate
     # de zonas de baja carga interna.
     # Hay que generalizar el cálculo de la presión exterior para la localidad concreta?
     # Calcular exceso de humedad condensado si se da el caso.
-
+    dibujagrafica(capas, temperaturas, presiones, presiones_sat)
