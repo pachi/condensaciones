@@ -60,6 +60,10 @@ def tempsup(tempext, tempint, Rtotal, Rk, tempj):
     tempj - Temperatura de la capa n-1 (text para n=1)"""
     return tempj + Rk * (tempint - tempext) / Rtotal
 
+def tempsupext(tempext, tempint, Rtotal, Rse):
+    """Temperatura superficial exterior"""
+    return tempsup(tempext, tempint, Rtotal, Rse, tempext)
+
 def calculatempsup(Resistencias_capas, tempext, tempint, R_total):
     """Devuelve lista de temperaturas:
         temperatura exterior, temperatura superficial exterior,
@@ -90,7 +94,7 @@ def calculapresvap(Espesor_aire_capas, pext, pint, S_total):
         pres.append(presj)
     return pres
 
-def dibujagrafica(capas, temperaturas, presiones, presiones_sat):
+def dibujagrafica(capas, temperaturas, presiones, presiones_sat, U, HR_int, HR_ext):
     # Representar Presiones de saturación vs. Presiones de vapor y temperaturas
     # en un diagrama capa/Presion de vapor y capa/Temp
     capas_e = [-0.025, 0.0]
@@ -99,30 +103,86 @@ def dibujagrafica(capas, temperaturas, presiones, presiones_sat):
         capas_e.append(nuevo)
     rotulos = capas_e + [capas_e[-1] +0.025]
 
-    sp1 = subplot(211) # 2 filas, 1 columnas, primer dibujo (arriba)
-    title(u"Presión de vapor efectiva y de saturación")
-    xlabel(u"Distancia [m]")
-    ylabel(u"Presión de vapor [Pa]")
-    axvline(rotulos[1], linewidth=2, color='k')
-    for rotulo in rotulos[2:-2]:
-        axvline(rotulo, color='0.5')
-    axvline(rotulos[-2], linewidth=2, color='k')
-    axvspan(rotulos[1], rotulos[-2], facecolor='#fff600', alpha=0.25)
-    plot(rotulos, presiones, 'b-', label='presiones')
-    plot(rotulos, presiones_sat, 'r-', label='presiones_sat')
-    legend(loc=0)
-    text(0.01, -0.15, 'U=%.2f W/m2K' % (1/R_total,), fontsize=12, bbox=dict(facecolor='red', alpha=0.5), transform=sp1.transAxes)
+    sp1 = subplot(111)
+    subplots_adjust(bottom=0.15, top=0.87) # ampliar márgenes
+    # Rótulos de valores calculados
+    # TODO: Indicar si cumple f_Rsi > f_Rsi,min, T_si > T_si,min, P > P_sat, etc
+    #XXX:R_total y otros son globales... corregir
+    f_Rsi = 1 - U*0.25
+    f_Rsimin = 0.5 #TODO
 
-    sp2 = subplot(212) # 2 filas, 1 columnas, segundo dibujo (abajo)
-    plot(rotulos, temperaturas, 'b-', label='temperaturas')
+    T_e = temperaturas[0]
+    T_i = temperaturas[-1]
+    T_se = temperaturas[1]
+    T_si = temperaturas[-2]
+    P_se = presiones[1]
+    P_sat_se = presiones_sat[1]
+    rotulo_se = rotulos[1]
+    rotulo_si = rotulos[-2]
+
+    figtext(0.5, 0.98,
+            r'$U = %.2f W/m^2K,\,f_{Rsi} = %.2f,\, f_{Rsi,min} = %.2f$' % (U, f_Rsi, f_Rsimin),
+            fontsize='large',
+            bbox=dict(facecolor='red', alpha=0.25),
+            verticalalignment='top',
+            horizontalalignment='center')
+    figtext(0.5, 0.03,
+            r'$T_{int} = %.2f^\circ C, \, HR_{int} = %.1f\%%, \,'
+            'T_{ext} = %.2f^\circ C, \, HR_{ext} = %.1f\%%$' % (T_i, HR_int, T_e, HR_ext),
+            fontsize='large',
+            bbox=dict(facecolor='blue', alpha=0.25),
+            horizontalalignment='center')
+
+    title(u"Presiones de vapor (efectiva y de saturación) y temperaturas")
     xlabel(u"Distancia [m]")
-    ylabel(u"Temperatura [ºC]")
-    axvline(rotulos[1], linewidth=2, color='k', label='Tsi=%.2f W/m2K' % (1.22,))
+    ylabel(u"Presión de vapor [Pa]", fontdict=dict(color='b'))
+    text(0.5, 0.97,
+            'Cerramiento %s' % ('tipo',), #TODO: recoger nombre
+            transform=sp1.transAxes,
+            verticalalignment='top',
+            horizontalalignment='center',
+            fontsize=12,
+            fontstyle='italic')
+    # Lineas de tramos de cerramiento
+    axvline(rotulo_se, linewidth=2, color='k', ymin=.05, ymax=.9)
     for rotulo in rotulos[2:-2]:
-        axvline(rotulo, color='0.5')
-    axvline(rotulos[-2], linewidth=2, color='k', label='Tse=%.2f W/m2K' % (2.22,))
-    axvspan(rotulos[1], rotulos[-2], facecolor='#fff600', alpha=0.25)
-    legend(loc=0)
+        axvline(rotulo, color='0.5', ymin=.05, ymax=.9)
+    axvline(rotulo_si, linewidth=2, color='k', ymin=.05, ymax=.9)
+    #TODO: cambiar fondo por tramos
+    axvspan(rotulo_se, rotulo_si, facecolor='#fff600', alpha=0.25, ymin=.05, ymax=.9)
+    # lineas de datos
+    plot(rotulos, presiones, 'b-', linewidth=0.5)
+    plot(rotulos, presiones_sat, 'b-', linewidth=1.5)
+    # Rótulos de lineas de presiones
+    annotate(r'$P_{n}$',
+            xy=(rotulo_se - 0.002, P_se),
+            horizontalalignment='right')
+    annotate(r'$P_{sat}$',
+            xy=(rotulo_se - 0.002, P_sat_se),
+            horizontalalignment='right')
+
+    # incrementar extensión de límites de ejes para hacer hueco
+    ymin, ymax = ylim()
+    ylim(ymin-ymin/10.0, ymax+ymax/10.0)
+
+    # Nuevo eje vertical de temperaturas
+    ax2 = twinx()
+    ylabel(u"Temperatura [ºC]", fontdict=dict(color='r'))
+    # curva de temperaturas
+    plot(rotulos, temperaturas, 'r:')
+    # Valores de T_si y T_se
+    annotate(r'$T_{se}=%.1f^\circ C$' % T_se,
+            xy=(rotulos[1] - 0.002, T_se),
+            horizontalalignment='right')
+    annotate(r'$T_{si}=%.1f^\circ C$' % T_si,
+            xy=(rotulos[-2] + 0.002, T_si),
+            horizontalalignment='left',
+            verticalalignment='top')
+    ax2.yaxis.tick_right()
+    # extender eje para evitar coincidencia con curvas de presiones
+    ymin, ymax = ylim()
+    ylim(ymin-ymin/10.0, ymax+ymax/5.0)
+    # guardar y mostrar gráfica
     #savefig('presionesplot.png')
     show()
 
@@ -155,6 +215,7 @@ if __name__ == "__main__":
             ("Tabique de LH sencillo [40 mm < Esp", 0.03, 10.0, 0.44),
             ("Enlucido_de_yeso_1000<d<1300", 0.01, 6.0, 0.57),]
 
+    # pasar esto a las funciones, sin usar n y recalcular. Usar siempre capas en llamadas.
     capas_propiedades = [(str(n), e / K, e * mu) for n, (nombre, e, mu, K) in enumerate(capas)] # (n, Ri, Si)
     capas_espesores = [capa[1] for capa in capas]
     capas_R = [prop[1] for prop in capas_propiedades]
@@ -163,6 +224,7 @@ if __name__ == "__main__":
     Rs_ext = 0.04
     Rs_int = 0.13
     R_total = Rs_ext + sum(capas_R) + Rs_int #("Resistencia total (m²K/W)", 1.25)
+    U = 1 / R_total
     S_total = sum(capas_S) #Espesor de aire equivalente total (m), 2.16
 
     temperaturas = calculatempsup([Rs_ext] + capas_R + [Rs_int], temp_ext, temp_int, R_total)
@@ -186,4 +248,4 @@ if __name__ == "__main__":
     # de zonas de baja carga interna.
     # Hay que generalizar el cálculo de la presión exterior para la localidad concreta?
     # Calcular exceso de humedad condensado si se da el caso.
-    dibujagrafica(capas, temperaturas, presiones, presiones_sat)
+    dibujagrafica(capas, temperaturas, presiones, presiones_sat, U, HR_int, HR_ext)
