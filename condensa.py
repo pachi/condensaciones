@@ -3,6 +3,15 @@
 import math
 from pylab import *
 
+def R_capas(capas):
+    return [e / K for nombre, e, mu, K in capas]
+
+def S_capas(capas):
+    return [e * mu for nombre, e, mu, K in capas]
+
+def R_total(capas, Rs_ext, Rs_int):
+    return Rs_ext + sum(R_capas(capas)) + Rs_int
+
 def psat(temp):
     """Presión de saturación - temp en ºC"""
     if temp >0.0:
@@ -12,113 +21,130 @@ def psat(temp):
 
 def pvapor(temp, humedad):
     """Presión de vapor - temp en ºC y humedad en tanto por uno.
-    temp - temperatura media exterior para el mes dado
-    humedad - humedad relativa media para el mes dado"""
+        temp - temperatura media exterior para el mes dado
+        humedad - humedad relativa media para el mes dado"""
     return (humedad / 100.0) * psat(temp)
 
 def temploc(temp, delta_alt):
     """Temperatura de la localidad en función de la temperatura de
     la capital de provincia y la diferencia de altitud entre ellas.
-    temp - temperatura media exterior de la capital para el mes dado
-    delta_alt - altura de la localidad sobre la de la capital."""
+        temp - temperatura media exterior de la capital para el mes dado
+        delta_alt - altura de la localidad sobre la de la capital."""
     return temp - 1.0 * delta_alt / 100.0
 
 def psatloc(temp, delta_alt):
     """Presión de saturación en una localidad situada a una altitud
     distinta a la capital de provincia.
-    temp - temperatura media exterior de la capital para el mes dado
-    delta_alt - altura de la localidad sobre la de la capital."""
+        temp - temperatura media exterior de la capital para el mes dado
+        delta_alt - altura de la localidad sobre la de la capital."""
     return psat(temploc(temp, delta_alt))
 
-def hrelloc(temp, humedad, delta_alt):
+def hrloc(temp, humedad, delta_alt):
     """Humedad relativa para la localidad situada a una diferencia
     de altitud dada sobre la capital de provincia.
-    temp - temperatura media exterior de la capital para el mes dado
-    humedad - humedad relativa media de la capital para el mes dado
-    delta_alt - altura de la localidad sobre la de la capital."""
+        temp - temperatura media exterior de la capital para el mes dado
+        humedad - humedad relativa media de la capital para el mes dado
+        delta_alt - altura de la localidad sobre la de la capital."""
     return pvapor(temp, humedad) / (psatloc(temp, delta_alt) * temploc(temp, delta_alt))
 
-def humrelint(tempext, tempint, Pe, Psat, G, volumen, n):
+def calculahrint(temperaturas, hrext, G, volumen, n):
     """Humedad relativa interior del mes de enero, dado el ritmo
     de producción de humedad interior y la tasa de renovación de aire,
-    para el cálculo de condensaciones superf."""
-    #TODO
+    para el cálculo de condensaciones superf.
+    n - tasa renovación de aire [h^-1]
+    V - Volumen de aire del local [m^3]
+    G - ritmo de producción de la humedad interior [kg/h]
+        higrometría 3 o inferior - 55%
+        higrometría 4 - 62%
+        hogrometría 5 - 70%
+    """
+    #TODO: eliminar parámetro tempsupint usando datos de paramento
+    T_e = temperaturas[0]
+    T_i = temperaturas[-1]
+    T_si = temperaturas[-2]
     delta_v = G / (n * V)
-    delta_p = 462.0 * delta_v * (tempint + tempext) / 2.0
-    Pi = Pe + delta_p
-    Pe = 1.0 #??
-    Psat = 1.0 #??
-    return
+    Pext = pvapor(T_e, hrext)
+    delta_p = 462.0 * delta_v * (T_i + T_e) / 2.0
+    Pi = Pext + delta_p
+    Psi = psat(T_si)
+    hrint = 100.0 * Pi / Psi
+    return hrint
 
-def tempsup(tempext, tempint, Rtotal, Rk, tempj):
-    """Temperatura en interfase de la capa n (con la capa n-1)
-    temp(n) = temp(n-1) + R(n)/Rtotal * (tempint - tempext)
-    tempext - temperatura exterior media en el mes de enero
-    tempint - temperatura interior de cálculo (20ºC)
-    Rtotal - Resistencia térmica total del elemento constructivo (m2K/W)
-    Rk - Resistencia térmica superficial de la capa n
-    tempj - Temperatura de la capa n-1 (text para n=1)"""
-    return tempj + Rk * (tempint - tempext) / Rtotal
+def calculaU(R_total):
+    """Transmitancia térmica del cerramiento"""
+    return 1.0 / R_total
 
-def tempsupext(tempext, tempint, Rtotal, Rse):
-    """Temperatura superficial exterior"""
-    return tempsup(tempext, tempint, Rtotal, Rse, tempext)
+def calculafRsi(U):
+    return 1.0 - U * 0.25
 
-def calculatempsup(Resistencias_capas, tempext, tempint, R_total):
+def calculafRsimin(tempext, hrint):
+    p_i = hrint * 2337 / 100.0
+    p_sat = p_i / 0.8
+    temp_si_min = 237.3 * math.log (p_sat / 610.5) / (17.269 - math.log (p_sat / 610.5))
+    return (temp_si_min - tempext) / (20.0 - tempext)
+
+def calculatemperaturas(capas, tempext, tempint, Rs_ext, Rs_int):
     """Devuelve lista de temperaturas:
-        temperatura exterior, temperatura superficial exterior,
-        temperaturas intersticiales, temperatura superficial interior
-        y temperatura interior"""
-    temps = [tempext]
-    for capa_Ri in Resistencias_capas:
-        tempj = tempsup(tempext, tempint, R_total, capa_Ri, temps[-1])
-        temps.append(tempj)
-    return temps
+    temperatura exterior, temperatura superficial exterior,
+    temperaturas intersticiales, temperatura superficial interior
+    y temperatura interior.
+        tempext - temperatura exterior media en el mes de enero
+        tempint - temperatura interior de cálculo (20ºC)
+        Rs_ext - Resistencia térmica superficial exterior
+        Rs_int - Resistencia térmica superficial interior"""
+    resistencias_capas = [Rs_ext] + R_capas(capas) + [Rs_int]
+    rtotal = R_total(capas, Rs_ext, Rs_int)
+    temperaturas = [tempext]
+    for capa_Ri in resistencias_capas:
+        tempj = temperaturas[-1] + capa_Ri * (tempint - tempext) / rtotal
+        temperaturas.append(tempj)
+    return temperaturas
 
-def pressup(pext, pint, Stotal, Sk, Pj):
-    """Presión de vapor en capa n (a partir de la capa n-1)
-    P(n) = P(n-1) + Sd(n-1) / SUM Sd(n) * (Pint - Pext)
-    pext - presión de vapor del aire exterior [Pa]
-    pint - presión de vapor del aire interior [Pa]
-    Stotal - Espesor de aire equivalente de todas las capas.
-    Sk - Espesor de aire equivalente de la capa n
-    Pj - Presión de vapor en la capa n-1"""
-    return Pj + Sk * (pint - pext) / Stotal
-
-def calculapresvap(Espesor_aire_capas, pext, pint, S_total):
-    """Devuelve una lista de presiones de vapor intermedias:
-    P(n) = P(n-1) + Sd(n-1) / SUM Sd(n) * (Pint - Pext)"""
-    pres = [pext]
+def calculapresiones(capas, temp_ext, temp_int, HR_ext, HR_int):
+    """Devuelve una lista de presiones de vapor
+    presión de vapor al exterior, presiones de vapor intermedias y presión de vapor interior"""
+    pres_ext = pvapor(temp_ext, HR_ext) # presión de vapor exterior: 1016.00
+    pres_int = pvapor(temp_int, HR_int) # presión de vapor interior: 1285.32
+    Espesor_aire_capas = S_capas(capas)
+    S_total = sum(Espesor_aire_capas)
+    # La presión al exterior es constante, en el aire y la superficie exterior de cerramiento
+    presiones_vapor = [pres_ext, pres_ext]
     for capa_Si in Espesor_aire_capas:
-        presj = pressup(pext, pint, S_total, capa_Si, pres[-1])
-        pres.append(presj)
-    return pres
+        pres_j = presiones_vapor[-1] + capa_Si * (pres_int - pres_ext) / S_total
+        presiones_vapor.append(pres_j)
+    # La presión interior es constante, en la superficie interior de cerramiento y en el aire
+    presiones_vapor.append(pres_int)
+    return presiones_vapor
 
-def dibujagrafica(capas, temperaturas, presiones, presiones_sat, U, HR_int, HR_ext):
+def calculapresionessat(temperaturas):
+    return [psat(temperatura) for temperatura in temperaturas]
+
+def dibujagrafica(capas, Rs_ext, Rs_int, temperaturas, presiones, presiones_sat, U, HR_int, HR_ext):
     # Representar Presiones de saturación vs. Presiones de vapor y temperaturas
     # en un diagrama capa/Presion de vapor y capa/Temp
-    capas_e = [-0.025, 0.0]
-    for elemento in capas_espesores:
-        nuevo = capas_e[-1] + elemento
-        capas_e.append(nuevo)
-    rotulos = capas_e + [capas_e[-1] +0.025]
-
-    sp1 = subplot(111)
-    subplots_adjust(bottom=0.15, top=0.87) # ampliar márgenes
-    # Rótulos de valores calculados
-    # TODO: Indicar si cumple f_Rsi > f_Rsi,min, T_si > T_si,min, P > P_sat, etc
-    #XXX:R_total y otros son globales... corregir
-    f_Rsi = 1 - U*0.25
-    f_Rsimin = 0.5 #TODO
-
     T_e = temperaturas[0]
     T_i = temperaturas[-1]
     T_se = temperaturas[1]
     T_si = temperaturas[-2]
     P_se = presiones[1]
     P_sat_se = presiones_sat[1]
+    Rtotal = R_total(capas, Rs_ext, Rs_int)
+    U = calculaU(Rtotal)
+    f_Rsi = calculafRsi(U)
+    f_Rsimin = calculafRsimin(T_e, HR_int)
+    # TODO: Indicar si cumple f_Rsi > f_Rsi,min, T_si > T_si,min, P > P_sat, etc
+
+    margen_lateral = 0.025
+    rotulos = [-margen_lateral, 0.0]
+    for elemento in [e for nombre, e, mu, K in capas]:
+        nuevo = rotulos[-1] + elemento
+        rotulos.append(nuevo)
+    rotulos.append(rotulos[-1] + margen_lateral)
     rotulo_se = rotulos[1]
     rotulo_si = rotulos[-2]
+
+    sp1 = subplot(111)
+    subplots_adjust(bottom=0.15, top=0.87) # ampliar márgenes
 
     figtext(0.5, 0.98,
             r'$U = %.2f W/m^2K,\,f_{Rsi} = %.2f,\, f_{Rsi,min} = %.2f$' % (U, f_Rsi, f_Rsimin),
@@ -216,28 +242,24 @@ if __name__ == "__main__":
             ("Enlucido_de_yeso_1000<d<1300", 0.01, 6.0, 0.57),]
 
     # pasar esto a las funciones, sin usar n y recalcular. Usar siempre capas en llamadas.
-    capas_propiedades = [(str(n), e / K, e * mu) for n, (nombre, e, mu, K) in enumerate(capas)] # (n, Ri, Si)
-    capas_espesores = [capa[1] for capa in capas]
-    capas_R = [prop[1] for prop in capas_propiedades]
-    capas_S = [prop[2] for prop in capas_propiedades]
-
+    capas_R = R_capas(capas)
+    capas_S = S_capas(capas)
     Rs_ext = 0.04
     Rs_int = 0.13
-    R_total = Rs_ext + sum(capas_R) + Rs_int #("Resistencia total (m²K/W)", 1.25)
-    U = 1 / R_total
+    R_totalx = R_total(capas, Rs_ext, Rs_int) #("Resistencia total (m²K/W)", 1.25)
+    U = 1 / R_totalx
     S_total = sum(capas_S) #Espesor de aire equivalente total (m), 2.16
 
-    temperaturas = calculatempsup([Rs_ext] + capas_R + [Rs_int], temp_ext, temp_int, R_total)
-    presiones_sat = [psat(temperatura) for temperatura in temperaturas]
-    pres_ext = pvapor(temp_ext, HR_ext) # presión de vapor exterior: 1016.00
-    pres_int = pvapor(temp_int, HR_int) # presión de vapor interior: 1285.32
-    presiones = [pres_ext] + calculapresvap(capas_S, pres_ext, pres_int, S_total) + [pres_int]
+    temperaturas = calculatemperaturas(capas, temp_ext, temp_int, Rs_ext, Rs_int)
+    presiones_sat = calculapresionessat(temperaturas)
+    presiones = calculapresiones(capas, temp_ext, temp_int, HR_ext, HR_int)
 
-    print "Capas: ", capas
-    print "Propiedades de capas: ", capas_propiedades
-    print "Temperaturas: ", temperaturas
-    print "Presiones de saturación: ", presiones_sat
-    print "Presiones de vapor: ", presiones
+    print u"Capas: \n\t", "\n\t".join([x[0] for x in capas])
+    print u"Temperaturas: %s" % ["%.1f" % x for x in temperaturas]
+    print u"Presiones de saturación: %s" % ["%.2f" % x for x in presiones_sat]
+    print u"Presiones de vapor: %s" % ["%.2f" % x for x in presiones]
+    print u"Presión de vapor exterior: %.2f" % presiones[1] # presión de vapor exterior: 1016.00
+    print u"Presión de vapor interior: %.2f" % presiones[-1] # presión de vapor interior: 1285.32
 
     for pres, pres_sat in zip(presiones, presiones_sat):
         if pres < pres_sat:
@@ -248,4 +270,4 @@ if __name__ == "__main__":
     # de zonas de baja carga interna.
     # Hay que generalizar el cálculo de la presión exterior para la localidad concreta?
     # Calcular exceso de humedad condensado si se da el caso.
-    dibujagrafica(capas, temperaturas, presiones, presiones_sat, U, HR_int, HR_ext)
+    dibujagrafica(capas, Rs_ext, Rs_int, temperaturas, presiones, presiones_sat, U, HR_int, HR_ext)
