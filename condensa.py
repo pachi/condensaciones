@@ -22,21 +22,24 @@ def psat(temp):
 def pvapor(temp, humedad):
     """Presión de vapor - temp en ºC y humedad en tanto por uno.
         temp - temperatura media exterior para el mes dado
-        humedad - humedad relativa media para el mes dado"""
+        humedad - humedad relativa media para el mes dado.
+    """
     return (humedad / 100.0) * psat(temp)
 
 def temploc(temp, delta_alt):
     """Temperatura de la localidad en función de la temperatura de
     la capital de provincia y la diferencia de altitud entre ellas.
         temp - temperatura media exterior de la capital para el mes dado
-        delta_alt - altura de la localidad sobre la de la capital."""
+        delta_alt - altura de la localidad sobre la de la capital.
+    """
     return temp - 1.0 * delta_alt / 100.0
 
 def psatloc(temp, delta_alt):
     """Presión de saturación en una localidad situada a una altitud
     distinta a la capital de provincia.
         temp - temperatura media exterior de la capital para el mes dado
-        delta_alt - altura de la localidad sobre la de la capital."""
+        delta_alt - altura de la localidad sobre la de la capital.
+    """
     return psat(temploc(temp, delta_alt))
 
 def hrloc(temp, humedad, delta_alt):
@@ -44,7 +47,8 @@ def hrloc(temp, humedad, delta_alt):
     de altitud dada sobre la capital de provincia.
         temp - temperatura media exterior de la capital para el mes dado
         humedad - humedad relativa media de la capital para el mes dado
-        delta_alt - altura de la localidad sobre la de la capital."""
+        delta_alt - altura de la localidad sobre la de la capital.
+    """
     return pvapor(temp, humedad) / (psatloc(temp, delta_alt) * temploc(temp, delta_alt))
 
 def calculahrint(temperaturas, hrext, G, volumen, n):
@@ -58,7 +62,6 @@ def calculahrint(temperaturas, hrext, G, volumen, n):
         higrometría 4 - 62%
         hogrometría 5 - 70%
     """
-    #TODO: eliminar parámetro tempsupint usando datos de paramento
     T_e = temperaturas[0]
     T_i = temperaturas[-1]
     T_si = temperaturas[-2]
@@ -91,7 +94,8 @@ def calculatemperaturas(capas, tempext, tempint, Rs_ext, Rs_int):
         tempext - temperatura exterior media en el mes de enero
         tempint - temperatura interior de cálculo (20ºC)
         Rs_ext - Resistencia térmica superficial exterior
-        Rs_int - Resistencia térmica superficial interior"""
+        Rs_int - Resistencia térmica superficial interior
+    """
     resistencias_capas = [Rs_ext] + R_capas(capas) + [Rs_int]
     rtotal = R_total(capas, Rs_ext, Rs_int)
     temperaturas = [tempext]
@@ -102,9 +106,10 @@ def calculatemperaturas(capas, tempext, tempint, Rs_ext, Rs_int):
 
 def calculapresiones(capas, temp_ext, temp_int, HR_ext, HR_int):
     """Devuelve una lista de presiones de vapor
-    presión de vapor al exterior, presiones de vapor intermedias y presión de vapor interior"""
-    pres_ext = pvapor(temp_ext, HR_ext) # presión de vapor exterior: 1016.00
-    pres_int = pvapor(temp_int, HR_int) # presión de vapor interior: 1285.32
+    presión de vapor al exterior, presiones de vapor intermedias y presión de vapor interior.
+    """
+    pres_ext = pvapor(temp_ext, HR_ext)
+    pres_int = pvapor(temp_int, HR_int)
     Espesor_aire_capas = S_capas(capas)
     S_total = sum(Espesor_aire_capas)
     # La presión al exterior es constante, en el aire y la superficie exterior de cerramiento
@@ -119,7 +124,17 @@ def calculapresiones(capas, temp_ext, temp_int, HR_ext, HR_int):
 def calculapresionessat(temperaturas):
     return [psat(temperatura) for temperatura in temperaturas]
 
-def dibujagrafica(capas, Rs_ext, Rs_int, temperaturas, presiones, presiones_sat, U, HR_int, HR_ext):
+def colorlist(steps):
+    import colorsys
+    clist =[]
+    salto_color = 0.0
+    for i in range(steps):
+        color = colorsys.hls_to_rgb(salto_color, .5, .7)
+        clist.append(color)
+        salto_color += 1.0/steps
+    return clist
+
+def dibujagrafica(nombre, capas, Rs_ext, Rs_int, temperaturas, presiones, presiones_sat, U, HR_int, HR_ext):
     # Representar Presiones de saturación vs. Presiones de vapor y temperaturas
     # en un diagrama capa/Presion de vapor y capa/Temp
     T_e = temperaturas[0]
@@ -163,19 +178,25 @@ def dibujagrafica(capas, Rs_ext, Rs_int, temperaturas, presiones, presiones_sat,
     xlabel(u"Distancia [m]")
     ylabel(u"Presión de vapor [Pa]", fontdict=dict(color='b'))
     text(0.5, 0.97,
-            'Cerramiento %s' % ('tipo',), #TODO: recoger nombre
+            nombre,
             transform=sp1.transAxes,
             verticalalignment='top',
             horizontalalignment='center',
             fontsize=12,
             fontstyle='italic')
     # Lineas de tramos de cerramiento
+    print "Número colores:", len(rotulos)
+    colors = colorlist(len(rotulos) - 2) # genera gradiente colores
     axvline(rotulo_se, linewidth=2, color='k', ymin=.05, ymax=.9)
-    for rotulo in rotulos[2:-2]:
+    rotuloanterior = rotulo_se
+    for rotulo, color in zip(rotulos[2:-2], colors):
+        axvspan(rotuloanterior, rotulo, facecolor=color, alpha=0.25, ymin=.05, ymax=.9)
         axvline(rotulo, color='0.5', ymin=.05, ymax=.9)
+        rotuloanterior = rotulo
+    #TODO: cambiar color de fondo añadiendo un paso más a colors
+    axvspan(rotuloanterior, rotulo_si, facecolor='#fff600', alpha=0.25, ymin=.05, ymax=.9)
     axvline(rotulo_si, linewidth=2, color='k', ymin=.05, ymax=.9)
-    #TODO: cambiar fondo por tramos
-    axvspan(rotulo_se, rotulo_si, facecolor='#fff600', alpha=0.25, ymin=.05, ymax=.9)
+
     # lineas de datos
     plot(rotulos, presiones, 'b-', linewidth=0.5)
     plot(rotulos, presiones_sat, 'b-', linewidth=1.5)
@@ -223,6 +244,8 @@ if __name__ == "__main__":
     HR_ext = 79 #Humedad relativa enero
     temp_int = 20
     HR_int = 55 #según clase de higrometría: 3:55%, 4:62%, 5:70%
+    #XXX: La humedad interior se podría calcular con calculahrint y datos de generación de
+    # vapor de agua (higrometría, ventilación, temperatura superficial interior y temp. ext...
 
     # Datos constructivos
     #Resistencia térmica                    e       mu      K       R       S
@@ -270,4 +293,5 @@ if __name__ == "__main__":
     # de zonas de baja carga interna.
     # Hay que generalizar el cálculo de la presión exterior para la localidad concreta?
     # Calcular exceso de humedad condensado si se da el caso.
-    dibujagrafica(capas, Rs_ext, Rs_int, temperaturas, presiones, presiones_sat, U, HR_int, HR_ext)
+    dibujagrafica("Cerramiento tipo", capas, Rs_ext, Rs_int,
+            temperaturas, presiones, presiones_sat, U, HR_int, HR_ext)
