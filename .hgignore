@@ -1,0 +1,13 @@
+syntax: glob
+dist/*
+build/*
+*~
+*.bak
+*.pyc
+*.orig
+*.swp
+*.gladep
+*.exe
+*.project
+*.pydevproject
+*.settings
