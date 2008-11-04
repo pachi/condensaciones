@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #encoding: iso-8859-15
 from pylab import *
-from condensa import nombre_capas
+from capas import nombre_capas
 import colorsys
 
 def colorlist(steps):
@@ -28,7 +28,7 @@ def x_capas(espesores_capas, margen_lateral=0.025):
     rotulos.append(rotulos[-1] + margen_lateral)
     return rotulos
 
-def dibujagrafica(nombre_grafica, capas, Rs_ext, Rs_int, temperaturas, presiones, presiones_sat, U, HR_int, HR_ext, f_Rsi, f_Rsimin):
+def dibujapresionestemperaturas(nombre_grafica, capas, Rs_ext, Rs_int, temperaturas, presiones, presiones_sat, U, HR_int, HR_ext, f_Rsi, f_Rsimin):
     """Representa Presiones de saturación vs. Presiones de vapor y temperaturas
     en un diagrama capa/Presion de vapor y capa/Temp
     """
@@ -122,6 +122,10 @@ def dibujagrafica(nombre_grafica, capas, Rs_ext, Rs_int, temperaturas, presiones
     #savefig('presionesplot.png')
     show()
 
+def dibujapresiones():
+    pass
+
+
 if __name__ == "__main__":
     import grafica
     # Valores constructivos: nombre, espesor, mu, K
@@ -145,5 +149,5 @@ if __name__ == "__main__":
     presiones = [1016.00, 1016.00, 1153.16, 1165.62, 1240.44, 1277.84, 1285.32, 1285.32]
     presiones_sat = [1286.08, 1311.79, 1418.84, 1435.87, 2114.68, 2182.84, 2200.69, 2336.95]
 
-    grafica.dibujagrafica("Cerramiento tipo", capas, Rs_ext, Rs_int,
+    grafica.dibujapresionestemperaturas("Cerramiento tipo", capas, Rs_ext, Rs_int,
             temperaturas, presiones, presiones_sat, U, HR_int, HR_ext, f_Rsi, f_Rsimin)

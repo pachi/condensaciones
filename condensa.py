@@ -1,18 +1,7 @@
 #!/usr/bin/env python
 #encoding: iso-8859-15
 import math
-
-def nombre_capas(capas):
-    return [nombre for nombre, e, mu, K in capas]
-
-def R_capas(capas):
-    return [e / K for nombre, e, mu, K in capas]
-
-def S_capas(capas):
-    return [e * mu for nombre, e, mu, K in capas]
-
-def R_total(capas, Rs_ext, Rs_int):
-    return Rs_ext + sum(R_capas(capas)) + Rs_int
+from capas import *
 
 def psat(temp):
     """Presión de saturación - temp en ºC"""
@@ -78,10 +67,6 @@ def calculahrint(temperaturas, hrext, G, volumen, n):
     hrint = 100.0 * Pi / Psi
     return hrint
 
-def calculaU(capas, Rs_ext, Rs_int):
-    """Transmitancia térmica del cerramiento"""
-    return 1.0 / R_total(capas, Rs_ext, Rs_int)
-
 def calculafRsi(U):
     """Factor de temperatura de la superficie interior
     """
@@ -101,17 +86,18 @@ def calculafRsimin(hrint, tempext, tempint=20.0):
     temp_si_min = calculatemp_simin(hrint)
     return (temp_si_min - tempext) / (tempint - tempext)
 
-def tasatransferenciavapor(pe, pi, S_total):
-    """Tasa de transferencia de vapor a través del cerramiento.
+def tasatransferenciavapor(pe, pi, Se, Si, tiempo=3600.0):
+    """Tasa de transferencia de vapor a través del cerramiento en un tiempo dado.
     Sirve para calcular condensada o evaporada entre interfases.
         pe - presión de vapor exterior
         pi - presión de vapor interior
-        S_total - espesor de aire equivalente total
+        Se - espesor de aire equivalente en pe
+        Si - espesor de aire equivalente en pi
         delta0 -permeabilidad al vapor de agua del aire en relación a la
-            presión parcial de vapor [kg/(m.s.Pa) delta0 = 2.10^-10 kg/(m.s.Pa)
+            presión parcial de vapor (en g/m.s.Pa)x(tiempo)
     """
-    delta0 = 2.0 * 10.0**(-10.0) #kg/(m.s.Pa)
-    return delta0 * (pi - pe) / S_total #kg/(m2.s), ver unidad de tiempo
+    delta0 = tiempo * 2.0 * 10.0**(-7.0) #delta0 -> [g/(m.s.Pa)] x tiempo[s]
+    return delta0 * (pi - pe) / (Si - Se) #kg/(m2.s), ver unidad de tiempo
 
 def calculacantidadcondensacion(presiones, presiones_sat, Scapas):
     #XXX: cómo se calcula según ISO 13788?
@@ -127,10 +113,9 @@ def calculacantidadcondensacion(presiones, presiones_sat, Scapas):
     p_j = [p_e] + [presiones_sat[i] for i in indices] + [p_i]
     s_j = [0.0] + [S_acumuladas[i-2] for i in indices] + [S_T]
     delta0 = 2.0 * 10.0**(-10.0) * 3600.0 * 24.0 * 30.0 * 1000.0 #g/(m.mes.Pa)
-    g = [delta0 * (
-        ((p_j[n+2] - p_j[n+1]) / (s_j[n+2] - s_j[n+1])) -
-        ((p_j[n+1] - p_j[n]) / (s_j[n+1] - s_j[n]))
-        ) for n in range(len(indices))]
+    g = [(tasatransferenciavapor(p_j[n+1], p_j[n+2], s_j[n+1], s_j[n+2], 24.0*30.0) -
+        tasatransferenciavapor(p_j[n], p_j[n+1], s_j[n], s_j[n+1], 24.0*30.0))
+        for n in range(len(indices))]
     # condensaciones g/m2.mes
     # Representar presiones vs. S
     import pylab
@@ -249,7 +234,7 @@ if __name__ == "__main__":
     presiones = calculapresiones(capas, temp_ext, temp_int, HR_ext, HR_int)
     p_ext = presiones[1]
     p_int = presiones[-1]
-    g = tasatransferenciavapor(p_ext, p_int, S_total)
+    g = tasatransferenciavapor(p_ext, p_int, 0.0, S_total)
 
     # Temperaturas: [10.7, 11.0, 12.2, 12.4, 18.4, 18.9, 19.0, 20.0]
     # Presiones de saturación: [1286.08, 1311.79, 1418.84, 1435.87, 2114.68, 2182.84, 2200.69, 2336.95]
@@ -263,13 +248,11 @@ if __name__ == "__main__":
     c_sup = compruebacsuperificiales(f_Rsi, f_Rsimin)
     print u"Condensaciones superficiales (%s) - fRsi = %.2f, fRsimin = %.2f" % (c_sup, f_Rsi, f_Rsimin)
     print u"Condensaciones intersticiales (%s)" % compuebacintersticiales(presiones, presiones_sat)
-    print u"Tasa de transferencia de vapor %.3f x 10^-3[kg/(h.m2)]" % (g * 1000.0 * 3600,)
+    print u"Tasa de transferencia de vapor %.3f x 10^-3[g/(h.m2)]" % (g * 1000.0,)
 
 #     import grafica
-#     grafica.dibujagrafica("Cerramiento tipo", capas, Rs_ext, Rs_int,
+#     grafica.dibujapresionestemperaturas("Cerramiento tipo", capas, Rs_ext, Rs_int,
 #             temperaturas, presiones, presiones_sat, U, HR_int, HR_ext, f_Rsi, f_Rsimin)
 
     # Para calcular cantidades condensadas:
-    presiones =     [1016.00, 1016.00, 1453.16, 1465.62, 1240.44, 1277.84, 1285.32, 1285.32]
-    presiones_sat = [1286.08, 1311.79, 1418.84, 1435.87, 2114.68, 2182.84, 2200.69, 2336.95]
     calculacantidadcondensacion(presiones, presiones_sat, capas_S)
