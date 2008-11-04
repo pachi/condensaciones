@@ -67,26 +67,81 @@ def calculahrint(temperaturas, hrext, G, volumen, n):
     T_e = temperaturas[0]
     T_i = temperaturas[-1]
     T_si = temperaturas[-2]
-    delta_v = G / (n * V)
+    ## XXX: En lugar de delta_p y delta_v se puede usar la higrometría de los locales y T_e según norma
+    delta_v = G / (n * V) # Exceso de humedad interior
+    delta_p = 462.0 * delta_v * (T_i + T_e) / 2.0 # Exceso de presión de vapor interna
     Pext = pvapor(T_e, hrext)
-    delta_p = 462.0 * delta_v * (T_i + T_e) / 2.0
+    # Presión de vapor al interior (la ISO 13788 añade un factor de seguridad 1.10 a delta_p)
     Pi = Pext + delta_p
+    # Presión de saturación al interior (la ISO 13788 divide por un factor de seguridad de 0.80)
     Psi = psat(T_si)
     hrint = 100.0 * Pi / Psi
     return hrint
 
-def calculaU(R_total):
+def calculaU(capas, Rs_ext, Rs_int):
     """Transmitancia térmica del cerramiento"""
-    return 1.0 / R_total
+    return 1.0 / R_total(capas, Rs_ext, Rs_int)
 
 def calculafRsi(U):
+    """Factor de temperatura de la superficie interior
+    """
     return 1.0 - U * 0.25
 
-def calculafRsimin(tempext, hrint):
-    p_i = hrint * 2337 / 100.0
-    p_sat = p_i / 0.8
-    temp_si_min = 237.3 * math.log (p_sat / 610.5) / (17.269 - math.log (p_sat / 610.5))
-    return (temp_si_min - tempext) / (20.0 - tempext)
+def calculafRsimin(hrint, tempext, tempint=20.0):
+    """Factor de temperatura útil sobre el paramento interior.
+    """
+    def calculatemp_simin(hrint):
+        p_i = hrint * 2337 / 100.0
+        p_sat = p_i / 0.8 # la humedad relativa no debería pasar de 0.80
+        if p_sat >= 610.5: # condición CTE (son las expresiones inversas de p_sat como f(temp)
+            temp_si_min = 237.3 * math.log (p_sat / 610.5) / (17.269 - math.log (p_sat / 610.5))
+        else: # condición ISO 13788
+            temp_si_min = 265.5 * math.log (p_sat / 610.5) / (21.875 - math.log (p_sat / 610.5))
+        return temp_si_min
+    temp_si_min = calculatemp_simin(hrint)
+    return (temp_si_min - tempext) / (tempint - tempext)
+
+def tasatransferenciavapor(pe, pi, S_total):
+    """Tasa de transferencia de vapor a través del cerramiento.
+    Sirve para calcular condensada o evaporada entre interfases.
+        pe - presión de vapor exterior
+        pi - presión de vapor interior
+        S_total - espesor de aire equivalente total
+        delta0 -permeabilidad al vapor de agua del aire en relación a la
+            presión parcial de vapor [kg/(m.s.Pa) delta0 = 2.10^-10 kg/(m.s.Pa)
+    """
+    delta0 = 2.0 * 10.0**(-10.0) #kg/(m.s.Pa)
+    return delta0 * (pi - pe) / S_total #kg/(m2.s), ver unidad de tiempo
+
+def calculacantidadcondensacion(presiones, presiones_sat, Scapas):
+    #XXX: cómo se calcula según ISO 13788?
+    p_e = presiones[1]
+    p_i = presiones[-1]
+    S_T = sum(Scapas)
+    S_acumuladas = []
+    S_previa = 0.0
+    for Scapa in Scapas:
+        S_previa = Scapa + S_previa
+        S_acumuladas.append(S_previa)
+    indices = [i for i, (p_i, ps_i) in enumerate(zip(presiones, presiones_sat)) if p_i > ps_i]
+    p_j = [p_e] + [presiones_sat[i] for i in indices] + [p_i]
+    s_j = [0.0] + [S_acumuladas[i-2] for i in indices] + [S_T]
+    delta0 = 2.0 * 10.0**(-10.0) * 3600.0 * 24.0 * 30.0 * 1000.0 #g/(m.mes.Pa)
+    g = [delta0 * (
+        ((p_j[n+2] - p_j[n+1]) / (s_j[n+2] - s_j[n+1])) -
+        ((p_j[n+1] - p_j[n]) / (s_j[n+1] - s_j[n]))
+        ) for n in range(len(indices))]
+    # condensaciones g/m2.mes
+    # Representar presiones vs. S
+    import pylab
+    s_todas = [0.0, 0.0] + S_acumuladas + [sum(capas_S)]
+    pylab.plot(s_todas, presiones_sat, 'k-', label='p_sat')
+    pylab.plot(s_j, p_j, 'b-', label='p_vap')
+    pylab.legend()
+    pylab.figtext(0.15, .85, "Cantidades condensadas: %s" % g)
+    pylab.figtext(0.15, .80, "Total: %.2f" % sum(g))
+    pylab.show()
+
 
 def calculatemperaturas(capas, tempext, tempint, Rs_ext, Rs_int):
     """Devuelve lista de temperaturas:
@@ -126,6 +181,26 @@ def calculapresiones(capas, temp_ext, temp_int, HR_ext, HR_int):
 def calculapresionessat(temperaturas):
     return [psat(temperatura) for temperatura in temperaturas]
 
+def compruebacsuperificiales(fRsi, fRsimin):
+    """Comprueba la condición de existencia de condensaciones superficiales en un
+    cerramiento o puente térmico.
+    Devuelve la comprobación y el valor de fRsi y fRsimin
+    """
+    # TODO: el CTE incluye tablas según zonas y clase de higrometría para fRsimin
+    return fRsi > fRsimin
+
+def compuebacintersticiales(presiones, presiones_sat):
+    """Comprueba la condición de existencia de condensaciones intersticiales en un
+    cerramiento o puente térmico.
+    Devuelve la comprobación
+    """
+    #TODO: devolver la cantidad condensada (s/ UNE EN ISO 13788:2002)
+    condensa = False
+    for presion_i, presion_sat_i in zip(presiones, presiones_sat):
+        if presion_i >= presion_sat_i:
+            condensa = True
+    return condensa
+
 
 if __name__ == "__main__":
     #Datos climáticos Sevilla
@@ -140,8 +215,12 @@ if __name__ == "__main__":
     HR_int = 55 #según clase de higrometría: 3:55%, 4:62%, 5:70%
     #XXX: La humedad interior se podría calcular con calculahrint y datos de generación de
     # vapor de agua (higrometría, ventilación, temperatura superficial interior y temp. ext...
+    # Hay que generalizar el cálculo de la presión exterior para la localidad concreta?
+    # Calcular exceso de humedad condensado si se da el caso.
 
     # Datos constructivos
+    Rs_ext = 0.04
+    Rs_int = 0.13
     #Resistencia térmica                    e       mu      K       R       S
     #Nombre                                 [m]     [-]     [W/mK]  [m²K/W] [m]
     #1/2 pie LP métrico o catalán 40 mm<    0.11    10      0.69    0.16    1.1
@@ -158,38 +237,39 @@ if __name__ == "__main__":
             ("Tabique de LH sencillo [40 mm < Esp", 0.03, 10.0, 0.44),
             ("Enlucido_de_yeso_1000<d<1300", 0.01, 6.0, 0.57),]
 
-    # pasar esto a las funciones, sin usar n y recalcular. Usar siempre capas en llamadas.
     capas_R = R_capas(capas)
     capas_S = S_capas(capas)
-    Rs_ext = 0.04
-    Rs_int = 0.13
     Rtotal = R_total(capas, Rs_ext, Rs_int) #("Resistencia total (m²K/W)", 1.25)
-    U = calculaU(Rtotal) # 0.80 W/m^2K
+    U = calculaU(capas, Rs_ext, Rs_int) # 0.80 W/m^2K = 1/Rtotal
     S_total = sum(capas_S) # Espesor de aire equivalente total (m), 2.16
     f_Rsi = calculafRsi(U) # 0.80
-    f_Rsimin = calculafRsimin(temp_ext, HR_int) # 0.36
-
+    f_Rsimin = calculafRsimin(HR_int, temp_ext) # 0.36
     temperaturas = calculatemperaturas(capas, temp_ext, temp_int, Rs_ext, Rs_int)
     presiones_sat = calculapresionessat(temperaturas)
     presiones = calculapresiones(capas, temp_ext, temp_int, HR_ext, HR_int)
+    p_ext = presiones[1]
+    p_int = presiones[-1]
+    g = tasatransferenciavapor(p_ext, p_int, S_total)
 
+    # Temperaturas: [10.7, 11.0, 12.2, 12.4, 18.4, 18.9, 19.0, 20.0]
+    # Presiones de saturación: [1286.08, 1311.79, 1418.84, 1435.87, 2114.68, 2182.84, 2200.69, 2336.95]
+    # Presiones de vapor: [1016.00, 1016.00, 1153.16, 1165.62, 1240.44, 1277.84, 1285.32, 1285.32]
     print u"Capas: \n\t", "\n\t".join(nombre_capas(capas))
     print u"Temperaturas: %s" % ["%.1f" % x for x in temperaturas]
     print u"Presiones de saturación: %s" % ["%.2f" % x for x in presiones_sat]
     print u"Presiones de vapor: %s" % ["%.2f" % x for x in presiones]
-    print u"Presión de vapor exterior: %.2f" % presiones[1] # presión de vapor exterior: 1016.00
-    print u"Presión de vapor interior: %.2f" % presiones[-1] # presión de vapor interior: 1285.32
+    print u"Presión de vapor exterior: %.2f" % p_ext # presión de vapor exterior: 1016.00
+    print u"Presión de vapor interior: %.2f" % p_int # presión de vapor interior: 1285.32
+    c_sup = compruebacsuperificiales(f_Rsi, f_Rsimin)
+    print u"Condensaciones superficiales (%s) - fRsi = %.2f, fRsimin = %.2f" % (c_sup, f_Rsi, f_Rsimin)
+    print u"Condensaciones intersticiales (%s)" % compuebacintersticiales(presiones, presiones_sat)
+    print u"Tasa de transferencia de vapor %.3f x 10^-3[kg/(h.m2)]" % (g * 1000.0 * 3600,)
 
-    for pres, pres_sat in zip(presiones, presiones_sat):
-        if pres < pres_sat:
-            continue
-        else:
-            print "Se supera la presión de saturación"
-    # Se puede calcular la humedad relativa interior para casos en los que no se trate
-    # de zonas de baja carga interna.
-    # Hay que generalizar el cálculo de la presión exterior para la localidad concreta?
-    # Calcular exceso de humedad condensado si se da el caso.
-    import grafica
+#     import grafica
+#     grafica.dibujagrafica("Cerramiento tipo", capas, Rs_ext, Rs_int,
+#             temperaturas, presiones, presiones_sat, U, HR_int, HR_ext, f_Rsi, f_Rsimin)
 
-    grafica.dibujagrafica("Cerramiento tipo", capas, Rs_ext, Rs_int,
-            temperaturas, presiones, presiones_sat, U, HR_int, HR_ext, f_Rsi, f_Rsimin)
+    # Para calcular cantidades condensadas:
+    presiones =     [1016.00, 1016.00, 1453.16, 1465.62, 1240.44, 1277.84, 1285.32, 1285.32]
+    presiones_sat = [1286.08, 1311.79, 1418.84, 1435.87, 2114.68, 2182.84, 2200.69, 2336.95]
+    calculacantidadcondensacion(presiones, presiones_sat, capas_S)

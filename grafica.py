@@ -2,9 +2,9 @@
 #encoding: iso-8859-15
 from pylab import *
 from condensa import nombre_capas
+import colorsys
 
 def colorlist(steps):
-    import colorsys
     clist =[]
     salto_color = 0.0
     for i in range(steps):
