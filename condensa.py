@@ -59,6 +59,10 @@ def calculahrint(temperaturas, hrext, G, volumen, n):
     ## XXX: En lugar de delta_p y delta_v se puede usar la higrometría de los locales y T_e según norma
     delta_v = G / (n * V) # Exceso de humedad interior
     delta_p = 462.0 * delta_v * (T_i + T_e) / 2.0 # Exceso de presión de vapor interna
+    # Higrometría 3 (viviendas residencial): delta_p = 810 Pa
+    # Higrometría 4 (restaurantes, cocinas...): delta_p = 1080 Pa
+    # Higrometría 5 (lavanderías, piscinas...): delta_p = 1300 Pa
+    # Baja higrometría (oficinas, ...): delta_p = 540 Pa
     Pext = pvapor(T_e, hrext)
     # Presión de vapor al interior (la ISO 13788 añade un factor de seguridad 1.10 a delta_p)
     Pi = Pext + delta_p
@@ -99,34 +103,39 @@ def tasatransferenciavapor(pe, pi, Se, Si, tiempo=3600.0):
     delta0 = tiempo * 2.0 * 10.0**(-7.0) #delta0 -> [g/(m.s.Pa)] x tiempo[s]
     return delta0 * (pi - pe) / (Si - Se) #kg/(m2.s), ver unidad de tiempo
 
-def calculacantidadcondensacion(presiones, presiones_sat, Scapas):
+def calculacantidadcondensacion(capas, presiones, presiones_sat, Scapas):
     #XXX: cómo se calcula según ISO 13788?
     p_e = presiones[1]
     p_i = presiones[-1]
     S_T = sum(Scapas)
-    S_acumuladas = []
-    S_previa = 0.0
-    for Scapa in Scapas:
-        S_previa = Scapa + S_previa
-        S_acumuladas.append(S_previa)
-    indices = [i for i, (p_i, ps_i) in enumerate(zip(presiones, presiones_sat)) if p_i > ps_i]
-    p_j = [p_e] + [presiones_sat[i] for i in indices] + [p_i]
-    s_j = [0.0] + [S_acumuladas[i-2] for i in indices] + [S_T]
-    delta0 = 2.0 * 10.0**(-10.0) * 3600.0 * 24.0 * 30.0 * 1000.0 #g/(m.mes.Pa)
-    g = [(tasatransferenciavapor(p_j[n+1], p_j[n+2], s_j[n+1], s_j[n+2], 24.0*30.0) -
-        tasatransferenciavapor(p_j[n], p_j[n+1], s_j[n], s_j[n+1], 24.0*30.0))
-        for n in range(len(indices))]
-    # condensaciones g/m2.mes
-    # Representar presiones vs. S
-    import pylab
-    s_todas = [0.0, 0.0] + S_acumuladas + [sum(capas_S)]
-    pylab.plot(s_todas, presiones_sat, 'k-', label='p_sat')
-    pylab.plot(s_j, p_j, 'b-', label='p_vap')
-    pylab.legend()
-    pylab.figtext(0.15, .85, "Cantidades condensadas: %s" % g)
-    pylab.figtext(0.15, .80, "Total: %.2f" % sum(g))
-    pylab.show()
 
+    S_acumuladas = Scapas[:]
+    for i in range(1, len(Scapas)):
+        S_acumuladas[i] = S_acumuladas[i] + S_acumuladas[i-1]
+    s_j = [0.0] + S_acumuladas[:]
+
+    # El problema de lo siguiente es que no calcula la envolvente convexa y no recalcula
+    # las presiones resultantes de mover el punto de presión de vapor antes y después de ese
+    # punto.
+    # Calcular pendientes máximas y mínimas desde p_i y p_e hasta la curva de p_sat
+    # para detectar envolvente convexa de las p_sat (con eso detectamos las s_j importantes)
+    # y podemos recalcular las presiones previas y posteriores que nos darán las pendientes
+    # en el cálculo de la transferencia de vapor.
+    p_j = []
+    for p, p_sat in zip(presiones[1:-1], presiones_sat[1:-1]):
+        if p <= p_sat:
+            p_j.append(p)
+        else:
+            p_j.append(p_sat)
+#     print len(s_j), s_j
+#     print len(p_j), p_j
+
+    # condensaciones g/m2.mes
+    g = [(tasatransferenciavapor(p_j[n+1], p_j[n+2], s_j[n+1], s_j[n+2], 24.0*30.0*3600.0) -
+        tasatransferenciavapor(p_j[n], p_j[n+1], s_j[n], s_j[n+1], 24.0*30.0*3600.0))
+        for n in range(len(p_j) - 2)]
+    import grafica
+    grafica.dibujapresiones(capas, capas_S, S_acumuladas, presiones_sat, s_j, p_j, g)
 
 def calculatemperaturas(capas, tempext, tempint, Rs_ext, Rs_int):
     """Devuelve lista de temperaturas:
@@ -234,7 +243,7 @@ if __name__ == "__main__":
     presiones = calculapresiones(capas, temp_ext, temp_int, HR_ext, HR_int)
     p_ext = presiones[1]
     p_int = presiones[-1]
-    g = tasatransferenciavapor(p_ext, p_int, 0.0, S_total)
+    g = tasatransferenciavapor(p_ext, p_int, 0.0, S_total) #0,0898 g/m2.s
 
     # Temperaturas: [10.7, 11.0, 12.2, 12.4, 18.4, 18.9, 19.0, 20.0]
     # Presiones de saturación: [1286.08, 1311.79, 1418.84, 1435.87, 2114.68, 2182.84, 2200.69, 2336.95]
@@ -255,4 +264,4 @@ if __name__ == "__main__":
 #             temperaturas, presiones, presiones_sat, U, HR_int, HR_ext, f_Rsi, f_Rsimin)
 
     # Para calcular cantidades condensadas:
-    calculacantidadcondensacion(presiones, presiones_sat, capas_S)
+    calculacantidadcondensacion(capas, presiones, presiones_sat, capas_S)

@@ -99,7 +99,8 @@ def dibujapresionestemperaturas(nombre_grafica, capas, Rs_ext, Rs_int, temperatu
 
     # incrementar extensión de límites de ejes para hacer hueco
     ymin, ymax = ylim()
-    ylim(ymin-ymin/10.0, ymax+ymax/10.0)
+    length = ymax - ymin
+    ylim(ymin - length / 10.0, ymax + length / 5.0)
 
     # Nuevo eje vertical de temperaturas
     ax2 = twinx()
@@ -117,13 +118,44 @@ def dibujapresionestemperaturas(nombre_grafica, capas, Rs_ext, Rs_int, temperatu
     ax2.yaxis.tick_right()
     # extender eje para evitar coincidencia con curvas de presiones
     ymin, ymax = ylim()
-    ylim(ymin-ymin/10.0, ymax+ymax/5.0)
+    length = ymax - ymin
+    ylim(ymin - length / 10.0, ymax + length / 5.0)
     # guardar y mostrar gráfica
     #savefig('presionesplot.png')
     show()
 
-def dibujapresiones():
-    pass
+def dibujapresiones(capas, capas_S, S_acumuladas, presiones_sat, s_j, p_j, g):
+    # Representar presiones vs. S
+
+    sp1 = subplot('111')
+    title(u"Presiones de vapor (efectiva y de saturación)")
+    xlabel(u"Espesor de aire equivalente [m]")
+    ylabel(u"Presión de vapor [Pa]", fontdict=dict(color='b'))
+    #subplots_adjust(bottom=0.15, top=0.87) # ampliar márgenes
+
+    s_todas = [0.0, 0.0] + S_acumuladas + [sum(capas_S)]
+    plot(s_j, presiones_sat[1:-1], 'k-', label='p_sat')
+    plot(s_j, p_j, 'b-', label='p_vap')
+    leg = legend(loc='upper right')
+    ltext  = leg.get_texts()
+    setp(ltext, fontsize='small')
+    textog = "Cantidades condensadas: " + ", ".join(["%.2f" % x for x in g])
+    figtext(0.15, .85, textog, fontsize=9)
+    figtext(0.15, .80, "Total: %.2f" % sum(g))
+
+    # incrementar extensión de límites de ejes para hacer hueco
+    xmin, xmax, ymin, ymax = axis()
+    lengthx = s_j[-1]
+    lengthy = ymax - ymin
+    axis([- lengthx / 10.0, lengthx + lengthx / 10.0, ymin, ymax + lengthy/5.0])
+
+    # Lineas de tramos de cerramiento
+    axvline(s_j[0], linewidth=2, color='k', ymin=.05, ymax=.8)
+    for rotulo in s_j[1:-1]:
+        axvline(rotulo, color='0.5', ymin=.05, ymax=.8)
+    axvline(s_j[-1], linewidth=2, color='k', ymin=.05, ymax=.8)
+
+    show()
 
 
 if __name__ == "__main__":
