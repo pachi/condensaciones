@@ -338,7 +338,7 @@ if __name__ == "__main__":
     print u"\tTasa de transferencia de vapor %.3f x 10^-3[g/(h.m2)]" % (g_total * 3600.0,)
 
     import grafica
-#     grafica.dibujapresionestemperaturas("Cerramiento tipo", capas, Rs_ext, Rs_int,
-#             temperaturas, presiones, presiones_sat, U, HR_int, HR_ext, f_Rsi, f_Rsimin)
+    grafica.dibujapresionestemperaturas("Cerramiento tipo", capas, Rs_ext, Rs_int,
+            temperaturas, presiones, presiones_sat, U, HR_int, HR_ext, f_Rsi, f_Rsimin)
 #     grafica.dibujapresiones(capas, puntos_condensacion, presiones, presiones_sat, g)
-    grafica.dibujapresiones(capas, puntos_evaporacion, presiones, presiones_sat, g)
+#     grafica.dibujapresiones(capas, puntos_evaporacion, presiones, presiones_sat, g)
