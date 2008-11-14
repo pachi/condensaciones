@@ -5,7 +5,6 @@
 # que resolver el problema de usar subplot y show en cada figura.
 
 from pylab import *
-import capas
 import colorsys
 import operator
 
@@ -33,7 +32,7 @@ def x_capas(espesores_capas, margen_lateral=0.025):
     rotulos.append(rotulos[-1] + margen_lateral)
     return rotulos
 
-def dibujapresionestemperaturas(nombre_grafica, lcapas, Rs_ext, Rs_int, temperaturas, presiones, presiones_sat, U, HR_int, HR_ext, f_Rsi, f_Rsimin):
+def dibujapresionestemperaturas(nombre_grafica, muro, Rs_ext, Rs_int, temperaturas, presiones, presiones_sat, U, HR_int, HR_ext, f_Rsi, f_Rsimin):
     """Representa Presiones de saturación vs. Presiones de vapor y temperaturas
     en un diagrama capa/Presion de vapor y capa/Temp
     """
@@ -46,7 +45,7 @@ def dibujapresionestemperaturas(nombre_grafica, lcapas, Rs_ext, Rs_int, temperat
     Rtotal = 1 / U
     # TODO: Indicar si cumple f_Rsi > f_Rsi,min, T_si > T_si,min, P > P_sat, etc
 
-    espesores_capas = [e for nombre, e, mu, K in lcapas]
+    espesores_capas = muro.espesores
     rotulos = x_capas(espesores_capas)
     rotulo_se = rotulos[1]
     rotulo_si = rotulos[-2]
@@ -81,9 +80,9 @@ def dibujapresionestemperaturas(nombre_grafica, lcapas, Rs_ext, Rs_int, temperat
         axvline(rotulo, color='0.5', ymin=.05, ymax=.9)
     axvline(rotulo_si, linewidth=2, color='k', ymin=.05, ymax=.9)
     # Rellenos de materiales
-    colordict = colores_capas(capas.nombre_capas(lcapas))
+    colordict = colores_capas(muro.nombre_capas)
     rotuloanterior = rotulo_se
-    for capa, rotulo in zip(capas.nombre_capas(lcapas), rotulos[2:]):
+    for capa, rotulo in zip(muro.nombre_capas, rotulos[2:]):
         color = colordict[capa]
         axvspan(rotuloanterior, rotulo, facecolor=color, alpha=0.25, ymin=.05, ymax=.9)
         rotuloanterior = rotulo
@@ -123,11 +122,11 @@ def dibujapresionestemperaturas(nombre_grafica, lcapas, Rs_ext, Rs_int, temperat
     #savefig('presionesplot.png')
     show()
 
-def dibujapresiones(lcapas, puntos_condensacion, presiones, presiones_sat, g):
+def dibujapresiones(muro, puntos_condensacion, presiones, presiones_sat, g):
     """ Representar presiones frente a espesores de aire equivalentes
     señalando planos de condensación y cantidad condensada.
     """
-    capas_S = capas.S_capas(lcapas)
+    capas_S = muro.S
     s_sat = [0.0] + [reduce(operator.add, capas_S[:i]) for i in range(1,len(capas_S)+1)]
     s_min = s_sat[0]
     s_max = s_sat[-1]
@@ -167,13 +166,13 @@ def dibujapresiones(lcapas, puntos_condensacion, presiones, presiones_sat, g):
     show()
 
 if __name__ == "__main__":
-    import grafica
-    # Valores constructivos: nombre, espesor, mu, K
-    lcapas = [("1/2 pie LP métrico o catalán 40 mm<", 0.11, 10.0, 0.69),
-            ("Mortero_de_áridos_ligeros_[vermiculita", 0.01, 10.0, 0.41),
-            ("EPS Poliestireno Expandido", 0.03, 20.0, 0.037),
-            ("Tabique de LH sencillo [40 mm < Esp", 0.03, 10.0, 0.44),
-            ("Enlucido_de_yeso_1000<d<1300", 0.01, 6.0, 0.57),]
+    from capas import *
+    import datos_ejemplo
+    import condensa
+
+    capas = datos_ejemplo.capas
+    muro = Cerramiento(capas)
+
     # Valores climáticos
     temp_ext = 10.7
     HR_ext = 79
@@ -189,5 +188,9 @@ if __name__ == "__main__":
     presiones = [1016.00, 1016.00, 1153.16, 1165.62, 1240.44, 1277.84, 1285.32, 1285.32]
     presiones_sat = [1286.08, 1311.79, 1418.84, 1435.87, 2114.68, 2182.84, 2200.69, 2336.95]
 
-    grafica.dibujapresionestemperaturas("Cerramiento tipo", lcapas, Rs_ext, Rs_int,
+    dibujapresionestemperaturas("Cerramiento tipo", muro, Rs_ext, Rs_int,
             temperaturas, presiones, presiones_sat, U, HR_int, HR_ext, f_Rsi, f_Rsimin)
+    g, puntos_condensacion = condensa.calculacantidadcondensacion(muro, presiones, presiones_sat)
+    g, puntos_evaporacion = condensa.calculacantidadevaporacion(muro, presiones, presiones_sat, interfases=[2])
+    dibujapresiones(muro, puntos_condensacion, presiones, presiones_sat, g)
+    dibujapresiones(muro, puntos_evaporacion, presiones, presiones_sat, g)

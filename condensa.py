@@ -151,14 +151,14 @@ def tasatransferenciavapor(pe, pi, Se, Si):
     delta0 = 2.0 * 10.0**(-7.0) #delta0 -> [g/(m.s.Pa)]
     return delta0 * (pi - pe) / (Si - Se) #g/(m2.s)
 
-def calculacantidadcondensacion(capas, presiones, presiones_sat):
+def calculacantidadcondensacion(muro, presiones, presiones_sat):
     """Calcular cantidad de condensación y coordenadas (S, presión de vapor)
     de los planos de condensación.
     Devuelve g, puntos_condensacion
     """
     # calculamos las posiciones x, y correspondientes a espesor de aire equivalente
     # y presiones de saturación
-    Scapas = S_capas(capas)
+    Scapas = muro.S
     x_jo = [0.0] + [reduce(operator.add, Scapas[:i]) for i in range(1,len(Scapas)+1)]
     y_jo = [presiones[1]] + [p for p in presiones_sat[2:-2]] + [presiones[-1]]
 
@@ -185,13 +185,13 @@ def calculacantidadcondensacion(capas, presiones, presiones_sat):
         for n in range(len(y_j) - 2)]
     return g, envolvente_inf
 
-def calculacantidadevaporacion(capas, presiones, presiones_sat, interfases):
+def calculacantidadevaporacion(muro, presiones, presiones_sat, interfases):
     """Calcular cantidad de evaporacion devolver coordenadas (S, presión de vapor)
     Devuelve g, puntos_evaporacion
     """
     # calculamos las posiciones x, y correspondientes a espesor de aire equivalente
     # y presiones de saturación
-    Scapas = S_capas(capas)
+    Scapas = muro.S
     x_jo = [0.0] + [reduce(operator.add, Scapas[:i]) for i in range(1,len(Scapas)+1)]
     y_jo = [presiones[1]] + [p for p in presiones_sat[2:-2]] + [presiones[-1]]
 
@@ -205,7 +205,7 @@ def calculacantidadevaporacion(capas, presiones, presiones_sat, interfases):
         for n in range(len(y_j) - 2)]
     return g, envolvente_inf
 
-def calculatemperaturas(capas, tempext, tempint, Rs_ext, Rs_int):
+def calculatemperaturas(muro, tempext, tempint, Rs_ext, Rs_int):
     """Devuelve lista de temperaturas:
     temperatura exterior, temperatura superficial exterior,
     temperaturas intersticiales, temperatura superficial interior
@@ -215,22 +215,22 @@ def calculatemperaturas(capas, tempext, tempint, Rs_ext, Rs_int):
         Rs_ext - Resistencia térmica superficial exterior
         Rs_int - Resistencia térmica superficial interior
     """
-    resistencias_capas = [Rs_ext] + R_capas(capas) + [Rs_int]
-    rtotal = R_total(capas, Rs_ext, Rs_int)
+    resistencias_capas = [Rs_ext] + muro.R + [Rs_int]
+    rtotal = muro.R_total(Rs_ext, Rs_int)
     temperaturas = [tempext]
     for capa_Ri in resistencias_capas:
         tempj = temperaturas[-1] + capa_Ri * (tempint - tempext) / rtotal
         temperaturas.append(tempj)
     return temperaturas
 
-def calculapresiones(capas, temp_ext, temp_int, HR_ext, HR_int):
+def calculapresiones(muro, temp_ext, temp_int, HR_ext, HR_int):
     """Devuelve una lista de presiones de vapor
     presión de vapor al exterior, presiones de vapor intermedias y presión de vapor interior.
     """
     pres_ext = pvapor(temp_ext, HR_ext)
     pres_int = pvapor(temp_int, HR_int)
-    espesor_aire_capas = S_capas(capas)
-    S_total = sum(espesor_aire_capas)
+    espesor_aire_capas = muro.S
+    S_total = muro.S_total
     # La presión al exterior es constante, en el aire y la superficie exterior de cerramiento
     presiones_vapor = [pres_ext, pres_ext]
     for capa_Si in espesor_aire_capas:
@@ -264,6 +264,7 @@ def compuebacintersticiales(presiones, presiones_sat):
 
 if __name__ == "__main__":
     import datos_ejemplo
+    import grafica
 
     def stringify(list, prec):
         format = '%%.%if' % prec
@@ -286,32 +287,29 @@ if __name__ == "__main__":
 
     # Datos constructivos
     capas = datos_ejemplo.capas
+    muro = Cerramiento(capas)
     Rs_ext = 0.04
     Rs_int = 0.13
 
-    capas_R = R_capas(capas)
-    capas_S = S_capas(capas)
-    Rtotal = R_total(capas, Rs_ext, Rs_int) #("Resistencia total (m²K/W)", 1.25)
-    U = calculaU(capas, Rs_ext, Rs_int) # 0.80 W/m^2K = 1/Rtotal
-    S_total = sum(capas_S) # Espesor de aire equivalente total (m), 2.16
+    U = muro.U(Rs_ext, Rs_int)
     f_Rsi = calculafRsi(U) # 0.80
     f_Rsimin = calculafRsimin(HR_int, temp_ext) # 0.36
-    temperaturas = calculatemperaturas(capas, temp_ext, temp_int, Rs_ext, Rs_int)
+    temperaturas = calculatemperaturas(muro, temp_ext, temp_int, Rs_ext, Rs_int)
     hrint = calculahrinthigrometria(temperaturas, HR_ext, higrometria=higrometria)
     presiones_sat = calculapresionessat(temperaturas)
     #presiones = calculapresiones(capas, temp_ext, temp_int, HR_ext, hrint)
-    presiones = calculapresiones(capas, temp_ext, temp_int, HR_ext, HR_int)
+    presiones = calculapresiones(muro, temp_ext, temp_int, HR_ext, HR_int)
     p_ext = presiones[1]
     p_int = presiones[-1]
-    g_total = tasatransferenciavapor(p_ext, p_int, 0.0, S_total) #0,0898 g/m2.s
+    g_total = tasatransferenciavapor(p_ext, p_int, 0.0, muro.S_total) #0,0898 g/m2.s
     # Para calcular cantidades condensadas:
-    g, puntos_condensacion = calculacantidadcondensacion(capas, presiones, presiones_sat)
-    g, puntos_evaporacion = calculacantidadevaporacion(capas, presiones, presiones_sat, interfases=[2])
+    g, puntos_condensacion = calculacantidadcondensacion(muro, presiones, presiones_sat)
+    g, puntos_evaporacion = calculacantidadevaporacion(muro, presiones, presiones_sat, interfases=[2])
 
     # Temperaturas: [10.7, 11.0, 12.2, 12.4, 18.4, 18.9, 19.0, 20.0]
     # Presiones de saturación: [1286.08, 1311.79, 1418.84, 1435.87, 2114.68, 2182.84, 2200.69, 2336.95]
     # Presiones de vapor: [1016.00, 1016.00, 1153.16, 1165.62, 1240.44, 1277.84, 1285.32, 1285.32]
-    print u"Capas: \n\t", "\n\t".join(nombre_capas(capas))
+    print u"Capas: \n\t", "\n\t".join(muro.nombre_capas)
     print u"Temperaturas:\n\t", stringify(temperaturas, 1)
     print u"Humedad relativa interior para higrometría 3: %.2f" % hrint #
     print u"Presiones de saturación:\n\t", stringify(presiones_sat, 1)
@@ -325,8 +323,7 @@ if __name__ == "__main__":
     print u"Condensaciones intersticiales (%s)" % c_int
     print u"\tTasa de transferencia de vapor %.3f x 10^-3[g/(h.m2)]" % (g_total * 3600.0,)
 
-    import grafica
-    grafica.dibujapresionestemperaturas("Cerramiento tipo", capas, Rs_ext, Rs_int,
+    grafica.dibujapresionestemperaturas("Cerramiento tipo", muro, Rs_ext, Rs_int,
             temperaturas, presiones, presiones_sat, U, HR_int, HR_ext, f_Rsi, f_Rsimin)
-#     grafica.dibujapresiones(capas, puntos_condensacion, presiones, presiones_sat, g)
-#     grafica.dibujapresiones(capas, puntos_evaporacion, presiones, presiones_sat, g)
+#     grafica.dibujapresiones(muro, puntos_condensacion, presiones, presiones_sat, g)
+#     grafica.dibujapresiones(muro, puntos_evaporacion, presiones, presiones_sat, g)
