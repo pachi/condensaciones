@@ -32,17 +32,17 @@ def x_capas(espesores_capas, margen_lateral=0.025):
     rotulos.append(rotulos[-1] + margen_lateral)
     return rotulos
 
-def dibujapresionestemperaturas(nombre_grafica, muro, Rs_ext, Rs_int, temperaturas, presiones, presiones_sat, U, HR_int, HR_ext, f_Rsi, f_Rsimin):
+def dibujapresionestemperaturas(nombre_grafica, muro, temp_ext, temp_int, HR_int, HR_ext, f_Rsi, f_Rsimin):
     """Representa Presiones de saturación vs. Presiones de vapor y temperaturas
     en un diagrama capa/Presion de vapor y capa/Temp
     """
-    T_e = temperaturas[0]
-    T_i = temperaturas[-1]
+    temperaturas = muro.calculatemperaturas(temp_ext, temp_int)
+    presiones = muro.calculapresiones(temp_ext, temp_int, HR_ext, HR_int)
+    presiones_sat = muro.calculapresionessat(temp_ext, temp_int)
     T_se = temperaturas[1]
     T_si = temperaturas[-2]
     P_se = presiones[1]
     P_sat_se = presiones_sat[1]
-    Rtotal = 1 / U
     # TODO: Indicar si cumple f_Rsi > f_Rsi,min, T_si > T_si,min, P > P_sat, etc
 
     espesores_capas = muro.espesores
@@ -53,14 +53,14 @@ def dibujapresionestemperaturas(nombre_grafica, muro, Rs_ext, Rs_int, temperatur
     sp1 = subplot('111')
     subplots_adjust(bottom=0.15, top=0.87) # ampliar márgenes
     figtext(0.5, 0.98,
-            r'$U = %.2f W/m^2K,\,f_{Rsi} = %.2f,\, f_{Rsi,min} = %.2f$' % (U, f_Rsi, f_Rsimin),
+            r'$U = %.2f W/m^2K,\,f_{Rsi} = %.2f,\, f_{Rsi,min} = %.2f$' % (muro.U, f_Rsi, f_Rsimin),
             fontsize='large',
             bbox=dict(facecolor='red', alpha=0.25),
             verticalalignment='top',
             horizontalalignment='center')
     figtext(0.5, 0.03,
             r'$T_{int} = %.2f^\circ C, \, HR_{int} = %.1f\%%, \,'
-            'T_{ext} = %.2f^\circ C, \, HR_{ext} = %.1f\%%$' % (T_i, HR_int, T_e, HR_ext),
+            'T_{ext} = %.2f^\circ C, \, HR_{ext} = %.1f\%%$' % (temp_int, HR_int, temp_ext, HR_ext),
             fontsize='large',
             bbox=dict(facecolor='blue', alpha=0.25),
             horizontalalignment='center')
@@ -122,10 +122,12 @@ def dibujapresionestemperaturas(nombre_grafica, muro, Rs_ext, Rs_int, temperatur
     #savefig('presionesplot.png')
     show()
 
-def dibujapresiones(muro, puntos_condensacion, presiones, presiones_sat, g):
+def dibujapresiones(muro, temp_ext, temp_int, HR_ext, HR_int, puntos_condensacion, g):
     """ Representar presiones frente a espesores de aire equivalentes
     señalando planos de condensación y cantidad condensada.
     """
+    presiones = muro.calculapresiones(temp_ext, temp_int, HR_ext, HR_int)
+    presiones_sat = muro.calculapresionessat(temp_ext, temp_int)
     capas_S = muro.S
     s_sat = [0.0] + [reduce(operator.add, capas_S[:i]) for i in range(1,len(capas_S)+1)]
     s_min = s_sat[0]
@@ -166,31 +168,21 @@ def dibujapresiones(muro, puntos_condensacion, presiones, presiones_sat, g):
     show()
 
 if __name__ == "__main__":
-    from capas import *
+    import capas
     import datos_ejemplo
-    import condensa
-
-    capas = datos_ejemplo.capas
-    muro = Cerramiento(capas)
-
     # Valores climáticos
     temp_ext = 10.7
     HR_ext = 79
     temp_int = 20
     HR_int = 55
-    Rs_ext = 0.04
-    Rs_int = 0.13
     # Valores "calculados"
-    U = 0.80 # W/m^2K
     f_Rsi = 0.80
     f_Rsimin = 0.36
-    temperaturas = [10.7, 11.0, 12.2, 12.4, 18.4, 18.9, 19.0, 20.0]
-    presiones = [1016.00, 1016.00, 1153.16, 1165.62, 1240.44, 1277.84, 1285.32, 1285.32]
-    presiones_sat = [1286.08, 1311.79, 1418.84, 1435.87, 2114.68, 2182.84, 2200.69, 2336.95]
 
-    dibujapresionestemperaturas("Cerramiento tipo", muro, Rs_ext, Rs_int,
-            temperaturas, presiones, presiones_sat, U, HR_int, HR_ext, f_Rsi, f_Rsimin)
-    g, puntos_condensacion = condensa.calculacantidadcondensacion(muro, presiones, presiones_sat)
-    g, puntos_evaporacion = condensa.calculacantidadevaporacion(muro, presiones, presiones_sat, interfases=[2])
-    dibujapresiones(muro, puntos_condensacion, presiones, presiones_sat, g)
-    dibujapresiones(muro, puntos_evaporacion, presiones, presiones_sat, g)
+    muro = capas.Cerramiento(datos_ejemplo.capas, 0.04, 0.13)
+
+    dibujapresionestemperaturas("Cerramiento tipo", muro, temp_ext, temp_int, HR_int, HR_ext, f_Rsi, f_Rsimin)
+    #g, puntos_condensacion = muro.calculacantidadcondensacion(temp_ext, temp_int, HR_ext, HR_int)
+    #dibujapresiones(muro, temp_ext, temp_int, HR_ext, HR_int, puntos_condensacion, g)
+    #g, puntos_evaporacion = muro.calculacantidadevaporacion(temp_ext, temp_int, HR_ext, HR_int, interfases=[2])
+    #dibujapresiones(muro, temp_ext, temp_int, HR_ext, HR_int, puntos_evaporacion, g)
