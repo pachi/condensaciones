@@ -12,7 +12,6 @@ class Cerramiento(object):
         """
         return [nombre for nombre, e, mu, K in self._capas]
 
-
     @property
     def espesores(self):
         """Nombre de las capas
