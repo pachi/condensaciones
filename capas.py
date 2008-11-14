@@ -154,10 +154,9 @@ if __name__ == "__main__":
     HR_int = 55 #según clase de higrometría: 3:55%, 4:62%, 5:70%
     higrometria = 3
 
-    capas = datos_ejemplo.capas
     Rs_ext = 0.04
     Rs_int = 0.13
-    muro = Cerramiento(capas, Rs_ext, Rs_int)
+    muro = Cerramiento(datos_ejemplo.capas, Rs_ext, Rs_int)
 
     temperaturas = muro.calculatemperaturas(temp_ext, temp_int)
     presiones_sat = muro.calculapresionessat(temp_ext, temp_int)
@@ -167,16 +166,31 @@ if __name__ == "__main__":
     p_ext = presiones[1]
     p_int = presiones[-1]
 
+    g, puntos_condensacion = muro.calculacantidadcondensacion(temp_ext, temp_int, HR_ext, HR_int)
+    cantidad_condensada = sum(g)
+    # indicamos evaporación en la interfase 2, pero en realidad habría que ver en cúales había antes
+    # condensaciones y realizar el cálculo en ellas.
+    g, puntos_evaporacion = muro.calculacantidadevaporacion(temp_ext, temp_int, HR_ext, HR_int, interfases=[2])
+    cantidad_evaporada = sum(g)
+
     print u"Nombre capas:\n\t", "\n\t".join(muro.nombre_capas)
+    print
     print u"R Capas:\n\t", stringify(muro.R, 2)
     print u"S Capas:\n\t", stringify(muro.S, 2)
     print u"S total:", muro.S_total # Espesor de aire equivalente total (m), 2.16
     print u"Rs_ext: %.2f\nRs_int: %.2f" % (muro.Rse, muro.Rsi)
     print u"R_total: %.2f" % muro.R_total #("Resistencia total (m²K/W)", 1.25)
     print u"U: %.2f" % muro.U # 0.80 W/m^2K = 1/Rtotal
-
+    print
     print u"Temperaturas:\n\t", stringify(temperaturas, 1)
     print u"Presiones de vapor:\n\t", stringify(presiones, 1)
     print u"\tPresión de vapor exterior: %.2f" % p_ext # presión de vapor exterior: 1016.00
     print u"\tPresión de vapor interior: %.2f" % p_int # presión de vapor interior: 1285.32
     print u"Presiones de saturación:\n\t", stringify(presiones_sat, 1)
+    print
+    print u"Condensaciones:"
+    print u"\tCantidad condensada: %.2f [g/m2.mes]" % (2592000.0 * cantidad_condensada,)
+    print u"\tCantidad evaporada: %.2f [g/m2.mes]" % (2592000.0 * cantidad_evaporada,)
+
+#     grafica.dibujapresiones(muro, temp_ext, temp_int, HR_ext, HR_int, puntos_condensacion, g)
+#     grafica.dibujapresiones(muro, temp_ext, temp_int, HR_ext, HR_int, puntos_evaporacion, g)

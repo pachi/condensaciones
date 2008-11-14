@@ -117,7 +117,7 @@ def calculahrintCTE(temp_ext, temp_int, temp_sint, hrext, G, volumen, n):
         higrometría 4 - 62%
         hogrometría 5 - 70%
     """
-    delta_v = G / (n * V) # Exceso de humedad interior
+    delta_v = G / (n * volumen) # Exceso de humedad interior
     delta_p = 462.0 * delta_v * (temp_int + temp_ext) / 2.0 # Exceso de presión de vapor interna
     return 100.0 * (psicrom.pvapor(temp_ext, hrext) + delta_p) / psicrom.psat(temp_sint)
 
@@ -135,9 +135,6 @@ def calculahrinthigrometriaCTE(higrometria):
 
 if __name__ == "__main__":
     import datos_ejemplo
-    import grafica
-    from util import stringify
-    import psicrom
 
     #Datos Sevilla enero: Te=10.7ºC, HR=79%
     temp_ext = 10.7 #Temperatura enero
@@ -149,11 +146,19 @@ if __name__ == "__main__":
     # Datos constructivos
     Rs_ext = 0.04
     Rs_int = 0.13
-    capas = datos_ejemplo.capas
-    muro = Cerramiento(capas, Rs_ext, Rs_int)
+    muro = Cerramiento(datos_ejemplo.capas, Rs_ext, Rs_int)
+    # datos calculados
+    temp_sint = 19.0330684375
+    G = 0.55 #higrometría 3
+    volumen = 10 #m3
+    n = 1 #[h^-1]
 
-    hrint = calculahrinthigrometria(temp_ext, 19.0330684375, HR_ext, higrometria=higrometria) #65.86%
+    hrint = calculahrinthigrometria(temp_ext, temp_sint, HR_ext, higrometria=higrometria) #65.86%
+    hrintCTE = calculahrintCTE(temp_ext, temp_int, temp_sint, HR_ext, G, volumen, n)
+    hrinthigroCTE = calculahrinthigrometriaCTE(3)
     g_total = tasatransferenciavapor(1016.00114017, 1285.32312909, 0.0, 2.16) #0,0898 g/m2.s
 
-    print u"Humedad relativa interior para higrometría 3: %.2f" % hrint #
-    print u"\tTasa de transferencia de vapor %.4f x 10^-3[g/(h.m2)]" % (g_total * 3600.0,)
+    print u"Humedad relativa interior para higrometría 3: %.2f" % hrint #65.86%
+    print u"Humedad relativa interior para V=%.2f, G=%.2f, n=%.2f (CTE): %.2f" % (volumen, G, n, hrintCTE) #63.89%
+    print u"Humedad relativa interior para higrometría 3 (CTE): %.2f" % hrinthigroCTE #55.00%
+    print u"\tTasa de transferencia de vapor %.4f x 10^-3[g/(h.m2)]" % (g_total * 3600.0,) #0,0898 g/m2.s
