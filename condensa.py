@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 #encoding: iso-8859-15
+
+# TODO: Hay que generalizar el cálculo de la presión exterior para la localidad concreta?
+
 import math
 from capas import *
 import operator
@@ -265,14 +268,7 @@ def compuebacintersticiales(presiones, presiones_sat):
 if __name__ == "__main__":
     import datos_ejemplo
     import grafica
-
-    def stringify(list, prec):
-        format = '%%.%if' % prec
-        return "[" + ", ".join([format % item for item in list]) + "]"
-    #Datos climáticos Sevilla
-    T_e_med = [10.7, 11.9, 14.0, 16.0, 19.6, 23.4, 26.8, 26.8, 24.4, 19.5, 14.3, 11.1]
-    HR_med = [79, 75, 68, 65, 59, 56, 51, 52, 58, 67, 76, 79]
-    delta_altura = 0 #diferencia de altura con la capital de provincia (en m)
+    from util import stringify
 
     #Datos Sevilla enero: Te=10.7ºC, HR=79%
     temp_ext = 10.7 #Temperatura enero
@@ -280,10 +276,6 @@ if __name__ == "__main__":
     temp_int = 20
     HR_int = 55 #según clase de higrometría: 3:55%, 4:62%, 5:70%
     higrometria = 3
-    #XXX: La humedad interior se podría calcular con calculahrint y datos de generación de
-    # vapor de agua (higrometría, ventilación, temperatura superficial interior y temp. ext...
-    # Hay que generalizar el cálculo de la presión exterior para la localidad concreta?
-    # Calcular exceso de humedad condensado si se da el caso.
 
     # Datos constructivos
     capas = datos_ejemplo.capas
@@ -302,9 +294,12 @@ if __name__ == "__main__":
     p_ext = presiones[1]
     p_int = presiones[-1]
     g_total = tasatransferenciavapor(p_ext, p_int, 0.0, muro.S_total) #0,0898 g/m2.s
-    # Para calcular cantidades condensadas:
     g, puntos_condensacion = calculacantidadcondensacion(muro, presiones, presiones_sat)
+    cantidad_condensada = sum(g)
+    # indicamos evaporación en la interfase 2, pero en realidad habría que ver en cúales había antes
+    # condensaciones y realizar el cálculo en ellas.
     g, puntos_evaporacion = calculacantidadevaporacion(muro, presiones, presiones_sat, interfases=[2])
+    cantidad_evaporada = sum(g)
 
     # Temperaturas: [10.7, 11.0, 12.2, 12.4, 18.4, 18.9, 19.0, 20.0]
     # Presiones de saturación: [1286.08, 1311.79, 1418.84, 1435.87, 2114.68, 2182.84, 2200.69, 2336.95]
@@ -322,6 +317,8 @@ if __name__ == "__main__":
     c_int = compuebacintersticiales(presiones, presiones_sat) and u"Sí" or "No"
     print u"Condensaciones intersticiales (%s)" % c_int
     print u"\tTasa de transferencia de vapor %.3f x 10^-3[g/(h.m2)]" % (g_total * 3600.0,)
+    print u"\tCantidad condensada: %.2f [g/m2.mes]" % (2592000.0 * cantidad_condensada,)
+    print u"\tCantidad evaporada: %.2f [g/m2.mes]" % (2592000.0 * cantidad_evaporada,)
 
     grafica.dibujapresionestemperaturas("Cerramiento tipo", muro, Rs_ext, Rs_int,
             temperaturas, presiones, presiones_sat, U, HR_int, HR_ext, f_Rsi, f_Rsimin)
