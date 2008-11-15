@@ -9,7 +9,7 @@ def calculafRsi(U):
     """
     return 1.0 - U * 0.25
 
-def calculafRsimin(hrint, tempext, tempint=20.0):
+def calculafRsimin(tempext, tempint, hrint):
     """Factor de temperatura de la superficie interior mínnimo aceptable de un puente
     térmico, cerramiento o partición interior.
     """
@@ -24,19 +24,24 @@ def calculafRsimin(hrint, tempext, tempint=20.0):
     temp_si_min = calculatemp_simin(hrint)
     return (temp_si_min - tempext) / (tempint - tempext)
 
-def compruebacsuperificiales(fRsi, fRsimin):
+def compruebacsuperificiales(muro, temp_ext, temp_int, HR_int):
     """Comprueba la condición de existencia de condensaciones superficiales en un
     cerramiento o puente térmico.
     Devuelve la comprobación y el valor de fRsi y fRsimin
     """
-    # TODO: el CTE incluye tablas según zonas y clase de higrometría para fRsimin
+    # XXX: el CTE incluye tablas según zonas y clase de higrometría para fRsimin
+    # que están calculadas para la capital más desfavorable de cada zona y con HR=55%,62%,70%
+    fRsi = calculafRsi(muro.U)
+    fRsimin = calculafRsimin(temp_ext, temp_int, HR_int)
     return fRsi < fRsimin
 
-def compuebacintersticiales(presiones, presiones_sat):
+def compuebacintersticiales(muro, temp_ext, temp_int, HR_ext, HR_int):
     """Comprueba la condición de existencia de condensaciones intersticiales en un
     cerramiento o puente térmico.
     Devuelve la comprobación
     """
+    presiones = muro.calculapresiones(temp_ext, temp_int, HR_ext, HR_int)
+    presiones_sat = muro.calculapresionessat(temp_ext, temp_int)
     condensa = False
     for presion_i, presion_sat_i in zip(presiones, presiones_sat):
         if presion_i >= presion_sat_i:
@@ -54,20 +59,21 @@ if __name__ == "__main__":
     HR_int = 55 #según clase de higrometría: 3:55%, 4:62%, 5:70%
 
     # Datos constructivos
-    muro = capas.Cerramiento(datos_ejemplo.capas, 0.04, 0.13)
-    presiones = muro.calculapresiones(temp_ext, temp_int, HR_ext, HR_int)
-    presiones_sat = muro.calculapresionessat(temp_ext, temp_int)
+    muro = capas.Cerramiento(datos_ejemplo.capas3, 0.04, 0.13)
 
     f_Rsi = calculafRsi(muro.U) # 0.80
-    f_Rsimin = calculafRsimin(HR_int, temp_ext) # 0.36
+    f_Rsimin = calculafRsimin(temp_ext, temp_int, HR_int) # 0.36
 
     print u"Capas: \n\t", "\n\t".join(muro.nombre_capas)
     print
-    c_sup = compruebacsuperificiales(f_Rsi, f_Rsimin) and u"Sí" or "No"
+    c_sup = compruebacsuperificiales(muro, temp_ext, temp_int, HR_int) and u"Sí" or "No"
     print u"Condensaciones superficiales (%s)" % c_sup
     print u"\tfRsi = %.2f, fRsimin = %.2f" % (f_Rsi, f_Rsimin)
-    c_int = compuebacintersticiales(presiones, presiones_sat) and u"Sí" or "No"
+    c_int = compuebacintersticiales(muro, temp_ext, temp_int, HR_ext, HR_int) and u"Sí" or "No"
     print u"Condensaciones intersticiales (%s)" % c_int
 
-    grafica.dibujapresionestemperaturas("Cerramiento tipo", muro,
-            temp_ext, temp_int, HR_int, HR_ext, f_Rsi, f_Rsimin)
+#     grafica.dibujapresionestemperaturas("Cerramiento tipo", muro,
+#             temp_ext, temp_int, HR_int, HR_ext, f_Rsi, f_Rsimin)
+
+    g, puntos_condensacion = muro.calculacantidadcondensacion(temp_ext, temp_int, HR_ext, HR_int)
+    grafica.dibujapresiones(muro, temp_ext, temp_int, HR_ext, HR_int, puntos_condensacion, g)
