@@ -18,7 +18,7 @@ class Cerramiento(object):
 
     @property
     def espesores(self):
-        """Nombre de las capas
+        """Espesores de las capas
         """
         return [e for nombre, e, mu, K in self.capas]
 
