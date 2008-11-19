@@ -1,0 +1,572 @@
+
+$
+$ -----------------------------------
+$      Datos de Base de Datos
+$ -----------------------------------
+$
+TEMPLARY = USER
+$++++++++++++++++++++++++++++++
+$           MATERIALES
+ $++++++++++++++++++++++++++++++
+"B_Vapor Z3 (d_1mm)" = MATERIAL
+    TYPE              = PROPERTIES
+    THICKNESS         =          0.001
+    THICKNESS_CHANGE         = YES
+    THICKNESS_MAX         =              2
+    THICKNESS_MIN         =          0.001
+    CONDUCTIVITY      =            500
+    DENSITY           =              1
+    SPECIFIC-HEAT     =              1
+    VAPOUR-DIFFUSIVITY-FACTOR =           2030
+    NAME          = "B_Vapor Z3 (d_1mm)"
+    GROUP         = "URSA B_VAPOR"
+    IMAGE          = "asfalto.bmp"
+    NAME_CALENER   = ""
+    LIBRARY       = NO
+    UTIL          =  NO
+    ..
+"URSA GLASSWOOL M1021 (Manta Papel)" = MATERIAL
+    TYPE              = PROPERTIES
+    THICKNESS         =           0.08
+    THICKNESS_CHANGE         = YES
+    THICKNESS_MAX         =              2
+    THICKNESS_MIN         =          0.001
+    CONDUCTIVITY      =          0.042
+    DENSITY           =             12
+    SPECIFIC-HEAT     =            800
+    VAPOUR-DIFFUSIVITY-FACTOR =              1
+    NAME          = "URSA GLASSWOOL M1021 (Manta Papel)"
+    GROUP         = "URSA GLASSWOOL"
+    IMAGE          = "Aislante.bmp"
+    NAME_CALENER   = ""
+    LIBRARY       = NO
+    UTIL          =  NO
+    ..
+"URSA GLASSWOOL P0058 (Panel Aislamiento ruido de imapcto)" = MATERIAL
+    TYPE              = PROPERTIES
+    THICKNESS         =           0.02
+    THICKNESS_CHANGE         = YES
+    THICKNESS_MAX         =              2
+    THICKNESS_MIN         =          0.001
+    CONDUCTIVITY      =          0.033
+    DENSITY           =             85
+    SPECIFIC-HEAT     =            800
+    VAPOUR-DIFFUSIVITY-FACTOR =              1
+    NAME          = "URSA GLASSWOOL P0058 (Panel Aislamiento ruido de imapcto)"
+    GROUP         = "URSA GLASSWOOL"
+    IMAGE          = "Aislante.bmp"
+    NAME_CALENER   = ""
+    LIBRARY       = NO
+    UTIL          =  NO
+    ..
+"URSA GLASSWOOL P0081 (Panel ACUSTIC)" = MATERIAL
+    TYPE              = PROPERTIES
+    THICKNESS         =          0.045
+    THICKNESS_CHANGE         = YES
+    THICKNESS_MAX         =              2
+    THICKNESS_MIN         =          0.001
+    CONDUCTIVITY      =          0.036
+    DENSITY           =             18
+    SPECIFIC-HEAT     =            800
+    VAPOUR-DIFFUSIVITY-FACTOR =              1
+    NAME          = "URSA GLASSWOOL P0081 (Panel ACUSTIC)"
+    GROUP         = "URSA GLASSWOOL"
+    IMAGE          = "Aislante.bmp"
+    NAME_CALENER   = ""
+    LIBRARY       = NO
+    UTIL          =  NO
+    ..
+"URSA GLASSWOOL P1281 (Panel MUR)" = MATERIAL
+    TYPE              = PROPERTIES
+    THICKNESS         =           0.05
+    THICKNESS_CHANGE         = YES
+    THICKNESS_MAX         =              2
+    THICKNESS_MIN         =          0.001
+    CONDUCTIVITY      =          0.036
+    DENSITY           =             18
+    SPECIFIC-HEAT     =            800
+    VAPOUR-DIFFUSIVITY-FACTOR =              1
+    NAME          = "URSA GLASSWOOL P1281 (Panel MUR)"
+    GROUP         = "URSA GLASSWOOL"
+    IMAGE          = "Aislante.bmp"
+    NAME_CALENER   = ""
+    LIBRARY       = NO
+    UTIL          =  NO
+    ..
+"URSA XPS NIII (d<80mm)" = MATERIAL
+    TYPE              = PROPERTIES
+    THICKNESS         =            0.1
+    THICKNESS_CHANGE         = YES
+    THICKNESS_MAX         =              2
+    THICKNESS_MIN         =          0.001
+    CONDUCTIVITY      =          0.034
+    DENSITY           =             35
+    SPECIFIC-HEAT     =            800
+    VAPOUR-DIFFUSIVITY-FACTOR =             80
+    NAME          = "URSA XPS NIII (d<80mm)"
+    GROUP         = "URSA XPS"
+    IMAGE          = "aislante.bmp"
+    NAME_CALENER   = ""
+    LIBRARY       = NO
+    UTIL          =  NO
+    ..
+"URSA XPS NIII (d>80mm)" = MATERIAL
+    TYPE              = PROPERTIES
+    THICKNESS         =            0.1
+    THICKNESS_CHANGE         = YES
+    THICKNESS_MAX         =              2
+    THICKNESS_MIN         =          0.001
+    CONDUCTIVITY      =          0.036
+    DENSITY           =             35
+    SPECIFIC-HEAT     =            800
+    VAPOUR-DIFFUSIVITY-FACTOR =             80
+    NAME          = "URSA XPS NIII (d>80mm)"
+    GROUP         = "URSA XPS"
+    IMAGE          = "aislante.bmp"
+    NAME_CALENER   = ""
+    LIBRARY       = NO
+    UTIL          =  NO
+    ..
+"URSA XPS NV (d<80mm)" = MATERIAL
+    TYPE              = PROPERTIES
+    THICKNESS         =            0.1
+    THICKNESS_CHANGE         = YES
+    THICKNESS_MAX         =              2
+    THICKNESS_MIN         =          0.001
+    CONDUCTIVITY      =          0.034
+    DENSITY           =             40
+    SPECIFIC-HEAT     =            800
+    VAPOUR-DIFFUSIVITY-FACTOR =             80
+    NAME          = "URSA XPS NV (d<80mm)"
+    GROUP         = "URSA XPS"
+    IMAGE          = "aislante.bmp"
+    NAME_CALENER   = ""
+    LIBRARY       = NO
+    UTIL          =  NO
+    ..
+"URSA XPS NV (d>80mm)" = MATERIAL
+    TYPE              = PROPERTIES
+    THICKNESS         =            0.1
+    THICKNESS_CHANGE         = YES
+    THICKNESS_MAX         =              2
+    THICKNESS_MIN         =          0.001
+    CONDUCTIVITY      =          0.036
+    DENSITY           =             40
+    SPECIFIC-HEAT     =            800
+    VAPOUR-DIFFUSIVITY-FACTOR =             80
+    NAME          = "URSA XPS NV (d>80mm)"
+    GROUP         = "URSA XPS"
+    IMAGE          = "aislante.bmp"
+    NAME_CALENER   = ""
+    LIBRARY       = NO
+    UTIL          =  NO
+    ..
+"URSA XPS NW (d<80mm)" = MATERIAL
+    TYPE              = PROPERTIES
+    THICKNESS         =            0.1
+    THICKNESS_CHANGE         = YES
+    THICKNESS_MAX         =              2
+    THICKNESS_MIN         =          0.001
+    CONDUCTIVITY      =          0.034
+    DENSITY           =             30
+    SPECIFIC-HEAT     =            800
+    VAPOUR-DIFFUSIVITY-FACTOR =             80
+    NAME          = "URSA XPS NW (d<80mm)"
+    GROUP         = "URSA XPS"
+    IMAGE          = "aislante.bmp"
+    NAME_CALENER   = ""
+    LIBRARY       = NO
+    UTIL          =  NO
+    ..
+"URSA XPS NW (d>80mm)" = MATERIAL
+    TYPE              = PROPERTIES
+    THICKNESS         =            0.1
+    THICKNESS_CHANGE         = YES
+    THICKNESS_MAX         =              2
+    THICKNESS_MIN         =          0.001
+    CONDUCTIVITY      =          0.036
+    DENSITY           =             30
+    SPECIFIC-HEAT     =            800
+    VAPOUR-DIFFUSIVITY-FACTOR =             80
+    NAME          = "URSA XPS NW (d>80mm)"
+    GROUP         = "URSA XPS"
+    IMAGE          = "aislante.bmp"
+    NAME_CALENER   = ""
+    LIBRARY       = NO
+    UTIL          =  NO
+    ..
+"URSA GLASSWOOL M0021 (Manta Fieltro)" = MATERIAL
+    TYPE              = PROPERTIES
+    THICKNESS         =            0.1
+    THICKNESS_CHANGE         = YES
+    THICKNESS_MAX         =              2
+    THICKNESS_MIN         =          0.001
+    CONDUCTIVITY      =          0.042
+    DENSITY           =             12
+    SPECIFIC-HEAT     =            800
+    VAPOUR-DIFFUSIVITY-FACTOR =              1
+    NAME          = "URSA GLASSWOOL M0021 (Manta Fieltro)"
+    GROUP         = "URSA GLASSWOOL"
+    IMAGE          = "aislante.bmp"
+    NAME_CALENER   = ""
+    LIBRARY       = NO
+    UTIL          =  NO
+    ..
+"URSA GLASSWOOL M1021 ( Manta Papel)" = MATERIAL
+    TYPE              = PROPERTIES
+    THICKNESS         =            0.1
+    THICKNESS_CHANGE         = YES
+    THICKNESS_MAX         =              2
+    THICKNESS_MIN         =          0.001
+    CONDUCTIVITY      =          0.042
+    DENSITY           =             12
+    SPECIFIC-HEAT     =            800
+    VAPOUR-DIFFUSIVITY-FACTOR =              1
+    NAME          = "URSA GLASSWOOL M1021 ( Manta Papel)"
+    GROUP         = "URSA GLASSWOOL"
+    IMAGE          = "aislante.bmp"
+    NAME_CALENER   = ""
+    LIBRARY       = NO
+    UTIL          =  NO
+    ..
+"URSA GLASSWOOL P0051 (Panel Fieltro)" = MATERIAL
+    TYPE              = PROPERTIES
+    THICKNESS         =            0.1
+    THICKNESS_CHANGE         = YES
+    THICKNESS_MAX         =              2
+    THICKNESS_MIN         =          0.001
+    CONDUCTIVITY      =          0.039
+    DENSITY           =             15
+    SPECIFIC-HEAT     =            800
+    VAPOUR-DIFFUSIVITY-FACTOR =              1
+    NAME          = "URSA GLASSWOOL P0051 (Panel Fieltro)"
+    GROUP         = "URSA GLASSWOOL"
+    IMAGE          = "aislante.bmp"
+    NAME_CALENER   = ""
+    LIBRARY       = NO
+    UTIL          =  NO
+    ..
+"URSA GLASSWOOL P1051 (Panel Papel)" = MATERIAL
+    TYPE              = PROPERTIES
+    THICKNESS         =            0.1
+    THICKNESS_CHANGE         = YES
+    THICKNESS_MAX         =              2
+    THICKNESS_MIN         =          0.001
+    CONDUCTIVITY      =          0.039
+    DENSITY           =             15
+    SPECIFIC-HEAT     =            800
+    VAPOUR-DIFFUSIVITY-FACTOR =              1
+    NAME          = "URSA GLASSWOOL P1051 (Panel Papel)"
+    GROUP         = "URSA GLASSWOOL"
+    IMAGE          = "aislante.bmp"
+    NAME_CALENER   = ""
+    LIBRARY       = NO
+    UTIL          =  NO
+    ..
+"URSA GLASSWOOL M4121 (Manta Paremento Reforzada)" = MATERIAL
+    TYPE              = PROPERTIES
+    THICKNESS         =            0.1
+    THICKNESS_CHANGE         = YES
+    THICKNESS_MAX         =              2
+    THICKNESS_MIN         =          0.001
+    CONDUCTIVITY      =           0.04
+    DENSITY           =             12
+    SPECIFIC-HEAT     =            800
+    VAPOUR-DIFFUSIVITY-FACTOR =              1
+    NAME          = "URSA GLASSWOOL M4121 (Manta Paremento Reforzada)"
+    GROUP         = "URSA GLASSWOOL"
+    IMAGE          = "aislante.bmp"
+    NAME_CALENER   = ""
+    LIBRARY       = NO
+    UTIL          =  NO
+    ..
+"URSA GLASSWOOL M5321 (Manta Vinilo Blanco)" = MATERIAL
+    TYPE              = PROPERTIES
+    THICKNESS         =            0.1
+    THICKNESS_CHANGE         = YES
+    THICKNESS_MAX         =              2
+    THICKNESS_MIN         =          0.001
+    CONDUCTIVITY      =           0.04
+    DENSITY           =             12
+    SPECIFIC-HEAT     =            800
+    VAPOUR-DIFFUSIVITY-FACTOR =              1
+    NAME          = "URSA GLASSWOOL M5321 (Manta Vinilo Blanco)"
+    GROUP         = "URSA GLASSWOOL"
+    IMAGE          = "aislante.bmp"
+    NAME_CALENER   = ""
+    LIBRARY       = NO
+    UTIL          =  NO
+    ..
+"URSA GLASSWOOL P0063 (Panel Fieltro 3)" = MATERIAL
+    TYPE              = PROPERTIES
+    THICKNESS         =            0.1
+    THICKNESS_CHANGE         = YES
+    THICKNESS_MAX         =              2
+    THICKNESS_MIN         =          0.001
+    CONDUCTIVITY      =          0.035
+    DENSITY           =             36
+    SPECIFIC-HEAT     =            800
+    VAPOUR-DIFFUSIVITY-FACTOR =              1
+    NAME          = "URSA GLASSWOOL P0063 (Panel Fieltro 3)"
+    GROUP         = "URSA GLASSWOOL"
+    IMAGE          = "aislante.bmp"
+    NAME_CALENER   = ""
+    LIBRARY       = NO
+    UTIL          =  NO
+    ..
+"URSA GLASSWOOL P2052 (Panel Aluminio HR)" = MATERIAL
+    TYPE              = PROPERTIES
+    THICKNESS         =            0.1
+    THICKNESS_CHANGE         = YES
+    THICKNESS_MAX         =              2
+    THICKNESS_MIN         =          0.001
+    CONDUCTIVITY      =          0.036
+    DENSITY           =             25
+    SPECIFIC-HEAT     =            800
+    VAPOUR-DIFFUSIVITY-FACTOR =              1
+    NAME          = "URSA GLASSWOOL P2052 (Panel Aluminio HR)"
+    GROUP         = "URSA GLASSWOOL"
+    IMAGE          = "aislante.bmp"
+    NAME_CALENER   = ""
+    LIBRARY       = NO
+    UTIL          =  NO
+    ..
+"URSA GLASSWOOL P2363 (Panel Aluminio Gofrado)" = MATERIAL
+    TYPE              = PROPERTIES
+    THICKNESS         =            0.1
+    THICKNESS_CHANGE         = YES
+    THICKNESS_MAX         =              2
+    THICKNESS_MIN         =          0.001
+    CONDUCTIVITY      =          0.035
+    DENSITY           =             36
+    SPECIFIC-HEAT     =            800
+    VAPOUR-DIFFUSIVITY-FACTOR =              1
+    NAME          = "URSA GLASSWOOL P2363 (Panel Aluminio Gofrado)"
+    GROUP         = "URSA GLASSWOOL"
+    IMAGE          = "aislante.bmp"
+    NAME_CALENER   = ""
+    LIBRARY       = NO
+    UTIL          =  NO
+    ..
+"URSA GLASSWOOL P3063 (Panel PVC)" = MATERIAL
+    TYPE              = PROPERTIES
+    THICKNESS         =            0.1
+    THICKNESS_CHANGE         = YES
+    THICKNESS_MAX         =              2
+    THICKNESS_MIN         =          0.001
+    CONDUCTIVITY      =          0.035
+    DENSITY           =             36
+    SPECIFIC-HEAT     =            800
+    VAPOUR-DIFFUSIVITY-FACTOR =              1
+    NAME          = "URSA GLASSWOOL P3063 (Panel PVC)"
+    GROUP         = "URSA GLASSWOOL"
+    IMAGE          = "aislante.bmp"
+    NAME_CALENER   = ""
+    LIBRARY       = NO
+    UTIL          =  NO
+    ..
+"URSA GLASSWOOL P4222 (Panel Velo Negro)" = MATERIAL
+    TYPE              = PROPERTIES
+    THICKNESS         =            0.1
+    THICKNESS_CHANGE         = YES
+    THICKNESS_MAX         =              2
+    THICKNESS_MIN         =          0.001
+    CONDUCTIVITY      =          0.036
+    DENSITY           =             22
+    SPECIFIC-HEAT     =            800
+    VAPOUR-DIFFUSIVITY-FACTOR =              1
+    NAME          = "URSA GLASSWOOL P4222 (Panel Velo Negro)"
+    GROUP         = "URSA GLASSWOOL"
+    IMAGE          = "aislante.bmp"
+    NAME_CALENER   = ""
+    LIBRARY       = NO
+    UTIL          =  NO
+    ..
+"URSA GLASSWOOL P4652 (Panel Fachada Ventilada)" = MATERIAL
+    TYPE              = PROPERTIES
+    THICKNESS         =            0.1
+    THICKNESS_CHANGE         = YES
+    THICKNESS_MAX         =              2
+    THICKNESS_MIN         =          0.001
+    CONDUCTIVITY      =          0.036
+    DENSITY           =             25
+    SPECIFIC-HEAT     =            800
+    VAPOUR-DIFFUSIVITY-FACTOR =              1
+    NAME          = "URSA GLASSWOOL P4652 (Panel Fachada Ventilada)"
+    GROUP         = "URSA GLASSWOOL"
+    IMAGE          = "aislante.bmp"
+    NAME_CALENER   = ""
+    LIBRARY       = NO
+    UTIL          =  NO
+    ..
+"URSA GLASSWOOL M0022 (Manta Fieltro)" = MATERIAL
+    TYPE              = PROPERTIES
+    THICKNESS         =            0.1
+    THICKNESS_CHANGE         = YES
+    THICKNESS_MAX         =              2
+    THICKNESS_MIN         =          0.001
+    CONDUCTIVITY      =          0.036
+    DENSITY           =             22
+    SPECIFIC-HEAT     =            800
+    VAPOUR-DIFFUSIVITY-FACTOR =              1
+    NAME          = "URSA GLASSWOOL M0022 (Manta Fieltro)"
+    GROUP         = "URSA GLASSWOOL"
+    IMAGE          = "aislante.bmp"
+    NAME_CALENER   = ""
+    LIBRARY       = NO
+    UTIL          =  NO
+    ..
+"URSA AIR M2021 (Manta Aluminio)" = MATERIAL
+    TYPE              = PROPERTIES
+    THICKNESS         =            0.1
+    THICKNESS_CHANGE         = YES
+    THICKNESS_MAX         =              2
+    THICKNESS_MIN         =          0.001
+    CONDUCTIVITY      =          0.042
+    DENSITY           =             12
+    SPECIFIC-HEAT     =            800
+    VAPOUR-DIFFUSIVITY-FACTOR =              1
+    NAME          = "URSA AIR M2021 (Manta Aluminio)"
+    GROUP         = "URSA AIR"
+    IMAGE          = "aislante.bmp"
+    NAME_CALENER   = ""
+    LIBRARY       = NO
+    UTIL          =  NO
+    ..
+"URSA AIR M3603 (Manta Aluminio Incombustible)" = MATERIAL
+    TYPE              = PROPERTIES
+    THICKNESS         =            0.1
+    THICKNESS_CHANGE         = YES
+    THICKNESS_MAX         =              2
+    THICKNESS_MIN         =          0.001
+    CONDUCTIVITY      =          0.036
+    DENSITY           =             30
+    SPECIFIC-HEAT     =            800
+    VAPOUR-DIFFUSIVITY-FACTOR =              1
+    NAME          = "URSA AIR M3603 (Manta Aluminio Incombustible)"
+    GROUP         = "URSA AIR"
+    IMAGE          = "aislante.bmp"
+    NAME_CALENER   = ""
+    LIBRARY       = NO
+    UTIL          =  NO
+    ..
+"URSA AIR M5102 (Manta Aluminio Reforzada)" = MATERIAL
+    TYPE              = PROPERTIES
+    THICKNESS         =            0.1
+    THICKNESS_CHANGE         = YES
+    THICKNESS_MAX         =              2
+    THICKNESS_MIN         =          0.001
+    CONDUCTIVITY      =          0.036
+    DENSITY           =             20
+    SPECIFIC-HEAT     =            800
+    VAPOUR-DIFFUSIVITY-FACTOR =              1
+    NAME          = "URSA AIR M5102 (Manta Aluminio Reforzada)"
+    GROUP         = "URSA AIR"
+    IMAGE          = "aislante.bmp"
+    NAME_CALENER   = ""
+    LIBRARY       = NO
+    UTIL          =  NO
+    ..
+"URSA AIR P4207 (Panel Velo Negro)" = MATERIAL
+    TYPE              = PROPERTIES
+    THICKNESS         =            0.1
+    THICKNESS_CHANGE         = YES
+    THICKNESS_MAX         =              2
+    THICKNESS_MIN         =          0.001
+    CONDUCTIVITY      =          0.033
+    DENSITY           =             70
+    SPECIFIC-HEAT     =            800
+    VAPOUR-DIFFUSIVITY-FACTOR =              1
+    NAME          = "URSA AIR P4207 (Panel Velo Negro)"
+    GROUP         = "URSA AIR"
+    IMAGE          = "aislante.bmp"
+    NAME_CALENER   = ""
+    LIBRARY       = NO
+    UTIL          =  NO
+    ..
+"URSA AIR P5858 (Panel Aluminio AL)" = MATERIAL
+    TYPE              = PROPERTIES
+    THICKNESS         =            0.1
+    THICKNESS_CHANGE         = YES
+    THICKNESS_MAX         =              2
+    THICKNESS_MIN         =          0.001
+    CONDUCTIVITY      =          0.033
+    DENSITY           =             85
+    SPECIFIC-HEAT     =            800
+    VAPOUR-DIFFUSIVITY-FACTOR =              1
+    NAME          = "URSA AIR P5858 (Panel Aluminio AL)"
+    GROUP         = "URSA AIR"
+    IMAGE          = "aislante.bmp"
+    NAME_CALENER   = ""
+    LIBRARY       = NO
+    UTIL          =  NO
+    ..
+"URSA AIR P6058 (Panel Aluminio dB)" = MATERIAL
+    TYPE              = PROPERTIES
+    THICKNESS         =            0.1
+    THICKNESS_CHANGE         = YES
+    THICKNESS_MAX         =              2
+    THICKNESS_MIN         =          0.001
+    CONDUCTIVITY      =          0.033
+    DENSITY           =             85
+    SPECIFIC-HEAT     =            800
+    VAPOUR-DIFFUSIVITY-FACTOR =              1
+    NAME          = "URSA AIR P6058 (Panel Aluminio dB)"
+    GROUP         = "URSA AIR"
+    IMAGE          = "aislante.bmp"
+    NAME_CALENER   = ""
+    LIBRARY       = NO
+    UTIL          =  NO
+    ..
+"B_Vapor Z100 (d_1mm)" = MATERIAL
+    TYPE              = PROPERTIES
+    THICKNESS         =          0.001
+    THICKNESS_CHANGE         = YES
+    THICKNESS_MAX         =              2
+    THICKNESS_MIN         =          0.001
+    CONDUCTIVITY      =            499
+    DENSITY           =              1
+    SPECIFIC-HEAT     =              1
+    VAPOUR-DIFFUSIVITY-FACTOR =          67500
+    NAME          = "B_Vapor Z100 (d_1mm)"
+    GROUP         = "URSA B_VAPOR"
+    IMAGE          = "asfalto.bmp"
+    NAME_CALENER   = ""
+    LIBRARY       = NO
+    UTIL          =  NO
+    ..
+"B_Vapor Z38 (d_1mm)" = MATERIAL
+    TYPE              = PROPERTIES
+    THICKNESS         =          0.001
+    THICKNESS_CHANGE         = YES
+    THICKNESS_MAX         =              2
+    THICKNESS_MIN         =          0.001
+    CONDUCTIVITY      =            499
+    DENSITY           =              1
+    SPECIFIC-HEAT     =              1
+    VAPOUR-DIFFUSIVITY-FACTOR =          25650
+    NAME          = "B_Vapor Z38 (d_1mm)"
+    GROUP         = "URSA B_VAPOR"
+    IMAGE          = "asfalto.bmp"
+    NAME_CALENER   = ""
+    LIBRARY       = NO
+    UTIL          =  NO
+    ..
+$++++++++++++++++++++++++++++++
+$         CERRAMIENTOS
+ $++++++++++++++++++++++++++++++
+$++++++++++++++++++++++++++++++
+$  ACRISTALAMIENTOS - VIDRIOS
+$++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++
+            MARCOS
+ ++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++
+            HUECOS
+ ++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++
+        PUENTES TERMICOS
+ ++++++++++++++++++++++++++++++
+$ ------------------------------------------------------------------
+$ Final de la base de datos 
+$ ------------------------------------------------------------------

@@ -1,0 +1,77 @@
+$
+$ -----------------------------------
+$      Datos de Base de Datos
+$ -----------------------------------
+$
+"Mortero de áridos ligeros [vermiculita perlita]" = MATERIAL
+     TYPE          = PROPERTIES
+     THICKNESS     = 0.02
+     CONDUCTIVITY  =  .41
+     DENSITY       =  900
+     SPECIFIC-HEAT =  1000
+     VAPOUR-DIFFUSIVITY-FACTOR =  10
+     NAME          ="Mortero de áridos ligeros [vermiculita perlita]"
+     NAME_CALENER  ="s ligeros [vermiculita perlit"
+     GROUP         ="Morteros"
+     IMAGE         = "mortero.bmp"
+     LIBRARY       = YES
+..
+"Enlucido de yeso 1000 < d < 1300" = MATERIAL
+     TYPE          = PROPERTIES
+     THICKNESS     = 0.02
+     CONDUCTIVITY  =  .57
+     DENSITY       =  1150
+     SPECIFIC-HEAT =  1000
+     VAPOUR-DIFFUSIVITY-FACTOR =  6
+     NAME          ="Enlucido de yeso 1000 < d < 1300"
+     NAME_CALENER  ="Enlucido de yeso 1000 < d < 13"
+     GROUP         ="Enlucidos"
+     IMAGE         = "yeso.bmp"
+     LIBRARY       = YES
+..
+"EPS Poliestireno Expandido [ 0.037 W/[mK]]" = MATERIAL
+     TYPE          = PROPERTIES
+     THICKNESS     = 0.02
+     CONDUCTIVITY  =  .0375
+     DENSITY       =  30
+     SPECIFIC-HEAT =  1000
+     VAPOUR-DIFFUSIVITY-FACTOR =  20
+     NAME          ="EPS Poliestireno Expandido [ 0.037 W/[mK]]"
+     NAME_CALENER  ="tireno Expandido [ 0.037 W/[mK"
+     GROUP         ="Aislantes"
+     IMAGE         = "aislante.bmp"
+     LIBRARY       = YES
+..
+"1/2 pie LP métrico o catalán 40 mm< G < 60 mm" = MATERIAL
+     TYPE          = PROPERTIES
+     THICKNESS     =  .115
+     THICKNESS_MIN =  .115
+     THICKNESS_MAX =  .13
+     CONDUCTIVITY  =  .667
+     DENSITY       =  1140
+     SPECIFIC-HEAT =  1000
+     VAPOUR-DIFFUSIVITY-FACTOR =  10
+     NAME          ="1/2 pie LP métrico o catalán 40 mm< G < 60 mm"
+     NAME_CALENER  ="trio o catalán 40 mm< G < 60 "
+     GROUP         ="Fábricas de ladrillo"
+     IMAGE         = "ladrillo.bmp"
+     LIBRARY       = YES
+..
+"Tabique de LH sencillo [40 mm < Espesor < 60 mm]" = MATERIAL
+     TYPE          = PROPERTIES
+     THICKNESS     =  .04
+     THICKNESS_MIN =  .04
+     THICKNESS_MAX =  .06
+     CONDUCTIVITY  =  .445
+     DENSITY       =  1000
+     SPECIFIC-HEAT =  1000
+     VAPOUR-DIFFUSIVITY-FACTOR =  10
+     NAME          ="Tabique de LH sencillo [40 mm < Espesor < 60 mm]"
+     NAME_CALENER  ="ncillo [40 mm < Espesor < 60 m"
+     GROUP         ="Fábricas de ladrillo"
+     IMAGE         = "ladrillo.bmp"
+     LIBRARY       = YES
+..
+$ ------------------------------------------------------------------
+$ Final de la base de datos
+$ ------------------------------------------------------------------
