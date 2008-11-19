@@ -29,8 +29,8 @@ def compruebacsuperificiales(muro, temp_ext, temp_int, HR_int):
     cerramiento o puente térmico.
     Devuelve la comprobación y el valor de fRsi y fRsimin
     """
-    # XXX: el CTE incluye tablas según zonas y clase de higrometría para fRsimin
-    # que están calculadas para la capital más desfavorable de cada zona y con HR=55%,62%,70%
+    # el CTE incluye tablas según zonas y clase de higrometría para fRsimin que
+    # están calculadas para la capital más desfavorable de cada zona y con HR=55%, 62%, 70%.
     fRsi = calculafRsi(muro.U)
     fRsimin = calculafRsimin(temp_ext, temp_int, HR_int)
     return fRsi < fRsimin
@@ -59,7 +59,7 @@ if __name__ == "__main__":
     HR_int = 55 #según clase de higrometría: 3:55%, 4:62%, 5:70%
 
     # Datos constructivos
-    muro = capas.Cerramiento(datos_ejemplo.capas3, 0.04, 0.13)
+    muro = capas.Cerramiento(datos_ejemplo.capas, 0.04, 0.13)
 
     f_Rsi = calculafRsi(muro.U) # 0.80
     f_Rsimin = calculafRsimin(temp_ext, temp_int, HR_int) # 0.36
