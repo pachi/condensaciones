@@ -32,15 +32,15 @@ def parsefile(file):
         elif line.startswith(KEYWORDS):
             continue
         elif line.startswith(SECTIONDELIMITER):
+            newsection = lines.next().strip()
+            datos[newsection] = []
+            lines.next() #el formato es delimitador // nombre // delimitador
             if section in datos:
                 datos[section].append(materiales[:])
             else:
                 datos[section] = materiales[:]
+            section = newsection
             materiales = []
-            section = lines.next().strip()
-            #guardar la nueva sección por si no tiene más datos
-            datos[section] = []
-            lines.next()
             continue
         else:
             if line.startswith('..'):
@@ -58,13 +58,10 @@ def db2datos(file):
     for material in datos[DEFAULT_SECTION]:
         # XXX: La siguiente comprobación no es necesaria en general, pero por ahora
         # la hecemos para filtrar los materiales sin conductividad (cámaras).
+        # Sin esto fallaría el cálculo de R y S en Cerramiento (capas.py)
         if material['TYPE'] == 'PROPERTIES':
             _nombre = material['MATERIAL']
             _resultado[_nombre] = material.copy()
-        else:
-            # TODO: Las cámaras de aire son del tipo RESISTANCE y no tienen
-            # conductividad sino resistencia
-            pass
     return _resultado
 
 if __name__ == "__main__":
