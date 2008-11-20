@@ -3,6 +3,9 @@
 import math
 import operator
 import psicrom
+import dbutils
+
+datos = dbutils.db2datos('db/PCatalogo.bdc')
 
 class Cerramiento(object):
     def __init__(self, capas, Rse=None, Rsi=None):
@@ -14,25 +17,27 @@ class Cerramiento(object):
     def nombre_capas(self):
         """Nombre de las capas
         """
-        return [nombre for nombre, e, mu, K in self.capas]
+        return [nombre for nombre, e in self.capas]
 
     @property
     def espesores(self):
         """Espesores de las capas
         """
-        return [e for nombre, e, mu, K in self.capas]
+        return [e for nombre, e in self.capas]
 
     @property
     def R(self):
         """Resistencia térmica de las capas
         """
-        return [self.Rse] + [e / K for nombre, e, mu, K in self.capas] + [self.Rsi]
+        #TODO: generalizar comprobando materiales tipo RESISTANCE (cámaras de aire) o PROPERTY
+        return [self.Rse] + [e / float(datos[nombre]['CONDUCTIVITY']) for nombre, e in self.capas] + [self.Rsi]
 
     @property
     def S(self):
         """Espesor de aire equivalente de las capas
         """
-        return [e * mu for nombre, e, mu, K in self.capas]
+        #TODO: generalizar comprobando materiales tipo RESISTANCE (cámaras de aire) o PROPERTY
+        return [e * float(datos[nombre]['VAPOUR-DIFFUSIVITY-FACTOR']) for nombre, e in self.capas]
 
     @property
     def S_total(self):
