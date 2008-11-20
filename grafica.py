@@ -52,7 +52,7 @@ def dibujapresionestemperaturas(nombre_grafica, muro, temp_ext, temp_int, HR_int
     # Dibujar gráfica
     sp1 = subplot('111')
     subplots_adjust(bottom=0.15, top=0.87) # ampliar márgenes
-    figtext(0.5, 0.98,
+    figtext(0.5, 0.94,
             r'$U = %.2f W/m^2K,\,f_{Rsi} = %.2f,\, f_{Rsi,min} = %.2f$' % (muro.U, f_Rsi, f_Rsimin),
             fontsize='large',
             bbox=dict(facecolor='red', alpha=0.25),
@@ -64,11 +64,14 @@ def dibujapresionestemperaturas(nombre_grafica, muro, temp_ext, temp_int, HR_int
             fontsize='large',
             bbox=dict(facecolor='blue', alpha=0.25),
             horizontalalignment='center')
-    title(u"Presiones de vapor (efectiva y de saturación) y temperaturas")
+    text(0.1, 0.9, 'exterior', transform=sp1.transAxes, fontsize=10, fontstyle='italic', horizontalalignment='right')
+    text(0.9, 0.9, 'interior', transform=sp1.transAxes, fontsize=10, fontstyle='italic', horizontalalignment='left')
+    _tit = title(nombre_grafica)
+    _tit.set_y(1.09)
     xlabel(u"Distancia [m]")
     ylabel(u"Presión de vapor [Pa]", fontdict=dict(color='b'))
     text(0.5, 0.97,
-            nombre_grafica,
+            u"Presiones de vapor y temperaturas",
             transform=sp1.transAxes,
             verticalalignment='top',
             horizontalalignment='center',
