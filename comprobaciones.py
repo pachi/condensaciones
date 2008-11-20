@@ -61,8 +61,8 @@ if __name__ == "__main__":
     # Datos constructivos
     muro = capas.Cerramiento(datos_ejemplo.capas, 0.04, 0.13)
 
-    f_Rsi = calculafRsi(muro.U) # 0.80
-    f_Rsimin = calculafRsimin(temp_ext, temp_int, HR_int) # 0.36
+    f_Rsi = calculafRsi(muro.U)
+    f_Rsimin = calculafRsimin(temp_ext, temp_int, HR_int)
 
     print u"Capas: \n\t", "\n\t".join(muro.nombre_capas)
     print

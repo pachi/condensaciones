@@ -12,7 +12,7 @@
 #Rsi (cerramientos verticales)                                  0.13
 #Resistencia total (m²K/W)                                      1.25
 
-#U = 0.80
+#U = 0.804
 #fRsi = 0.80
 #fRsimin = 0.36
 capas = [("1/2 pie LP métrico o catalán 40 mm< G < 60 mm", 0.11),
@@ -21,23 +21,23 @@ capas = [("1/2 pie LP métrico o catalán 40 mm< G < 60 mm", 0.11),
         ("Tabique de LH sencillo [40 mm < Espesor < 60 mm]", 0.03),
         ("Enlucido de yeso 1000 < d < 1300", 0.01),]
 
-#U = 0.49
+#U = 0.496
 #fRsi = 0.88
 #fRsimin = 0.36
-capas2 = [("Piedra compacta", 0.03, 82, 3.5),
-        ("Mortero de cemento", 0.02, 18, 1.3),
-        ("XPS tipo II", 0.05, 93, 0.034),
-        ("Ladrillo hueco", 0.14, 5.5, 0.432),
-        ("Enlucido de yeso", 0.015, 11, 0.3),]
+capas2 = [("Granito [2500 < d < 2700]", 0.03),
+        ("Mortero de cemento o cal para albañilería y para revoco/enlucido 1800 < d < 2000", 0.02),
+        ("XPS Expandido con dióxido de carbono CO2 [ 0.034 W/[mK]]", 0.05),
+        ("Tabicón de LH doble  [60 mm < E < 90 mm]", 0.14),
+        ("Enlucido de yeso 1000 < d < 1300", 0.015),]
 
-#U = 0.49
+#U = 0.496
 #fRsi = 0.88
 #fRsimin = 0.36
-capas3 = [("Piedra compacta", 0.03, 82, 3.5),
-        ("Mortero de cemento", 0.02, 18, 1.3),
-        ("XPS tipo II", 0.05, 93, 0.034),
-        ("Ladrillo hueco", 0.14, 5.5, 0.432),
-        ("Film Al 0.000008m", 0.000008, 100000, 160),
-        ("Enlucido de yeso", 0.015, 11, 0.3),]
+capas3 = [("Granito [2500 < d < 2700]", 0.03),
+        ("Mortero de cemento o cal para albañilería y para revoco/enlucido 1800 < d < 2000", 0.02),
+        ("XPS Expandido con dióxido de carbono CO2 [ 0.034 W/[mK]]", 0.05),
+        ("Tabicón de LH doble  [60 mm < E < 90 mm]", 0.14),
+        ("Aluminio", 0.000008),
+        ("Enlucido de yeso 1000 < d < 1300", 0.015),]
 
-
+# ver barrera de vapor en Base de datos ... ("Film Al 0.000008m", 0.000008),

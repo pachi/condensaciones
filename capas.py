@@ -5,7 +5,7 @@ import operator
 import psicrom
 import dbutils
 
-datos = dbutils.db2datos('db/PCatalogo.bdc')
+datos = dbutils.db2datos('db/BDCatalogo.bdc')
 
 class Cerramiento(object):
     def __init__(self, capas, Rse=None, Rsi=None):
