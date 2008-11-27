@@ -248,10 +248,6 @@ def dibuja(nombre_grafica, muro, temp_ext, temp_int, HR_int, HR_ext, f_Rsi, f_Rs
     # lineas de datos
     plot(rotulos_s, presiones, 'b-', linewidth=0.5)
     plot(rotulos_s, presiones_sat, 'b-', linewidth=1.5)
-    # incrementar extensión de límites de ejes para hacer hueco
-    ymin, ymax = ylim()
-    length = ymax - ymin
-    ylim(ymin - length / 10.0, ymax + length / 5.0)
     # Rótulos de lineas de presiones
     annotate(r'$P_{n}$',
             xy=(rotulo_se - 0.002, P_se),
@@ -259,6 +255,11 @@ def dibuja(nombre_grafica, muro, temp_ext, temp_int, HR_int, HR_ext, f_Rsi, f_Rs
     annotate(r'$P_{sat}$',
             xy=(rotulo_se - 0.002, P_sat_se),
             horizontalalignment='right')
+    # incrementar extensión de límites de ejes para hacer hueco
+    ymin, ymax = ylim()
+    length = ymax - ymin
+    ylim(ymin - length / 10.0, ymax + length / 5.0)
+
     # Nuevo eje vertical de temperaturas
     ax2 = twinx()
     ylabel(u"Temperatura [ºC]", fontdict=dict(color='r'))
@@ -295,7 +296,7 @@ def dibuja(nombre_grafica, muro, temp_ext, temp_int, HR_int, HR_ext, f_Rsi, f_Rs
     xmin, xmax, ymin, ymax = axis()
     lengthx = s_max
     lengthy = ymax - ymin
-    axis([- 0.1 * lengthx, lengthx + 0.1 * lengthx, ymin - 0.20 * lengthy, ymax + 0.2 * lengthy])
+    axis([- 0.25 * lengthx, lengthx + 0.30 * lengthx, ymin - 0.20 * lengthy, ymax + 0.2 * lengthy])
     # Lineas de tramos de cerramiento
     axvline(s_min, linewidth=2, color='k', ymin=.05, ymax=.9)
     for rotulo in s_sat[1:-1]:
@@ -317,6 +318,7 @@ def dibuja(nombre_grafica, muro, temp_ext, temp_int, HR_int, HR_ext, f_Rsi, f_Rs
     annotate(r'$P_{sat}$',
             xy=(rotulo_se - 0.002, P_sat_se),
             horizontalalignment='right')
+    #TODO: añadir rótulos de valores extremos de presiones
 
     # Mostrar
     #subplot_tool() #Ayuda para ajustar márgenes
