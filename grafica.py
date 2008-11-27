@@ -184,7 +184,11 @@ def dibuja(nombre_grafica, muro, temp_ext, temp_int, HR_int, HR_ext, f_Rsi, f_Rs
     T_si = temperaturas[-2]
     P_se = presiones[1]
     P_sat_se = presiones_sat[1]
-    # TODO: Indicar si cumple f_Rsi > f_Rsi,min, T_si > T_si,min, P > P_sat, etc
+    # TODO: mejorar definición de existencia de condensaciones en lugar de sum(g)
+    if (f_Rsi > f_Rsimin) and (sum(g) <= 0.0):
+        _boxcolor = 'green'
+    else:
+        _boxcolor = 'red'
 
     espesores_capas = muro.espesores
     rotulos = x_capas(espesores_capas)
@@ -198,33 +202,35 @@ def dibuja(nombre_grafica, muro, temp_ext, temp_int, HR_int, HR_ext, f_Rsi, f_Rs
     x_c = [x for x, y in puntos_condensacion]
     y_c = [y for x, y in puntos_condensacion]
 
-    figtext(0.5, 0.98,
+    figure(figsize=(9,10))
+    suptitle(nombre_grafica, fontsize='x-large')
+    subplots_adjust(left=0.11, right=0.93, bottom=0.11, top=0.84, hspace=0.25) # ampliar márgenes
+
+    figtext(0.5, 0.95,
             r'$U = %.2f W/m^2K,\,f_{Rsi} = %.2f,\, f_{Rsi,min} = %.2f$' % (muro.U, f_Rsi, f_Rsimin),
             fontsize='large',
-            bbox=dict(facecolor='red', alpha=0.25),
+            bbox=dict(facecolor=_boxcolor, alpha=0.25),
             verticalalignment='top',
             horizontalalignment='center')
-    figtext(0.5, 0.03,
+    figtext(0.5, 0.875,
             r'$T_{int} = %.2f^\circ C, \, HR_{int} = %.1f\%%, \,'
             'T_{ext} = %.2f^\circ C, \, HR_{ext} = %.1f\%%$' % (temp_int, HR_int, temp_ext, HR_ext),
-            fontsize='large',
-            bbox=dict(facecolor='blue', alpha=0.25),
+            fontsize='large', #bbox=dict(facecolor='blue', alpha=0.25),
             horizontalalignment='center')
+
     # 30.0 días * 24.0 horas * 3600.0 segundos = 2592000.0 s/mes
     texto_g = "Cantidades condensadas: " + ", ".join(["%.2f" % (2592000.0 * x,) for x in g])
     texto_g_total = r"$Total: %.2f\,[g/m^{2}mes]$" % (2592000.0 * sum(g))
-    figtext(0.15, .95, texto_g, fontsize=9)
-    figtext(0.15, .90, texto_g_total)
+    figtext(0.11, .05, texto_g, fontsize=9)
+    figtext(0.11, .02, texto_g_total)
 
-    suptitle(nombre_grafica, fontsize=12)
-    # Dibujar gráfica
+    # ======================== Dibujar gráfica 1 ========================
     sp1 = subplot('211')
-    subplots_adjust(bottom=0.15, top=0.87) # ampliar márgenes
-    text(0.1, 0.9, 'exterior', transform=sp1.transAxes, fontsize=10, fontstyle='italic', horizontalalignment='right')
-    text(0.9, 0.9, 'interior', transform=sp1.transAxes, fontsize=10, fontstyle='italic', horizontalalignment='left')
-    title(u"Presiones de vapor y temperaturas", fontsize=12)
+    title(u"Presiones de vapor y temperaturas", fontsize='large')
     xlabel(u"Distancia [m]")
     ylabel(u"Presión de vapor [Pa]", fontdict=dict(color='b'))
+    text(0.1, 0.9, 'exterior', transform=sp1.transAxes, fontsize=10, fontstyle='italic', horizontalalignment='right')
+    text(0.9, 0.9, 'interior', transform=sp1.transAxes, fontsize=10, fontstyle='italic', horizontalalignment='left')
     # Lineas de tramos de cerramiento
     axvline(rotulo_se, linewidth=2, color='k', ymin=.05, ymax=.9)
     for rotulo in rotulos[2:-2]:
@@ -269,13 +275,10 @@ def dibuja(nombre_grafica, muro, temp_ext, temp_int, HR_int, HR_ext, f_Rsi, f_Rs
     ymin, ymax = ylim()
     length = ymax - ymin
     ylim(ymin - length / 10.0, ymax + length / 5.0)
-    # guardar y mostrar gráfica
-    #savefig('presionesplot.png')
 
-
-    # Dibujar gráfica
+    # ======================== Dibujar gráfica 2 ========================
     sp1 = subplot('212')
-    title(u"Presiones de vapor (efectiva y de saturación)", fontsize=12)
+    title(u"Presiones de vapor (efectiva y de saturación)", fontsize='large')
     xlabel(u"Espesor de aire equivalente [m]")
     ylabel(u"Presión de vapor [Pa]", fontdict=dict(color='b'))
     plot(s_sat, presiones_sat[1:-1], 'k-', label='p_sat') #presiones de saturación
@@ -298,8 +301,12 @@ def dibuja(nombre_grafica, muro, temp_ext, temp_int, HR_int, HR_ext, f_Rsi, f_Rs
     # Lineas de tramos de cerramiento con condensaciones
     for rotulo in x_c[1:-1]:
         axvline(rotulo, linewidth=1, color='r', ymin=.05, ymax=.8)
+
     # Mostrar
+    #subplot_tool() #Ayuda para ajustar márgenes
     show()
+    # guardar y mostrar gráfica
+    #savefig('presionesplot.png')
 
 
 if __name__ == "__main__":
