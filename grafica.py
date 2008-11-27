@@ -230,8 +230,10 @@ def dibuja(nombre_grafica, muro, temp_ext, temp_int, HR_int, HR_ext, f_Rsi, f_Rs
     title(u"Presiones de vapor y temperaturas", fontsize='large')
     xlabel(u"Distancia [m]")
     ylabel(u"Presión de vapor [Pa]", fontdict=dict(color='b'))
-    text(0.1, 0.9, 'exterior', transform=sp1.transAxes, fontsize=10, fontstyle='italic', horizontalalignment='right')
-    text(0.9, 0.9, 'interior', transform=sp1.transAxes, fontsize=10, fontstyle='italic', horizontalalignment='left')
+    text(0.1, 0.92, 'exterior',
+            transform=sp1.transAxes, fontsize=10, fontstyle='italic', horizontalalignment='right')
+    text(0.9, 0.92, 'interior',
+            transform=sp1.transAxes, fontsize=10, fontstyle='italic', horizontalalignment='left')
     # Lineas de tramos de cerramiento
     axvline(rotulo_se, linewidth=2, color='k', ymin=.05, ymax=.9)
     for rotulo in rotulos_s[2:-2]:
@@ -246,6 +248,10 @@ def dibuja(nombre_grafica, muro, temp_ext, temp_int, HR_int, HR_ext, f_Rsi, f_Rs
     # lineas de datos
     plot(rotulos_s, presiones, 'b-', linewidth=0.5)
     plot(rotulos_s, presiones_sat, 'b-', linewidth=1.5)
+    # incrementar extensión de límites de ejes para hacer hueco
+    ymin, ymax = ylim()
+    length = ymax - ymin
+    ylim(ymin - length / 10.0, ymax + length / 5.0)
     # Rótulos de lineas de presiones
     annotate(r'$P_{n}$',
             xy=(rotulo_se - 0.002, P_se),
@@ -253,10 +259,6 @@ def dibuja(nombre_grafica, muro, temp_ext, temp_int, HR_int, HR_ext, f_Rsi, f_Rs
     annotate(r'$P_{sat}$',
             xy=(rotulo_se - 0.002, P_sat_se),
             horizontalalignment='right')
-    # incrementar extensión de límites de ejes para hacer hueco
-    ymin, ymax = ylim()
-    length = ymax - ymin
-    ylim(ymin - length / 10.0, ymax + length / 5.0)
     # Nuevo eje vertical de temperaturas
     ax2 = twinx()
     ylabel(u"Temperatura [ºC]", fontdict=dict(color='r'))
@@ -281,13 +283,14 @@ def dibuja(nombre_grafica, muro, temp_ext, temp_int, HR_int, HR_ext, f_Rsi, f_Rs
     title(u"Presiones de vapor (efectiva y de saturación)", fontsize='large')
     xlabel(u"Espesor de aire equivalente [m]")
     ylabel(u"Presión de vapor [Pa]", fontdict=dict(color='b'))
+    text(0.1, 0.92, 'exterior',
+            transform=sp1.transAxes, fontsize=10, fontstyle='italic', horizontalalignment='right')
+    text(0.9, 0.92, 'interior',
+            transform=sp1.transAxes, fontsize=10, fontstyle='italic', horizontalalignment='left')
     plot(s_sat, presiones_sat[1:-1], 'k-', label='p_sat') #presiones de saturación
     plot(x_c, y_c, 'b-', label='p_vap') # presiones efectivas
     if len(puntos_condensacion) > 2: #si hay condensaciones dibuja la linea original
         plot(s_sat, presiones[1:-1], 'g--')
-    leg = legend(loc='upper right')
-    ltext  = leg.get_texts()
-    setp(ltext, fontsize='small')
     # Incrementar extensión de límites de ejes para hacer hueco
     xmin, xmax, ymin, ymax = axis()
     lengthx = s_max
@@ -304,17 +307,22 @@ def dibuja(nombre_grafica, muro, temp_ext, temp_int, HR_int, HR_ext, f_Rsi, f_Rs
         color = colordict[capa]
         axvspan(rotuloanterior, rotulo, facecolor=color, alpha=0.25, ymin=.05, ymax=.9)
         rotuloanterior = rotulo
-
     # Lineas de tramos de cerramiento con condensaciones
     for rotulo in x_c[1:-1]:
         axvline(rotulo, linewidth=1, color='r', ymin=.05, ymax=.8)
+    # Rótulos de lineas de presiones
+    annotate(r'$P_{n}$',
+            xy=(rotulo_se - 0.002, P_se),
+            horizontalalignment='right')
+    annotate(r'$P_{sat}$',
+            xy=(rotulo_se - 0.002, P_sat_se),
+            horizontalalignment='right')
 
     # Mostrar
     #subplot_tool() #Ayuda para ajustar márgenes
     show()
     # guardar y mostrar gráfica
     #savefig('presionesplot.png')
-
 
 if __name__ == "__main__":
     import capas
