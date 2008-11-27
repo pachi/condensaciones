@@ -3,6 +3,8 @@
 
 """Relaciones psicrométricas"""
 # TODO: Hay que generalizar el cálculo de la presión exterior para la localidad concreta?
+# Sería mejor cambiar psatloc, temploc y hrloc a funciones que tengan delta_alt = None
+# y se usen siempre?
 
 import math
 from capas import *
