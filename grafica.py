@@ -191,9 +191,9 @@ def dibuja(nombre_grafica, muro, temp_ext, temp_int, HR_int, HR_ext, f_Rsi, f_Rs
         _boxcolor = 'red'
 
     espesores_capas = muro.espesores
-    rotulos = x_capas(espesores_capas)
-    rotulo_se = rotulos[1]
-    rotulo_si = rotulos[-2]
+    rotulos_s = x_capas(espesores_capas)
+    rotulo_se = rotulos_s[1]
+    rotulo_si = rotulos_s[-2]
 
     capas_S = muro.S
     s_sat = [0.0] + [reduce(operator.add, capas_S[:i]) for i in range(1,len(capas_S)+1)]
@@ -201,6 +201,7 @@ def dibuja(nombre_grafica, muro, temp_ext, temp_int, HR_int, HR_ext, f_Rsi, f_Rs
     s_max = s_sat[-1]
     x_c = [x for x, y in puntos_condensacion]
     y_c = [y for x, y in puntos_condensacion]
+    colordict = colores_capas(muro.nombre_capas)
 
     figure(figsize=(9,10))
     suptitle(nombre_grafica, fontsize='x-large')
@@ -233,19 +234,18 @@ def dibuja(nombre_grafica, muro, temp_ext, temp_int, HR_int, HR_ext, f_Rsi, f_Rs
     text(0.9, 0.9, 'interior', transform=sp1.transAxes, fontsize=10, fontstyle='italic', horizontalalignment='left')
     # Lineas de tramos de cerramiento
     axvline(rotulo_se, linewidth=2, color='k', ymin=.05, ymax=.9)
-    for rotulo in rotulos[2:-2]:
+    for rotulo in rotulos_s[2:-2]:
         axvline(rotulo, color='0.5', ymin=.05, ymax=.9)
     axvline(rotulo_si, linewidth=2, color='k', ymin=.05, ymax=.9)
     # Rellenos de materiales
-    colordict = colores_capas(muro.nombre_capas)
     rotuloanterior = rotulo_se
-    for capa, rotulo in zip(muro.nombre_capas, rotulos[2:]):
+    for capa, rotulo in zip(muro.nombre_capas, rotulos_s[2:]):
         color = colordict[capa]
         axvspan(rotuloanterior, rotulo, facecolor=color, alpha=0.25, ymin=.05, ymax=.9)
         rotuloanterior = rotulo
     # lineas de datos
-    plot(rotulos, presiones, 'b-', linewidth=0.5)
-    plot(rotulos, presiones_sat, 'b-', linewidth=1.5)
+    plot(rotulos_s, presiones, 'b-', linewidth=0.5)
+    plot(rotulos_s, presiones_sat, 'b-', linewidth=1.5)
     # Rótulos de lineas de presiones
     annotate(r'$P_{n}$',
             xy=(rotulo_se - 0.002, P_se),
@@ -261,13 +261,13 @@ def dibuja(nombre_grafica, muro, temp_ext, temp_int, HR_int, HR_ext, f_Rsi, f_Rs
     ax2 = twinx()
     ylabel(u"Temperatura [ºC]", fontdict=dict(color='r'))
     # curva de temperaturas
-    plot(rotulos, temperaturas, 'r:')
+    plot(rotulos_s, temperaturas, 'r:')
     # Valores de T_si y T_se
     annotate(r'$T_{se}=%.1f^\circ C$' % T_se,
-            xy=(rotulos[1] - 0.002, T_se),
+            xy=(rotulos_s[1] - 0.002, T_se),
             horizontalalignment='right')
     annotate(r'$T_{si}=%.1f^\circ C$' % T_si,
-            xy=(rotulos[-2] + 0.002, T_si),
+            xy=(rotulos_s[-2] + 0.002, T_si),
             horizontalalignment='left',
             verticalalignment='top')
     ax2.yaxis.tick_right()
@@ -292,12 +292,19 @@ def dibuja(nombre_grafica, muro, temp_ext, temp_int, HR_int, HR_ext, f_Rsi, f_Rs
     xmin, xmax, ymin, ymax = axis()
     lengthx = s_max
     lengthy = ymax - ymin
-    axis([- 0.1 * lengthx, lengthx + 0.1 * lengthx, ymin - 0.05 * lengthy, ymax + 0.2 * lengthy])
+    axis([- 0.1 * lengthx, lengthx + 0.1 * lengthx, ymin - 0.20 * lengthy, ymax + 0.2 * lengthy])
     # Lineas de tramos de cerramiento
-    axvline(s_min, linewidth=2, color='k', ymin=.05, ymax=.8)
+    axvline(s_min, linewidth=2, color='k', ymin=.05, ymax=.9)
     for rotulo in s_sat[1:-1]:
-        axvline(rotulo, color='0.5', ymin=.05, ymax=.8)
-    axvline(s_max, linewidth=2, color='k', ymin=.05, ymax=.8)
+        axvline(rotulo, color='0.5', ymin=.05, ymax=.9)
+    axvline(s_max, linewidth=2, color='k', ymin=.05, ymax=.9)
+    # Rellenos de materiales
+    rotuloanterior = rotulo_se
+    for capa, rotulo in zip(muro.nombre_capas, s_sat[1:]):
+        color = colordict[capa]
+        axvspan(rotuloanterior, rotulo, facecolor=color, alpha=0.25, ymin=.05, ymax=.9)
+        rotuloanterior = rotulo
+
     # Lineas de tramos de cerramiento con condensaciones
     for rotulo in x_c[1:-1]:
         axvline(rotulo, linewidth=1, color='r', ymin=.05, ymax=.8)
