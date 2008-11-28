@@ -76,4 +76,4 @@ if __name__ == "__main__":
 #             temp_ext, temp_int, HR_int, HR_ext, f_Rsi, f_Rsimin)
 
     g, puntos_condensacion = muro.calculacantidadcondensacion(temp_ext, temp_int, HR_ext, HR_int)
-    grafica.dibujapresiones(muro, temp_ext, temp_int, HR_ext, HR_int, puntos_condensacion, g)
+    grafica.dibuja("Cerramiento tipo", muro, temp_ext, temp_int, HR_ext, HR_int, f_Rsi, f_Rsimin, puntos_condensacion, g)
