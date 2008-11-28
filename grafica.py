@@ -173,7 +173,7 @@ def dibujapresiones(muro, temp_ext, temp_int, HR_ext, HR_int, puntos_condensacio
     # Mostrar
     show()
 
-def dibuja(nombre_grafica, muro, temp_ext, temp_int, HR_int, HR_ext, f_Rsi, f_Rsimin, puntos_condensacion, g):
+def dibuja(nombre_grafica, muro, temp_ext, temp_int, HR_ext, HR_int, f_Rsi, f_Rsimin, puntos_condensacion, g):
     """Representa Presiones de saturación vs. Presiones de vapor y temperaturas
     en un diagrama capa/Presion de vapor y capa/Temp
     """
@@ -346,4 +346,4 @@ if __name__ == "__main__":
     #g, puntos_evaporacion = muro.calculacantidadevaporacion(temp_ext, temp_int, HR_ext, HR_int, interfases=[2])
     #dibujapresiones(muro, temp_ext, temp_int, HR_ext, HR_int, puntos_evaporacion, g)
 
-    dibuja("Cerramiento tipo", muro, temp_ext, temp_int, HR_int, HR_ext, f_Rsi, f_Rsimin, puntos_condensacion, g)
+    dibuja("Cerramiento tipo", muro, temp_ext, temp_int, HR_ext, HR_int, f_Rsi, f_Rsimin, puntos_condensacion, g)
