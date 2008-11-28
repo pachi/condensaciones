@@ -8,24 +8,8 @@
 # matplotlib.use('GTK')
 
 from pylab import *
-import colorsys
 import operator
-
-def colorlist(steps):
-    clist =[]
-    salto_color = 0.0
-    for i in range(steps):
-        color = colorsys.hls_to_rgb(salto_color, .6, .8)
-        clist.append(color)
-        salto_color += 1.0/steps
-    return clist
-
-def colores_capas(lista_capas):
-    capas_distintas = set(lista_capas)
-    colordict = {}
-    for nombre, color in zip(capas_distintas, colorlist(len(capas_distintas))):
-        colordict[nombre] = color
-    return colordict
+from util import colores_capas
 
 #TODO: crear método espesoracumulado en Cerramiento y usar aquí
 def x_capas(espesores_capas, margen_lateral=0.025):
