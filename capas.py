@@ -26,6 +26,10 @@ class Cerramiento(object):
         return [e for nombre, e in self.capas]
 
     @property
+    def espesores_acumulados(self):
+        return [reduce(operator.add, self.espesores[:i]) for i in range(1, len(self.espesores)+1)]
+
+    @property
     def R(self):
         """Resistencia térmica de las capas
         """
@@ -44,6 +48,10 @@ class Cerramiento(object):
         """Espesor de aire equivalente de las capas
         """
         return [e * float(datos[nombre]['VAPOUR-DIFFUSIVITY-FACTOR']) for nombre, e in self.capas]
+
+    @property
+    def S_acumulados(self):
+        return [reduce(operator.add, self.S[:i]) for i in range(1,len(self.S)+1)]
 
     @property
     def S_total(self):
@@ -186,8 +194,11 @@ if __name__ == "__main__":
 
     print u"Nombre capas:\n\t", "\n\t".join(muro.nombre_capas)
     print
+    print u"Espesores:\n\t", stringify(muro.espesores, 2)
+    print u"Espesores acumulados:\n\t", stringify(muro.espesores_acumulados, 2)
     print u"R Capas:\n\t", stringify(muro.R, 2)
     print u"S Capas:\n\t", stringify(muro.S, 2)
+    print u"S acumulados:\n\t", stringify(muro.S_acumulados, 2)
     print u"S total:", muro.S_total # Espesor de aire equivalente total (m), 2.16
     print u"Rs_ext: %.2f\nRs_int: %.2f" % (muro.Rse, muro.Rsi)
     print u"R_total: %.2f" % muro.R_total #("Resistencia total (m²K/W)", 1.25)
