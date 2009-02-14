@@ -1,6 +1,8 @@
 syntax: glob
 dist/*
 build/*
+articulos/*
+fichas/*
 *~
 *.bak
 *.pyc
@@ -15,3 +17,5 @@ build/*
 *.log
 *.aux
 *.dvi
+*$py.class
+nbproject/*
