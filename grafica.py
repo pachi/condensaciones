@@ -9,16 +9,7 @@
 
 from pylab import *
 import operator
-from util import colores_capas
-
-#TODO: crear método espesoracumulado en Cerramiento y usar aquí
-def x_capas(espesores_capas, margen_lateral=0.025):
-    rotulos = [-margen_lateral, 0.0]
-    for espesor in espesores_capas:
-        nuevo = rotulos[-1] + espesor
-        rotulos.append(nuevo)
-    rotulos.append(rotulos[-1] + margen_lateral)
-    return rotulos
+from util import colores_capas, add_margin
 
 def plot_prestemp(subplot, presiones, presiones_sat, temperaturas, rotulos, rotulos_s, colordict):
     #nemotécnicas intermedias
@@ -162,8 +153,8 @@ def dibujapresionestemperaturas(nombre_grafica, muro, temp_ext, temp_int, HR_int
     temperaturas = muro.calculatemperaturas(temp_ext, temp_int)
     presiones = muro.calculapresiones(temp_ext, temp_int, HR_ext, HR_int)
     presiones_sat = muro.calculapresionessat(temp_ext, temp_int)
-    rotulos = muros.nombre_capas
-    rotulos_s = x_capas(muro.espesores)
+    rotulos = muro.nombre_capas
+    rotulos_s = add_margin(muro.espesores_acumulados)
     colordict = colores_capas(muro.nombre_capas)
     ccheck = (f_Rsi > f_Rsimin) and True or False
 
@@ -184,8 +175,8 @@ def dibujapresiones(muro, temp_ext, temp_int, HR_ext, HR_int, puntos_condensacio
     presiones = muro.calculapresiones(temp_ext, temp_int, HR_ext, HR_int)
     presiones_sat = muro.calculapresionessat(temp_ext, temp_int)
     rotulos = muro.nombre_capas
-    rotulos_s = x_capas(muro.espesores)
-    rotulos_ssat = [0.0] + [reduce(operator.add, muro.S[:i]) for i in range(1,len(muro.S)+1)]
+    rotulos_s = add_margin(muro.espesores_acumulados)
+    rotulos_ssat = muro.S_acumulados
     colordict = colores_capas(muro.nombre_capas)
 
     sp1 = subplot('111')
@@ -200,8 +191,8 @@ def dibuja(nombre_grafica, muro, temp_ext, temp_int, HR_ext, HR_int, f_Rsi, f_Rs
     presiones = muro.calculapresiones(temp_ext, temp_int, HR_ext, HR_int)
     presiones_sat = muro.calculapresionessat(temp_ext, temp_int)
     rotulos = muro.nombre_capas
-    rotulos_s = x_capas(muro.espesores)
-    rotulos_ssat = [0.0] + [reduce(operator.add, muro.S[:i]) for i in range(1,len(muro.S)+1)]
+    rotulos_s = add_margin(muro.espesores_acumulados)
+    rotulos_ssat = muro.S_acumulados
     colordict = colores_capas(muro.nombre_capas)
     # TODO: mejorar definición de existencia de condensaciones en lugar de sum(g)
     ccheck = ((f_Rsi > f_Rsimin) and (sum(g) <= 0.0)) and True or False

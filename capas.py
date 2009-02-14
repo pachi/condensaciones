@@ -27,7 +27,7 @@ class Cerramiento(object):
 
     @property
     def espesores_acumulados(self):
-        return [reduce(operator.add, self.espesores[:i]) for i in range(1, len(self.espesores)+1)]
+        return [0.0] + [reduce(operator.add, self.espesores[:i]) for i in range(1, len(self.espesores)+1)]
 
     @property
     def R(self):
@@ -51,7 +51,7 @@ class Cerramiento(object):
 
     @property
     def S_acumulados(self):
-        return [reduce(operator.add, self.S[:i]) for i in range(1,len(self.S)+1)]
+        return [0.0] + [reduce(operator.add, self.S[:i]) for i in range(1,len(self.S)+1)]
 
     @property
     def S_total(self):
