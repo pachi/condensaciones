@@ -22,3 +22,7 @@ def colores_capas(lista_capas):
     for nombre, color in zip(capas_distintas, colorlist(len(capas_distintas))):
         colordict[nombre] = color
     return colordict
+
+def add_margin(lista, margen_lateral=0.025):
+    "Añade un margen a una lista"
+    return ([lista[0] - margen_lateral] + lista + [lista[-1] + margen_lateral])
