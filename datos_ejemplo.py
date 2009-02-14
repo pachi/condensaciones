@@ -41,3 +41,34 @@ capas3 = [("Granito [2500 < d < 2700]", 0.03),
         ("Enlucido de yeso 1000 < d < 1300", 0.015),]
 
 # ver barrera de vapor en Base de datos ... ("Film Al 0.000008m", 0.000008),
+
+capas4 = [
+        ("XPS Expandido con dióxido de carbono CO2 [ 0.034 W/[mK]]", 0.05),
+        ("Placa de yeso laminado [PYL] 750 < d < 900", 0.015),
+        ("MW Lana mineral [0.031 W/[mK]]", 0.080),
+        ("MW Lana mineral [0.031 W/[mK]]", 0.040),
+        ("Placa de yeso laminado [PYL] 750 < d < 900", 0.0125),
+        ("Placa de yeso laminado [PYL] 750 < d < 900", 0.0125),
+        ]
+
+capas5 = [
+        ("EPS Poliestireno Expandido [ 0.037 W/[mK]]", 0.05),
+        ("Placa de yeso laminado [PYL] 750 < d < 900", 0.015),
+        ("MW Lana mineral [0.031 W/[mK]]", 0.080),
+#         ("Aluminio", 0.0008),
+#        ("Cámara de aire sin ventilar horizontal 2 cm", 0.015),
+        ("MW Lana mineral [0.031 W/[mK]]", 0.040),
+        ("Placa de yeso laminado [PYL] 750 < d < 900", 0.0125),
+        ("Placa de yeso laminado [PYL] 750 < d < 900", 0.0125),
+        ]
+#"EPS Poliestireno Expandido [ 0.037 W/[mK]]"
+capas6 = [
+        ("EPS Poliestireno Expandido [ 0.037 W/[mK]]", 0.05),
+        ("Placa de yeso laminado [PYL] 750 < d < 900", 0.015),
+        ("MW Lana mineral [0.031 W/[mK]]", 0.080),
+#        ("Cámara de aire sin ventilar horizontal 2 cm", 0.015),
+        ("XPS Expandido con dióxido de carbono CO2 [ 0.034 W/[mK]]", 0.05),
+        ("Placa de yeso laminado [PYL] 750 < d < 900", 0.0125),
+        ("Placa de yeso laminado [PYL] 750 < d < 900", 0.0125),
+        ]
+#"EPS Poliestireno Expandido [ 0.037 W/[mK]]"
