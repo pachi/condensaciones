@@ -6,6 +6,7 @@
 # Sería mejor cambiar psatloc, temploc y hrloc a funciones que tengan delta_alt = None
 # y se usen siempre?
 
+import sys
 import math
 from capas import *
 import operator
@@ -60,6 +61,8 @@ def tasatransferenciavapor(pe, pi, Se, Si):
             presión parcial de vapor (en g/m.s.Pa)x(tiempo)
     """
     delta0 = 2.0 * 10.0**(-7.0) #delta0 -> [g/(m.s.Pa)]
+    if Si == Se:
+        return sys.maxint
     return delta0 * (pi - pe) / (Si - Se) #g/(m2.s)
 
 def calculahrinthigrometria(temp_ext, temp_sint, hrext, higrometria):

@@ -29,14 +29,20 @@ class Cerramiento(object):
     def R(self):
         """Resistencia térmica de las capas
         """
-        #TODO: generalizar comprobando materiales tipo RESISTANCE (cámaras de aire) o PROPERTY
-        return [self.Rse] + [e / float(datos[nombre]['CONDUCTIVITY']) for nombre, e in self.capas] + [self.Rsi]
+        def resist_capa(capa, e=None):
+            tipo = datos[nombre]['TYPE']
+            if tipo == 'PROPERTIES':
+                return e / float(datos[nombre]['CONDUCTIVITY'])
+            elif tipo == 'RESISTANCE':
+                return float(datos[nombre]['RESISTANCE'])
+            else:
+                raise
+        return [self.Rse] + [resist_capa(nombre, e) for nombre, e in self.capas] + [self.Rsi]
 
     @property
     def S(self):
         """Espesor de aire equivalente de las capas
         """
-        #TODO: generalizar comprobando materiales tipo RESISTANCE (cámaras de aire) o PROPERTY
         return [e * float(datos[nombre]['VAPOUR-DIFFUSIVITY-FACTOR']) for nombre, e in self.capas]
 
     @property
