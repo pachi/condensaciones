@@ -52,14 +52,14 @@ def parsefile(file):
         datos[section] = materiales[:]
     return datos
 
-def db2datos(file):
+def db2datos(files):
     _resultado = {}
-    datos = parsefile(file)
-    for material in datos[DEFAULT_SECTION]:
-        # XXX: La siguiente comprobación no es necesaria en general, pero por ahora
-        # la hecemos para filtrar los materiales sin conductividad (cámaras).
-        # Sin esto fallaría el cálculo de R y S en Cerramiento (capas.py)
-        if material['TYPE'] == 'PROPERTIES':
+    if not isinstance(files, (tuple, list)):
+        files = [files]
+    for file in files:
+        #print "Procesando %s" % file
+        datos = parsefile(file)
+        for material in datos[DEFAULT_SECTION]:
             _nombre = material['MATERIAL']
             _resultado[_nombre] = material.copy()
     return _resultado
@@ -70,17 +70,19 @@ if __name__ == "__main__":
     if len(sys.argv) < 2:
         argfile = None
     else:
-        argfile = sys.argv[1]
-    file = argfile or "db/PCatalogo.bdc"
+        argfile = sys.argv[1:]
+    files = argfile or "db/PCatalogo.bdc"
+    db = db2datos(files)
+    print "%i materiales generados" % len(db)
 
-    datos = parsefile(file)
-
+#     for file in files:
+#         datos = parsefile(file)
+#         print "Archivo: %s" % file
+#         print "Secciones:", datos.keys().sort()
+#         print "%i secciones y %i materiales en la sección 'default'" % (len(datos), len(datos['default']))
+#
 #     for index, material in enumerate(datos['default']):
 #         print material['MATERIAL']
 #     for dato in b2datos(file).keys():
 #         print dato
 #     print b2datos(file)
-
-    print "Secciones:", datos.keys().sort()
-    print "%i secciones y %i materiales en la sección 'default'" % (len(datos), len(datos['default']))
-    print "%i materiales generados" % len(db2datos(file))
