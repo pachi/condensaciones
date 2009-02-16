@@ -11,12 +11,14 @@ from pylab import *
 import operator
 from util import colores_capas, add_margin
 
-def plot_prestemp(subplot, presiones, presiones_sat, temperaturas, rotulos, rotulos_s, colordict):
+def plot_prestemp(figure, subplot, presiones, presiones_sat, temperaturas, rotulos, rotulos_s, colordict):
     #nemotécnicas intermedias
     rotulo_se = rotulos_s[1]
     rotulo_si = rotulos_s[-2]
     P_se = presiones[1]
     P_sat_se = presiones_sat[1]
+    P_si = presiones[-2]
+    P_sat_si = presiones_sat[-2]
     T_se = temperaturas[1]
     T_si = temperaturas[-2]
 
@@ -27,27 +29,30 @@ def plot_prestemp(subplot, presiones, presiones_sat, temperaturas, rotulos, rotu
             transform=subplot.transAxes, fontsize=10, fontstyle='italic', horizontalalignment='right')
     text(0.9, 0.92, 'interior',
             transform=subplot.transAxes, fontsize=10, fontstyle='italic', horizontalalignment='left')
+    # lineas de datos
+    plot(rotulos_s, presiones, 'b-', linewidth=0.5)
+    plot(rotulos_s, presiones_sat, 'k-', linewidth=0.5)
     # Lineas de tramos de cerramiento
     axvline(rotulo_se, linewidth=2, color='k', ymin=.05, ymax=.9)
     for rotulo in rotulos_s[2:-2]:
         axvline(rotulo, color='0.5', ymin=.05, ymax=.9)
     axvline(rotulo_si, linewidth=2, color='k', ymin=.05, ymax=.9)
     # Rellenos de materiales
+    ymin, ymax = ylim()
     rotuloanterior = rotulo_se
-    for capa, rotulo in zip(rotulos, rotulos_s[2:]):
+    for _i, (capa, rotulo) in enumerate(zip(rotulos, rotulos_s[2:])):
         color = colordict[capa]
         axvspan(rotuloanterior, rotulo, facecolor=color, alpha=0.25, ymin=.05, ymax=.9)
+        text((rotulo + rotuloanterior) / 2.0, ymax, "%i" % _i,
+                fontsize=8, fontstyle='italic', horizontalalignment='center')
         rotuloanterior = rotulo
-    # lineas de datos
-    plot(rotulos_s, presiones, 'b-', linewidth=0.5)
-    plot(rotulos_s, presiones_sat, 'b-', linewidth=1.5)
     # Rótulos de lineas de presiones
     annotate(r'$P_{n}$',
-            xy=(rotulo_se - 0.002, P_se),
-            horizontalalignment='right')
+            xy=(rotulo_si + 0.002, P_si),
+            horizontalalignment='left', verticalalignment='top', color='b', size='small')
     annotate(r'$P_{sat}$',
-            xy=(rotulo_se - 0.002, P_sat_se),
-            horizontalalignment='right')
+            xy=(rotulo_si + 0.002, P_sat_si),
+            horizontalalignment='left', verticalalignment='baseline', color='k', size='small')
     # incrementar extensión de límites de ejes para hacer hueco
     ymin, ymax = ylim()
     length = ymax - ymin
@@ -57,7 +62,8 @@ def plot_prestemp(subplot, presiones, presiones_sat, temperaturas, rotulos, rotu
     ax2 = twinx()
     ylabel(u"Temperatura [ºC]", fontdict=dict(color='r'))
     # curva de temperaturas
-    plot(rotulos_s, temperaturas, 'r:')
+    plot(rotulos_s, temperaturas, 'r', linewidth=1.5)
+    #fill_between(rotulos_s[1:-1], temperaturas[1:-1], color=(1,0,0,0.1))
     # Valores de T_si y T_se
     annotate(r'$T_{se}=%.1f^\circ C$' % T_se,
             xy=(rotulo_se - 0.002, T_se),
@@ -72,7 +78,7 @@ def plot_prestemp(subplot, presiones, presiones_sat, temperaturas, rotulos, rotu
     length = ymax - ymin
     ylim(ymin - length / 10.0, ymax + length / 5.0)
 
-def plot_presiones(subplot, presiones, presiones_sat, rotulos, rotulos_s, rotulos_ssat, puntos_condensacion, colordict):
+def plot_presiones(figure, subplot, presiones, presiones_sat, rotulos, rotulos_s, rotulos_ssat, puntos_condensacion, colordict):
     #nemotécnicas intermedias
     rotulo_se = rotulos_s[1]
     rotulo_si = rotulos_s[-2]
@@ -80,6 +86,8 @@ def plot_presiones(subplot, presiones, presiones_sat, rotulos, rotulos_s, rotulo
     rotulo_ssati = rotulos_ssat[-1]
     P_se = presiones[1]
     P_sat_se = presiones_sat[1]
+    P_si = presiones[-2] #en superficie, no el aire
+    P_sat_si = presiones_sat[-2] #en superficie, no el aire
 
     x_c = [x for x, y in puntos_condensacion]
     y_c = [y for x, y in puntos_condensacion]
@@ -91,11 +99,13 @@ def plot_presiones(subplot, presiones, presiones_sat, rotulos, rotulos_s, rotulo
             transform=subplot.transAxes, fontsize=10, fontstyle='italic', horizontalalignment='right')
     text(0.9, 0.92, 'interior',
             transform=subplot.transAxes, fontsize=10, fontstyle='italic', horizontalalignment='left')
-    plot(rotulos_ssat, presiones_sat[1:-1], 'k-', label='p_sat') #presiones de saturación
     plot(x_c, y_c, 'b-', label='p_vap') # presiones efectivas
+    plot(rotulos_ssat, presiones_sat[1:-1], 'k-', label='p_sat', linewidth=1.5) #presiones de saturación
     if len(puntos_condensacion) > 2: #si hay condensaciones dibuja la linea original
         plot(rotulos_ssat, presiones[1:-1], 'g--')
     # Incrementar extensión de límites de ejes para hacer hueco
+    # además guardamos extremos del gráfico interior, sin márgen
+    # para luego hacer rótulos, etc
     xmin, xmax, ymin, ymax = axis()
     lengthx = rotulo_ssati
     lengthy = ymax - ymin
@@ -107,21 +117,37 @@ def plot_presiones(subplot, presiones, presiones_sat, rotulos, rotulos_s, rotulo
     axvline(rotulo_ssati, linewidth=2, color='k', ymin=.05, ymax=.9)
     # Rellenos de materiales
     rotuloanterior = rotulo_se
-    for capa, rotulo in zip(rotulos, rotulos_ssat[1:]):
+    for _i, (capa, rotulo) in enumerate(zip(rotulos, rotulos_ssat[1:])):
         color = colordict[capa]
         axvspan(rotuloanterior, rotulo, facecolor=color, alpha=0.25, ymin=.05, ymax=.9)
+        text((rotulo + rotuloanterior) / 2.0, ymax, "%i" % _i,
+                fontsize=8, fontstyle='italic', horizontalalignment='center')
         rotuloanterior = rotulo
     # Lineas de tramos de cerramiento con condensaciones
     for rotulo in x_c[1:-1]:
         axvline(rotulo, linewidth=1, color='r', ymin=.05, ymax=.8)
-    # Rótulos de lineas de presiones
-    annotate(r'$P_{n}$',
-            xy=(rotulo_se - 0.002, P_se),
-            horizontalalignment='right')
-    annotate(r'$P_{sat}$',
-            xy=(rotulo_se - 0.002, P_sat_se),
-            horizontalalignment='right')
-    #TODO: añadir rótulos de valores extremos de presiones
+    # Rótulos de lineas de presiones exteriores
+    if P_sat_se > P_se:
+        va1, va2 = 'top', 'baseline'
+    else:
+        va1, va2 = 'baseline', 'top'
+    annotate(r'$P_{n}$ = %iPa' % P_se,
+            xy=(rotulo_se - 0.01, P_se),
+            horizontalalignment='right', verticalalignment=va1, color='b', size='small')
+    annotate(r'$P_{sat}$ = %iPa' % P_sat_se,
+            xy=(rotulo_se - 0.01, P_sat_se),
+            horizontalalignment='right', verticalalignment=va2, color='k', size='small')
+    # Rótulos de lineas de presiones interiores
+    if P_sat_si > P_si:
+        va1, va2 = 'top', 'baseline'
+    else:
+        va1, va2 = 'baseline', 'top'
+    annotate(r'$P_{n}$ = %iPa' % P_si,
+            xy=(rotulo_ssati + 0.01, P_si),
+            horizontalalignment='left', verticalalignment=va1, color='b', size='small')
+    annotate(r'$P_{sat}$ = %iPa' % P_sat_si,
+            xy=(rotulo_ssati + 0.01, P_sat_si),
+            horizontalalignment='left', verticalalignment=va2, color='k', size='small')
 
 def textocomprueba(muro, f_Rsi, f_Rsimin, ccheck=True, y=0.95):
     _boxcolor = ccheck and 'green' or 'red'
@@ -158,12 +184,13 @@ def dibujapresionestemperaturas(nombre_grafica, muro, temp_ext, temp_int, HR_int
     colordict = colores_capas(muro.nombre_capas)
     ccheck = (f_Rsi > f_Rsimin) and True or False
 
+    fig = figure(figsize=(9,10))
     sp1 = subplot('111')
     suptitle(nombre_grafica, fontsize='x-large')
     textocomprueba(muro, f_Rsi, f_Rsimin, ccheck, y=0.93)
     textodatos(temp_ext, temp_int, HR_ext, HR_int, y=0.03)
     subplots_adjust(bottom=0.15, top=0.82) # ampliar márgenes
-    plot_prestemp(sp1, presiones, presiones_sat, temperaturas, rotulos, rotulos_s, colordict)
+    plot_prestemp(fig, sp1, presiones, presiones_sat, temperaturas, rotulos, rotulos_s, colordict)
     #savefig('presionesplot.png')
     #subplot_tool() #Ayuda para ajustar márgenes
     show()
@@ -179,8 +206,9 @@ def dibujapresiones(muro, temp_ext, temp_int, HR_ext, HR_int, puntos_condensacio
     rotulos_ssat = muro.S_acumulados
     colordict = colores_capas(muro.nombre_capas)
 
+    fig = figure(figsize=(9,10))
     sp1 = subplot('111')
-    plot_presiones(sp1, presiones, presiones_sat, rotulos, rotulos_s, rotulos_ssat, puntos_condensacion, colordict)
+    plot_presiones(fig, sp1, presiones, presiones_sat, rotulos, rotulos_s, rotulos_ssat, puntos_condensacion, colordict)
     show()
 
 def dibuja(nombre_grafica, muro, temp_ext, temp_int, HR_ext, HR_int, f_Rsi, f_Rsimin, puntos_condensacion, g):
@@ -197,16 +225,16 @@ def dibuja(nombre_grafica, muro, temp_ext, temp_int, HR_ext, HR_int, f_Rsi, f_Rs
     # TODO: mejorar definición de existencia de condensaciones en lugar de sum(g)
     ccheck = ((f_Rsi > f_Rsimin) and (sum(g) <= 0.0)) and True or False
 
-    figure(figsize=(9,10))
+    fig = figure(figsize=(9,10))
     suptitle(nombre_grafica, fontsize='x-large')
     subplots_adjust(left=0.11, right=0.93, bottom=0.11, top=0.84, hspace=0.25) # ampliar márgenes
     textocomprueba(muro, f_Rsi, f_Rsimin, ccheck)
     textodatos(temp_ext, temp_int, HR_ext, HR_int)
     textocondensa(g)
     sp1 = subplot('211')
-    plot_prestemp(sp1, presiones, presiones_sat, temperaturas, rotulos, rotulos_s, colordict)
+    plot_prestemp(fig, sp1, presiones, presiones_sat, temperaturas, rotulos, rotulos_s, colordict)
     sp1 = subplot('212')
-    plot_presiones(sp1, presiones, presiones_sat, rotulos, rotulos_s, rotulos_ssat, puntos_condensacion, colordict)
+    plot_presiones(fig, sp1, presiones, presiones_sat, rotulos, rotulos_s, rotulos_ssat, puntos_condensacion, colordict)
     #subplot_tool() #Ayuda para ajustar márgenes
     show()
     # guardar y mostrar gráfica
