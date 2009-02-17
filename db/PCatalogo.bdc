@@ -29,6 +29,19 @@ $
     IMAGE          = "asfalto.bmp"
     LIBRARY        = NO
 ..
+"B_Vapor Al (d_0.008mm)" = MATERIAL
+    TYPE           = PROPERTIES
+    THICKNESS      = 0.000008
+    CONDUCTIVITY   = 230
+    DENSITY        = 2700
+    SPECIFIC-HEAT  = 880
+    VAPOUR-DIFFUSIVITY-FACTOR = 1E+8
+    NAME           = "B_Vapor Al (d_0.008mm)"
+    NAME_CALENER   = ""
+    GROUP          = "B_VAPOR"
+    IMAGE          = "metales.bmp"
+    LIBRARY        = NO
+..
 $ ------------------------------------------------------------------
 $ Final de la base de datos
 $ ------------------------------------------------------------------

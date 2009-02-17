@@ -151,67 +151,13 @@ def plot_presiones(figure, ax1, presiones, presiones_sat, rotulos, rotulos_s, ro
             xy=(rotulo_ssati + 0.01, P_sat_si),
             horizontalalignment='left', verticalalignment=va2, color='k', size='small')
 
-def dibujapresionestemperaturas(nombre_grafica, muro, temp_ext, temp_int, HR_int, HR_ext, f_Rsi, f_Rsimin):
+def dibuja(nombre_grafica, muro, climae, climai, f_Rsi, f_Rsimin, puntos_condensacion, g):
     """Representa Presiones de saturación vs. Presiones de vapor y temperaturas
     en un diagrama capa/Presion de vapor y capa/Temp
     """
-    temperaturas = muro.calculatemperaturas(temp_ext, temp_int)
-    presiones = muro.calculapresiones(temp_ext, temp_int, HR_ext, HR_int)
-    presiones_sat = muro.calculapresionessat(temp_ext, temp_int)
-    rotulos = muro.nombre_capas
-    rotulos_s = add_margin(muro.espesores_acumulados)
-    colordict = colores_capas(muro.nombre_capas)
-    ccheck = (f_Rsi > f_Rsimin) and True or False
-
-    fig = plt.figure(figsize=(9,10), dpi=80)
-    axis = fig.add_subplot('111')
-    fig.suptitle(nombre_grafica, fontsize='x-large')
-    textocomprueba(muro, f_Rsi, f_Rsimin, ccheck, y=0.93)
-    textodatos(temp_ext, temp_int, HR_ext, HR_int, y=0.03)
-    fig.subplots_adjust(bottom=0.15, top=0.82) # ampliar márgenes
-    plot_prestemp(fig, axis, presiones, presiones_sat, temperaturas, rotulos, rotulos_s, colordict)
-    #savefig('presionesplot.png')
-    #subplot_tool() #Ayuda para ajustar márgenes
-    #show()
-    w = gtk.Window()
-    w.connect('delete-event', gtk.main_quit)
-    w.set_default_size(600,400)
-    canvas = FigureCanvas(fig)
-    canvas.show()
-    w.add(canvas)
-    w.show_all()
-    gtk.main()
-
-def dibujapresiones(muro, temp_ext, temp_int, HR_ext, HR_int, puntos_condensacion, g):
-    """ Representar presiones frente a espesores de aire equivalentes
-    señalando planos de condensación y cantidad condensada.
-    """
-    presiones = muro.calculapresiones(temp_ext, temp_int, HR_ext, HR_int)
-    presiones_sat = muro.calculapresionessat(temp_ext, temp_int)
-    rotulos = muro.nombre_capas
-    rotulos_s = add_margin(muro.espesores_acumulados)
-    rotulos_ssat = muro.S_acumulados
-    colordict = colores_capas(muro.nombre_capas)
-
-    fig = plt.figure(figsize=(9,10), dpi=80)
-    axis = fig.add_subplot('111')
-    plot_presiones(fig, axis, presiones, presiones_sat, rotulos, rotulos_s, rotulos_ssat, puntos_condensacion, colordict)
-    w = gtk.Window()
-    w.connect('delete-event', gtk.main_quit)
-    w.set_default_size(600,400)
-    canvas = FigureCanvas(fig)
-    canvas.show()
-    w.add(canvas)
-    w.show_all()
-    gtk.main()
-
-def dibuja(nombre_grafica, muro, temp_ext, temp_int, HR_ext, HR_int, f_Rsi, f_Rsimin, puntos_condensacion, g):
-    """Representa Presiones de saturación vs. Presiones de vapor y temperaturas
-    en un diagrama capa/Presion de vapor y capa/Temp
-    """
-    temperaturas = muro.calculatemperaturas(temp_ext, temp_int)
-    presiones = muro.calculapresiones(temp_ext, temp_int, HR_ext, HR_int)
-    presiones_sat = muro.calculapresionessat(temp_ext, temp_int)
+    temperaturas = muro.calculatemperaturas(climae.temp, climai.temp)
+    presiones = muro.calculapresiones(climae.temp, climai.temp, climae.HR, climai.HR)
+    presiones_sat = muro.calculapresionessat(climae.temp, climai.temp)
     rotulos = muro.nombre_capas
     rotulos_s = add_margin(muro.espesores_acumulados)
     rotulos_ssat = muro.S_acumulados
@@ -225,12 +171,12 @@ def dibuja(nombre_grafica, muro, temp_ext, temp_int, HR_ext, HR_int, f_Rsi, f_Rs
     fig.text(0.5, 0.95,
             r'$U = %.2f W/m^2K,\,f_{Rsi} = %.2f,\, f_{Rsi,min} = %.2f$' % (muro.U, f_Rsi, f_Rsimin),
             fontsize='large',
-            bbox=dict(facecolor=ccheck and 'green' or 'red', alpha=0.25),
+            bbox=dict(facecolor=(ccheck and (0.5,0.7,0.5,0.8) or (0.7,0.5,0.5,0.8))),
             verticalalignment='top',
             horizontalalignment='center')
     fig.text(0.5, 0.875,
             r'$T_{int} = %.2f^\circ C, \, HR_{int} = %.1f\%%, \,'
-            'T_{ext} = %.2f^\circ C, \, HR_{ext} = %.1f\%%$' % (temp_int, HR_int, temp_ext, HR_ext),
+            'T_{ext} = %.2f^\circ C, \, HR_{ext} = %.1f\%%$' % (climai.temp, climai.HR, climae.temp, climae.HR),
             fontsize='large', #bbox=dict(facecolor='blue', alpha=0.25),
             horizontalalignment='center')
     # 30.0 días * 24.0 horas * 3600.0 segundos = 2592000.0 s/mes
@@ -238,14 +184,31 @@ def dibuja(nombre_grafica, muro, temp_ext, temp_int, HR_ext, HR_int, f_Rsi, f_Rs
     texto_g_total = r"$Total: %.2f\,[g/m^{2}mes]$" % (2592000.0 * sum(g))
     fig.text(0.11, .05, texto_g, fontsize=9)
     fig.text(0.11, .02, texto_g_total)
+    # ================== presiones y temperaturas =====================
     axis1 = fig.add_subplot('211')
     plot_prestemp(fig, axis1, presiones, presiones_sat, temperaturas, rotulos, rotulos_s, colordict)
+    # ============================ presiones ==========================
     axis2 = fig.add_subplot('212')
     plot_presiones(fig, axis2, presiones, presiones_sat, rotulos, rotulos_s, rotulos_ssat, puntos_condensacion, colordict)
     #subplot_tool() #Ayuda para ajustar márgenes
     #show()
     # guardar y mostrar gráfica
     #savefig('presionesplot.png')
+    return fig
+
+if __name__ == "__main__":
+    import capas
+    from datos_ejemplo import climae, climai, murocapas
+    import comprobaciones
+
+    muro = capas.Cerramiento(murocapas, 0.04, 0.13)
+    f_Rsi = comprobaciones.calculafRsi(muro.U)
+    f_Rsimin = comprobaciones.calculafRsimin(climae.temp, climai.temp, climai.HR)
+    g, puntos_condensacion = muro.calculacantidadcondensacion(climae.temp, climai.temp, climae.HR, climai.HR)
+    #g, puntos_evaporacion = muro.calculacantidadevaporacion(temp_ext, temp_int, HR_ext, HR_int, interfases=[2])
+
+    fig = dibuja("Cerramiento tipo", muro, climae, climai, f_Rsi, f_Rsimin, puntos_condensacion, g)
+
     w = gtk.Window()
     w.connect('delete-event', gtk.main_quit)
     w.set_default_size(600,800)
@@ -254,25 +217,3 @@ def dibuja(nombre_grafica, muro, temp_ext, temp_int, HR_ext, HR_int, f_Rsi, f_Rs
     w.add(canvas)
     w.show_all()
     gtk.main()
-
-if __name__ == "__main__":
-    import capas
-    import datos_ejemplo
-    # Valores climáticos
-    temp_ext = 10.7
-    HR_ext = 79
-    temp_int = 20
-    HR_int = 55
-    # Valores "calculados"
-    f_Rsi = 0.80
-    f_Rsimin = 0.36
-
-    muro = capas.Cerramiento(datos_ejemplo.capas, 0.04, 0.13)
-
-    #dibujapresionestemperaturas("Cerramiento tipo", muro, temp_ext, temp_int, HR_int, HR_ext, f_Rsi, f_Rsimin)
-    g, puntos_condensacion = muro.calculacantidadcondensacion(temp_ext, temp_int, HR_ext, HR_int)
-    #dibujapresiones(muro, temp_ext, temp_int, HR_ext, HR_int, puntos_condensacion, g)
-    #g, puntos_evaporacion = muro.calculacantidadevaporacion(temp_ext, temp_int, HR_ext, HR_int, interfases=[2])
-    #dibujapresiones(muro, temp_ext, temp_int, HR_ext, HR_int, puntos_evaporacion, g)
-
-    dibuja("Cerramiento tipo", muro, temp_ext, temp_int, HR_ext, HR_int, f_Rsi, f_Rsimin, puntos_condensacion, g)

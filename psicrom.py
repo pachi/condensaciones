@@ -139,27 +139,22 @@ def calculahrinthigrometriaCTE(higrometria):
         raise "Higrometría no definida"
 
 if __name__ == "__main__":
-    import datos_ejemplo
+    from datos_ejemplo import climae, climai, murocapas
 
-    #Datos Sevilla enero: Te=10.7ºC, HR=79%
-    temp_ext = 10.7 #Temperatura enero
-    HR_ext = 79 #Humedad relativa enero
-    temp_int = 20
-    HR_int = 55 #según clase de higrometría: 3:55%, 4:62%, 5:70%
     higrometria = 3
 
     # Datos constructivos
     Rs_ext = 0.04
     Rs_int = 0.13
-    muro = Cerramiento(datos_ejemplo.capas, Rs_ext, Rs_int)
+    muro = Cerramiento(murocapas, Rs_ext, Rs_int)
     # datos calculados
     temp_sint = 19.0330684375
     G = 0.55 #higrometría 3
     volumen = 10 #m3
     n = 1 #[h^-1]
 
-    hrint = calculahrinthigrometria(temp_ext, temp_sint, HR_ext, higrometria=higrometria) #65.86%
-    hrintCTE = calculahrintCTE(temp_ext, temp_int, temp_sint, HR_ext, G, volumen, n)
+    hrint = calculahrinthigrometria(climae.temp, temp_sint, climae.HR, higrometria=higrometria) #65.86%
+    hrintCTE = calculahrintCTE(climae.temp, climai.temp, temp_sint, climae.HR, G, volumen, n)
     hrinthigroCTE = calculahrinthigrometriaCTE(3)
     g_total = tasatransferenciavapor(1016.00114017, 1285.32312909, 0.0, 2.16) #0,0898 g/m2.s
 

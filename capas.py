@@ -5,7 +5,7 @@ import operator
 import psicrom
 import dbutils
 
-datos = dbutils.db2datos('db/BDCatalogo.bdc')
+datos = dbutils.db2datos(['db/PCatalogo.bdc', 'db/BDCatalogo.bdc', 'db/Catalogo_URSA.BDC'])
 
 class Cerramiento(object):
     def __init__(self, capas, Rse=None, Rsi=None):
@@ -163,33 +163,24 @@ class Cerramiento(object):
         return g, envolvente_inf
 
 if __name__ == "__main__":
-    import datos_ejemplo
+    from datos_ejemplo import climae, climai, murocapas
     from util import stringify
-
-    #Datos Sevilla enero: Te=10.7ºC, HR=79%
-    temp_ext = 10.7 #Temperatura enero
-    HR_ext = 79 #Humedad relativa enero
-    temp_int = 20
-    HR_int = 55 #según clase de higrometría: 3:55%, 4:62%, 5:70%
-    higrometria = 3
 
     Rs_ext = 0.04
     Rs_int = 0.13
-    muro = Cerramiento(datos_ejemplo.capas, Rs_ext, Rs_int)
+    muro = Cerramiento(murocapas, Rs_ext, Rs_int)
 
-    temperaturas = muro.calculatemperaturas(temp_ext, temp_int)
-    presiones_sat = muro.calculapresionessat(temp_ext, temp_int)
-    #hrint = 65.859067
-    #presiones = muro.calculapresiones(temp_ext, temp_int, HR_ext, hrint)
-    presiones = muro.calculapresiones(temp_ext, temp_int, HR_ext, HR_int)
+    temperaturas = muro.calculatemperaturas(climae.temp, climai.temp)
+    presiones_sat = muro.calculapresionessat(climae.temp, climai.temp)
+    presiones = muro.calculapresiones(climae.temp, climai.temp, climae.HR, climai.HR)
     p_ext = presiones[1]
     p_int = presiones[-1]
 
-    g, puntos_condensacion = muro.calculacantidadcondensacion(temp_ext, temp_int, HR_ext, HR_int)
+    g, puntos_condensacion = muro.calculacantidadcondensacion(climae.temp, climai.temp, climae.HR, climai.HR)
     cantidad_condensada = sum(g)
     # indicamos evaporación en la interfase 2, pero en realidad habría que ver en cúales había antes
     # condensaciones y realizar el cálculo en ellas.
-    g, puntos_evaporacion = muro.calculacantidadevaporacion(temp_ext, temp_int, HR_ext, HR_int, interfases=[2])
+    g, puntos_evaporacion = muro.calculacantidadevaporacion(climae.temp, climai.temp, climae.HR, climai.HR, interfases=[2])
     cantidad_evaporada = sum(g)
 
     print u"Nombre capas:\n\t", "\n\t".join(muro.nombre_capas)
@@ -200,9 +191,9 @@ if __name__ == "__main__":
     print u"S Capas:\n\t", stringify(muro.S, 2)
     print u"S acumulados:\n\t", stringify(muro.S_acumulados, 2)
     print u"S total:", muro.S_total # Espesor de aire equivalente total (m), 2.16
-    print u"Rs_ext: %.2f\nRs_int: %.2f" % (muro.Rse, muro.Rsi)
-    print u"R_total: %.2f" % muro.R_total #("Resistencia total (m²K/W)", 1.25)
-    print u"U: %.2f" % muro.U # 0.80 W/m^2K = 1/Rtotal
+    print u"Rs_ext: %.3f\nRs_int: %.2f" % (muro.Rse, muro.Rsi)
+    print u"R_total: %.3f" % muro.R_total #("Resistencia total (m²K/W)", 1.25)
+    print u"U: %.3f" % muro.U # 0.80 W/m^2K = 1/Rtotal
     print
     print u"Temperaturas:\n\t", stringify(temperaturas, 1)
     print u"Presiones de vapor:\n\t", stringify(presiones, 1)
@@ -213,6 +204,3 @@ if __name__ == "__main__":
     print u"Condensaciones:"
     print u"\tCantidad condensada: %.2f [g/m2.mes]" % (2592000.0 * cantidad_condensada,)
     print u"\tCantidad evaporada: %.2f [g/m2.mes]" % (2592000.0 * cantidad_evaporada,)
-
-#     grafica.dibujapresiones(muro, temp_ext, temp_int, HR_ext, HR_int, puntos_condensacion, g)
-#     grafica.dibujapresiones(muro, temp_ext, temp_int, HR_ext, HR_int, puntos_evaporacion, g)
