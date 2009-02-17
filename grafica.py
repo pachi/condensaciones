@@ -195,6 +195,27 @@ def dibuja(nombre_grafica, muro, climae, climai, f_Rsi, f_Rsimin, puntos_condens
     #savefig('presionesplot.png')
     return fig
 
+def dibujacuerpo(nombre_grafica, muro, climae, climai, f_Rsi, f_Rsimin, puntos_condensacion, g):
+    """Representa Presiones de saturación vs. Presiones de vapor y temperaturas
+    en un diagrama capa/Presion de vapor y capa/Temp
+    """
+    temperaturas = muro.calculatemperaturas(climae.temp, climai.temp)
+    presiones = muro.calculapresiones(climae.temp, climai.temp, climae.HR, climai.HR)
+    presiones_sat = muro.calculapresionessat(climae.temp, climai.temp)
+    rotulos = muro.nombre_capas
+    rotulos_s = add_margin(muro.espesores_acumulados)
+    rotulos_ssat = muro.S_acumulados
+    colordict = colores_capas(muro.nombre_capas)
+
+    fig = plt.figure()
+    # ================== presiones y temperaturas =====================
+    axis1 = fig.add_subplot('211')
+    plot_prestemp(fig, axis1, presiones, presiones_sat, temperaturas, rotulos, rotulos_s, colordict)
+    # ============================ presiones ==========================
+    axis2 = fig.add_subplot('212')
+    plot_presiones(fig, axis2, presiones, presiones_sat, rotulos, rotulos_s, rotulos_ssat, puntos_condensacion, colordict)
+    return fig
+
 if __name__ == "__main__":
     import capas
     from datos_ejemplo import climae, climai, murocapas
@@ -205,14 +226,50 @@ if __name__ == "__main__":
     f_Rsimin = comprobaciones.calculafRsimin(climae.temp, climai.temp, climai.HR)
     g, puntos_condensacion = muro.calculacantidadcondensacion(climae.temp, climai.temp, climae.HR, climai.HR)
     #g, puntos_evaporacion = muro.calculacantidadevaporacion(temp_ext, temp_int, HR_ext, HR_int, interfases=[2])
-
-    fig = dibuja("Cerramiento tipo", muro, climae, climai, f_Rsi, f_Rsimin, puntos_condensacion, g)
+    ccheck = ((f_Rsi > f_Rsimin) and (sum(g) <= 0.0)) and "#AACCAA" or "#CCAAAA"
+    basecolor = gtk.gdk.color_parse(ccheck)
 
     w = gtk.Window()
     w.connect('delete-event', gtk.main_quit)
     w.set_default_size(600,800)
+    vbox = gtk.VBox()
+    w.add(vbox)
+
+    eb = gtk.EventBox()
+    eb.modify_bg(gtk.STATE_NORMAL, basecolor)
+
+    vb = gtk.VBox()
+    title = '<span size="x-large">Cerramiento tipo</span>'
+    label = gtk.Label()
+    label.set_markup(title)
+    vb.pack_start(label, False, False)
+
+    line0 = u'U = %.2f W/m²K, f<sub>Rsi</sub> = %.2f, f<sub>Rsi,min</sub> = %.2f' % (muro.U, f_Rsi, f_Rsimin)
+    line1 = u'T<sub>int</sub> = %.2f°C, HR<sub>int</sub> = %.1f%%, T<sub>ext</sub> = %.2f°C, '\
+            u'HR<sub>ext</sub> = %.1f%%' % (climai.temp, climai.HR, climae.temp, climae.HR)
+    label0 = gtk.Label()
+    label1 = gtk.Label()
+    label0.set_markup(line0)
+    label1.set_markup(line1)
+    vb.pack_start(label0, False, False)
+    vb.pack_start(label1, False, False)
+    eb.add(vb)
+    vbox.pack_start(eb, False, False)
+
+    fig = dibujacuerpo("Cerramiento tipo", muro, climae, climai, f_Rsi, f_Rsimin, puntos_condensacion, g)
     canvas = FigureCanvas(fig)
-    canvas.show()
-    w.add(canvas)
+    canvas.set_size_request(600, 600)
+    vbox.pack_start(canvas)
+
+    vb2 = gtk.VBox()
+    # 30.0 días * 24.0 horas * 3600.0 segundos = 2592000.0 s/mes
+    texto_g_total = u"Total: %.2f [g/m²mes]" % (2592000.0 * sum(g))
+    texto_g = u"Cantidades condensadas: " + u", ".join(["%.2f" % (2592000.0 * x,) for x in g])
+    label2 = gtk.Label(texto_g_total)
+    label3 = gtk.Label(texto_g)
+    vb2.pack_start(label2, False, False)
+    vb2.pack_start(label3, False, False)
+    vbox.pack_start(vb2, False, False)
+
     w.show_all()
     gtk.main()
