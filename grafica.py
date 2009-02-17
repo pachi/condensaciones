@@ -5,13 +5,12 @@
 # que resolver el problema de usar subplot y show en cada figura.
 
 import gtk
-
 import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_gtkcairo import FigureCanvasGTKCairo as FigureCanvas
-
-import operator
 from util import colores_capas, add_margin
+
+matplotlib.rc('mathtext', fontset='custom') #para mostrar bien las expresiones matemáticas / latex
 
 def plot_prestemp(figure, ax1, presiones, presiones_sat, temperaturas, rotulos, rotulos_s, colordict):
     #nemotécnicas intermedias
@@ -62,15 +61,15 @@ def plot_prestemp(figure, ax1, presiones, presiones_sat, temperaturas, rotulos, 
 
     # Nuevo eje vertical de temperaturas
     ax2 = ax1.twinx()
-    ax2.set_ylabel(u"Temperatura [ºC]", fontdict=dict(color='r'))
+    ax2.set_ylabel(u"Temperatura [°C]", fontdict=dict(color='r'))
     # curva de temperaturas
     ax2.plot(rotulos_s, temperaturas, 'r', linewidth=1.5)
     #fill_between(rotulos_s[1:-1], temperaturas[1:-1], color=(1,0,0,0.1))
     # Valores de T_si y T_se
-    ax2.annotate(r'$T_{se}=%.1f^\circ C$' % T_se,
+    ax2.annotate(r'$T_{se}=%.1f°C$' % T_se,
             xy=(rotulo_se - 0.002, T_se),
             horizontalalignment='right')
-    ax2.annotate(r'$T_{si}=%.1f^\circ C$' % T_si,
+    ax2.annotate(r'$T_{si}=%.1f°C$' % T_si,
             xy=(rotulo_si + 0.002, T_si),
             horizontalalignment='left',
             verticalalignment='top')
@@ -127,7 +126,7 @@ def plot_presiones(figure, ax1, presiones, presiones_sat, rotulos, rotulos_s, ro
         rotuloanterior = rotulo
     # Lineas de tramos de cerramiento con condensaciones
     for rotulo in x_c[1:-1]:
-        ax1.axvline(rotulo, linewidth=1, color='r', ymin=.05, ymax=.8)
+        ax1.axvline(rotulo, linewidth=1.5, color='r', ymin=.05, ymax=.9)
     # Rótulos de lineas de presiones exteriores
     if P_sat_se > P_se:
         va1, va2 = 'top', 'baseline'
@@ -175,8 +174,8 @@ def dibuja(nombre_grafica, muro, climae, climai, f_Rsi, f_Rsimin, puntos_condens
             verticalalignment='top',
             horizontalalignment='center')
     fig.text(0.5, 0.875,
-            r'$T_{int} = %.2f^\circ C, \, HR_{int} = %.1f\%%, \,'
-            'T_{ext} = %.2f^\circ C, \, HR_{ext} = %.1f\%%$' % (climai.temp, climai.HR, climae.temp, climae.HR),
+            r'$T_{int} = %.2f°C, \, HR_{int} = %.1f\%%, \,'
+            'T_{ext} = %.2f°C, \, HR_{ext} = %.1f\%%$' % (climai.temp, climai.HR, climae.temp, climae.HR),
             fontsize='large', #bbox=dict(facecolor='blue', alpha=0.25),
             horizontalalignment='center')
     # 30.0 días * 24.0 horas * 3600.0 segundos = 2592000.0 s/mes
