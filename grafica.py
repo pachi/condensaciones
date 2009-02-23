@@ -217,6 +217,7 @@ def dibujacuerpo(nombre_grafica, muro, climae, climai, f_Rsi, f_Rsimin, puntos_c
     return fig
 
 if __name__ == "__main__":
+    import os
     import capas
     from datos_ejemplo import climae, climai, murocapas
     import comprobaciones
@@ -229,47 +230,32 @@ if __name__ == "__main__":
     ccheck = ((f_Rsi > f_Rsimin) and (sum(g) <= 0.0)) and "#AACCAA" or "#CCAAAA"
     basecolor = gtk.gdk.color_parse(ccheck)
 
-    w = gtk.Window()
-    w.connect('delete-event', gtk.main_quit)
-    w.set_default_size(600,800)
-    vbox = gtk.VBox()
-    w.add(vbox)
+    builder = gtk.Builder()
+    builder.add_from_file(os.path.join(os.getcwd(), 'condensa.ui'))
+    builder.connect_signals({ "on_window_destroy" : gtk.main_quit })
+    w = builder.get_object('window1')
+    eb = builder.get_object('eventbox1')
+    title = builder.get_object('titulo')
+    subtitulo1 = builder.get_object('subtitulo1')
+    subtitulo2 = builder.get_object('subtitulo2')
+    pie1 = builder.get_object('pie1')
+    pie2 = builder.get_object('pie2')
 
-    eb = gtk.EventBox()
     eb.modify_bg(gtk.STATE_NORMAL, basecolor)
-
-    vb = gtk.VBox()
-    title = '<span size="x-large">Cerramiento tipo</span>'
-    label = gtk.Label()
-    label.set_markup(title)
-    vb.pack_start(label, False, False)
-
-    line0 = u'U = %.2f W/m²K, f<sub>Rsi</sub> = %.2f, f<sub>Rsi,min</sub> = %.2f' % (muro.U, f_Rsi, f_Rsimin)
-    line1 = u'T<sub>int</sub> = %.2f°C, HR<sub>int</sub> = %.1f%%, T<sub>ext</sub> = %.2f°C, '\
-            u'HR<sub>ext</sub> = %.1f%%' % (climai.temp, climai.HR, climae.temp, climae.HR)
-    label0 = gtk.Label()
-    label1 = gtk.Label()
-    label0.set_markup(line0)
-    label1.set_markup(line1)
-    vb.pack_start(label0, False, False)
-    vb.pack_start(label1, False, False)
-    eb.add(vb)
-    vbox.pack_start(eb, False, False)
+    title.set_markup('<span size="x-large">Cerramiento tipo</span>')
+    subtitulo1.set_markup(u'U = %.2f W/m²K, f<sub>Rsi</sub> = %.2f, f<sub>Rsi,min</sub> = %.2f' % (muro.U, f_Rsi, f_Rsimin))
+    subtitulo2.set_markup(u'T<sub>int</sub> = %.2f°C, HR<sub>int</sub> = %.1f%%, T<sub>ext</sub> = %.2f°C, HR<sub>ext</sub> = %.1f%%' % (climai.temp, climai.HR, climae.temp, climae.HR))
 
     fig = dibujacuerpo("Cerramiento tipo", muro, climae, climai, f_Rsi, f_Rsimin, puntos_condensacion, g)
     canvas = FigureCanvas(fig)
     canvas.set_size_request(600, 600)
-    vbox.pack_start(canvas)
+    cnv = builder.get_object('comodin')
+    cnvparent = cnv.get_parent()
+    cnv.destroy()
+    cnvparent.add(canvas)
+    cnvparent.reorder_child(canvas, 1)
 
-    vb2 = gtk.VBox()
-    # 30.0 días * 24.0 horas * 3600.0 segundos = 2592000.0 s/mes
-    texto_g_total = u"Total: %.2f [g/m²mes]" % (2592000.0 * sum(g))
-    texto_g = u"Cantidades condensadas: " + u", ".join(["%.2f" % (2592000.0 * x,) for x in g])
-    label2 = gtk.Label(texto_g_total)
-    label3 = gtk.Label(texto_g)
-    vb2.pack_start(label2, False, False)
-    vb2.pack_start(label3, False, False)
-    vbox.pack_start(vb2, False, False)
-
+    pie1.set_markup(u"Total: %.2f [g/m²mes]" % (2592000.0 * sum(g)))
+    pie2.set_markup(u"Cantidades condensadas: " + u", ".join(["%.2f" % (2592000.0 * x,) for x in g]))
     w.show_all()
     gtk.main()
