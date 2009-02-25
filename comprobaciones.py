@@ -41,8 +41,8 @@ def compuebacintersticiales(muro, temp_ext, temp_int, HR_ext, HR_int):
     cerramiento o puente térmico.
     Devuelve la comprobación
     """
-    presiones = muro.calculapresiones(temp_ext, temp_int, HR_ext, HR_int)
-    presiones_sat = muro.calculapresionessat(temp_ext, temp_int)
+    presiones = muro.presiones(temp_ext, temp_int, HR_ext, HR_int)
+    presiones_sat = muro.presionessat(temp_ext, temp_int)
     condensa = False
     for presion_i, presion_sat_i in zip(presiones, presiones_sat):
         if presion_i >= presion_sat_i:

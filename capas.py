@@ -71,7 +71,7 @@ class Cerramiento(object):
         """
         return 1.0 / self.R_total
 
-    def calculatemperaturas(self, tempext, tempint):
+    def temperaturas(self, tempext, tempint):
         """Devuelve lista de temperaturas:
         temperatura exterior, temperatura superficial exterior,
         temperaturas intersticiales, temperatura superficial interior
@@ -85,7 +85,7 @@ class Cerramiento(object):
             temperaturas.append(tempj)
         return temperaturas
 
-    def calculapresiones(self, temp_ext, temp_int, HR_ext, HR_int):
+    def presiones(self, temp_ext, temp_int, HR_ext, HR_int):
         """Devuelve una lista de presiones de vapor
         presión de vapor al exterior, presiones de vapor intermedias y presión de vapor interior.
         """
@@ -100,17 +100,17 @@ class Cerramiento(object):
         presiones_vapor.append(pres_int)
         return presiones_vapor
 
-    def calculapresionessat(self, tempext, tempint):
-        temperaturas = self.calculatemperaturas(tempext, tempint)
+    def presionessat(self, tempext, tempint):
+        temperaturas = self.temperaturas(tempext, tempint)
         return [psicrom.psat(temperatura) for temperatura in temperaturas]
 
-    def calculacantidadcondensacion(self, temp_ext, temp_int, HR_ext, HR_int):
+    def cantidadcondensacion(self, temp_ext, temp_int, HR_ext, HR_int):
         """Calcular cantidad de condensación y coordenadas (S, presión de vapor)
         de los planos de condensación.
         Devuelve g, puntos_condensacion
         """
-        presiones = self.calculapresiones(temp_ext, temp_int, HR_ext, HR_int)
-        presiones_sat = self.calculapresionessat(temp_ext, temp_int)
+        presiones = self.presiones(temp_ext, temp_int, HR_ext, HR_int)
+        presiones_sat = self.presionessat(temp_ext, temp_int)
         # calculamos las posiciones x, y correspondientes a espesor de aire equivalente
         # y presiones de saturación
         Scapas = self.S
@@ -140,12 +140,12 @@ class Cerramiento(object):
             for n in range(len(y_j) - 2)]
         return g, envolvente_inf
 
-    def calculacantidadevaporacion(self, temp_ext, temp_int, HR_ext, HR_int, interfases):
+    def cantidadevaporacion(self, temp_ext, temp_int, HR_ext, HR_int, interfases):
         """Calcular cantidad de evaporacion devolver coordenadas (S, presión de vapor)
         Devuelve g, puntos_evaporacion
         """
-        presiones = self.calculapresiones(temp_ext, temp_int, HR_ext, HR_int)
-        presiones_sat = self.calculapresionessat(temp_ext, temp_int)
+        presiones = self.presiones(temp_ext, temp_int, HR_ext, HR_int)
+        presiones_sat = self.presionessat(temp_ext, temp_int)
         # calculamos las posiciones x, y correspondientes a espesor de aire equivalente
         # y presiones de saturación
         Scapas = self.S
@@ -170,17 +170,17 @@ if __name__ == "__main__":
     Rs_int = 0.13
     muro = Cerramiento(murocapas, Rs_ext, Rs_int)
 
-    temperaturas = muro.calculatemperaturas(climae.temp, climai.temp)
-    presiones_sat = muro.calculapresionessat(climae.temp, climai.temp)
-    presiones = muro.calculapresiones(climae.temp, climai.temp, climae.HR, climai.HR)
+    temperaturas = muro.temperaturas(climae.temp, climai.temp)
+    presiones_sat = muro.presionessat(climae.temp, climai.temp)
+    presiones = muro.presiones(climae.temp, climai.temp, climae.HR, climai.HR)
     p_ext = presiones[1]
     p_int = presiones[-1]
 
-    g, puntos_condensacion = muro.calculacantidadcondensacion(climae.temp, climai.temp, climae.HR, climai.HR)
+    g, puntos_condensacion = muro.cantidadcondensacion(climae.temp, climai.temp, climae.HR, climai.HR)
     cantidad_condensada = sum(g)
     # indicamos evaporación en la interfase 2, pero en realidad habría que ver en cúales había antes
     # condensaciones y realizar el cálculo en ellas.
-    g, puntos_evaporacion = muro.calculacantidadevaporacion(climae.temp, climai.temp, climae.HR, climai.HR, interfases=[2])
+    g, puntos_evaporacion = muro.cantidadevaporacion(climae.temp, climai.temp, climae.HR, climai.HR, interfases=[2])
     cantidad_evaporada = sum(g)
 
     print u"Nombre capas:\n\t", "\n\t".join(muro.nombre_capas)

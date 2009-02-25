@@ -154,9 +154,9 @@ def dibuja(nombre_grafica, muro, climae, climai, f_Rsi, f_Rsimin, puntos_condens
     """Representa Presiones de saturación vs. Presiones de vapor y temperaturas
     en un diagrama capa/Presion de vapor y capa/Temp
     """
-    temperaturas = muro.calculatemperaturas(climae.temp, climai.temp)
-    presiones = muro.calculapresiones(climae.temp, climai.temp, climae.HR, climai.HR)
-    presiones_sat = muro.calculapresionessat(climae.temp, climai.temp)
+    temperaturas = muro.temperaturas(climae.temp, climai.temp)
+    presiones = muro.presiones(climae.temp, climai.temp, climae.HR, climai.HR)
+    presiones_sat = muro.presionessat(climae.temp, climai.temp)
     rotulos = muro.nombre_capas
     rotulos_s = add_margin(muro.espesores_acumulados)
     rotulos_ssat = muro.S_acumulados
@@ -199,9 +199,9 @@ def dibujacuerpo(nombre_grafica, muro, climae, climai, f_Rsi, f_Rsimin, puntos_c
     """Representa Presiones de saturación vs. Presiones de vapor y temperaturas
     en un diagrama capa/Presion de vapor y capa/Temp
     """
-    temperaturas = muro.calculatemperaturas(climae.temp, climai.temp)
-    presiones = muro.calculapresiones(climae.temp, climai.temp, climae.HR, climai.HR)
-    presiones_sat = muro.calculapresionessat(climae.temp, climai.temp)
+    temperaturas = muro.temperaturas(climae.temp, climai.temp)
+    presiones = muro.presiones(climae.temp, climai.temp, climae.HR, climai.HR)
+    presiones_sat = muro.presionessat(climae.temp, climai.temp)
     rotulos = muro.nombre_capas
     rotulos_s = add_margin(muro.espesores_acumulados)
     rotulos_ssat = muro.S_acumulados
@@ -225,8 +225,8 @@ if __name__ == "__main__":
     muro = capas.Cerramiento(murocapas, 0.04, 0.13)
     f_Rsi = comprobaciones.calculafRsi(muro.U)
     f_Rsimin = comprobaciones.calculafRsimin(climae.temp, climai.temp, climai.HR)
-    g, puntos_condensacion = muro.calculacantidadcondensacion(climae.temp, climai.temp, climae.HR, climai.HR)
-    #g, puntos_evaporacion = muro.calculacantidadevaporacion(temp_ext, temp_int, HR_ext, HR_int, interfases=[2])
+    g, puntos_condensacion = muro.cantidadcondensacion(climae.temp, climai.temp, climae.HR, climai.HR)
+    #g, puntos_evaporacion = muro.cantidadevaporacion(temp_ext, temp_int, HR_ext, HR_int, interfases=[2])
     ccheck = ((f_Rsi > f_Rsimin) and (sum(g) <= 0.0)) and "#AACCAA" or "#CCAAAA"
     basecolor = gtk.gdk.color_parse(ccheck)
 
