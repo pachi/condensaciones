@@ -36,18 +36,30 @@ def compruebacsuperificiales(muro, temp_ext, temp_int, HR_int):
     fRsimin = calculafRsimin(temp_ext, temp_int, HR_int)
     return fRsi < fRsimin
 
-def compuebacintersticiales(muro, temp_ext, temp_int, HR_ext, HR_int):
+def compruebacintersticiales(muro, temp_ext, temp_int, HR_ext, HR_int):
     """Comprueba la condición de existencia de condensaciones intersticiales en un
     cerramiento o puente térmico.
     Devuelve la comprobación
     """
-    presiones = muro.presiones(temp_ext, temp_int, HR_ext, HR_int)
-    presiones_sat = muro.presionessat(temp_ext, temp_int)
-    condensa = False
-    for presion_i, presion_sat_i in zip(presiones, presiones_sat):
-        if presion_i >= presion_sat_i:
-            condensa = True
+#    presiones = muro.presiones(temp_ext, temp_int, HR_ext, HR_int)
+#    presiones_sat = muro.presionessat(temp_ext, temp_int)
+#    condensa = False
+#    for presion_i, presion_sat_i in zip(presiones, presiones_sat):
+#        if presion_i >= presion_sat_i:
+#            condensa = True
+#
+#TODO: Revisar condensaciones viendo si la cantidad condensada es susceptible
+# de evaporación
+    g, puntos_condensacion = muro.cantidadcondensacion(temp_ext, temp_int, HR_ext, HR_int)
+    #g, puntos_evaporacion = muro.cantidadevaporacion(temp_ext, temp_int, HR_ext, HR_int, interfases=[2])
+    condensa = (sum(g) <= 0.0)
     return condensa
+
+def compruebacondensaciones(muro, temp_ext, temp_int, HR_ext, HR_int):
+    ci = compruebacintersticiales(muro, temp_ext, temp_int, HR_ext, HR_int)
+    cs = compruebacsuperificiales(muro, temp_ext, temp_int, HR_int)
+
+    return ci and cs
 
 if __name__ == "__main__":
     import capas
