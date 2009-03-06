@@ -52,7 +52,7 @@ def compruebacintersticiales(muro, temp_ext, temp_int, HR_ext, HR_int):
 # de evaporación
     g, puntos_condensacion = muro.cantidadcondensacion(temp_ext, temp_int, HR_ext, HR_int)
     #g, puntos_evaporacion = muro.cantidadevaporacion(temp_ext, temp_int, HR_ext, HR_int, interfases=[2])
-    condensa = (sum(g) <= 0.0)
+    condensa = (sum(g) > 0.0)
     return condensa
 
 def compruebacondensaciones(muro, temp_ext, temp_int, HR_ext, HR_int):
