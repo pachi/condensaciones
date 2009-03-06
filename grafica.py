@@ -1,10 +1,6 @@
 #!/usr/bin/env python
 #encoding: iso-8859-15
 
-#TODO: Hacer test con los tres gráficos de condensa.py. Para ello hay
-# que resolver el problema de usar subplot y show en cada figura.
-
-import gtk
 import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_gtkcairo import FigureCanvasGTKCairo as FigureCanvas
@@ -150,112 +146,38 @@ def plot_presiones(figure, ax1, presiones, presiones_sat, rotulos, rotulos_s, ro
             xy=(rotulo_ssati + 0.01, P_sat_si),
             horizontalalignment='left', verticalalignment=va2, color='k', size='small')
 
-def dibuja(nombre_grafica, muro, climae, climai, f_Rsi, f_Rsimin, puntos_condensacion, g):
-    """Representa Presiones de saturación vs. Presiones de vapor y temperaturas
-    en un diagrama capa/Presion de vapor y capa/Temp
-    """
-    temperaturas = muro.temperaturas(climae.temp, climai.temp)
-    presiones = muro.presiones(climae.temp, climai.temp, climae.HR, climai.HR)
-    presiones_sat = muro.presionessat(climae.temp, climai.temp)
-    rotulos = muro.nombre_capas
-    rotulos_s = add_margin(muro.espesores_acumulados)
-    rotulos_ssat = muro.S_acumulados
-    colordict = colores_capas(muro.nombre_capas)
-    # TODO: mejorar definición de existencia de condensaciones en lugar de sum(g)
-    ccheck = ((f_Rsi > f_Rsimin) and (sum(g) <= 0.0)) and True or False
+class PTCanvas(FigureCanvas):
+    __gtype_name__ = 'PTCanvas'
 
-    fig = plt.figure(figsize=(9,10), dpi=80)
-    fig.suptitle(nombre_grafica, fontsize='x-large')
-    fig.subplots_adjust(left=0.11, right=0.93, bottom=0.11, top=0.84, hspace=0.25) # ampliar márgenes
-    fig.text(0.5, 0.95,
-            r'$U = %.2f W/m^2K,\,f_{Rsi} = %.2f,\, f_{Rsi,min} = %.2f$' % (muro.U, f_Rsi, f_Rsimin),
-            fontsize='large',
-            bbox=dict(facecolor=(ccheck and (0.5,0.7,0.5,0.8) or (0.7,0.5,0.5,0.8))),
-            verticalalignment='top',
-            horizontalalignment='center')
-    fig.text(0.5, 0.875,
-            r'$T_{int} = %.2f°C, \, HR_{int} = %.1f\%%, \,'
-            'T_{ext} = %.2f°C, \, HR_{ext} = %.1f\%%$' % (climai.temp, climai.HR, climae.temp, climae.HR),
-            fontsize='large', #bbox=dict(facecolor='blue', alpha=0.25),
-            horizontalalignment='center')
-    # 30.0 días * 24.0 horas * 3600.0 segundos = 2592000.0 s/mes
-    texto_g = "Cantidades condensadas: " + ", ".join(["%.2f" % (2592000.0 * x,) for x in g])
-    texto_g_total = r"$Total: %.2f\,[g/m^{2}mes]$" % (2592000.0 * sum(g))
-    fig.text(0.11, .05, texto_g, fontsize=9)
-    fig.text(0.11, .02, texto_g_total)
-    # ================== presiones y temperaturas =====================
-    axis1 = fig.add_subplot('211')
-    plot_prestemp(fig, axis1, presiones, presiones_sat, temperaturas, rotulos, rotulos_s, colordict)
-    # ============================ presiones ==========================
-    axis2 = fig.add_subplot('212')
-    plot_presiones(fig, axis2, presiones, presiones_sat, rotulos, rotulos_s, rotulos_ssat, puntos_condensacion, colordict)
-    #subplot_tool() #Ayuda para ajustar márgenes
-    #show()
-    # guardar y mostrar gráfica
-    #savefig('presionesplot.png')
-    return fig
-
-def dibujacuerpo(nombre_grafica, muro, climae, climai, f_Rsi, f_Rsimin, puntos_condensacion, g):
-    """Representa Presiones de saturación vs. Presiones de vapor y temperaturas
-    en un diagrama capa/Presion de vapor y capa/Temp
-    """
-    temperaturas = muro.temperaturas(climae.temp, climai.temp)
-    presiones = muro.presiones(climae.temp, climai.temp, climae.HR, climai.HR)
-    presiones_sat = muro.presionessat(climae.temp, climai.temp)
-    rotulos = muro.nombre_capas
-    rotulos_s = add_margin(muro.espesores_acumulados)
-    rotulos_ssat = muro.S_acumulados
-    colordict = colores_capas(muro.nombre_capas)
-
-    fig = plt.figure()
-    # ================== presiones y temperaturas =====================
-    axis1 = fig.add_subplot('211')
-    plot_prestemp(fig, axis1, presiones, presiones_sat, temperaturas, rotulos, rotulos_s, colordict)
-    # ============================ presiones ==========================
-    axis2 = fig.add_subplot('212')
-    plot_presiones(fig, axis2, presiones, presiones_sat, rotulos, rotulos_s, rotulos_ssat, puntos_condensacion, colordict)
-    return fig
-
-if __name__ == "__main__":
-    import os
-    import capas
-    from datos_ejemplo import climae, climai, murocapas
-    import comprobaciones
-
-    muro = capas.Cerramiento(murocapas, 0.04, 0.13)
-    f_Rsi = comprobaciones.calculafRsi(muro.U)
-    f_Rsimin = comprobaciones.calculafRsimin(climae.temp, climai.temp, climai.HR)
-    g, puntos_condensacion = muro.cantidadcondensacion(climae.temp, climai.temp, climae.HR, climai.HR)
-    #g, puntos_evaporacion = muro.cantidadevaporacion(temp_ext, temp_int, HR_ext, HR_int, interfases=[2])
-    ccheck = ((f_Rsi > f_Rsimin) and (sum(g) <= 0.0)) and "#AACCAA" or "#CCAAAA"
-    basecolor = gtk.gdk.color_parse(ccheck)
-
-    builder = gtk.Builder()
-    builder.add_from_file(os.path.join(os.getcwd(), 'condensa.ui'))
-    builder.connect_signals({ "on_window_destroy" : gtk.main_quit })
-    w = builder.get_object('window1')
-    eb = builder.get_object('eventbox1')
-    title = builder.get_object('titulo')
-    subtitulo1 = builder.get_object('subtitulo1')
-    subtitulo2 = builder.get_object('subtitulo2')
-    pie1 = builder.get_object('pie1')
-    pie2 = builder.get_object('pie2')
-
-    eb.modify_bg(gtk.STATE_NORMAL, basecolor)
-    title.set_markup('<span size="x-large">Cerramiento tipo</span>')
-    subtitulo1.set_markup(u'U = %.2f W/m²K, f<sub>Rsi</sub> = %.2f, f<sub>Rsi,min</sub> = %.2f' % (muro.U, f_Rsi, f_Rsimin))
-    subtitulo2.set_markup(u'T<sub>int</sub> = %.2f°C, HR<sub>int</sub> = %.1f%%, T<sub>ext</sub> = %.2f°C, HR<sub>ext</sub> = %.1f%%' % (climai.temp, climai.HR, climae.temp, climae.HR))
-
-    fig = dibujacuerpo("Cerramiento tipo", muro, climae, climai, f_Rsi, f_Rsimin, puntos_condensacion, g)
-    canvas = FigureCanvas(fig)
-    canvas.set_size_request(600, 600)
-    cnv = builder.get_object('comodin')
-    cnvparent = cnv.get_parent()
-    cnv.destroy()
-    cnvparent.add(canvas)
-    cnvparent.reorder_child(canvas, 1)
-
-    pie1.set_markup(u"Total: %.2f [g/m²mes]" % (2592000.0 * sum(g)))
-    pie2.set_markup(u"Cantidades condensadas: " + u", ".join(["%.2f" % (2592000.0 * x,) for x in g]))
-    w.show_all()
-    gtk.main()
+    def __init__(self, fig=None):
+        if fig:
+            self.fig = fig
+        else:
+            self.fig = plt.figure()
+        FigureCanvas.__init__(self, self.fig)
+    def dibuja(self, nombre_grafica, muro, climae, climai, w=600, h=600):
+        """Representa Presiones de saturación vs. Presiones de vapor y temperaturas
+        en un diagrama capa/Presion de vapor y capa/Temp
+        """
+        import comprobaciones
+        f_Rsi = comprobaciones.calculafRsi(muro.U)
+        f_Rsimin = comprobaciones.calculafRsimin(climae.temp, climai.temp, climai.HR)
+        g, puntos_condensacion = muro.cantidadcondensacion(climae.temp, climai.temp, climae.HR, climai.HR)
+        #g, puntos_evaporacion = muro.cantidadevaporacion(temp_ext, temp_int, HR_ext, HR_int, interfases=[2])
+        temperaturas = muro.temperaturas(climae.temp, climai.temp)
+        presiones = muro.presiones(climae.temp, climai.temp, climae.HR, climai.HR)
+        presiones_sat = muro.presionessat(climae.temp, climai.temp)
+        rotulos = muro.nombre_capas
+        rotulos_s = add_margin(muro.espesores_acumulados)
+        rotulos_ssat = muro.S_acumulados
+        colordict = colores_capas(muro.nombre_capas)
+        # ================== presiones y temperaturas =====================
+        axis1 = self.fig.add_subplot('211')
+        plot_prestemp(self.fig, axis1, presiones, presiones_sat, temperaturas, rotulos, rotulos_s, colordict)
+        # ============================ presiones ==========================
+        axis2 = self.fig.add_subplot('212')
+        plot_presiones(self.fig, axis2, presiones, presiones_sat, rotulos, rotulos_s, rotulos_ssat, puntos_condensacion, colordict)
+        self.set_size_request(w, h)
+    def save(self, filename='presionesplot.png'):
+        # guardar y mostrar gráfica
+        self.savefig(filename)
