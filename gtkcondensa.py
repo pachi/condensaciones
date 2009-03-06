@@ -9,7 +9,7 @@ import os
 import capas
 from datos_ejemplo import climae, climai, murocapas
 import comprobaciones
-from grafica import PTCanvas
+from ptcanvas import PTCanvas
 
 muro = capas.Cerramiento(murocapas, 0.04, 0.13)
 f_Rsi = comprobaciones.calculafRsi(muro.U)
