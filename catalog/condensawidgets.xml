@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glade-catalog name="condensaciones" supports="gtkbuilder" depends="gtk+" language="python">
+    <glade-widget-classes>
+        <glade-widget-class name="PTCanvas" generic-name="ptcanvas" title="Plot Canvas" parent="GtkDrawingArea">
+            <properties>
+                <property id="is-frobnicator" name="Is Frobnicator" ignore="True">
+                    <parameter-spec><type>GParamBoolean</type></parameter-spec>
+                    <tooltip>Whether this bar is a canvas frobnicator</tooltip>
+                </property>
+            </properties>
+        </glade-widget-class>
+        <glade-widget-class name="CCabecera" generic-name="ccabecera" title="Cabecera condensaciones" parent="GtkEventBox">
+            <properties>
+                <property id="is-frobnicator" name="Is Frobnicator" ignore="True">
+                    <parameter-spec><type>GParamBoolean</type></parameter-spec>
+                    <tooltip>Whether this bar is a eventbox frobnicator</tooltip>
+                </property>
+            </properties>
+        </glade-widget-class>
+        <glade-widget-class name="CPie" generic-name="cpie" title="Pie condensaciones" parent="GtkEventBox">
+            <properties>
+                <property id="is-frobnicator" name="Is Frobnicator" ignore="True">
+                    <parameter-spec><type>GParamBoolean</type></parameter-spec>
+                    <tooltip>Whether this bar is a eventbox frobnicator</tooltip>
+                </property>
+            </properties>
+        </glade-widget-class> 
+    </glade-widget-classes>
+    <glade-widget-group name="condensaciones" title="widgets para condensaciones">
+        <glade-widget-class-ref name="PTCanvas"/>
+        <glade-widget-class-ref name="Cabecera"/>
+    </glade-widget-group>
+</glade-catalog>
