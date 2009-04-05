@@ -1,100 +1,35 @@
-<?xml version="1.0" ?><!--Generated with glade3 3.4.3 on Tue Feb 17 14:10:49 2009 --><interface>
+<?xml version="1.0" ?><!--Generated with glade3 3.4.3 on Sun Apr 05 20:10:34 2009 --><interface>
+  
   <object class="GtkWindow" id="window1">
-    <signal handler="gtk_main_quit" name="delete_event"/>
     <child>
       <object class="GtkVBox" id="vbox1">
         <property name="visible">True</property>
+        <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
+        <property name="orientation">GTK_ORIENTATION_VERTICAL</property>
         <child>
-          <object class="GtkEventBox" id="eventbox1">
+          <object class="CCabecera" id="cabecera">
             <property name="visible">True</property>
             <child>
-              <object class="GtkVBox" id="vbox2">
-                <property name="visible">True</property>
-                <child>
-                  <object class="GtkLabel" id="titulo">
-                    <property name="visible">True</property>
-                    <property name="label" translatable="yes">Título</property>
-                    <property name="use_markup">True</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="subtitulo1">
-                    <property name="visible">True</property>
-                    <property name="label" translatable="yes">subtitulo1</property>
-                    <property name="use_markup">True</property>
-                    <property name="justify">GTK_JUSTIFY_CENTER</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="subtitulo2">
-                    <property name="visible">True</property>
-                    <property name="label" translatable="yes">subtitulo2</property>
-                    <property name="use_markup">True</property>
-                    <property name="justify">GTK_JUSTIFY_CENTER</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">False</property>
-                    <property name="position">2</property>
-                  </packing>
-                </child>
-              </object>
+              <placeholder/>
             </child>
           </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-          </packing>
         </child>
         <child>
-          <object class="GtkLabel" id="comodin">
+          <object class="PTCanvas" id="ptcanvas1">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">comodin</property>
           </object>
           <packing>
             <property name="position">1</property>
           </packing>
         </child>
         <child>
-          <object class="GtkVBox" id="vbox3">
+          <object class="CPie" id="pie">
             <property name="visible">True</property>
             <child>
-              <object class="GtkLabel" id="pie1">
-                <property name="visible">True</property>
-                <property name="label" translatable="yes">pie1</property>
-                <property name="use_markup">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel" id="pie2">
-                <property name="visible">True</property>
-                <property name="label" translatable="yes">pie2</property>
-                <property name="use_markup">True</property>
-                <property name="wrap">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">1</property>
-              </packing>
+              <placeholder/>
             </child>
           </object>
           <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
             <property name="position">2</property>
           </packing>
         </child>

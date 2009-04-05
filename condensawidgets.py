@@ -44,10 +44,38 @@ class CCabecera(gtk.EventBox):
         _text = u'T<sub>int</sub> = %.2f°C, HR<sub>int</sub> = %.1f%%, T<sub>ext</sub> = %.2f°C, HR<sub>ext</sub> = %.1f%%' % (self._tempi, self._HRi, self._tempe, self._HRe)
         self._subtitulo2.set_markup(_text)
 
+class CPie(gtk.VBox):
+    __gtype_name__ = 'CPie'
+    def __init__(self):
+        self._subtitulo1 = gtk.Label()
+        self._subtitulo2 = gtk.Label()
+        self._settitle1()
+        self._settitle2()
+        gtk.VBox.__init__(self)
+        self.pack_start(self._subtitulo1)
+        self.pack_start(self._subtitulo2)
+        self.show_all()
+    def _settitle1(self, gtotal=0.0):
+        self.gtotal = gtotal
+        #_text = u"Total: %.2f [g/m²mes]" % (2592000.0 * sum(g))
+        _text = u"Total: %.2f [g/m²mes]" % self.gtotal
+        self._subtitulo1.set_markup(_text)
+    def _settitle2(self, gcondensadas=None):
+        if gcondensadas is None:
+            self.gcondensadas = [0]
+        else:
+            self.gcondensadas = gcondensadas
+        _text = u"Cantidades condensadas: " + u", ".join(["%.2f" % (2592000.0 * x,) for x in self.gcondensadas])
+        self._subtitulo2.set_markup(_text)
+
 if __name__ == "__main__":
     w = gtk.Window()
+    v = gtk.VBox()
     c = CCabecera()
-    w.add(c)
+    p = CPie()
+    v.pack_start(c)
+    v.pack_start(p)
+    w.add(v)
     w.show_all()
     w.connect('destroy', gtk.main_quit)
     gtk.main()
