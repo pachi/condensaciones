@@ -181,3 +181,83 @@ class PTCanvas(FigureCanvas):
     def save(self, filename='presionesplot.png'):
         # guardar y mostrar gráfica
         self.savefig(filename)
+
+class CPTCanvas(FigureCanvas):
+    __gtype_name__ = 'CPTCanvas'
+
+    def __init__(self, fig=None):
+        if fig:
+            self.fig = fig
+        else:
+            self.fig = plt.figure()
+        FigureCanvas.__init__(self, self.fig)
+    def dibuja(self, nombre_grafica, muro, climae, climai, w=600, h=400):
+        """Representa Presiones de saturación vs. Presiones de vapor y temperaturas
+        en un diagrama capa/Presion de vapor y capa/Temp
+        """
+        temperaturas = muro.temperaturas(climae.temp, climai.temp)
+        presiones = muro.presiones(climae.temp, climai.temp, climae.HR, climai.HR)
+        presiones_sat = muro.presionessat(climae.temp, climai.temp)
+        rotulos = muro.nombre_capas
+        rotulos_s = add_margin(muro.espesores_acumulados)
+        rotulos_ssat = muro.S_acumulados
+        colordict = colores_capas(muro.nombre_capas)
+        # ================== presiones y temperaturas =====================
+        axis1 = self.fig.add_subplot('111')
+        plot_prestemp(self.fig, axis1, presiones, presiones_sat, temperaturas, rotulos, rotulos_s, colordict)
+        self.set_size_request(w, h)
+    def save(self, filename='presionestempplot.png'):
+        # guardar y mostrar gráfica
+        self.savefig(filename)
+
+class CPCanvas(FigureCanvas):
+    __gtype_name__ = 'CPCanvas'
+
+    def __init__(self, fig=None):
+        if fig:
+            self.fig = fig
+        else:
+            self.fig = plt.figure()
+        FigureCanvas.__init__(self, self.fig)
+    def dibuja(self, nombre_grafica, muro, climae, climai, w=600, h=400):
+        """Representa Presiones de saturación vs. Presiones de vapor en un
+        diagrama capa/Presion de vapor y capa/Temp
+        """
+        g, puntos_condensacion = muro.cantidadcondensacion(climae.temp, climai.temp, climae.HR, climai.HR)
+        #g, puntos_evaporacion = muro.cantidadevaporacion(temp_ext, temp_int, HR_ext, HR_int, interfases=[2])
+        temperaturas = muro.temperaturas(climae.temp, climai.temp)
+        presiones = muro.presiones(climae.temp, climai.temp, climae.HR, climai.HR)
+        presiones_sat = muro.presionessat(climae.temp, climai.temp)
+        rotulos = muro.nombre_capas
+        rotulos_s = add_margin(muro.espesores_acumulados)
+        rotulos_ssat = muro.S_acumulados
+        colordict = colores_capas(muro.nombre_capas)
+        # ============================ presiones ==========================
+        axis2 = self.fig.add_subplot('111')
+        plot_presiones(self.fig, axis2, presiones, presiones_sat, rotulos, rotulos_s, rotulos_ssat, puntos_condensacion, colordict)
+        self.set_size_request(w, h)
+    def save(self, filename='presionesplot.png'):
+        # guardar y mostrar gráfica
+        self.savefig(filename)
+
+if __name__ == "__main__":
+    import gtk
+    from capas import Cerramiento
+    from datos_ejemplo import climae, climai, murocapas
+
+    Rs_ext = 0.04
+    Rs_int = 0.13
+    muro = Cerramiento(murocapas, Rs_ext, Rs_int)
+
+    w = gtk.Window()
+    v = gtk.VBox()
+    pt = CPTCanvas()
+    p = CPCanvas()
+    pt.dibuja("Prueba PT", muro, climae, climai)
+    p.dibuja("Prueba p", muro, climae, climai)
+    v.pack_start(pt)
+    v.pack_start(p)
+    w.add(v)
+    w.show_all()
+    w.connect('destroy', gtk.main_quit)
+    gtk.main()
