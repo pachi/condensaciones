@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.3 on Tue Apr 14 01:35:22 2009 -->
+<!--Generated with glade3 3.4.3 on Tue Apr 14 01:44:32 2009 -->
 <glade-interface>
   <requires lib="condensaciones"/>
   <widget class="GtkWindow" id="window1">
@@ -18,19 +18,46 @@
           </widget>
         </child>
         <child>
-          <widget class="CPTCanvas" id="cptcanvas1">
+          <widget class="GtkNotebook" id="notebook1">
             <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <child>
+              <widget class="CPTCanvas" id="cptcanvas1">
+                <property name="visible">True</property>
+              </widget>
+            </child>
+            <child>
+              <widget class="GtkLabel" id="label1">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Presiones y temperaturas</property>
+              </widget>
+              <packing>
+                <property name="type">tab</property>
+                <property name="tab_fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="CPCanvas" id="cpcanvas1">
+                <property name="visible">True</property>
+              </widget>
+              <packing>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <widget class="GtkLabel" id="label2">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Presiones de vapor</property>
+              </widget>
+              <packing>
+                <property name="type">tab</property>
+                <property name="position">1</property>
+                <property name="tab_fill">False</property>
+              </packing>
+            </child>
           </widget>
           <packing>
             <property name="position">1</property>
-          </packing>
-        </child>
-        <child>
-          <widget class="CPCanvas" id="cpcanvas1">
-            <property name="visible">True</property>
-          </widget>
-          <packing>
-            <property name="position">2</property>
           </packing>
         </child>
         <child>
@@ -41,7 +68,7 @@
             </child>
           </widget>
           <packing>
-            <property name="position">3</property>
+            <property name="position">2</property>
           </packing>
         </child>
       </widget>

@@ -1,4 +1,4 @@
-<?xml version="1.0" ?><!--Generated with glade3 3.4.3 on Tue Apr 14 01:35:22 2009 --><interface>
+<?xml version="1.0" ?><!--Generated with glade3 3.4.3 on Tue Apr 14 01:44:32 2009 --><interface>
   
   <object class="GtkWindow" id="window1">
     <child>
@@ -15,19 +15,44 @@
           </object>
         </child>
         <child>
-          <object class="CPTCanvas" id="cptcanvas1">
+          <object class="GtkNotebook" id="notebook1">
             <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <child>
+              <object class="CPTCanvas" id="cptcanvas1">
+                <property name="visible">True</property>
+              </object>
+            </child>
+            <child type="tab">
+              <object class="GtkLabel" id="label1">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Presiones y temperaturas</property>
+              </object>
+              <packing>
+                
+                <property name="tab_fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <object class="CPCanvas" id="cpcanvas1">
+                <property name="visible">True</property>
+              </object>
+              
+            </child>
+            <child type="tab">
+              <object class="GtkLabel" id="label2">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Presiones de vapor</property>
+              </object>
+              <packing>
+                
+                <property name="position">1</property>
+                <property name="tab_fill">False</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="position">1</property>
-          </packing>
-        </child>
-        <child>
-          <object class="CPCanvas" id="cpcanvas1">
-            <property name="visible">True</property>
-          </object>
-          <packing>
-            <property name="position">2</property>
           </packing>
         </child>
         <child>
@@ -38,7 +63,7 @@
             </child>
           </object>
           <packing>
-            <property name="position">3</property>
+            <property name="position">2</property>
           </packing>
         </child>
       </object>
