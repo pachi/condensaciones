@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.4.3 on Sun Apr 05 20:10:34 2009 -->
+<!--Generated with glade3 3.4.3 on Tue Apr 14 01:35:22 2009 -->
 <glade-interface>
   <requires lib="condensaciones"/>
   <widget class="GtkWindow" id="window1">
@@ -18,11 +18,19 @@
           </widget>
         </child>
         <child>
-          <widget class="PTCanvas" id="ptcanvas1">
+          <widget class="CPTCanvas" id="cptcanvas1">
             <property name="visible">True</property>
           </widget>
           <packing>
             <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="CPCanvas" id="cpcanvas1">
+            <property name="visible">True</property>
+          </widget>
+          <packing>
+            <property name="position">2</property>
           </packing>
         </child>
         <child>
@@ -33,7 +41,7 @@
             </child>
           </widget>
           <packing>
-            <property name="position">2</property>
+            <property name="position">3</property>
           </packing>
         </child>
       </widget>

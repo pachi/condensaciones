@@ -10,7 +10,7 @@ import capas
 from datos_ejemplo import climae, climai, murocapas
 import comprobaciones
 from condensawidgets import CCabecera, CPie
-from ptcanvas import PTCanvas
+from ptcanvas import CPTCanvas, CPCanvas
 
 muro = capas.Cerramiento(murocapas, 0.04, 0.13)
 fRsi = comprobaciones.calculafRsi(muro.U)
@@ -24,7 +24,8 @@ builder.add_from_file(os.path.join(os.getcwd(), 'condensa.ui'))
 builder.connect_signals({ "on_window_destroy" : gtk.main_quit })
 w = builder.get_object('window1')
 cabecera = builder.get_object('cabecera')
-grafico = builder.get_object('ptcanvas1')
+grafico1 = builder.get_object('cptcanvas1')
+grafico2 = builder.get_object('cpcanvas1')
 pie = builder.get_object('pie')
 
 cabecera._settitle("Mi cerramiento")
@@ -32,7 +33,8 @@ cabecera._setsubtitle1(muro.U, fRsi, fRsimin)
 cabecera._setsubtitle2(climai.temp, climai.HR, climae.temp, climae.HR)
 cabecera.ok = ccheck
 
-grafico.dibuja("Cerramiento tipo", muro, climae, climai)
+grafico1.dibuja("Cerramiento tipo", muro, climae, climai)
+grafico2.dibuja("Cerramiento tipo", muro, climae, climai)
 
 gtotal = 2592000.0 * sum(g)
 pie._settitle1(gtotal)
