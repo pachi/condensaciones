@@ -15,14 +15,12 @@ class Cerramiento(object):
 
     @property
     def nombre_capas(self):
-        """Nombre de las capas
-        """
+        "Nombre de las capas"
         return [nombre for nombre, e in self.capas]
 
     @property
     def espesores(self):
-        """Espesores de las capas
-        """
+        "Espesores de las capas [m]"
         return [e for nombre, e in self.capas]
 
     @property
@@ -31,8 +29,7 @@ class Cerramiento(object):
 
     @property
     def R(self):
-        """Resistencia térmica de las capas
-        """
+        "Resistencia térmica de las capas [m²K/W]"
         def resist_capa(capa, e=None):
             tipo = datos[nombre]['TYPE']
             if tipo == 'PROPERTIES':
@@ -45,34 +42,33 @@ class Cerramiento(object):
 
     @property
     def S(self):
-        """Espesor de aire equivalente de las capas
-        """
+        "Espesor de aire equivalente de las capas [m]"
         return [e * float(datos[nombre]['VAPOUR-DIFFUSIVITY-FACTOR']) for nombre, e in self.capas]
 
     @property
     def S_acumulados(self):
+        "Espesor de aire equivalente acumulado en cada capa del cerramiento [m]"
         return [0.0] + [reduce(operator.add, self.S[:i]) for i in range(1,len(self.S)+1)]
 
     @property
     def S_total(self):
-        """Resistencia térmica total del cerramiento
-        """
+        "Espesor de aire equivalente de todo el cerramiento [m]"
         return sum(self.S)
 
     @property
     def R_total(self):
-        """Resistencia térmica total del cerramiento
+        """Resistencia térmica total del cerramiento [m²K/W]
         """
         return sum(self.R)
 
     @property
     def U(self):
-        """Transmitancia térmica del cerramiento
+        """Transmitancia térmica del cerramiento [W/m²K]
         """
         return 1.0 / self.R_total
 
     def temperaturas(self, tempext, tempint):
-        """Devuelve lista de temperaturas:
+        """Devuelve lista de temperaturas [ºC]:
         temperatura exterior, temperatura superficial exterior,
         temperaturas intersticiales, temperatura superficial interior
         y temperatura interior.
@@ -86,7 +82,7 @@ class Cerramiento(object):
         return temperaturas
 
     def presiones(self, temp_ext, temp_int, HR_ext, HR_int):
-        """Devuelve una lista de presiones de vapor
+        """Devuelve una lista de presiones de vapor [Pa]
         presión de vapor al exterior, presiones de vapor intermedias y presión de vapor interior.
         """
         pres_ext = psicrom.pvapor(temp_ext, HR_ext)
@@ -101,13 +97,14 @@ class Cerramiento(object):
         return presiones_vapor
 
     def presionessat(self, tempext, tempint):
+        "Presiones de saturación en cada capa [Pa]"
         temperaturas = self.temperaturas(tempext, tempint)
         return [psicrom.psat(temperatura) for temperatura in temperaturas]
 
     def cantidadcondensacion(self, temp_ext, temp_int, HR_ext, HR_int):
         """Calcular cantidad de condensación y coordenadas (S, presión de vapor)
         de los planos de condensación.
-        Devuelve g, puntos_condensacion
+        Devuelve g [g/m²s], puntos_condensacion
         """
         presiones = self.presiones(temp_ext, temp_int, HR_ext, HR_int)
         presiones_sat = self.presionessat(temp_ext, temp_int)
@@ -142,7 +139,7 @@ class Cerramiento(object):
 
     def cantidadevaporacion(self, temp_ext, temp_int, HR_ext, HR_int, interfases):
         """Calcular cantidad de evaporacion devolver coordenadas (S, presión de vapor)
-        Devuelve g, puntos_evaporacion
+        Devuelve g [g/m²s], puntos_evaporacion
         """
         presiones = self.presiones(temp_ext, temp_int, HR_ext, HR_int)
         presiones_sat = self.presionessat(temp_ext, temp_int)
