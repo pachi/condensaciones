@@ -19,3 +19,6 @@ fichas/*
 *.dvi
 *$py.class
 nbproject/*
+
+syntax: regexp
+^TODO\.txt$
