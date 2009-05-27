@@ -68,12 +68,31 @@ class CPie(gtk.VBox):
         _text = u"Cantidades condensadas: " + u", ".join(["%.2f" % (2592000.0 * x,) for x in self.gcondensadas])
         self._subtitulo2.set_markup(_text)
 
+class CTextView(gtk.TextView):
+    "Control para mostrar datos de Cerramientos en formato Texto"
+    __gtype_name__ = 'CTextView'
+    def __init__(self):
+        gtk.TextView.__init__(self)
+        self.buffer = self.get_buffer()
+    def update(self, muro):
+        "Mostrar texto"
+        text = u""
+        _capatxt = u"%s:\n\t%.3f [m]\n\tR=%.3f [m²K/W]\n\tS=%.3f [m]\n"
+        _murotxt = u"\nR_total: %.3f [m²K/W]\nS_total=%.3f [m]\nU = %.3f [W/m²K]"
+        for nombre, e, R, S in zip(muro.nombre_capas, muro.espesores, muro.R, muro.S):
+            #el archivo de datos de ejemplo está en formato latin1
+            text += _capatxt % (nombre.decode('iso-8859-1'), e, R, S)
+        text += _murotxt % (muro.R_total, muro.S_total, muro.U)
+        self.buffer.set_text(text)
+
 if __name__ == "__main__":
     w = gtk.Window()
     v = gtk.VBox()
     c = CCabecera()
+    t = CTextView()
     p = CPie()
     v.pack_start(c)
+    v.pack_start(t)
     v.pack_start(p)
     w.add(v)
     w.show_all()

@@ -27,11 +27,14 @@
         </glade-widget-class>
         <glade-widget-class name="CPie" generic-name="cpie" title="Pie condensaciones" parent="GtkEventBox">
         </glade-widget-class>
+        <glade-widget-class name="CTextView" generic-name="ctextview" title="TextView de Muros" parent="GtkTextView">
+        </glade-widget-class>
     </glade-widget-classes>
     <glade-widget-group name="condensaciones" title="widgets para condensaciones">
         <glade-widget-class-ref name="CCabecera"/>
         <glade-widget-class-ref name="CPTCanvas"/>
         <glade-widget-class-ref name="CPCanvas"/>
         <glade-widget-class-ref name="CPie"/>
+        <glade-widget-class-ref name="CTextView"/>
     </glade-widget-group>
 </glade-catalog>

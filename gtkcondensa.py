@@ -26,6 +26,7 @@ w = builder.get_object('window1')
 cabecera = builder.get_object('cabecera')
 grafico1 = builder.get_object('cptcanvas1')
 grafico2 = builder.get_object('cpcanvas1')
+textview = builder.get_object('ctextview1')
 pie = builder.get_object('pie')
 
 cabecera._settitle("Mi cerramiento")
@@ -35,6 +36,7 @@ cabecera.ok = ccheck
 
 grafico1.dibuja("Cerramiento tipo", muro, climae, climai)
 grafico2.dibuja("Cerramiento tipo", muro, climae, climai)
+textview.update(muro)
 
 gtotal = 2592000.0 * sum(g)
 pie._settitle1(gtotal)
