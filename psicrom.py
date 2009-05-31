@@ -146,7 +146,7 @@ if __name__ == "__main__":
     # Datos constructivos
     Rs_ext = 0.04
     Rs_int = 0.13
-    muro = Cerramiento(murocapas, Rs_ext, Rs_int)
+    muro = Cerramiento("Cerramiento tipo", murocapas, Rs_ext, Rs_int)
     # datos calculados
     temp_sint = 19.0330684375
     G = 0.55 #higrometría 3

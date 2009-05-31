@@ -8,7 +8,8 @@ import dbutils
 materiales = dbutils.db2datos(['db/PCatalogo.bdc', 'db/BDCatalogo.bdc', 'db/Catalogo_URSA.BDC'])
 
 class Cerramiento(object):
-    def __init__(self, capas, Rse=None, Rsi=None):
+    def __init__(self, nombre, capas, Rse=None, Rsi=None):
+        self.nombre = nombre
         self.capas = capas
         self.Rse = Rse
         self.Rsi = Rsi
@@ -165,7 +166,7 @@ if __name__ == "__main__":
 
     Rs_ext = 0.04
     Rs_int = 0.13
-    muro = Cerramiento(murocapas, Rs_ext, Rs_int)
+    muro = Cerramiento("Cerramiento tipo", murocapas, Rs_ext, Rs_int)
 
     temperaturas = muro.temperaturas(climae.temp, climai.temp)
     presiones_sat = muro.presionessat(climae.temp, climai.temp)
@@ -180,6 +181,7 @@ if __name__ == "__main__":
     g, puntos_evaporacion = muro.cantidadevaporacion(climae.temp, climai.temp, climae.HR, climai.HR, interfases=[2])
     cantidad_evaporada = sum(g)
 
+    print u"Cerramiento:\n\t", muro.nombre
     print u"Nombre capas:\n\t", "\n\t".join(muro.nombre_capas)
     print
     print u"Espesores:\n\t", stringify(muro.espesores, 2)

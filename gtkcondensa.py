@@ -12,7 +12,7 @@ import comprobaciones
 from condensawidgets import CCabecera, CPie
 from ptcanvas import CPTCanvas, CPCanvas
 
-muro = capas.Cerramiento(murocapas, 0.04, 0.13)
+muro = capas.Cerramiento("Cerramiento tipo", murocapas, 0.04, 0.13)
 fRsi = comprobaciones.calculafRsi(muro.U)
 fRsimin = comprobaciones.calculafRsimin(climae.temp, climai.temp, climai.HR)
 g, puntos_condensacion = muro.cantidadcondensacion(climae.temp, climai.temp, climae.HR, climai.HR)
@@ -29,7 +29,7 @@ grafico2 = builder.get_object('cpcanvas1')
 textview = builder.get_object('ctextview1')
 pie = builder.get_object('pie')
 
-cabecera._settitle("Mi cerramiento")
+cabecera._settitle(muro.nombre)
 cabecera._setsubtitle1(muro.U, fRsi, fRsimin)
 cabecera._setsubtitle2(climai.temp, climai.HR, climae.temp, climae.HR)
 cabecera.ok = ccheck

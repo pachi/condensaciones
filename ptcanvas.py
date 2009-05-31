@@ -211,7 +211,7 @@ if __name__ == "__main__":
 
     Rs_ext = 0.04
     Rs_int = 0.13
-    muro = Cerramiento(murocapas, Rs_ext, Rs_int)
+    muro = Cerramiento("Cerramiento tipo", murocapas, Rs_ext, Rs_int)
 
     w = gtk.Window()
     v = gtk.VBox()

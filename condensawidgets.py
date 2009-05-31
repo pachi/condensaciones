@@ -77,6 +77,7 @@ class CTextView(gtk.TextView):
     def update(self, muro):
         "Mostrar texto"
         text = u""
+        text += "%s\n" % muro.nombre
         _capatxt = u"%s:\n\t%.3f [m]\n\tR=%.3f [m²K/W]\n\tS=%.3f [m]\n"
         _murotxt = u"\nR_total: %.3f [m²K/W]\nS_total=%.3f [m]\nU = %.3f [W/m²K]"
         for nombre, e, R, S in zip(muro.nombre_capas, muro.espesores, muro.R, muro.S):

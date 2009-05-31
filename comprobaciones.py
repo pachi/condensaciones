@@ -66,7 +66,7 @@ if __name__ == "__main__":
     import grafica
     from datos_ejemplo import climae, climai, murocapas
 
-    muro = capas.Cerramiento(murocapas, 0.04, 0.13)
+    muro = capas.Cerramiento("Cerramiento tipo", murocapas, 0.04, 0.13)
     f_Rsi = calculafRsi(muro.U)
     f_Rsimin = calculafRsimin(climae.temp, climai.temp, climai.HR)
     c_sup = compruebacsuperificiales(muro, climae.temp, climai.temp, climai.HR)
