@@ -5,7 +5,7 @@ import operator
 import psicrom
 import dbutils
 
-datos = dbutils.db2datos(['db/PCatalogo.bdc', 'db/BDCatalogo.bdc', 'db/Catalogo_URSA.BDC'])
+materiales = dbutils.db2datos(['db/PCatalogo.bdc', 'db/BDCatalogo.bdc', 'db/Catalogo_URSA.BDC'])
 
 class Cerramiento(object):
     def __init__(self, capas, Rse=None, Rsi=None):
@@ -31,11 +31,11 @@ class Cerramiento(object):
     def R(self):
         "Resistencia térmica de las capas [m²K/W]"
         def resist_capa(capa, e=None):
-            tipo = datos[nombre]['TYPE']
+            tipo = materiales[nombre]['TYPE']
             if tipo == 'PROPERTIES':
-                return e / float(datos[nombre]['CONDUCTIVITY'])
+                return e / float(materiales[nombre]['CONDUCTIVITY'])
             elif tipo == 'RESISTANCE':
-                return float(datos[nombre]['RESISTANCE'])
+                return float(materiales[nombre]['RESISTANCE'])
             else:
                 raise
         return [self.Rse] + [resist_capa(nombre, e) for nombre, e in self.capas] + [self.Rsi]
@@ -43,7 +43,7 @@ class Cerramiento(object):
     @property
     def S(self):
         "Espesor de aire equivalente de las capas [m]"
-        return [e * float(datos[nombre]['VAPOUR-DIFFUSIVITY-FACTOR']) for nombre, e in self.capas]
+        return [e * float(materiales[nombre]['VAPOUR-DIFFUSIVITY-FACTOR']) for nombre, e in self.capas]
 
     @property
     def S_acumulados(self):
