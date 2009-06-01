@@ -2,6 +2,7 @@
 #encoding: iso-8859-15
 
 import gtk
+import pango
 
 class CCabecera(gtk.EventBox):
     __gtype_name__ = 'CCabecera'
@@ -74,17 +75,32 @@ class CTextView(gtk.TextView):
     def __init__(self):
         gtk.TextView.__init__(self)
         self.buffer = self.get_buffer()
+        self.set_wrap_mode(gtk.WRAP_WORD)
+        self.init_tags()
+    def init_tags(self):
+        self.buffer.create_tag("titulo", foreground='blue', scale=pango.SCALE_X_LARGE)
+        tag = self.buffer.create_tag("capa", weight=pango.WEIGHT_BOLD)
+        self.buffer.create_tag("datoscapa", style=pango.STYLE_ITALIC, indent=30)
+        self.buffer.create_tag("resultados", weight=pango.WEIGHT_BOLD, scale=pango.SCALE_X_LARGE)
+        pass
     def update(self, muro):
         "Mostrar texto"
-        text = u""
-        text += "%s\n" % muro.nombre
-        _capatxt = u"%s:\n\t%.3f [m]\n\tR=%.3f [m²K/W]\n\tS=%.3f [m]\n"
+        text = "%s\n\n" % muro.nombre
+        iter = self.buffer.get_start_iter()
+        self.buffer.insert_with_tags_by_name(iter, text, 'titulo')
         _murotxt = u"\nR_total: %.3f [m²K/W]\nS_total=%.3f [m]\nU = %.3f [W/m²K]"
         for nombre, e, R, S in zip(muro.nombre_capas, muro.espesores, muro.R, muro.S):
             #el archivo de datos de ejemplo está en formato latin1
-            text += _capatxt % (nombre.decode('iso-8859-1'), e, R, S)
-        text += _murotxt % (muro.R_total, muro.S_total, muro.U)
-        self.buffer.set_text(text)
+            text = u"%s:\n" % nombre.decode('iso-8859-1')
+            iter = self.buffer.get_end_iter()
+            self.buffer.insert_with_tags_by_name(iter, text, 'capa')
+            text = u"%.3f [m]\nR=%.3f [m²K/W]\nS=%.3f [m]\n" % (e, R, S)
+            iter = self.buffer.get_end_iter()
+            self.buffer.insert_with_tags_by_name(iter, text, 'datoscapa')
+        text = _murotxt % (muro.R_total, muro.S_total, muro.U)
+        iter = self.buffer.get_end_iter()
+        self.buffer.insert_with_tags_by_name(iter, text, 'resultados')
+        #self.buffer.set_text(text)
 
 if __name__ == "__main__":
     w = gtk.Window()
@@ -97,5 +113,6 @@ if __name__ == "__main__":
     v.pack_start(p)
     w.add(v)
     w.show_all()
+    #t.update(muro)
     w.connect('destroy', gtk.main_quit)
     gtk.main()

@@ -24,10 +24,18 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <child>
-              <object class="CTextView" id="ctextview1">
+              <object class="GtkScrolledWindow" id="scrolledwindow1">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="editable">False</property>
+                <property name="hscrollbar_policy">automatic</property>
+                <property name="vscrollbar_policy">automatic</property>
+                <child>
+                  <object class="CTextView" id="ctextview1">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="editable">False</property>
+                  </object>
+                </child>
               </object>
             </child>
             <child type="tab">
