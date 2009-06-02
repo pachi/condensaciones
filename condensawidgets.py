@@ -69,20 +69,23 @@ class CPie(gtk.VBox):
         _text = u"Cantidades condensadas: " + u", ".join(["%.2f" % (2592000.0 * x,) for x in self.gcondensadas])
         self._subtitulo2.set_markup(_text)
 
-class CTextView(gtk.TextView):
+class CTextView(gtk.ScrolledWindow):
     "Control para mostrar datos de Cerramientos en formato Texto"
     __gtype_name__ = 'CTextView'
     def __init__(self):
-        gtk.TextView.__init__(self)
-        self.buffer = self.get_buffer()
-        self.set_wrap_mode(gtk.WRAP_WORD)
+        gtk.ScrolledWindow.__init__(self)
+        self.tv = gtk.TextView()
+        self.tv.set_wrap_mode(gtk.WRAP_WORD)
+        self.buffer = self.tv.get_buffer()
+        self.add(self.tv)
         self.init_tags()
+
     def init_tags(self):
-        self.buffer.create_tag("titulo", foreground='blue', scale=pango.SCALE_X_LARGE)
+        self.buffer.create_tag("titulo", weight=pango.WEIGHT_BOLD, scale=pango.SCALE_X_LARGE)
         tag = self.buffer.create_tag("capa", weight=pango.WEIGHT_BOLD)
         self.buffer.create_tag("datoscapa", style=pango.STYLE_ITALIC, indent=30)
-        self.buffer.create_tag("resultados", weight=pango.WEIGHT_BOLD, scale=pango.SCALE_X_LARGE)
-        pass
+        self.buffer.create_tag("resultados", foreground='blue', scale=pango.SCALE_LARGE)
+
     def update(self, muro):
         "Mostrar texto"
         text = "%s\n\n" % muro.nombre
@@ -100,7 +103,8 @@ class CTextView(gtk.TextView):
         text = _murotxt % (muro.R_total, muro.S_total, muro.U)
         iter = self.buffer.get_end_iter()
         self.buffer.insert_with_tags_by_name(iter, text, 'resultados')
-        #self.buffer.set_text(text)
+        while gtk.events_pending():
+            gtk.main_iteration()
 
 if __name__ == "__main__":
     w = gtk.Window()
