@@ -18,10 +18,12 @@ fRsimin = comprobaciones.calculafRsimin(climae.temp, climai.temp, climai.HR)
 g, puntos_condensacion = muro.cantidadcondensacion(climae.temp, climai.temp, climae.HR, climai.HR)
 #g, puntos_evaporacion = muro.cantidadevaporacion(temp_ext, temp_int, HR_ext, HR_int, interfases=[2])
 ccheck = comprobaciones.compruebacondensaciones(muro, climae.temp, climai.temp, climae.HR, climai.HR)
+def on_botonmuro_clicked(self):
+    print "click"
 
 builder = gtk.Builder()
 builder.add_from_file(os.path.join(os.getcwd(), 'condensa.ui'))
-builder.connect_signals({ "on_window_destroy" : gtk.main_quit })
+builder.connect_signals({ "on_window_destroy" : gtk.main_quit, "on_botonmuro_clicked": on_botonmuro_clicked})
 w = builder.get_object('window1')
 cabecera = builder.get_object('cabecera')
 grafico1 = builder.get_object('cptcanvas1')
