@@ -155,7 +155,7 @@ class CPTCanvas(FigureCanvas):
         else:
             self.fig = plt.figure()
         FigureCanvas.__init__(self, self.fig)
-    def dibuja(self, nombre_grafica, muro, climae, climai, w=600, h=400):
+    def dibuja(self, muro, climae, climai, w=600, h=400):
         """Representa Presiones de saturación vs. Presiones de vapor y temperaturas
         en un diagrama capa/Presion de vapor y capa/Temp
         """
@@ -183,7 +183,7 @@ class CPCanvas(FigureCanvas):
         else:
             self.fig = plt.figure()
         FigureCanvas.__init__(self, self.fig)
-    def dibuja(self, nombre_grafica, muro, climae, climai, w=600, h=400):
+    def dibuja(self, muro, climae, climai, w=600, h=400):
         """Representa Presiones de saturación vs. Presiones de vapor en un
         diagrama capa/Presion de vapor y capa/Temp
         """
@@ -217,8 +217,8 @@ if __name__ == "__main__":
     v = gtk.VBox()
     pt = CPTCanvas()
     p = CPCanvas()
-    pt.dibuja("Prueba PT", muro, climae, climai)
-    p.dibuja("Prueba p", muro, climae, climai)
+    pt.dibuja(muro, climae, climai)
+    p.dibuja(muro, climae, climai)
     v.pack_start(pt)
     v.pack_start(p)
     w.add(v)
