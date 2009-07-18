@@ -12,37 +12,49 @@ import comprobaciones
 from condensawidgets import CCabecera, CPie
 from ptcanvas import CPTCanvas, CPCanvas
 
+class Gtkcondensa:
+    def __init__(self, muro, climae, climai):
+        self.muro = muro
+        self.climae = climae
+        self.climai = climai
+        builder = gtk.Builder()
+        builder.add_from_file(os.path.join(os.getcwd(), 'condensa.ui'))
+        self.w = builder.get_object('window1')
+        self.cabecera = builder.get_object('cabecera')
+        self.grafico1 = builder.get_object('cptcanvas1')
+        self.grafico2 = builder.get_object('cpcanvas1')
+        self.textview = builder.get_object('ctextview1')
+        self.pie = builder.get_object('pie')
+        self.dialog = builder.get_object('dialogomuro')
+        smap = {"on_window_destroy" : gtk.main_quit,
+                "on_botonmuro_clicked": self.on_botonmuro_clicked}
+        builder.connect_signals(smap)
+        self.actualiza()
+        
+    def main(self):
+        self.w.show_all()
+        gtk.main()
+        
+    def actualiza(self):
+        fRsi = comprobaciones.calculafRsi(self.muro.U)
+        fRsimin = comprobaciones.calculafRsimin(self.climae.temp, self.climai.temp, self.climai.HR)
+        g, puntos_condensacion = self.muro.cantidadcondensacion(self.climae.temp, self.climai.temp, self.climae.HR, self.climai.HR)
+        #g, puntos_evaporacion = muro.cantidadevaporacion(temp_ext, temp_int, HR_ext, HR_int, interfases=[2])
+        ccheck = comprobaciones.compruebacondensaciones(self.muro, self.climae.temp, self.climai.temp, self.climae.HR, self.climai.HR)
+        self.cabecera._settitle(self.muro.nombre)
+        self.cabecera._setsubtitle1(self.muro.U, fRsi, fRsimin)
+        self.cabecera._setsubtitle2(self.climai.temp, self.climai.HR, self.climae.temp, self.climae.HR)
+        self.cabecera.ok = ccheck
+        self.grafico1.dibuja("Cerramiento tipo", self.muro, self.climae, self.climai)
+        self.grafico2.dibuja("Cerramiento tipo", self.muro, self.climae, self.climai)
+        self.textview.update(self.muro)
+        gtotal = 2592000.0 * sum(g)
+        self.pie._settitle1(gtotal)
+        self.pie._settitle2(g)
+        
+    def on_botonmuro_clicked(self, widget):
+        self.dialog.run()
+
 muro = capas.Cerramiento("Cerramiento tipo", murocapas, 0.04, 0.13)
-fRsi = comprobaciones.calculafRsi(muro.U)
-fRsimin = comprobaciones.calculafRsimin(climae.temp, climai.temp, climai.HR)
-g, puntos_condensacion = muro.cantidadcondensacion(climae.temp, climai.temp, climae.HR, climai.HR)
-#g, puntos_evaporacion = muro.cantidadevaporacion(temp_ext, temp_int, HR_ext, HR_int, interfases=[2])
-ccheck = comprobaciones.compruebacondensaciones(muro, climae.temp, climai.temp, climae.HR, climai.HR)
-def on_botonmuro_clicked(self):
-    print "click"
-
-builder = gtk.Builder()
-builder.add_from_file(os.path.join(os.getcwd(), 'condensa.ui'))
-builder.connect_signals({ "on_window_destroy" : gtk.main_quit, "on_botonmuro_clicked": on_botonmuro_clicked})
-w = builder.get_object('window1')
-cabecera = builder.get_object('cabecera')
-grafico1 = builder.get_object('cptcanvas1')
-grafico2 = builder.get_object('cpcanvas1')
-textview = builder.get_object('ctextview1')
-pie = builder.get_object('pie')
-
-cabecera._settitle(muro.nombre)
-cabecera._setsubtitle1(muro.U, fRsi, fRsimin)
-cabecera._setsubtitle2(climai.temp, climai.HR, climae.temp, climae.HR)
-cabecera.ok = ccheck
-
-grafico1.dibuja("Cerramiento tipo", muro, climae, climai)
-grafico2.dibuja("Cerramiento tipo", muro, climae, climai)
-textview.update(muro)
-
-gtotal = 2592000.0 * sum(g)
-pie._settitle1(gtotal)
-pie._settitle2(g)
-
-w.show_all()
-gtk.main()
+app = Gtkcondensa(muro, climae, climai)
+app.main()
