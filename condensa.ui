@@ -130,10 +130,28 @@
           </packing>
         </child>
         <child>
-          <object class="CPie" id="pie">
+          <object class="GtkVBox" id="pie">
             <property name="visible">True</property>
+            <property name="orientation">vertical</property>
             <child>
-              <placeholder/>
+              <object class="GtkLabel" id="pie1">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">condensaci&#xF3;n total</property>
+                <property name="use_markup">True</property>
+              </object>
+              <packing>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="pie2">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">puntos de condensaci&#xF3;n</property>
+                <property name="use_markup">True</property>
+              </object>
+              <packing>
+                <property name="position">1</property>
+              </packing>
             </child>
           </object>
           <packing>

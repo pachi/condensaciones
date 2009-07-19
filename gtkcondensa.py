@@ -6,7 +6,7 @@ import os
 import capas
 from datos_ejemplo import climae, climai, murocapas
 import comprobaciones
-from condensawidgets import CCabecera, CPie
+from condensawidgets import CCabecera
 from ptcanvas import CPTCanvas, CPCanvas
 
 class GtkCondensa(object):
@@ -23,7 +23,8 @@ class GtkCondensa(object):
         self.grafico1 = builder.get_object('cptcanvas1')
         self.grafico2 = builder.get_object('cpcanvas1')
         self.textview = builder.get_object('ctextview1')
-        self.pie = builder.get_object('pie')
+        self.pie1 = builder.get_object('pie1')
+        self.pie2 = builder.get_object('pie2')
         # Controles de diálogo de selección de muros
         self.dlg = builder.get_object('dialogomuro')
         self.tvmuro = builder.get_object('tvmuro')
@@ -41,24 +42,40 @@ class GtkCondensa(object):
     def main(self):
         self.w.show_all()
         gtk.main()
-        
+
     def actualiza(self):
+        self.actualizacabecera()
+        self.actualizagraficas()
+        self.actualizatexto()
+        self.actualizapie()
+
+    def actualizacabecera(self):
         fRsi = comprobaciones.calculafRsi(self.muro.U)
         fRsimin = comprobaciones.calculafRsimin(self.climae.temp, self.climai.temp, self.climai.HR)
-        g, puntos_condensacion = self.muro.cantidadcondensacion(self.climae.temp, self.climai.temp, self.climae.HR, self.climai.HR)
-        #g, puntos_evaporacion = self.muro.cantidadevaporacion(temp_ext, temp_int, HR_ext, HR_int, interfases=[2])
         ccheck = comprobaciones.compruebacondensaciones(self.muro, self.climae.temp, self.climai.temp, self.climae.HR, self.climai.HR)
         self.cabecera.titulo(self.muro.nombre)
         self.cabecera.texto1(self.muro.U, fRsi, fRsimin)
         self.cabecera.texto2(self.climai.temp, self.climai.HR, self.climae.temp, self.climae.HR)
         self.cabecera.ok = ccheck
+
+    def actualizagraficas(self):
         self.grafico1.dibuja(self.muro, self.climae, self.climai)
         self.grafico2.dibuja(self.muro, self.climae, self.climai)
+    
+    def actualizatexto(self):
         self.textview.update(self.muro)
+
+    def actualizapie(self):
+        g, puntos_condensacion = self.muro.cantidadcondensacion(self.climae.temp, self.climai.temp, self.climae.HR, self.climai.HR)
+        #g, puntos_evaporacion = self.muro.cantidadevaporacion(temp_ext, temp_int, HR_ext, HR_int, interfases=[2])
         gtotal = 2592000.0 * sum(g)
-        self.pie.texto1(gtotal)
-        self.pie.texto2(g)
-        
+        _text = u"Total: %.2f [g/m²mes]" % gtotal
+        self.pie1.set_markup(_text)
+        if g is None:
+            g = 0.
+        _text = u"Cantidades condensadas: " + u", ".join(["%.2f" % (2592000.0 * x,) for x in g])
+        self.pie2.set_markup(_text)
+
     # -- Retrollamadas ventana principal --
     def on_botonmuro_clicked(self, widget):
         #TODO: limpiar lista de datos y cargar datos de biblioteca

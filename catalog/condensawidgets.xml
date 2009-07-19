@@ -25,8 +25,6 @@
                 <signal id="frobnicate" since="1.0"/>
             </signals>
         </glade-widget-class>
-        <glade-widget-class name="CPie" generic-name="cpie" title="Pie condensaciones" parent="GtkEventBox">
-        </glade-widget-class>
         <glade-widget-class name="CTextView" generic-name="ctextview" title="TextView de Muros" parent="GtkScrolledWindow">
         </glade-widget-class>
     </glade-widget-classes>
@@ -34,7 +32,6 @@
         <glade-widget-class-ref name="CCabecera"/>
         <glade-widget-class-ref name="CPTCanvas"/>
         <glade-widget-class-ref name="CPCanvas"/>
-        <glade-widget-class-ref name="CPie"/>
         <glade-widget-class-ref name="CTextView"/>
     </glade-widget-group>
 </glade-catalog>

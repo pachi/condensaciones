@@ -47,34 +47,11 @@ class CCabecera(gtk.EventBox):
         _text = u'T<sub>int</sub> = %.2f°C, HR<sub>int</sub> = %.1f%%, T<sub>ext</sub> = %.2f°C, HR<sub>ext</sub> = %.1f%%' % (self._tempi, self._HRi, self._tempe, self._HRe)
         self._subtitulo2.set_markup(_text)
 
-class CPie(gtk.VBox):
-    __gtype_name__ = 'CPie'
-    
-    def __init__(self):
-        gtk.VBox.__init__(self)
-        self._subtitulo1 = gtk.Label()
-        self._subtitulo2 = gtk.Label()
-        self.pack_start(self._subtitulo1)
-        self.pack_start(self._subtitulo2)
-        self.show_all()
-
-    def texto1(self, gtotal=0.0):
-        self.gtotal = gtotal
-        #_text = u"Total: %.2f [g/m²mes]" % (2592000.0 * sum(g))
-        _text = u"Total: %.2f [g/m²mes]" % self.gtotal
-        self._subtitulo1.set_markup(_text)
-    
-    def texto2(self, gcondensadas=None):
-        if gcondensadas is None:
-            self.gcondensadas = [0]
-        else:
-            self.gcondensadas = gcondensadas
-        _text = u"Cantidades condensadas: " + u", ".join(["%.2f" % (2592000.0 * x,) for x in self.gcondensadas])
-        self._subtitulo2.set_markup(_text)
-
 class CTextView(gtk.ScrolledWindow):
     "Control para mostrar datos de Cerramientos en formato Texto"
     __gtype_name__ = 'CTextView'
+    #TODO: Convertir a scrolledwindow cuando glade3 soporte buffer de texto con
+    #textags en la textagtable (ahora permite crear tablas pero no añadir tags
     def __init__(self):
         gtk.ScrolledWindow.__init__(self)
         self.tv = gtk.TextView()
@@ -117,12 +94,8 @@ if __name__ == "__main__":
     c.texto1()
     c.texto2()
     t = CTextView()
-    p = CPie()
-    p.texto1()
-    p.texto2()
     v.pack_start(c)
     v.pack_start(t)
-    v.pack_start(p)
     w.add(v)
     w.show_all()
     #t.update(muro)
