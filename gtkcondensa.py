@@ -9,7 +9,7 @@ import os
 import capas
 from datos_ejemplo import climae, climai, murocapas
 import comprobaciones
-from condensawidgets import CCabecera, CPie
+from condensawidgets import CCabecera, CPie, CDialogoMuro
 from ptcanvas import CPTCanvas, CPCanvas
 
 class Gtkcondensa(object):
@@ -25,7 +25,6 @@ class Gtkcondensa(object):
         self.grafico2 = builder.get_object('cpcanvas1')
         self.textview = builder.get_object('ctextview1')
         self.pie = builder.get_object('pie')
-        self.dialog = builder.get_object('dialogomuro')
         smap = {"on_window_destroy" : gtk.main_quit,
                 "on_botonmuro_clicked": self.on_botonmuro_clicked}
         builder.connect_signals(smap)
@@ -53,7 +52,12 @@ class Gtkcondensa(object):
         self.pie._settitle2(g)
         
     def on_botonmuro_clicked(self, widget):
-        self.dialog.run()
+        dlg = CDialogoMuro()
+        resultado = dlg.run()
+        if resultado == gtk.RESPONSE_ACCEPT:
+            print resultado
+        elif resultado == gtk.RESPONSE_CANCEL:
+            print 'Sin cambios'
 
 muro = capas.Cerramiento("Cerramiento tipo", murocapas, 0.04, 0.13)
 app = Gtkcondensa(muro, climae, climai)
