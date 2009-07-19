@@ -9,7 +9,7 @@ import os
 import capas
 from datos_ejemplo import climae, climai, murocapas
 import comprobaciones
-from condensawidgets import CCabecera, CPie, CDialogoMuro
+from condensawidgets import CCabecera, CPie
 from ptcanvas import CPTCanvas, CPCanvas
 
 class GtkCondensa(object):
@@ -17,16 +17,27 @@ class GtkCondensa(object):
         self.muro = muro
         self.climae = climae
         self.climai = climai
+
         builder = gtk.Builder()
         builder.add_from_file(os.path.join(os.getcwd(), 'condensa.ui'))
+        # Controles ventana principal
         self.w = builder.get_object('window1')
         self.cabecera = builder.get_object('cabecera')
         self.grafico1 = builder.get_object('cptcanvas1')
         self.grafico2 = builder.get_object('cpcanvas1')
         self.textview = builder.get_object('ctextview1')
         self.pie = builder.get_object('pie')
+        # Controles de diálogo de selección de muros
+        self.dlg = builder.get_object('dialogomuro')
+        self.tvmuro = builder.get_object('tvmuro')
+        self.lblselected = builder.get_object('lblselected')
+        self.lsmuros = builder.get_object('liststoremuros')
+
         smap = {"on_window_destroy" : gtk.main_quit,
-                "on_botonmuro_clicked": self.on_botonmuro_clicked}
+                "on_botonmuro_clicked": self.on_botonmuro_clicked,
+                "on_tvmuro_cursor_changed" : self.on_tvmuro_cursor_changed,
+                "on_btnacepta_clicked": self.on_btnacepta_clicked,
+                "on_btncancela_clicked": self.on_btncancela_clicked}
         builder.connect_signals(smap)
         self.actualiza()
         
@@ -51,13 +62,32 @@ class GtkCondensa(object):
         self.pie._settitle1(gtotal)
         self.pie._settitle2(g)
         
+    # -- Retrollamadas ventana principal --
     def on_botonmuro_clicked(self, widget):
-        dlg = CDialogoMuro()
-        resultado = dlg.run()
+#         datosmuro = [("M1",), ("M2",), ("M3",)]
+#        for muro in datosmuro:
+#            self.lsmuros.append(muro)
+        resultado = self.dlg.run()
+#        self.nombremuro = self.lblselected.get_text()
         if resultado == gtk.RESPONSE_ACCEPT:
-            print resultado
+            print 'Cambiado'
         elif resultado == gtk.RESPONSE_CANCEL:
             print 'Sin cambios'
+        self.dlg.hide()
+
+    # -- Retrollamadas diálogo muros --
+    def on_tvmuro_cursor_changed(self, tv):
+        _murotm, _murotm_iter = self.tvmuro.get_selection().get_selected()
+        value = _murotm.get_value(_murotm_iter, 0)
+        self.lblselected.set_text(value)
+
+    def on_btnacepta_clicked(self, btn):
+        self.dlg.response(gtk.RESPONSE_ACCEPT)
+#        print 1
+
+    def on_btncancela_clicked(self, btn):
+        self.dlg.response(gtk.RESPONSE_CANCEL)
+#        print 2
 
 muro = capas.Cerramiento("Cerramiento tipo", murocapas, 0.04, 0.13)
 app = GtkCondensa(muro, climae, climai)

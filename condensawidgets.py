@@ -108,46 +108,6 @@ class CTextView(gtk.ScrolledWindow):
         while gtk.events_pending():
             gtk.main_iteration()
 
-class CDialogoMuro(object):
-    """Clase para mostrar el diálogo de selección de muro"""
-
-    def __init__(self):
-        builder = gtk.Builder()
-        builder.add_from_file(os.path.join(os.getcwd(), 'condensa.ui'))
-        self.dlg = builder.get_object('dialogomuro')
-        self.tvmuro = builder.get_object('tvmuro')
-        self.lblselected = builder.get_object('lblselected')
-        self.lsmuros = builder.get_object('liststoremuros')
-#        datosmuro = [("M1",), ("M2",), ("M3",)]
-#        for muro in datosmuro:
-#            self.lsmuros.append(muro)
-        smap = {"on_tvmuro_cursor_changed" : self.on_tvmuro_cursor_changed,
-                "on_btnacepta_clicked": self.on_btnacepta_clicked,
-                "on_btncancela_clicked": self.on_btncancela_clicked}
-        builder.connect_signals(smap)
-        self.lblselected.set_text("Nada")
-
-    def on_tvmuro_cursor_changed(self, tv):
-        _murotm, _murotm_iter = self.tvmuro.get_selection().get_selected()
-        value = _murotm.get_value(_murotm_iter, 0)
-        print value
-        self.lblselected.set_text(value)
-        print
-
-    def on_btnacepta_clicked(self, btn):
-        self.dlg.response(gtk.RESPONSE_ACCEPT)
-        print 1
-
-    def on_btncancela_clicked(self, btn):
-        self.dlg.response(gtk.RESPONSE_CANCEL)
-        print 2
-
-    def run(self):
-        self.result = self.dlg.run()
-        self.nombremuro = self.lblselected.get_text()
-        self.dlg.destroy()
-        return self.nombremuro
-
 if __name__ == "__main__":
     w = gtk.Window()
     v = gtk.VBox()
