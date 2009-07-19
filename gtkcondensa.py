@@ -12,7 +12,7 @@ import comprobaciones
 from condensawidgets import CCabecera, CPie, CDialogoMuro
 from ptcanvas import CPTCanvas, CPCanvas
 
-class Gtkcondensa(object):
+class GtkCondensa(object):
     def __init__(self, muro, climae, climai):
         self.muro = muro
         self.climae = climae
@@ -60,5 +60,5 @@ class Gtkcondensa(object):
             print 'Sin cambios'
 
 muro = capas.Cerramiento("Cerramiento tipo", murocapas, 0.04, 0.13)
-app = Gtkcondensa(muro, climae, climai)
+app = GtkCondensa(muro, climae, climai)
 app.main()
