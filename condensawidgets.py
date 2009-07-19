@@ -122,13 +122,3 @@ if __name__ == "__main__":
     #t.update(muro)
     w.connect('destroy', gtk.main_quit)
     gtk.main()
-    
-#    def on_clicked(widget, accion):
-#        resultado, accion_resultado = AccionDialog(accion).run()
-#        if resultado == gtk.RESPONSE_APPLY:
-#            print accion_resultado
-#            accion = accion_resultado
-#        elif resultado == gtk.RESPONSE_CANCEL:
-#            print 'Acción intacta'
-#        elif resultado == gtk.RESPONSE_DELETE_EVENT:
-#            gtk.main_quit()
