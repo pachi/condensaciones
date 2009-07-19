@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 #encoding: iso-8859-15
 
-import os
 import gtk
 import pango
 import ptcanvas
