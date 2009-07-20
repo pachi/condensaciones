@@ -6,8 +6,11 @@ import os
 import capas
 from datos_ejemplo import climae, climai, murocapas
 import comprobaciones
-from condensawidgets import CCabecera
+from condensawidgets import CTextView
 from ptcanvas import CPTCanvas, CPCanvas
+
+COLOR_OK = gtk.gdk.color_parse("#AACCAA")
+COLOR_BAD = gtk.gdk.color_parse("#CCAAAA")
 
 class GtkCondensa(object):
     def __init__(self, muro, climae, climai):
@@ -19,10 +22,17 @@ class GtkCondensa(object):
         builder.add_from_file(os.path.join(os.getcwd(), 'condensa.ui'))
         # Controles ventana principal
         self.w = builder.get_object('window1')
-        self.cabecera = builder.get_object('cabecera')
+        # - cabecera -
+        self.cfondo = builder.get_object('cfondo')
+        self.ctitulo = builder.get_object('ctitulo')
+        self.csubtitulo1 = builder.get_object('csubtitulo1')
+        self.csubtitulo2 = builder.get_object('csubtitulo2')
+        # - gráficas -
         self.grafico1 = builder.get_object('cptcanvas1')
         self.grafico2 = builder.get_object('cpcanvas1')
+        # - texto -
         self.textview = builder.get_object('ctextview1')
+        # - pie -
         self.pie1 = builder.get_object('pie1')
         self.pie2 = builder.get_object('pie2')
         # Controles de diálogo de selección de muros
@@ -53,10 +63,13 @@ class GtkCondensa(object):
         fRsi = comprobaciones.calculafRsi(self.muro.U)
         fRsimin = comprobaciones.calculafRsimin(self.climae.temp, self.climai.temp, self.climai.HR)
         ccheck = comprobaciones.compruebacondensaciones(self.muro, self.climae.temp, self.climai.temp, self.climae.HR, self.climai.HR)
-        self.cabecera.titulo(self.muro.nombre)
-        self.cabecera.texto1(self.muro.U, fRsi, fRsimin)
-        self.cabecera.texto2(self.climai.temp, self.climai.HR, self.climae.temp, self.climae.HR)
-        self.cabecera.ok = ccheck
+        _text = u'<span size="x-large">%s</span>' % self.muro.nombre
+        self.ctitulo.set_markup(_text)
+        _text = u'U = %.2f W/m²K, f<sub>Rsi</sub> = %.2f, f<sub>Rsi,min</sub> = %.2f' % (self.muro.U, fRsi, fRsimin)
+        self.csubtitulo1.set_markup(_text)
+        _text = u'T<sub>int</sub> = %.2f°C, HR<sub>int</sub> = %.1f%%, T<sub>ext</sub> = %.2f°C, HR<sub>ext</sub> = %.1f%%' % (self.climai.temp, self.climai.HR, self.climae.temp, self.climae.HR)
+        self.csubtitulo2.set_markup(_text)
+        self.cfondo.modify_bg(gtk.STATE_NORMAL, ccheck and COLOR_OK or COLOR_BAD)
 
     def actualizagraficas(self):
         self.grafico1.dibuja(self.muro, self.climae, self.climai)

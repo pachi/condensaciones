@@ -29,10 +29,43 @@
         <property name="visible">True</property>
         <property name="orientation">vertical</property>
         <child>
-          <object class="CCabecera" id="cabecera">
+          <object class="GtkEventBox" id="cfondo">
             <property name="visible">True</property>
             <child>
-              <placeholder/>
+              <object class="GtkVBox" id="cabecera">
+                <property name="visible">True</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkLabel" id="ctitulo">
+                    <property name="visible">True</property>
+                    <property name="label" translatable="yes">Cerramiento</property>
+                    <property name="use_markup">True</property>
+                  </object>
+                  <packing>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="csubtitulo1">
+                    <property name="visible">True</property>
+                    <property name="label" translatable="yes">label</property>
+                    <property name="use_markup">True</property>
+                  </object>
+                  <packing>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="csubtitulo2">
+                    <property name="visible">True</property>
+                    <property name="label" translatable="yes">label</property>
+                    <property name="use_markup">True</property>
+                  </object>
+                  <packing>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+              </object>
             </child>
           </object>
           <packing>
@@ -45,7 +78,7 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <child>
-              <object class="GtkVBox" id="vbox3">
+              <object class="GtkVBox" id="textomuro">
                 <property name="visible">True</property>
                 <property name="orientation">vertical</property>
                 <child>
