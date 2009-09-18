@@ -26,6 +26,7 @@ class CTextView(gtk.ScrolledWindow):
 
     def update(self, muro):
         "Mostrar texto"
+        self.buffer.set_text("")
         text = "%s\n\n" % muro.nombre
         iter = self.buffer.get_start_iter()
         self.buffer.insert_with_tags_by_name(iter, text, 'titulo')
