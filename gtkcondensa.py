@@ -47,11 +47,18 @@ class GtkCondensa(object):
                 "on_btnacepta_clicked": self.on_btnacepta_clicked,
                 "on_btncancela_clicked": self.on_btncancela_clicked}
         builder.connect_signals(smap)
+        self.cargamuros()
         self.actualiza()
         
     def main(self):
         self.w.show_all()
         gtk.main()
+
+    def cargamuros(self):
+        #TODO: cargar datos de biblioteca
+        datosmuro = [('M1',), ('M2',), ('M3',), ('M4',)]
+        for muro in datosmuro:
+            self.lsmuros.append(muro)
 
     def actualiza(self):
         self.actualizacabecera()
@@ -91,15 +98,13 @@ class GtkCondensa(object):
 
     # -- Retrollamadas ventana principal --
     def on_botonmuro_clicked(self, widget):
-        #TODO: limpiar lista de datos y cargar datos de biblioteca
-        datosmuro = [('M1',), ('M2',), ('M3',), ('M4',)]
-        for muro in datosmuro:
-            self.lsmuros.append(muro)
         resultado = self.dlg.run()
         if resultado == gtk.RESPONSE_ACCEPT:
             #TODO: Cambiar muro y actualizar
-            #nombremuro = self.lblselected.get_text()
+            nombremuro = self.lblselected.get_text()
             #self.muro = buscamurodesdenombre(nombremuro)
+            self.muro.nombre = nombremuro
+            self.actualiza()
             print 'Cambiado'
         elif resultado == gtk.RESPONSE_CANCEL:
             print 'Sin cambios'
@@ -112,10 +117,14 @@ class GtkCondensa(object):
         self.lblselected.set_text(value)
 
     def on_btnacepta_clicked(self, btn):
+        #XXX:Se podría eliminar si el botón devuelve un ID correspondiente a gtk.RESPONSE_ACCEPT
+        #eso es necesario hacerlo en la definición del diálogo de muros en glade
         self.dlg.response(gtk.RESPONSE_ACCEPT)
 #        print 1
 
     def on_btncancela_clicked(self, btn):
+        #XXX:Se podría eliminar si el botón devuelve un ID correspondiente a gtk.RESPONSE_CANCEL
+        #eso es necesario hacerlo en la definición del diálogo de muros en glade
         self.dlg.response(gtk.RESPONSE_CANCEL)
 #        print 2
 
