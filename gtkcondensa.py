@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 #encoding: iso-8859-15
 
-import gtk
 import os
+import gtk
 import capas
-from datos_ejemplo import climae, climai, murocapas
 import comprobaciones
+from datos_ejemplo import climae, climai, murocapas
 from condensawidgets import CTextView
 from ptcanvas import CPTCanvas, CPCanvas
 
@@ -87,11 +87,11 @@ class GtkCondensa(object):
     def actualizapie(self):
         g, puntos_condensacion = self.muro.cantidadcondensacion(self.climae.temp, self.climai.temp, self.climae.HR, self.climai.HR)
         #g, puntos_evaporacion = self.muro.cantidadevaporacion(temp_ext, temp_int, HR_ext, HR_int, interfases=[2])
+        if not g:
+            g = 0.0
         gtotal = 2592000.0 * sum(g)
         _text = u"Total: %.2f [g/m²mes]" % gtotal
         self.pie1.set_markup(_text)
-        if g is None:
-            g = 0.
         _text = u"Cantidades condensadas: " + u", ".join(["%.2f" % (2592000.0 * x,) for x in g])
         self.pie2.set_markup(_text)
 
@@ -100,14 +100,11 @@ class GtkCondensa(object):
         resultado = self.dlg.run()
         # gtk.RESPONSE_ACCEPT == -3, gtk.RESPONSE_CANCEL == -6
         if resultado == gtk.RESPONSE_ACCEPT:
-            #TODO: Cambiar muro y actualizar
             nombremuro = self.lblselected.get_text()
+            #TODO: Cambiar datos de muro
             #self.muro = buscamurodesdenombre(nombremuro)
             self.muro.nombre = nombremuro
             self.actualiza()
-            print 'Cambiado'
-        elif resultado == gtk.RESPONSE_CANCEL:
-            print 'Sin cambios'
         self.dlg.hide()
 
     # -- Retrollamadas diálogo muros --

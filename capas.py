@@ -1,11 +1,8 @@
 #!/usr/bin/env python
 #encoding: iso-8859-15
-import math
 import operator
 import psicrom
-import dbutils
-
-materiales = dbutils.db2datos(['db/PCatalogo.bdc', 'db/BDCatalogo.bdc', 'db/Catalogo_URSA.BDC'])
+import materiales
 
 class Cerramiento(object):
     def __init__(self, nombre, capas, Rse=None, Rsi=None):
@@ -32,11 +29,11 @@ class Cerramiento(object):
     def R(self):
         "Resistencia térmica de las capas [m²K/W]"
         def resist_capa(capa, e=None):
-            tipo = materiales[nombre]['TYPE']
+            tipo = materiales.tipo(nombre)
             if tipo == 'PROPERTIES':
-                return e / float(materiales[nombre]['CONDUCTIVITY'])
+                return e / materiales.conductividad(nombre)
             elif tipo == 'RESISTANCE':
-                return float(materiales[nombre]['RESISTANCE'])
+                return materiales.resistencia(nombre)
             else:
                 raise
         return [self.Rse] + [resist_capa(nombre, e) for nombre, e in self.capas] + [self.Rsi]
@@ -44,7 +41,7 @@ class Cerramiento(object):
     @property
     def S(self):
         "Espesor de aire equivalente de las capas [m]"
-        return [e * float(materiales[nombre]['VAPOUR-DIFFUSIVITY-FACTOR']) for nombre, e in self.capas]
+        return [e * materiales.difusividad(nombre) for nombre, e in self.capas]
 
     @property
     def S_acumulados(self):
