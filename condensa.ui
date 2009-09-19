@@ -266,7 +266,6 @@
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_stock">True</property>
-                <signal name="clicked" handler="on_btnacepta_clicked"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -281,7 +280,6 @@
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_stock">True</property>
-                <signal name="clicked" handler="on_btncancela_clicked"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -299,8 +297,8 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="0">btnacepta</action-widget>
-      <action-widget response="0">btncancela</action-widget>
+      <action-widget response="-3">btnacepta</action-widget>
+      <action-widget response="-6">btncancela</action-widget>
     </action-widgets>
   </object>
   <object class="GtkAdjustment" id="adjustment1">

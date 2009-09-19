@@ -43,10 +43,9 @@ class GtkCondensa(object):
 
         smap = {"on_window_destroy" : gtk.main_quit,
                 "on_botonmuro_clicked": self.on_botonmuro_clicked,
-                "on_tvmuro_cursor_changed" : self.on_tvmuro_cursor_changed,
-                "on_btnacepta_clicked": self.on_btnacepta_clicked,
-                "on_btncancela_clicked": self.on_btncancela_clicked}
+                "on_tvmuro_cursor_changed" : self.on_tvmuro_cursor_changed,}
         builder.connect_signals(smap)
+        
         self.cargamuros()
         self.actualiza()
         
@@ -99,6 +98,7 @@ class GtkCondensa(object):
     # -- Retrollamadas ventana principal --
     def on_botonmuro_clicked(self, widget):
         resultado = self.dlg.run()
+        # gtk.RESPONSE_ACCEPT == -3, gtk.RESPONSE_CANCEL == -6
         if resultado == gtk.RESPONSE_ACCEPT:
             #TODO: Cambiar muro y actualizar
             nombremuro = self.lblselected.get_text()
@@ -115,18 +115,6 @@ class GtkCondensa(object):
         _murotm, _murotm_iter = self.tvmuro.get_selection().get_selected()
         value = _murotm.get_value(_murotm_iter, 0)
         self.lblselected.set_text(value)
-
-    def on_btnacepta_clicked(self, btn):
-        #XXX:Se podría eliminar si el botón devuelve un ID correspondiente a gtk.RESPONSE_ACCEPT
-        #eso es necesario hacerlo en la definición del diálogo de muros en glade
-        self.dlg.response(gtk.RESPONSE_ACCEPT)
-#        print 1
-
-    def on_btncancela_clicked(self, btn):
-        #XXX:Se podría eliminar si el botón devuelve un ID correspondiente a gtk.RESPONSE_CANCEL
-        #eso es necesario hacerlo en la definición del diálogo de muros en glade
-        self.dlg.response(gtk.RESPONSE_CANCEL)
-#        print 2
 
 muro = capas.Cerramiento("Cerramiento tipo", murocapas, 0.04, 0.13)
 app = GtkCondensa(muro, climae, climai)
