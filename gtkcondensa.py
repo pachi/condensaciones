@@ -5,7 +5,6 @@ import os
 import gtk
 import capas
 import comprobaciones
-from datos_ejemplo import climae, climai, murocapas
 from condensawidgets import CTextView
 from ptcanvas import CPTCanvas, CPCanvas
 
@@ -113,6 +112,8 @@ class GtkCondensa(object):
         value = _murotm.get_value(_murotm_iter, 0)
         self.lblselected.set_text(value)
 
-muro = capas.Cerramiento("Cerramiento tipo", murocapas, 0.04, 0.13)
-app = GtkCondensa(muro, climae, climai)
-app.main()
+if __name__ == "__main__":
+    from datos_ejemplo import climae, climai, murocapas
+    muro = capas.Cerramiento("Cerramiento tipo", murocapas, 0.04, 0.13)
+    app = GtkCondensa(muro, climae, climai)
+    app.main()
