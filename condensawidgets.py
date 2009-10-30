@@ -11,7 +11,8 @@ class CTextView(gtk.ScrolledWindow):
     #TODO: Convertir a scrolledwindow cuando glade3 soporte buffer de texto con
     #textags en la textagtable (ahora permite crear tablas pero no añadir tags
     def __init__(self):
-        gtk.ScrolledWindow.__init__(self)
+        #Inicializar sin ajustes para que los cree automáticamente y los conecte con el textview
+        gtk.ScrolledWindow.__init__(self, None, None)
         self.tv = gtk.TextView()
         self.tv.set_wrap_mode(gtk.WRAP_WORD)
         self.buffer = self.tv.get_buffer()
