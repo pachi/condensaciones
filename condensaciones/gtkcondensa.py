@@ -3,6 +3,7 @@
 
 import os
 import gtk
+import util
 import capas
 import comprobaciones
 from condensawidgets import CTextView
@@ -13,12 +14,13 @@ COLOR_BAD = gtk.gdk.color_parse("#CCAAAA")
 
 class GtkCondensa(object):
     def __init__(self, muro, climae, climai):
+        UIFILE = util.get_resource('..', 'rc/condensa.ui')
         self.muro = muro
         self.climae = climae
         self.climai = climai
 
         builder = gtk.Builder()
-        builder.add_from_file(os.path.join(os.getcwd(), 'condensa.ui'))
+        builder.add_from_file(UIFILE)
         # Controles ventana principal
         self.w = builder.get_object('window1')
         # - cabecera -

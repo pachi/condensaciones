@@ -1,9 +1,14 @@
 #!/usr/bin/env python
 #encoding: iso-8859-15
 
+from util import get_resource
 import dbutils
 
-materiales = dbutils.db2datos(['db/PCatalogo.bdc', 'db/BDCatalogo.bdc', 'db/Catalogo_URSA.BDC'])
+CATALOGOPACHI = get_resource('..', 'db/PCatalogo.bdc')
+CATALOGOCALENER = get_resource('..', 'db/BDCatalogo.bdc')
+CATALOGOURSA = get_resource('..', 'db/Catalogo_URSA.BDC')
+
+materiales = dbutils.db2datos([CATALOGOPACHI, CATALOGOCALENER, CATALOGOURSA])
 
 def tipo(nombre):
     return materiales[nombre]['TYPE']

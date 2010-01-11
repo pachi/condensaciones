@@ -66,12 +66,13 @@ def db2datos(files):
 
 if __name__ == "__main__":
     import sys
+    import util
 
     if len(sys.argv) < 2:
         argfile = None
     else:
         argfile = sys.argv[1:]
-    files = argfile or "db/PCatalogo.bdc"
+    files = argfile or util.get_resource('..', 'db/PCatalogo.bdc')
     db = db2datos(files)
     print "%i materiales generados" % len(db)
 

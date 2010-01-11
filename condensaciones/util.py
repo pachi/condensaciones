@@ -1,7 +1,13 @@
 #!/usr/bin/env python
 #encoding: iso-8859-15
 
+import os, sys
 import colorsys
+
+def get_resource(*path_list):
+    "Localiza un recurso del proyecto en base al directorio base del paquete"
+    APPROOT = os.path.dirname(__file__)
+    return os.path.join(APPROOT, *path_list)
 
 def stringify(list, prec):
     format = '%%.%if' % prec
