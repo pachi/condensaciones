@@ -3,26 +3,6 @@
   <requires lib="gtk+" version="2.16"/>
   <!-- interface-requires condensaciones 0.0 -->
   <!-- interface-naming-policy project-wide -->
-  <object class="GtkListStore" id="liststoremuros">
-    <columns>
-      <!-- column-name nombre -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Muro1</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Muro2</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Muro3</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Muro4</col>
-      </row>
-    </data>
-  </object>
   <object class="GtkWindow" id="window1">
     <child>
       <object class="GtkVBox" id="vbox2">
@@ -195,6 +175,32 @@
       </object>
     </child>
   </object>
+  <object class="GtkListStore" id="liststoremuros">
+    <columns>
+      <!-- column-name nombre -->
+      <column type="gchararray"/>
+      <!-- column-name muro -->
+      <column type="GObject"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Muro1</col>
+        <col id="1"/>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Muro2</col>
+        <col id="1"/>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Muro3</col>
+        <col id="1"/>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Muro4</col>
+        <col id="1"/>
+      </row>
+    </data>
+  </object>
   <object class="GtkDialog" id="dialogomuro">
     <property name="border_width">5</property>
     <property name="type_hint">normal</property>
@@ -214,25 +220,39 @@
                 <property name="label" translatable="yes">Selecci&#xF3;n de Cerramiento</property>
               </object>
               <packing>
+                <property name="expand">False</property>
                 <property name="position">0</property>
               </packing>
             </child>
             <child>
-              <object class="GtkTreeView" id="tvmuro">
+              <object class="GtkScrolledWindow" id="scrolledwindow1">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="model">liststoremuros</property>
-                <property name="headers_clickable">False</property>
-                <property name="search_column">0</property>
-                <signal name="cursor_changed" handler="on_tvmuro_cursor_changed"/>
+                <property name="hadjustment">adjustment1</property>
+                <property name="vadjustment">adjustment2</property>
+                <property name="hscrollbar_policy">automatic</property>
+                <property name="vscrollbar_policy">automatic</property>
                 <child>
-                  <object class="GtkTreeViewColumn" id="nombrecolumn">
-                    <property name="title">Descripci&#xF3;n cerramiento</property>
+                  <object class="GtkTreeView" id="tvmuro">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="model">liststoremuros</property>
+                    <property name="hadjustment">adjustment1</property>
+                    <property name="vadjustment">adjustment2</property>
+                    <property name="headers_clickable">False</property>
+                    <property name="rules_hint">True</property>
+                    <property name="search_column">0</property>
+                    <signal name="cursor_changed" handler="on_tvmuro_cursor_changed"/>
                     <child>
-                      <object class="GtkCellRendererText" id="cellrenderertext1"/>
-                      <attributes>
-                        <attribute name="text">0</attribute>
-                      </attributes>
+                      <object class="GtkTreeViewColumn" id="nombrecolumn">
+                        <property name="title">Descripci&#xF3;n cerramiento</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="cellrenderertext1"/>
+                          <attributes>
+                            <attribute name="text">0</attribute>
+                          </attributes>
+                        </child>
+                      </object>
                     </child>
                   </object>
                 </child>
@@ -247,6 +267,7 @@
                 <property name="label" translatable="yes">Ninguno</property>
               </object>
               <packing>
+                <property name="expand">False</property>
                 <property name="position">2</property>
               </packing>
             </child>

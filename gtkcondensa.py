@@ -54,9 +54,19 @@ class GtkCondensa(object):
 
     def cargamuros(self):
         #TODO: cargar datos de biblioteca
-        datosmuro = [('M1',), ('M2',), ('M3',), ('M4',)]
+        from datos_ejemplo import muros
+        listamuros = []
+        for muro in muros:
+            row = [str(muro.nombre), str(muro)]
+            listamuros.append(row)
+            print row
+        #datosmuro = [('M1',), ('M2',), ('M3',), ('M4',)]
+        datosmuro = listamuros
         for muro in datosmuro:
-            self.lsmuros.append(muro)
+            print muro
+            # XXX: No se puede cargar el muro porque la segunda columna debería ser
+            # un PyGobject, y no un Gobject nada más... (glade no permite seleccionar ese tipo)
+            #self.lsmuros.append(muro)
 
     def actualiza(self):
         self.actualizacabecera()
