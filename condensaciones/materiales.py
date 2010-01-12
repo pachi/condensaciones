@@ -6,7 +6,7 @@ import dbutils
 
 CATALOGOPACHI = get_resource('..', 'db/PCatalogo.bdc')
 CATALOGOCALENER = get_resource('..', 'db/BDCatalogo.bdc')
-CATALOGOURSA = get_resource('..', 'db/Catalogo_URSA.BDC')
+CATALOGOURSA = get_resource('..', 'db/Catalogo_URSA.bdc')
 
 materiales = dbutils.db2datos([CATALOGOPACHI, CATALOGOCALENER, CATALOGOURSA])
 
