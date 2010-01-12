@@ -75,7 +75,7 @@ if __name__ == "__main__":
         argfile = None
     else:
         argfile = sys.argv[1:]
-    files = argfile or util.get_resource('..', 'db/BDCatalogo.bdc')
+    files = argfile or util.get_resource('../data/BDCatalogo.bdc')
     db = db2datos(files)
     print u"%i materiales generados" % len(db)
 

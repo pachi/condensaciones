@@ -18,7 +18,7 @@ class GtkCondensa(object):
         self.climae = climae
         self.climai = climai
 
-        UIFILE = util.get_resource('..', 'rc', 'condensa.ui')
+        UIFILE = util.get_resource('..', 'data', 'condensa.ui')
         builder = gtk.Builder()
         builder.add_from_file(UIFILE)
         # Controles ventana principal
