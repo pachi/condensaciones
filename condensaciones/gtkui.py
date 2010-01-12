@@ -65,7 +65,8 @@ class GtkCondensa(object):
         #datosmuro = [('M1',), ('M2',), ('M3',), ('M4',)]
         datosmuro = listamuros
         for muro in datosmuro:
-            print muro
+            pass
+            #print muro
             # XXX: No se puede cargar el muro porque la segunda columna debería ser
             # un PyGobject, y no un Gobject nada más... (glade no permite seleccionar ese tipo)
             #self.lsmuros.append(muro)
