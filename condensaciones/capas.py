@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#encoding: iso-8859-15
+#encoding: utf-8
 import operator
 import psicrom
 import materiales
@@ -27,7 +27,7 @@ class Cerramiento(object):
 
     @property
     def R(self):
-        "Resistencia t閞mica de las capas [m睰/W]"
+        "Resistencia t茅rmica de las capas [m虏K/W]"
         def resist_capa(capa, e=None):
             tipo = materiales.tipo(nombre)
             if tipo == 'PROPERTIES':
@@ -55,68 +55,68 @@ class Cerramiento(object):
 
     @property
     def R_total(self):
-        """Resistencia t閞mica total del cerramiento [m睰/W]
+        """Resistencia t茅rmica total del cerramiento [m虏K/W]
         """
         return sum(self.R)
 
     @property
     def U(self):
-        """Transmitancia t閞mica del cerramiento [W/m睰]
+        """Transmitancia t茅rmica del cerramiento [W/m虏K]
         """
         return 1.0 / self.R_total
 
     def temperaturas(self, tempext, tempint):
-        """Devuelve lista de temperaturas [篊]:
+        """Devuelve lista de temperaturas [潞C]:
         temperatura exterior, temperatura superficial exterior,
         temperaturas intersticiales, temperatura superficial interior
         y temperatura interior.
             tempext - temperatura exterior media en el mes de enero
-            tempint - temperatura interior de c醠culo (20篊)
+            tempint - temperatura interior de c谩lculo (20潞C)
         """
         temperaturas = [tempext]
         for capa_Ri in self.R:
-            tempj = temperaturas[-1] + capa_Ri * (tempint - tempext) / self.R_total
+            tempj = temperaturas[-1] + (capa_Ri * (tempint - tempext) / self.R_total)
             temperaturas.append(tempj)
         return temperaturas
 
     def presiones(self, temp_ext, temp_int, HR_ext, HR_int):
         """Devuelve una lista de presiones de vapor [Pa]
-        presi髇 de vapor al exterior, presiones de vapor intermedias y presi髇 de vapor interior.
+        presi贸n de vapor al exterior, presiones de vapor intermedias y presi贸n de vapor interior.
         """
         pres_ext = psicrom.pvapor(temp_ext, HR_ext)
         pres_int = psicrom.pvapor(temp_int, HR_int)
-        # La presi髇 al exterior es constante, en el aire y la superficie exterior de cerramiento
+        # La presi贸n al exterior es constante, en el aire y la superficie exterior de cerramiento
         presiones_vapor = [pres_ext, pres_ext]
         for capa_Si in self.S:
             pres_j = presiones_vapor[-1] + capa_Si * (pres_int - pres_ext) / self.S_total
             presiones_vapor.append(pres_j)
-        # La presi髇 interior es constante, en la superficie interior de cerramiento y en el aire
+        # La presi贸n interior es constante, en la superficie interior de cerramiento y en el aire
         presiones_vapor.append(pres_int)
         return presiones_vapor
 
     def presionessat(self, tempext, tempint):
-        "Presiones de saturaci髇 en cada capa [Pa]"
+        "Presiones de saturaci贸n en cada capa [Pa]"
         temperaturas = self.temperaturas(tempext, tempint)
         return [psicrom.psat(temperatura) for temperatura in temperaturas]
 
     def cantidadcondensacion(self, temp_ext, temp_int, HR_ext, HR_int):
-        """Calcular cantidad de condensaci髇 y coordenadas (S, presi髇 de vapor)
-        de los planos de condensaci髇.
-        Devuelve g [g/m瞫], puntos_condensacion
+        """Calcular cantidad de condensaci贸n y coordenadas (S, presi贸n de vapor)
+        de los planos de condensaci贸n.
+        Devuelve g [g/m虏s], puntos_condensacion
         """
         presiones = self.presiones(temp_ext, temp_int, HR_ext, HR_int)
         presiones_sat = self.presionessat(temp_ext, temp_int)
         # calculamos las posiciones x, y correspondientes a espesor de aire equivalente
-        # y presiones de saturaci髇
+        # y presiones de saturaci贸n
         Scapas = self.S
         x_jo = [0.0] + [reduce(operator.add, Scapas[:i]) for i in range(1,len(Scapas)+1)]
         y_jo = [presiones[1]] + [p for p in presiones_sat[2:-2]] + [presiones[-1]]
 
-        # Calculamos la envolvente convexa inferior de la linea de presiones de saturaci髇
+        # Calculamos la envolvente convexa inferior de la linea de presiones de saturaci贸n
         # partiendo de presion_exterior y presion_interior como extremos.
-        # Los puntos de tangencia son los planos de condensaci髇
+        # Los puntos de tangencia son los planos de condensaci贸n
         def _giraIzquierda((p, q, r)):
-            "縁orman los vectores pq:qr un giro a la izquierda?"
+            "驴Forman los vectores pq:qr un giro a la izquierda?"
             _det = ((q[0]*r[1] + p[0]*q[1] + r[0]*p[1]) -
                     (q[0]*p[1] + r[0]*q[1] + p[0]*r[1]))
             return (_det > 0) or False
@@ -136,13 +136,13 @@ class Cerramiento(object):
         return g, envolvente_inf
 
     def cantidadevaporacion(self, temp_ext, temp_int, HR_ext, HR_int, interfases):
-        """Calcular cantidad de evaporacion devolver coordenadas (S, presi髇 de vapor)
-        Devuelve g [g/m瞫], puntos_evaporacion
+        """Calcular cantidad de evaporacion devolver coordenadas (S, presi贸n de vapor)
+        Devuelve g [g/m虏s], puntos_evaporacion
         """
         presiones = self.presiones(temp_ext, temp_int, HR_ext, HR_int)
         presiones_sat = self.presionessat(temp_ext, temp_int)
         # calculamos las posiciones x, y correspondientes a espesor de aire equivalente
-        # y presiones de saturaci髇
+        # y presiones de saturaci贸n
         Scapas = self.S
         x_jo = [0.0] + [reduce(operator.add, Scapas[:i]) for i in range(1,len(Scapas)+1)]
         y_jo = [presiones[1]] + [p for p in presiones_sat[2:-2]] + [presiones[-1]]
@@ -173,8 +173,8 @@ if __name__ == "__main__":
 
     g, puntos_condensacion = muro.cantidadcondensacion(climae.temp, climai.temp, climae.HR, climai.HR)
     cantidad_condensada = sum(g)
-    # indicamos evaporaci髇 en la interfase 2, pero en realidad habr韆 que ver en c鷄les hab韆 antes
-    # condensaciones y realizar el c醠culo en ellas.
+    # indicamos evaporaci贸n en la interfase 2, pero en realidad habr铆a que ver en c煤ales hab铆a antes
+    # condensaciones y realizar el c谩lculo en ellas.
     g, puntos_evaporacion = muro.cantidadevaporacion(climae.temp, climai.temp, climae.HR, climai.HR, interfases=[2])
     cantidad_evaporada = sum(g)
 
@@ -188,14 +188,14 @@ if __name__ == "__main__":
     print u"S acumulados:\n\t", stringify(muro.S_acumulados, 2)
     print u"S total:", muro.S_total # Espesor de aire equivalente total (m), 2.16
     print u"Rs_ext: %.3f\nRs_int: %.2f" % (muro.Rse, muro.Rsi)
-    print u"R_total: %.3f" % muro.R_total #("Resistencia total (m睰/W)", 1.25)
+    print u"R_total: %.3f" % muro.R_total #("Resistencia total (m虏K/W)", 1.25)
     print u"U: %.3f" % muro.U # 0.80 W/m^2K = 1/Rtotal
     print
     print u"Temperaturas:\n\t", stringify(temperaturas, 1)
     print u"Presiones de vapor:\n\t", stringify(presiones, 1)
-    print u"\tPresi髇 de vapor exterior: %.2f" % p_ext # presi髇 de vapor exterior: 1016.00
-    print u"\tPresi髇 de vapor interior: %.2f" % p_int # presi髇 de vapor interior: 1285.32
-    print u"Presiones de saturaci髇:\n\t", stringify(presiones_sat, 1)
+    print u"\tPresi贸n de vapor exterior: %.2f" % p_ext # presi贸n de vapor exterior: 1016.00
+    print u"\tPresi贸n de vapor interior: %.2f" % p_int # presi贸n de vapor interior: 1285.32
+    print u"Presiones de saturaci贸n:\n\t", stringify(presiones_sat, 1)
     print
     print u"Condensaciones:"
     print u"\tCantidad condensada: %.2f [g/m2.mes]" % (2592000.0 * cantidad_condensada,)

@@ -1,12 +1,12 @@
 #!/usr/bin/env python
-#encoding: iso-8859-15
+#encoding: utf-8
 
 import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_gtkcairo import FigureCanvasGTKCairo as FigureCanvas
 from util import colores_capas, add_margin
 
-matplotlib.rc('mathtext', fontset='custom') #para mostrar bien las expresiones matem醫icas / latex
+matplotlib.rc('mathtext', fontset='custom') #para mostrar bien las expresiones matem谩ticas / latex
 
 class CPTCanvas(FigureCanvas):
     __gtype_name__ = 'CPTCanvas'
@@ -19,7 +19,7 @@ class CPTCanvas(FigureCanvas):
         FigureCanvas.__init__(self, self.fig)
 
     def dibuja(self, muro, climae, climai, w=600, h=400):
-        """Representa Presiones de saturaci髇 vs. Presiones de vapor y temperaturas
+        """Representa Presiones de saturaci贸n vs. Presiones de vapor y temperaturas
         en un diagrama capa/Presion de vapor y capa/Temp
         """
         # ================== presiones y temperaturas =====================
@@ -30,7 +30,7 @@ class CPTCanvas(FigureCanvas):
         rotulos_s = add_margin(muro.espesores_acumulados)
         rotulos_ssat = muro.S_acumulados
         colordict = colores_capas(muro.nombre_capas)
-        #nemot閏nicas intermedias
+        #nemot茅cnicas intermedias
         rotulo_se = rotulos_s[1]
         rotulo_si = rotulos_s[-2]
         P_se = presiones[1]
@@ -43,7 +43,7 @@ class CPTCanvas(FigureCanvas):
         ax1 = self.fig.add_subplot('111')
         ax1.set_title(u"Presiones de vapor y temperaturas", fontsize='large')
         ax1.set_xlabel(u"Distancia [m]")
-        ax1.set_ylabel(u"Presi髇 de vapor [Pa]", fontdict=dict(color='b'))
+        ax1.set_ylabel(u"Presi贸n de vapor [Pa]", fontdict=dict(color='b'))
         ax1.text(0.1, 0.92, 'exterior',
                 transform=ax1.transAxes, fontsize=10, fontstyle='italic', horizontalalignment='right')
         ax1.text(0.9, 0.92, 'interior',
@@ -65,28 +65,28 @@ class CPTCanvas(FigureCanvas):
             ax1.text((rotulo + rotuloanterior) / 2.0, ymax, "%i" % _i,
                     fontsize=8, fontstyle='italic', horizontalalignment='center')
             rotuloanterior = rotulo
-        # R髏ulos de lineas de presiones
+        # R贸tulos de lineas de presiones
         ax1.annotate(r'$P_{n}$',
                 xy=(rotulo_si + 0.002, P_si),
                 horizontalalignment='left', verticalalignment='top', color='b', size='small')
         ax1.annotate(r'$P_{sat}$',
                 xy=(rotulo_si + 0.002, P_sat_si),
                 horizontalalignment='left', verticalalignment='baseline', color='k', size='small')
-        # incrementar extensi髇 de l韒ites de ejes para hacer hueco
+        # incrementar extensi贸n de l铆mites de ejes para hacer hueco
         ymin, ymax = ax1.get_ylim()
         length = ymax - ymin
         ax1.set_ylim(ymin - length / 10.0, ymax + length / 5.0)
         # Nuevo eje vertical de temperaturas
         ax2 = ax1.twinx()
-        ax2.set_ylabel(u"Temperatura [癈]", fontdict=dict(color='r'))
+        ax2.set_ylabel(u"Temperatura [掳C]", fontdict=dict(color='r'))
         # curva de temperaturas
         ax2.plot(rotulos_s, temperaturas, 'r', linewidth=1.5)
         #fill_between(rotulos_s[1:-1], temperaturas[1:-1], color=(1,0,0,0.1))
         # Valores de T_si y T_se
-        ax2.annotate(r'$T_{se}=%.1f癈$' % T_se,
+        ax2.annotate(r'$T_{se}=%.1f掳C$' % T_se,
                 xy=(rotulo_se - 0.002, T_se),
                 horizontalalignment='right')
-        ax2.annotate(r'$T_{si}=%.1f癈$' % T_si,
+        ax2.annotate(r'$T_{si}=%.1f掳C$' % T_si,
                 xy=(rotulo_si + 0.002, T_si),
                 horizontalalignment='left',
                 verticalalignment='top')
@@ -99,7 +99,7 @@ class CPTCanvas(FigureCanvas):
         self.set_size_request(w, h)
 
     def save(self, filename='presionestempplot.png'):
-        # guardar y mostrar gr醘ica
+        # guardar y mostrar gr谩fica
         self.savefig(filename)
 
 class CPCanvas(FigureCanvas):
@@ -113,7 +113,7 @@ class CPCanvas(FigureCanvas):
         FigureCanvas.__init__(self, self.fig)
 
     def dibuja(self, muro, climae, climai, w=600, h=400):
-        """Representa Presiones de saturaci髇 vs. Presiones de vapor en un
+        """Representa Presiones de saturaci贸n vs. Presiones de vapor en un
         diagrama capa/Presion de vapor y capa/Temp
         """
         # ============================ presiones ==========================
@@ -126,7 +126,7 @@ class CPCanvas(FigureCanvas):
         rotulos_s = add_margin(muro.espesores_acumulados)
         rotulos_ssat = muro.S_acumulados
         colordict = colores_capas(muro.nombre_capas)
-        #nemot閏nicas intermedias
+        #nemot茅cnicas intermedias
         rotulo_se = rotulos_s[1]
         rotulo_si = rotulos_s[-2]
         rotulo_ssate = rotulos_ssat[0]
@@ -140,20 +140,20 @@ class CPCanvas(FigureCanvas):
         y_c = [y for x, y in puntos_condensacion]
         # -- dibujo ---
         ax1 = self.fig.add_subplot('111')
-        ax1.set_title(u"Presiones de vapor (efectiva y de saturaci髇)", fontsize='large')
+        ax1.set_title(u"Presiones de vapor (efectiva y de saturaci贸n)", fontsize='large')
         ax1.set_xlabel(u"Espesor de aire equivalente [m]")
-        ax1.set_ylabel(u"Presi髇 de vapor [Pa]", fontdict=dict(color='b'))
+        ax1.set_ylabel(u"Presi贸n de vapor [Pa]", fontdict=dict(color='b'))
         ax1.text(0.1, 0.92, 'exterior',
                 transform=ax1.transAxes, fontsize=10, fontstyle='italic', horizontalalignment='right')
         ax1.text(0.9, 0.92, 'interior',
                 transform=ax1.transAxes, fontsize=10, fontstyle='italic', horizontalalignment='left')
         ax1.plot(x_c, y_c, 'b-', label='p_vap') # presiones efectivas
-        ax1.plot(rotulos_ssat, presiones_sat[1:-1], 'k-', label='p_sat', linewidth=1.5) #presiones de saturaci髇
+        ax1.plot(rotulos_ssat, presiones_sat[1:-1], 'k-', label='p_sat', linewidth=1.5) #presiones de saturaci贸n
         if len(puntos_condensacion) > 2: #si hay condensaciones dibuja la linea original
             ax1.plot(rotulos_ssat, presiones[1:-1], 'g--')
-        # Incrementar extensi髇 de l韒ites de ejes para hacer hueco
-        # adem醩 guardamos extremos del gr醘ico interior, sin m醨gen
-        # para luego hacer r髏ulos, etc
+        # Incrementar extensi贸n de l铆mites de ejes para hacer hueco
+        # adem谩s guardamos extremos del gr谩fico interior, sin m谩rgen
+        # para luego hacer r贸tulos, etc
         xmin, xmax, ymin, ymax = ax1.axis()
         lengthx = rotulo_ssati
         lengthy = ymax - ymin
@@ -174,7 +174,7 @@ class CPCanvas(FigureCanvas):
         # Lineas de tramos de cerramiento con condensaciones
         for rotulo in x_c[1:-1]:
             ax1.axvline(rotulo, linewidth=1.5, color='r', ymin=.05, ymax=.9)
-        # R髏ulos de lineas de presiones exteriores
+        # R贸tulos de lineas de presiones exteriores
         if P_sat_se > P_se:
             va1, va2 = 'top', 'baseline'
         else:
@@ -185,7 +185,7 @@ class CPCanvas(FigureCanvas):
         ax1.annotate(r'$P_{sat}$ = %iPa' % P_sat_se,
                 xy=(rotulo_se - 0.01, P_sat_se),
                 horizontalalignment='right', verticalalignment=va2, color='k', size='small')
-        # R髏ulos de lineas de presiones interiores
+        # R贸tulos de lineas de presiones interiores
         if P_sat_si > P_si:
             va1, va2 = 'top', 'baseline'
         else:
@@ -200,7 +200,7 @@ class CPCanvas(FigureCanvas):
         self.set_size_request(w, h)
 
     def save(self, filename='presionesplot.png'):
-        # guardar y mostrar gr醘ica
+        # guardar y mostrar gr谩fica
         self.savefig(filename)
 
 if __name__ == "__main__":

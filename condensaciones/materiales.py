@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#encoding: iso-8859-15
+#encoding: utf-8
 
 from util import get_resource
 import dbutils
@@ -21,3 +21,6 @@ def resistencia(nombre):
 
 def difusividad(nombre):
     return float(materiales[nombre]['VAPOUR-DIFFUSIVITY-FACTOR'])
+
+if __name__ == "__main__":
+    print materiales

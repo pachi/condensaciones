@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#encoding: iso-8859-15
+#encoding: utf-8
 
 import gtk
 import pango
@@ -9,9 +9,9 @@ class CTextView(gtk.ScrolledWindow):
     "Control para mostrar datos de Cerramientos en formato Texto"
     __gtype_name__ = 'CTextView'
     #TODO: Convertir a scrolledwindow cuando glade3 soporte buffer de texto con
-    #textags en la textagtable (ahora permite crear tablas pero no añadir tags
+    #textags en la textagtable (ahora permite crear tablas pero no aÃ±adir tags
     def __init__(self):
-        #Inicializar sin ajustes para que los cree automáticamente y los conecte con el textview
+        #Inicializar sin ajustes para que los cree automÃ¡ticamente y los conecte con el textview
         gtk.ScrolledWindow.__init__(self, None, None)
         self.tv = gtk.TextView()
         self.tv.set_wrap_mode(gtk.WRAP_WORD)
@@ -31,13 +31,13 @@ class CTextView(gtk.ScrolledWindow):
         text = "%s\n\n" % muro.nombre
         iter = self.buffer.get_start_iter()
         self.buffer.insert_with_tags_by_name(iter, text, 'titulo')
-        _murotxt = u"\nR_total: %.3f [m²K/W]\nS_total=%.3f [m]\nU = %.3f [W/m²K]"
+        _murotxt = u"\nR_total: %.3f [mÂ²K/W]\nS_total=%.3f [m]\nU = %.3f [W/mÂ²K]"
         for nombre, e, R, S in zip(muro.nombre_capas, muro.espesores, muro.R, muro.S):
-            #el archivo de datos de ejemplo está en formato latin1
+            #el archivo de datos de ejemplo estÃ¡ en formato latin1
             text = u"%s:\n" % nombre.decode('iso-8859-1')
             iter = self.buffer.get_end_iter()
             self.buffer.insert_with_tags_by_name(iter, text, 'capa')
-            text = u"%.3f [m]\nR=%.3f [m²K/W]\nS=%.3f [m]\n" % (e, R, S)
+            text = u"%.3f [m]\nR=%.3f [mÂ²K/W]\nS=%.3f [m]\n" % (e, R, S)
             iter = self.buffer.get_end_iter()
             self.buffer.insert_with_tags_by_name(iter, text, 'datoscapa')
         text = _murotxt % (muro.R_total, muro.S_total, muro.U)

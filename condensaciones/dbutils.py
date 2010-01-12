@@ -1,12 +1,15 @@
 #!/usr/bin/env python
-#encoding: iso-8859-15
+#encoding: utf-8
 """Funciones para leer bases de datos de materiales tipo LIDER y crear un
 diccionario con sus datos.
 """
+
+import codecs
+
 KEYWORDS = ('TEMPLARY',)
 SECTIONDELIMITER = '+++'
 COMMENT = '$'
-DEFAULT_SECTION = 'default'
+DEFAULT_SECTION = u'default'
 
 def parseblock(block):
     _dict = {}
@@ -19,7 +22,7 @@ def parseblock(block):
 
 def parsefile(file):
     #TODO: ampliar a listas de archivos para combinar bases de datos (eg. LIDER + URSA)
-    lines = open(file, 'rb')
+    lines = codecs.open(file, 'rb', 'iso-8859-1') #Las BBDD est√°n en iso-8859-1
     datos = {}
     block = []
     materiales = []
@@ -48,7 +51,7 @@ def parsefile(file):
                 block = []
             else:
                 block.append(line)
-    if materiales is not []: #si solamente hay secciÛn default
+    if materiales is not []: #si solamente hay secci√≥n default
         datos[section] = materiales[:]
     return datos
 
@@ -72,18 +75,19 @@ if __name__ == "__main__":
         argfile = None
     else:
         argfile = sys.argv[1:]
-    files = argfile or util.get_resource('..', 'db/PCatalogo.bdc')
+    files = argfile or util.get_resource('..', 'db/BDCatalogo.bdc')
     db = db2datos(files)
-    print "%i materiales generados" % len(db)
+    print u"%i materiales generados" % len(db)
 
-#     for file in files:
-#         datos = parsefile(file)
-#         print "Archivo: %s" % file
-#         print "Secciones:", datos.keys().sort()
-#         print "%i secciones y %i materiales en la secciÛn 'default'" % (len(datos), len(datos['default']))
-#
-#     for index, material in enumerate(datos['default']):
-#         print material['MATERIAL']
-#     for dato in b2datos(file).keys():
-#         print dato
-#     print b2datos(file)
+    if not isinstance(files, (tuple, list)):
+        files = [files]
+    for file in files:
+        datos = parsefile(file)
+        print u"Archivo: %s" % file
+        print u"Secciones:", datos.keys().sort()
+        print u"%i secciones y %i materiales en la secci√≥n 'default'" % (len(datos), len(datos['default']))
+        for index, material in enumerate(datos['default']):
+            print material['MATERIAL']
+        for dato in db2datos(file).keys():
+            print dato
+        print db2datos(file)
