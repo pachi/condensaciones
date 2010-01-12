@@ -61,7 +61,7 @@ class GtkCondensa(object):
         for muro in muros:
             row = [str(muro.nombre), str(muro)]
             listamuros.append(row)
-            print row
+            #print row
         #datosmuro = [('M1',), ('M2',), ('M3',), ('M4',)]
         datosmuro = listamuros
         for muro in datosmuro:
