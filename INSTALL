@@ -1,0 +1,12 @@
+Cómo instalar este programa:
+
+1)Usando el ejecutable:
+    El programa no precisa de instalación especial. Se puede ejecutar directamente.
+
+2)Desde una copia del código fuente
+    Dependencias:
+        Python
+        ConfigParser
+        Matplotlib
+        PyGTK (+ Pygobject + Pycairo)
+        GTK+
