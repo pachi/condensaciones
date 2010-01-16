@@ -10,7 +10,6 @@
 # al reinstalar matplotlib para que indique como default backend GTKCairo:
 # backend      : GTKCairo
 
-import os, shutil
 from distutils.core import setup
 import py2exe
 import matplotlib
@@ -20,7 +19,7 @@ datafilelist = ['data/condensa.ui',
                 'data/BDCatalogo.bdc',
                 'data/Catalogo_URSA.bdc',
                 'data/PCatalogo.bdc']
-includes = ['cairo', 'pango', 'pangocairo', 'atk', 'gobject',]
+includes = ['cairo', 'pango', 'pangocairo', 'atk', 'gobject']
 excludes = ['_wxagg', '_fltkagg', '_cocoaagg', '_gtkagg',
             'email', 'logging', 'PyQt4', 'nose', 'wx', 'scipy',
             'tcl', 'Tkinter', 'compiler']
@@ -44,7 +43,8 @@ opts = {'py2exe': {
                    }
         }
 
-data_files = [('', docfiles), ('data', datafilelist)] + matplotlib.get_py2exe_datafiles()
+data_files = [('', docfiles),
+              ('data', datafilelist)] + matplotlib.get_py2exe_datafiles()
 
 setup(
     name = 'Acciones-CTE',
