@@ -12,10 +12,7 @@ class CPTCanvas(FigureCanvas):
     __gtype_name__ = 'CPTCanvas'
 
     def __init__(self, fig=None):
-        if fig:
-            self.fig = fig
-        else:
-            self.fig = plt.figure()
+        self.fig = fig or matplotlib.pyplot.figure()
         FigureCanvas.__init__(self, self.fig)
 
     def dibuja(self, muro, climae, climai, w=600, h=400):
@@ -106,10 +103,7 @@ class CPCanvas(FigureCanvas):
     __gtype_name__ = 'CPCanvas'
 
     def __init__(self, fig=None):
-        if fig:
-            self.fig = fig
-        else:
-            self.fig = plt.figure()
+        self.fig = fig or matplotlib.pyplot.figure()
         FigureCanvas.__init__(self, self.fig)
 
     def dibuja(self, muro, climae, climai, w=600, h=400):
