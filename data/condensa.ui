@@ -71,7 +71,7 @@
                       <object class="GtkTextView" id="murotextview">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
-                        <property name="wrap_mode">word</property>
+                        <property name="wrap_mode">word-char</property>
                         <property name="buffer">murotextbuffer</property>
                       </object>
                     </child>
