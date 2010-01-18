@@ -3,10 +3,10 @@
 
 import os
 import gtk
+import pango
 import util
 import capas
 import comprobaciones
-from condensawidgets import CTextView
 from ptcanvas import CPTCanvas, CPCanvas
 
 COLOR_OK = gtk.gdk.color_parse("#AACCAA")
@@ -32,7 +32,12 @@ class GtkCondensa(object):
         self.grafico1 = builder.get_object('cptcanvas1')
         self.grafico2 = builder.get_object('cpcanvas1')
         # - texto -
-        self.textview = builder.get_object('ctextview1')
+        self.textview = builder.get_object('murotextview')
+        self.murotextbuffer = builder.get_object('murotextbuffer')
+        self.murotextbuffer.create_tag("titulo", weight=pango.WEIGHT_BOLD, scale=pango.SCALE_X_LARGE)
+        self.murotextbuffer.create_tag("capa", weight=pango.WEIGHT_BOLD)
+        self.murotextbuffer.create_tag("datoscapa", style=pango.STYLE_ITALIC, indent=30)
+        self.murotextbuffer.create_tag("resultados", foreground='blue', scale=pango.SCALE_LARGE)
         # - pie -
         self.pie1 = builder.get_object('pie1')
         self.pie2 = builder.get_object('pie2')
@@ -94,7 +99,30 @@ class GtkCondensa(object):
         self.grafico2.dibuja(self.muro, self.climae, self.climai)
     
     def actualizatexto(self):
-        self.textview.update(self.muro)
+        "Mostrar texto"
+        muro = self.muro
+        _tb = self.murotextbuffer
+        _tb.set_text("")
+        text = "%s\n\n" % muro.nombre
+        iter = _tb.get_start_iter()
+        _tb.insert_with_tags_by_name(iter, text, 'titulo')
+        _murotxt = u"\nR_total: %.3f [m²K/W]\nS_total=%.3f [m]\nU = %.3f [W/m²K]"
+        for nombre, e, R, S in zip(muro.nombre_capas,
+                                   muro.espesores,
+                                   muro.R,
+                                   muro.S):
+            #el archivo de datos de ejemplo está en formato latin1
+            text = u"%s:\n" % nombre.decode('iso-8859-1')
+            iter = _tb.get_end_iter()
+            _tb.insert_with_tags_by_name(iter, text, 'capa')
+            text = u"%.3f [m]\nR=%.3f [m²K/W]\nS=%.3f [m]\n" % (e, R, S)
+            iter = _tb.get_end_iter()
+            _tb.insert_with_tags_by_name(iter, text, 'datoscapa')
+        text = _murotxt % (muro.R_total, muro.S_total, muro.U)
+        iter = _tb.get_end_iter()
+        _tb.insert_with_tags_by_name(iter, text, 'resultados')
+        while gtk.events_pending():
+            gtk.main_iteration()
 
     def actualizapie(self):
         g, puntos_condensacion = self.muro.cantidadcondensacion(self.climae.temp, self.climai.temp, self.climae.HR, self.climai.HR)

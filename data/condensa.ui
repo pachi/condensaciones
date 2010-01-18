@@ -62,13 +62,19 @@
                 <property name="visible">True</property>
                 <property name="orientation">vertical</property>
                 <child>
-                  <object class="CTextView" id="ctextview1">
+                  <object class="GtkScrolledWindow" id="muroscrolledwindow">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="hadjustment">adjustment1</property>
-                    <property name="vadjustment">adjustment2</property>
-                    <property name="hscrollbar_policy">never</property>
+                    <property name="hscrollbar_policy">automatic</property>
                     <property name="vscrollbar_policy">automatic</property>
+                    <child>
+                      <object class="GtkTextView" id="murotextview">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="wrap_mode">word</property>
+                        <property name="buffer">murotextbuffer</property>
+                      </object>
+                    </child>
                   </object>
                   <packing>
                     <property name="position">0</property>
@@ -334,4 +340,5 @@
     <property name="page_increment">10</property>
     <property name="page_size">10</property>
   </object>
+  <object class="GtkTextBuffer" id="murotextbuffer"/>
 </interface>
