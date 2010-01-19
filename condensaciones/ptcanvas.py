@@ -24,10 +24,10 @@ class CPTCanvas(FigureCanvas):
         temperaturas = muro.temperaturas(climae.temp, climai.temp)
         presiones = muro.presiones(climae.temp, climai.temp, climae.HR, climai.HR)
         presiones_sat = muro.presionessat(climae.temp, climai.temp)
-        rotulos = muro.nombre_capas
+        rotulos = muro.nombres
         rotulos_s = add_margin(muro.espesores_acumulados)
         #rotulos_ssat = muro.S_acumulados
-        colordict = colores_capas(muro.nombre_capas)
+        colordict = colores_capas(muro.nombres)
         #nemotécnicas intermedias
         rotulo_se = rotulos_s[1]
         rotulo_si = rotulos_s[-2]
@@ -123,10 +123,10 @@ class CPCanvas(FigureCanvas):
         #temperaturas = muro.temperaturas(climae.temp, climai.temp)
         presiones = muro.presiones(climae.temp, climai.temp, climae.HR, climai.HR)
         presiones_sat = muro.presionessat(climae.temp, climai.temp)
-        rotulos = muro.nombre_capas
+        rotulos = muro.nombres
         rotulos_s = add_margin(muro.espesores_acumulados)
         rotulos_ssat = muro.S_acumulados
-        colordict = colores_capas(muro.nombre_capas)
+        colordict = colores_capas(muro.nombres)
         #nemotécnicas intermedias
         rotulo_se = rotulos_s[1]
         rotulo_si = rotulos_s[-2]

@@ -122,7 +122,7 @@ class GtkCondensa(object):
         _tb.insert_with_tags_by_name(_tb.get_start_iter(), text, 'titulo')
         _murotxt = (u"\nR_total: %.3f [m²K/W]\n"
                     u"S_total = %.3f [m]\nU = %.3f [W/m²K]")
-        for nombre, e, R, S in zip(m.nombre_capas, m.espesores, m.R, m.S):
+        for nombre, e, R, S in zip(m.nombres, m.espesores, m.R, m.S):
             text = u"%s:\n" % nombre
             _tb.insert_with_tags_by_name(_tb.get_end_iter(), text, 'capa')
             text = u"%.3f [m]\nR=%.3f [m²K/W]\nS=%.3f [m]\n" % (e, R, S)

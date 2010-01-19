@@ -12,7 +12,7 @@ class Cerramiento(object):
         self.Rsi = Rsi
 
     @property
-    def nombre_capas(self):
+    def nombres(self):
         "Nombre de las capas"
         return [nombre for nombre, e in self.capas]
 
@@ -197,7 +197,7 @@ if __name__ == "__main__":
     cantidad_evaporada = sum(g)
 
     print u"Cerramiento:\n\t", muro.nombre
-    print u"Nombre capas:\n\t", "\n\t".join(muro.nombre_capas)
+    print u"Nombre capas:\n\t", "\n\t".join(muro.nombres)
     print
     print u"Espesores:\n\t", stringify(muro.espesores, 2)
     print u"Espesores acumulados:\n\t", stringify(muro.espesores_acumulados, 2)

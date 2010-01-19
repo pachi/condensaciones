@@ -84,7 +84,7 @@ if __name__ == "__main__":
     c_soi = condensaciones(muro, climae.temp, climai.temp,
                            climae.HR, climai.HR)
 
-    print u"Capas: \n\t", "\n\t".join(muro.nombre_capas)
+    print u"Capas: \n\t", "\n\t".join(muro.nombres)
     print u"\nCondensaciones superficiales (%s)" % (c_sup and u"Sí" or u"No")
     print u"\tfRsi = %.2f, fRsimin = %.2f" % (f_Rsi, f_Rsimin)
     print u"Condensaciones intersticiales (%s)" % (c_int and u"Sí" or u"No")
