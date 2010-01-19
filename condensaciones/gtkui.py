@@ -118,37 +118,31 @@ class GtkCondensa(object):
     
     def actualizatexto(self):
         "Mostrar texto"
-        muro = self.muro
+        m = self.muro
         _tb = self.murotextbuffer
         _tb.set_text("")
-        text = "%s\n\n" % muro.nombre
-        iter = _tb.get_start_iter()
-        _tb.insert_with_tags_by_name(iter, text, 'titulo')
+        text = "%s\n\n" % m.nombre
+        _tb.insert_with_tags_by_name(_tb.get_start_iter(), text, 'titulo')
         _murotxt = (u"\nR_total: %.3f [m²K/W]\n"
                     u"S_total = %.3f [m]\nU = %.3f [W/m²K]")
-        for nombre, e, R, S in zip(muro.nombre_capas,
-                                   muro.espesores,
-                                   muro.R,
-                                   muro.S):
+        for nombre, e, R, S in zip(m.nombre_capas, m.espesores, m.R, m.S):
             text = u"%s:\n" % nombre
-            iter = _tb.get_end_iter()
-            _tb.insert_with_tags_by_name(iter, text, 'capa')
+            _tb.insert_with_tags_by_name(_tb.get_end_iter(), text, 'capa')
             text = u"%.3f [m]\nR=%.3f [m²K/W]\nS=%.3f [m]\n" % (e, R, S)
-            iter = _tb.get_end_iter()
-            _tb.insert_with_tags_by_name(iter, text, 'datoscapa')
-        text = _murotxt % (muro.R_total, muro.S_total, muro.U)
-        iter = _tb.get_end_iter()
-        _tb.insert_with_tags_by_name(iter, text, 'resultados')
+            _tb.insert_with_tags_by_name(_tb.get_end_iter(), text, 'datoscapa')
+        text = _murotxt % (m.R_total, m.S_total, m.U)
+        _tb.insert_with_tags_by_name(_tb.get_end_iter(), text, 'resultados')
         while gtk.events_pending():
             gtk.main_iteration()
 
     def actualizapie(self):
-        g, puntos_condensacion = self.muro.condensacion(self.climae.temp, self.climai.temp, self.climae.HR, self.climai.HR)
-        #g, puntos_evaporacion = self.muro.evaporacion(temp_ext, temp_int, HR_ext, HR_int, interfases=[2])
+        g, pcond = self.muro.condensacion(self.climae.temp, self.climai.temp,
+                                          self.climae.HR, self.climai.HR)
+#        g, pevap = self.muro.evaporacion(temp_ext, temp_int,
+#                                         HR_ext, HR_int, interfases=[2])
         if not g:
             g = 0.0
-        gtotal = 2592000.0 * sum(g)
-        _text = u"Total: %.2f [g/m²mes]" % gtotal
+        _text = u"Total: %.2f [g/m²mes]" % (2592000.0 * sum(g))
         self.pie1.set_markup(_text)
         _text = (u"Cantidades condensadas: " +
                  u", ".join(["%.2f" % (2592000.0 * x,) for x in g]))
