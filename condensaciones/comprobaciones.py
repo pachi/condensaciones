@@ -63,14 +63,13 @@ def compruebacondensaciones(muro, temp_ext, temp_int, HR_ext, HR_int):
 
 if __name__ == "__main__":
     import capas
-    import grafica
     from datos_ejemplo import climae, climai, murocapas
 
     muro = capas.Cerramiento("Cerramiento tipo", murocapas, 0.04, 0.13)
     f_Rsi = calculafRsi(muro.U)
     f_Rsimin = calculafRsimin(climae.temp, climai.temp, climai.HR)
     c_sup = compruebacsuperificiales(muro, climae.temp, climai.temp, climai.HR)
-    c_int = compuebacintersticiales(muro, climae.temp, climai.temp, climae.HR, climai.HR)
+    c_int = compruebacintersticiales(muro, climae.temp, climai.temp, climae.HR, climai.HR)
 
     print u"Capas: \n\t", "\n\t".join(muro.nombre_capas)
     print u"\nCondensaciones superficiales (%s)" % (c_sup and u"Sí" or u"No")
