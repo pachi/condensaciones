@@ -91,15 +91,13 @@ class GtkCondensa(object):
         self.actualizapie()
 
     def actualizacabecera(self):
-        fRsi = comprobaciones.calculafRsi(self.muro.U)
-        fRsimin = comprobaciones.calculafRsimin(self.climae.temp,
-                                                self.climai.temp,
-                                                self.climai.HR)
-        ccheck = comprobaciones.compruebacondensaciones(self.muro,
-                                                        self.climae.temp,
-                                                        self.climai.temp,
-                                                        self.climae.HR,
-                                                        self.climai.HR)
+        ti = self.climai.temp
+        hri = self.climai.HR
+        te = self.climae.temp
+        hre = self.climae.HR
+        fRsi = comprobaciones.fRsi(self.muro.U)
+        fRsimin = comprobaciones.fRsimin(te, ti, hri)
+        ccheck = comprobaciones.condensaciones(self.muro, te, ti, hre, hri)
         _text = u'<span size="x-large">%s</span>' % self.muro.nombre
         self.ctitulo.set_markup(_text)
         _text = (u'U = %.2f W/m²K, f<sub>Rsi</sub> ='
@@ -107,10 +105,9 @@ class GtkCondensa(object):
         self.csubtitulo1.set_markup(_text % (self.muro.U, fRsi, fRsimin))
         _text = (u'T<sub>int</sub> = %.2f°C, HR<sub>int</sub> = %.1f%%, '
                  u'T<sub>ext</sub> = %.2f°C, HR<sub>ext</sub> = %.1f%%')
-        self.csubtitulo2.set_markup(_text % (self.climai.temp, self.climai.HR,
-                                             self.climae.temp, self.climae.HR))
+        self.csubtitulo2.set_markup(_text % (ti, hri, te, hre))
         self.cfondo.modify_bg(gtk.STATE_NORMAL,
-                              ccheck and COLOR_OK or COLOR_BAD)
+                              ccheck and COLOR_BAD or COLOR_OK)
 
     def actualizagraficas(self):
         self.grafico1.dibuja(self.muro, self.climae, self.climai)

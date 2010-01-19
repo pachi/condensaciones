@@ -3,13 +3,13 @@
 
 import math
 
-def calculafRsi(U):
+def fRsi(U):
     """Factor de temperatura de la superficie interior de un cerramiento,
     partición interior o puentes térmicos INTEGRADOS en los cerramientos.
     """
     return 1.0 - U * 0.25
 
-def calculafRsimin(tempext, tempint, hrint):
+def fRsimin(tempext, tempint, hrint):
     """Factor de temperatura de la superficie interior mínnimo aceptable de un
     puente térmico, cerramiento o partición interior.
     """
@@ -28,22 +28,22 @@ def calculafRsimin(tempext, tempint, hrint):
     #XXX: comprobar si tempint = tempext?
     return (temp_si_min - tempext) / (tempint - tempext)
 
-def compruebacsuperificiales(muro, temp_ext, temp_int, HR_int):
+def condensas(muro, temp_ext, temp_int, HR_int):
     """Comprueba la condición de existencia de condensaciones superficiales en
     un cerramiento o puente térmico.
-    Devuelve la comprobación y el valor de fRsi y fRsimin
+    
+    Devuelve True si existen condensaciones superficiales.
     """
     # el CTE incluye tablas según zonas y clase de higrometría para fRsimin que
     # están calculadas para la capital más desfavorable de cada zona y con
     # HR=55%, 62%, 70%.
-    fRsi = calculafRsi(muro.U)
-    fRsimin = calculafRsimin(temp_ext, temp_int, HR_int)
-    return fRsi < fRsimin
+    return fRsi(muro.U) < fRsimin(temp_ext, temp_int, HR_int)
 
-def compruebacintersticiales(muro, temp_ext, temp_int, HR_ext, HR_int):
+def condensai(muro, temp_ext, temp_int, HR_ext, HR_int):
     """Comprueba la condición de existencia de condensaciones intersticiales en
     un cerramiento o puente térmico.
-    Devuelve la comprobación
+    
+    Devuelve True si existen condensaciones intersticiales.
     """
 #    presiones = muro.presiones(temp_ext, temp_int, HR_ext, HR_int)
 #    presiones_sat = muro.presionessat(temp_ext, temp_int)
@@ -53,7 +53,7 @@ def compruebacintersticiales(muro, temp_ext, temp_int, HR_ext, HR_int):
 #            condensa = True
 #
 #TODO: Revisar condensaciones viendo si la cantidad condensada es susceptible
-# de evaporación
+# de evaporación o no
     g, puntos_condensacion = muro.condensacion(temp_ext, temp_int,
                                                HR_ext, HR_int)
 #    g, puntos_evaporacion = muro.evaporacion(temp_ext, temp_int,
@@ -62,24 +62,30 @@ def compruebacintersticiales(muro, temp_ext, temp_int, HR_ext, HR_int):
     condensa = (sum(g) > 0.0)
     return condensa
 
-def compruebacondensaciones(muro, temp_ext, temp_int, HR_ext, HR_int):
-    ci = compruebacintersticiales(muro, temp_ext, temp_int, HR_ext, HR_int)
-    cs = compruebacsuperificiales(muro, temp_ext, temp_int, HR_int)
+def condensaciones(muro, temp_ext, temp_int, HR_ext, HR_int):
+    """Existencia de condensaciones en un cerramiento.
+    
+    Devuelve True si existen condensaciones superficiales o intersticiales"""
+    ci = condensai(muro, temp_ext, temp_int, HR_ext, HR_int)
+    cs = condensas(muro, temp_ext, temp_int, HR_int)
 
-    return ci and cs
+    return ci or cs
 
 if __name__ == "__main__":
     import capas
     from datos_ejemplo import climae, climai, murocapas
 
     muro = capas.Cerramiento("Cerramiento tipo", murocapas, 0.04, 0.13)
-    f_Rsi = calculafRsi(muro.U)
-    f_Rsimin = calculafRsimin(climae.temp, climai.temp, climai.HR)
-    c_sup = compruebacsuperificiales(muro, climae.temp, climai.temp, climai.HR)
-    c_int = compruebacintersticiales(muro, climae.temp, climai.temp,
+    f_Rsi = fRsi(muro.U)
+    f_Rsimin = fRsimin(climae.temp, climai.temp, climai.HR)
+    c_sup = condensas(muro, climae.temp, climai.temp, climai.HR)
+    c_int = condensai(muro, climae.temp, climai.temp,
                                      climae.HR, climai.HR)
+    c_soi = condensaciones(muro, climae.temp, climai.temp,
+                           climae.HR, climai.HR)
 
     print u"Capas: \n\t", "\n\t".join(muro.nombre_capas)
     print u"\nCondensaciones superficiales (%s)" % (c_sup and u"Sí" or u"No")
     print u"\tfRsi = %.2f, fRsimin = %.2f" % (f_Rsi, f_Rsimin)
     print u"Condensaciones intersticiales (%s)" % (c_int and u"Sí" or u"No")
+    print u"Condensaciones (%s)" % (c_soi and u"Sí" or u"No")
