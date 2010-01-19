@@ -34,10 +34,17 @@ class GtkCondensa(object):
         # - texto -
         self.textview = builder.get_object('murotextview')
         self.murotextbuffer = builder.get_object('murotextbuffer')
-        self.murotextbuffer.create_tag("titulo", weight=pango.WEIGHT_BOLD, scale=pango.SCALE_X_LARGE)
-        self.murotextbuffer.create_tag("capa", weight=pango.WEIGHT_BOLD)
-        self.murotextbuffer.create_tag("datoscapa", style=pango.STYLE_ITALIC, indent=30)
-        self.murotextbuffer.create_tag("resultados", foreground='blue', scale=pango.SCALE_LARGE)
+        self.murotextbuffer.create_tag("titulo",
+                                       weight=pango.WEIGHT_BOLD,
+                                       scale=pango.SCALE_X_LARGE)
+        self.murotextbuffer.create_tag("capa",
+                                       weight=pango.WEIGHT_BOLD)
+        self.murotextbuffer.create_tag("datoscapa",
+                                       style=pango.STYLE_ITALIC,
+                                       indent=30)
+        self.murotextbuffer.create_tag("resultados",
+                                       foreground='blue',
+                                       scale=pango.SCALE_LARGE)
         # - pie -
         self.pie1 = builder.get_object('pie1')
         self.pie2 = builder.get_object('pie2')
@@ -72,8 +79,9 @@ class GtkCondensa(object):
         for muro in datosmuro:
             pass
             #print muro
-            # XXX: No se puede cargar el muro porque la segunda columna debería ser
-            # un PyGobject, y no un Gobject nada más... (glade no permite seleccionar ese tipo)
+            # XXX: No se puede cargar el muro porque la segunda columna debería
+            # XXX: ser un PyGobject, y no un Gobject nada más... (glade no
+            # XXX: permite seleccionar ese tipo)
             #self.lsmuros.append(muro)
 
     def actualiza(self):
@@ -84,15 +92,25 @@ class GtkCondensa(object):
 
     def actualizacabecera(self):
         fRsi = comprobaciones.calculafRsi(self.muro.U)
-        fRsimin = comprobaciones.calculafRsimin(self.climae.temp, self.climai.temp, self.climai.HR)
-        ccheck = comprobaciones.compruebacondensaciones(self.muro, self.climae.temp, self.climai.temp, self.climae.HR, self.climai.HR)
+        fRsimin = comprobaciones.calculafRsimin(self.climae.temp,
+                                                self.climai.temp,
+                                                self.climai.HR)
+        ccheck = comprobaciones.compruebacondensaciones(self.muro,
+                                                        self.climae.temp,
+                                                        self.climai.temp,
+                                                        self.climae.HR,
+                                                        self.climai.HR)
         _text = u'<span size="x-large">%s</span>' % self.muro.nombre
         self.ctitulo.set_markup(_text)
-        _text = u'U = %.2f W/m²K, f<sub>Rsi</sub> = %.2f, f<sub>Rsi,min</sub> = %.2f' % (self.muro.U, fRsi, fRsimin)
-        self.csubtitulo1.set_markup(_text)
-        _text = u'T<sub>int</sub> = %.2f°C, HR<sub>int</sub> = %.1f%%, T<sub>ext</sub> = %.2f°C, HR<sub>ext</sub> = %.1f%%' % (self.climai.temp, self.climai.HR, self.climae.temp, self.climae.HR)
-        self.csubtitulo2.set_markup(_text)
-        self.cfondo.modify_bg(gtk.STATE_NORMAL, ccheck and COLOR_OK or COLOR_BAD)
+        _text = (u'U = %.2f W/m²K, f<sub>Rsi</sub> ='
+                 u' %.2f, f<sub>Rsi,min</sub> = %.2f')
+        self.csubtitulo1.set_markup(_text % (self.muro.U, fRsi, fRsimin))
+        _text = (u'T<sub>int</sub> = %.2f°C, HR<sub>int</sub> = %.1f%%, '
+                 u'T<sub>ext</sub> = %.2f°C, HR<sub>ext</sub> = %.1f%%')
+        self.csubtitulo2.set_markup(_text % (self.climai.temp, self.climai.HR,
+                                             self.climae.temp, self.climae.HR))
+        self.cfondo.modify_bg(gtk.STATE_NORMAL,
+                              ccheck and COLOR_OK or COLOR_BAD)
 
     def actualizagraficas(self):
         self.grafico1.dibuja(self.muro, self.climae, self.climai)
@@ -106,7 +124,8 @@ class GtkCondensa(object):
         text = "%s\n\n" % muro.nombre
         iter = _tb.get_start_iter()
         _tb.insert_with_tags_by_name(iter, text, 'titulo')
-        _murotxt = u"\nR_total: %.3f [m²K/W]\nS_total=%.3f [m]\nU = %.3f [W/m²K]"
+        _murotxt = (u"\nR_total: %.3f [m²K/W]\n"
+                    u"S_total = %.3f [m]\nU = %.3f [W/m²K]")
         for nombre, e, R, S in zip(muro.nombre_capas,
                                    muro.espesores,
                                    muro.R,
@@ -132,7 +151,8 @@ class GtkCondensa(object):
         gtotal = 2592000.0 * sum(g)
         _text = u"Total: %.2f [g/m²mes]" % gtotal
         self.pie1.set_markup(_text)
-        _text = u"Cantidades condensadas: " + u", ".join(["%.2f" % (2592000.0 * x,) for x in g])
+        _text = (u"Cantidades condensadas: " +
+                 u", ".join(["%.2f" % (2592000.0 * x,) for x in g]))
         self.pie2.set_markup(_text)
 
     # -- Retrollamadas ventana principal --
