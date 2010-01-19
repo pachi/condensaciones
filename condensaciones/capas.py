@@ -99,7 +99,7 @@ class Cerramiento(object):
         temperaturas = self.temperaturas(tempext, tempint)
         return [psicrom.psat(temperatura) for temperatura in temperaturas]
 
-    def cantidadcondensacion(self, temp_ext, temp_int, HR_ext, HR_int):
+    def condensacion(self, temp_ext, temp_int, HR_ext, HR_int):
         """Calcular cantidad de condensación y coordenadas (S, presión de vapor)
         de los planos de condensación.
         Devuelve g [g/m²s], puntos_condensacion
@@ -135,7 +135,7 @@ class Cerramiento(object):
             for n in range(len(y_j) - 2)]
         return g, envolvente_inf
 
-    def cantidadevaporacion(self, temp_ext, temp_int, HR_ext, HR_int, interfases):
+    def evaporacion(self, temp_ext, temp_int, HR_ext, HR_int, interfases):
         """Calcular cantidad de evaporacion devolver coordenadas (S, presión de vapor)
         Devuelve g [g/m²s], puntos_evaporacion
         """
@@ -171,11 +171,11 @@ if __name__ == "__main__":
     p_ext = presiones[1]
     p_int = presiones[-1]
 
-    g, puntos_condensacion = muro.cantidadcondensacion(climae.temp, climai.temp, climae.HR, climai.HR)
+    g, puntos_condensacion = muro.condensacion(climae.temp, climai.temp, climae.HR, climai.HR)
     cantidad_condensada = sum(g)
     # indicamos evaporación en la interfase 2, pero en realidad habría que ver en cúales había antes
     # condensaciones y realizar el cálculo en ellas.
-    g, puntos_evaporacion = muro.cantidadevaporacion(climae.temp, climai.temp, climae.HR, climai.HR, interfases=[2])
+    g, puntos_evaporacion = muro.evaporacion(climae.temp, climai.temp, climae.HR, climai.HR, interfases=[2])
     cantidad_evaporada = sum(g)
 
     print u"Cerramiento:\n\t", muro.nombre

@@ -144,7 +144,7 @@ class GtkCondensa(object):
             gtk.main_iteration()
 
     def actualizapie(self):
-        g, puntos_condensacion = self.muro.cantidadcondensacion(self.climae.temp, self.climai.temp, self.climae.HR, self.climai.HR)
+        g, puntos_condensacion = self.muro.condensacion(self.climae.temp, self.climai.temp, self.climae.HR, self.climai.HR)
         #g, puntos_evaporacion = self.muro.cantidadevaporacion(temp_ext, temp_int, HR_ext, HR_int, interfases=[2])
         if not g:
             g = 0.0

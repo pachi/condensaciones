@@ -118,7 +118,7 @@ class CPCanvas(FigureCanvas):
         diagrama capa/Presion de vapor y capa/Temp
         """
         # ============================ presiones ==========================
-        g, puntos_condensacion = muro.cantidadcondensacion(climae.temp, climai.temp, climae.HR, climai.HR)
+        g, puntos_condensacion = muro.condensacion(climae.temp, climai.temp, climae.HR, climai.HR)
         #g, puntos_evaporacion = muro.cantidadevaporacion(temp_ext, temp_int, HR_ext, HR_int, interfases=[2])
         #temperaturas = muro.temperaturas(climae.temp, climai.temp)
         presiones = muro.presiones(climae.temp, climai.temp, climae.HR, climai.HR)
