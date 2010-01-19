@@ -69,17 +69,18 @@ class Cerramiento(object):
         """
         return 1.0 / self.R_total
 
-    def temperaturas(self, tempext, tempint):
+    def temperaturas(self, temp_ext, temp_int):
         """Devuelve lista de temperaturas [ºC]:
         temperatura exterior, temperatura superficial exterior,
         temperaturas intersticiales, temperatura superficial interior
         y temperatura interior.
-            tempext - temperatura exterior media en el mes de enero
-            tempint - temperatura interior de cálculo (20ºC)
+            temp_ext - temperatura exterior media en el mes de enero
+            temp_int - temperatura interior de cálculo (20ºC)
         """
-        _tlist = [tempext]
+        _tlist = [temp_ext]
         for capa_Ri in self.R:
-            tempj = _tlist[-1] + (capa_Ri * (tempint - tempext) / self.R_total)
+            tempj = _tlist[-1] + (capa_Ri * (temp_int -
+                                             temp_ext) / self.R_total)
             _tlist.append(tempj)
         return _tlist
 
@@ -99,9 +100,9 @@ class Cerramiento(object):
         p_vapor.append(_p_int)
         return p_vapor
 
-    def presionessat(self, tempext, tempint):
+    def presionessat(self, temp_ext, temp_int):
         "Presiones de saturación en cada capa [Pa]"
-        _temperaturas = self.temperaturas(tempext, tempint)
+        _temperaturas = self.temperaturas(temp_ext, temp_int)
         return [psicrom.psat(t) for t in _temperaturas]
 
     def condensacion(self, temp_ext, temp_int, HR_ext, HR_int):
