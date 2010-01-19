@@ -130,8 +130,7 @@ class GtkCondensa(object):
                                    muro.espesores,
                                    muro.R,
                                    muro.S):
-            #el archivo de datos de ejemplo está en formato latin1
-            text = u"%s:\n" % nombre.decode('iso-8859-1')
+            text = u"%s:\n" % nombre
             iter = _tb.get_end_iter()
             _tb.insert_with_tags_by_name(iter, text, 'capa')
             text = u"%.3f [m]\nR=%.3f [m²K/W]\nS=%.3f [m]\n" % (e, R, S)
