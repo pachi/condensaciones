@@ -22,9 +22,9 @@
 #   02110-1301, USA.
 """Relaciones psicrométricas"""
 
-# TODO: Hay que generalizar el cálculo de la presión exterior para la localidad concreta?
-# Sería mejor cambiar psatloc, temploc y hrloc a funciones que tengan delta_alt = None
-# y se usen siempre?
+# TODO: Hay que generalizar el cálculo de la presión exterior para la localidad
+# concreta? Sería mejor cambiar psatloc, temploc y hrloc a funciones que tengan
+# delta_alt = None y se usen siempre?
 
 import sys
 import math
@@ -68,7 +68,8 @@ def hrloc(temp, humedad, delta_alt):
         humedad - humedad relativa media de la capital para el mes dado
         delta_alt - altura de la localidad sobre la de la capital.
     """
-    return pvapor(temp, humedad) / (psatloc(temp, delta_alt) * temploc(temp, delta_alt))
+    return pvapor(temp, humedad) / ((psatloc(temp, delta_alt) * 
+                                     temploc(temp, delta_alt)))
 
 def tasatransferenciavapor(pe, pi, Se, Si):
     """Tasa de transferencia de vapor a través del cerramiento g/m2.s
@@ -92,7 +93,7 @@ def calculahrinthigrometria(temp_ext, temp_sint, hrext, higrometria):
         Higrometría 1 (zonas de almacenamiento): delta_p = 270 Pa
         Higrometría 2 (oficinas, tiendas): delta_p = 540 Pa
         Higrometría 3 (viviendas residencial): delta_p = 810 Pa
-        Higrometría 4 (viviendas alta ocupación, restaurantes, cocinas): delta_p = 1080 Pa
+        Higrometría 4 (viv. alta ocupación, rest., cocinas): delta_p = 1080 Pa
         Higrometría 5 (lavanderías, piscinas, restaurantes): delta_p = 1300 Pa
     """
     # delta_p: exceso de presión interna
@@ -126,7 +127,8 @@ def calculahrinthigrometria(temp_ext, temp_sint, hrext, higrometria):
             delta_p = 0.0
     else:
         delta_p = 1300.0
-    return 100.0 * (psicrom.pvapor(temp_ext, hrext) + delta_p) / psicrom.psat(temp_sint)
+    return (100.0 * (psicrom.pvapor(temp_ext, hrext) + delta_p) /
+            psicrom.psat(temp_sint))
 
 def calculahrintCTE(temp_ext, temp_int, temp_sint, hrext, G, volumen, n):
     """Humedad relativa interior del mes de enero, dado el ritmo
@@ -142,9 +144,12 @@ def calculahrintCTE(temp_ext, temp_int, temp_sint, hrext, G, volumen, n):
         higrometría 4 - 62%
         hogrometría 5 - 70%
     """
-    delta_v = G / (n * volumen) # Exceso de humedad interior
-    delta_p = 462.0 * delta_v * (temp_int + temp_ext) / 2.0 # Exceso de presión de vapor interna
-    return 100.0 * (psicrom.pvapor(temp_ext, hrext) + delta_p) / psicrom.psat(temp_sint)
+    # Exceso de humedad interior:
+    delta_v = G / (n * volumen)
+    # Exceso de presión de vapor interna:
+    delta_p = 462.0 * delta_v * (temp_int + temp_ext) / 2.0
+    return (100.0 * (psicrom.pvapor(temp_ext, hrext) + delta_p) /
+            psicrom.psat(temp_sint))
 
 def calculahrinthigrometriaCTE(higrometria):
     """Humedad relativa interior del mes de enero, según CTE
@@ -173,12 +178,18 @@ if __name__ == "__main__":
     volumen = 10 #m3
     n = 1 #[h^-1]
 
-    hrint = calculahrinthigrometria(climae.temp, temp_sint, climae.HR, higrometria=higrometria) #65.86%
-    hrintCTE = calculahrintCTE(climae.temp, climai.temp, temp_sint, climae.HR, G, volumen, n)
+    hrint = calculahrinthigrometria(climae.temp, temp_sint,
+                                    climae.HR, higrometria=higrometria) #65.86%
+    hrintCTE = calculahrintCTE(climae.temp, climai.temp, temp_sint,
+                               climae.HR, G, volumen, n)
     hrinthigroCTE = calculahrinthigrometriaCTE(3)
-    g_total = tasatransferenciavapor(1016.00114017, 1285.32312909, 0.0, 2.16) #0,0898 g/m2.s
+    g_total = tasatransferenciavapor(1016.00114017, 1285.32312909,
+                                     0.0, 2.16) #0,0898 g/m2.s
 
     print u"Humedad relativa interior para higrometría 3: %.2f" % hrint #65.86%
-    print u"Humedad relativa interior para V=%.2f, G=%.2f, n=%.2f (CTE): %.2f" % (volumen, G, n, hrintCTE) #63.89%
-    print u"Humedad relativa interior para higrometría 3 (CTE): %.2f" % hrinthigroCTE #55.00%
-    print u"\tTasa de transferencia de vapor %.4f x 10^-3[g/(h.m2)]" % (g_total * 3600.0,) #0,0898 g/m2.s
+    print (u"Humedad relativa interior para V=%.2f, G=%.2f, n=%.2f (CTE): "
+           u"%.2f") % (volumen, G, n, hrintCTE) #63.89%
+    print (u"Humedad relativa interior para higrometría 3 (CTE): "
+           u"%.2f") % hrinthigroCTE #55.00%
+    print (u"\tTasa de transferencia de vapor "
+           u"%.4f x 10^-3[g/(h.m2)]") % (g_total * 3600.0,) #0,0898 g/m2.s
