@@ -55,11 +55,11 @@ class CPTCanvas(FigureCanvas):
         ax1.set_xlabel(u"Distancia [m]")
         ax1.set_ylabel(u"Presión de vapor [Pa]", fontdict=dict(color='b'))
         ax1.text(0.1, 0.92, 'exterior',
-                transform=ax1.transAxes,
-                fontsize=10, fontstyle='italic', horizontalalignment='right')
+                 transform=ax1.transAxes,
+                 fontsize=10, fontstyle='italic', horizontalalignment='right')
         ax1.text(0.9, 0.92, 'interior',
-                transform=ax1.transAxes,
-                fontsize=10, fontstyle='italic', horizontalalignment='left')
+                 transform=ax1.transAxes,
+                 fontsize=10, fontstyle='italic', horizontalalignment='left')
         # lineas de datos
         ax1.plot(d.rotulos_s, d.presiones, 'b-', linewidth=0.5)
         ax1.plot(d.rotulos_s, d.presiones_sat, 'k-', linewidth=0.5)
@@ -76,18 +76,18 @@ class CPTCanvas(FigureCanvas):
             ax1.axvspan(rotuloanterior, rotulo,
                         facecolor=color, alpha=0.25, ymin=.05, ymax=.9)
             ax1.text((rotulo + rotuloanterior) / 2.0, ymax, "%i" % _i,
-                    fontsize=8, fontstyle='italic',
-                    horizontalalignment='center')
+                     fontsize=8, fontstyle='italic',
+                     horizontalalignment='center')
             rotuloanterior = rotulo
         # Rótulos de lineas de presiones
         ax1.annotate(r'$P_{n}$',
-                xy=(d.rotulo_si + 0.002, d.P_si),
-                horizontalalignment='left', verticalalignment='top',
-                color='b', size='small')
+                     xy=(d.rotulo_si + 0.002, d.P_si),
+                     horizontalalignment='left', verticalalignment='top',
+                     color='b', size='small')
         ax1.annotate(r'$P_{sat}$',
-                xy=(d.rotulo_si + 0.002, d.P_sat_si),
-                horizontalalignment='left', verticalalignment='baseline',
-                color='k', size='small')
+                     xy=(d.rotulo_si + 0.002, d.P_sat_si),
+                     horizontalalignment='left', verticalalignment='baseline',
+                     color='k', size='small')
         # incrementar extensión de límites de ejes para hacer hueco
         ymin, ymax = ax1.get_ylim()
         length = ymax - ymin
@@ -100,12 +100,12 @@ class CPTCanvas(FigureCanvas):
         #fill_between(rotulos_s[1:-1], temperaturas[1:-1], color=(1,0,0,0.1))
         # Valores de T_si y T_se
         ax2.annotate(r'$T_{se}=%.1f°C$' % d.T_se,
-                xy=(d.rotulo_se - 0.002, d.T_se),
-                horizontalalignment='right')
+                     xy=(d.rotulo_se - 0.002, d.T_se),
+                     horizontalalignment='right')
         ax2.annotate(r'$T_{si}=%.1f°C$' % d.T_si,
-                xy=(d.rotulo_si + 0.002, d.T_si),
-                horizontalalignment='left',
-                verticalalignment='top')
+                     xy=(d.rotulo_si + 0.002, d.T_si),
+                     horizontalalignment='left',
+                     verticalalignment='top')
         ax2.yaxis.tick_right()
         # extender eje para evitar coincidencia con curvas de presiones
         ymin, ymax = ax2.get_ylim()
@@ -141,11 +141,11 @@ class CPCanvas(FigureCanvas):
         ax1.set_xlabel(u"Espesor de aire equivalente [m]")
         ax1.set_ylabel(u"Presión de vapor [Pa]", fontdict=dict(color='b'))
         ax1.text(0.1, 0.92, 'exterior',
-                transform=ax1.transAxes,
-                fontsize=10, fontstyle='italic', horizontalalignment='right')
+                 transform=ax1.transAxes,
+                 fontsize=10, fontstyle='italic', horizontalalignment='right')
         ax1.text(0.9, 0.92, 'interior',
-                transform=ax1.transAxes,
-                fontsize=10, fontstyle='italic', horizontalalignment='left')
+                 transform=ax1.transAxes,
+                 fontsize=10, fontstyle='italic', horizontalalignment='left')
         ax1.plot(x_c, y_c, 'b-', label='p_vap') # presiones efectivas
         ax1.plot(d.rotulos_ssat, d.presiones_sat[1:-1],
                  'k-', label='p_sat', linewidth=1.5) #presiones de saturación
@@ -174,8 +174,8 @@ class CPCanvas(FigureCanvas):
             ax1.axvspan(rotuloanterior, rotulo,
                         facecolor=color, alpha=0.25, ymin=.05, ymax=.9)
             ax1.text((rotulo + rotuloanterior) / 2.0, ymax, "%i" % _i,
-                    fontsize=8, fontstyle='italic',
-                    horizontalalignment='center')
+                     fontsize=8, fontstyle='italic',
+                     horizontalalignment='center')
             rotuloanterior = rotulo
         # Lineas de tramos de cerramiento con condensaciones
         for rotulo in x_c[1:-1]:
@@ -186,26 +186,26 @@ class CPCanvas(FigureCanvas):
         else:
             va1, va2 = 'baseline', 'top'
         ax1.annotate(r'$P_{n}$ = %iPa' % d.P_se,
-                xy=(d.rotulo_se - 0.01, d.P_se),
-                horizontalalignment='right', verticalalignment=va1,
-                color='b', size='small')
+                     xy=(d.rotulo_se - 0.01, d.P_se),
+                     horizontalalignment='right', verticalalignment=va1,
+                     color='b', size='small')
         ax1.annotate(r'$P_{sat}$ = %iPa' % d.P_sat_se,
-                xy=(d.rotulo_se - 0.01, d.P_sat_se),
-                horizontalalignment='right', verticalalignment=va2,
-                color='k', size='small')
+                     xy=(d.rotulo_se - 0.01, d.P_sat_se),
+                     horizontalalignment='right', verticalalignment=va2,
+                     color='k', size='small')
         # Rótulos de lineas de presiones interiores
         if d.P_sat_si > d.P_si:
             va1, va2 = 'top', 'baseline'
         else:
             va1, va2 = 'baseline', 'top'
         ax1.annotate(r'$P_{n}$ = %iPa' % d.P_si,
-                xy=(d.rotulo_ssati + 0.01, d.P_si),
-                horizontalalignment='left', verticalalignment=va1,
-                color='b', size='small')
+                     xy=(d.rotulo_ssati + 0.01, d.P_si),
+                     horizontalalignment='left', verticalalignment=va1,
+                     color='b', size='small')
         ax1.annotate(r'$P_{sat}$ = %iPa' % d.P_sat_si,
-                xy=(d.rotulo_ssati + 0.01, d.P_sat_si),
-                horizontalalignment='left', verticalalignment=va2,
-                color='k', size='small')
+                     xy=(d.rotulo_ssati + 0.01, d.P_sat_si),
+                     horizontalalignment='left', verticalalignment=va2,
+                     color='k', size='small')
         # -- dibujo ---
         self.set_size_request(w, h)
 
@@ -221,13 +221,14 @@ if __name__ == "__main__":
     Rs_ext = 0.04
     Rs_int = 0.13
     muro = Cerramiento("Cerramiento tipo", murocapas, Rs_ext, Rs_int)
+    data = GraphData(muro, climae, climai)
 
     w = gtk.Window()
     v = gtk.VBox()
     pt = CPTCanvas()
     p = CPCanvas()
-    pt.dibuja(muro, climae, climai)
-    p.dibuja(muro, climae, climai)
+    pt.dibuja(data)
+    p.dibuja(data)
     v.pack_start(pt)
     v.pack_start(p)
     w.add(v)
