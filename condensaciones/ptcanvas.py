@@ -16,7 +16,7 @@ class GraphData(object):
         self.presiones = muro.presiones(climae.temp, climai.temp,
                                         climae.HR, climai.HR)
         self.presiones_sat = muro.presionessat(climae.temp, climai.temp)
-        self.rotulos = muro.nombres
+        self.nombres = muro.nombres
         self.rotulos_s = add_margin(muro.espesores_acumulados)
         self.rotulos_ssat = muro.S_acumulados
         self.qc, self.p_condensa = muro.condensacion(climae.temp, climai.temp,
@@ -24,7 +24,7 @@ class GraphData(object):
 #        self.qe, self.p_evapora = muro.cantidadevaporacion(temp_ext, temp_int,
 #                                                           HR_ext, HR_int,
 #                                                           interfases=[2])
-        self.color = colores_capas(self.rotulos)
+        self.color = colores_capas(self.nombres)
 
         #nemotécnicas intermedias
         self.rotulo_se = self.rotulos_s[1]
@@ -36,7 +36,36 @@ class GraphData(object):
         self.P_si = self.presiones[-2] #en superficie, no el aire
         self.P_sat_si = self.presiones_sat[-2] #en superficie, no el aire
         self.T_se = self.temperaturas[1]
-        self.T_si = self.temperaturas[-2]        
+        self.T_si = self.temperaturas[-2]
+
+
+def _dibujacerramiento(ax, nombrecapas, xcapas, colordict):
+    """Dibujado de muro
+    
+    ax - ejes
+    nombrecapas - nombres de capas del cerramiento
+    xcapas - lista de coordenadas de interfases de capas
+    colordict - diccionario con colores según nombres de capa
+    """
+    # Etiquetas de exterior e interior
+    ax.text(0.1, 0.92, 'exterior', transform=ax.transAxes,
+            fontsize=10, fontstyle='italic', horizontalalignment='right')
+    ax.text(0.9, 0.92, 'interior', transform=ax.transAxes,
+            fontsize=10, fontstyle='italic', horizontalalignment='left')
+    # Lineas de tramos de cerramiento
+    ax.axvline(xcapas[0], linewidth=2, color='k', ymin=.05, ymax=.9)
+    for rotulo in xcapas[1:-1]:
+        ax.axvline(rotulo, color='0.5', ymin=.05, ymax=.9)
+    ax.axvline(xcapas[-1], linewidth=2, color='k', ymin=.05, ymax=.9)
+    # Rellenos de materiales
+    ymin, ymax = ax.get_ylim()
+    rotuloanterior = xcapas[0]
+    for _i, (capa, rotulo) in enumerate(zip(nombrecapas, xcapas[1:])):
+        ax.axvspan(rotuloanterior, rotulo,
+                   facecolor=colordict[capa], alpha=0.25, ymin=.05, ymax=.9)
+        ax.text((rotulo + rotuloanterior) / 2.0, ymax, "%i" % _i,
+                fontsize=8, fontstyle='italic', horizontalalignment='center')
+        rotuloanterior = rotulo
 
 class CPTCanvas(FigureCanvasGTKCairo):
     """Diagrama de presiones de saturación frente a presiones o temperaturas"""
@@ -45,6 +74,8 @@ class CPTCanvas(FigureCanvasGTKCairo):
     def __init__(self):
         self.fig = plt.figure()
         FigureCanvasGTKCairo.__init__(self, self.fig)
+
+
 
     def dibuja(self, d, width=600, height=400):
         """Representa Presiones de saturación vs. Presiones de vapor o
@@ -64,31 +95,13 @@ class CPTCanvas(FigureCanvasGTKCairo):
         ax1.set_title(u"Presiones de vapor y temperaturas", fontsize='large')
         ax1.set_xlabel(u"Distancia [m]")
         ax1.set_ylabel(u"Presión de vapor [Pa]", fontdict=dict(color='b'))
-        ax1.text(0.1, 0.92, 'exterior',
-                 transform=ax1.transAxes,
-                 fontsize=10, fontstyle='italic', horizontalalignment='right')
-        ax1.text(0.9, 0.92, 'interior',
-                 transform=ax1.transAxes,
-                 fontsize=10, fontstyle='italic', horizontalalignment='left')
-        # lineas de datos
+        # Eliminamos márgenes de espesor de rotulos_s de capas límite 
+        _dibujacerramiento(ax1, d.nombres, d.rotulos_s[1:-1], d.color)
+        # Presiones
         ax1.plot(d.rotulos_s, d.presiones, 'b-', linewidth=0.5)
+        # Presiones de saturación
         ax1.plot(d.rotulos_s, d.presiones_sat, 'k-', linewidth=0.5)
-        # Lineas de tramos de cerramiento
-        ax1.axvline(d.rotulo_se, linewidth=2, color='k', ymin=.05, ymax=.9)
-        for rotulo in d.rotulos_s[2:-2]:
-            ax1.axvline(rotulo, color='0.5', ymin=.05, ymax=.9)
-        ax1.axvline(d.rotulo_si, linewidth=2, color='k', ymin=.05, ymax=.9)
-        # Rellenos de materiales
-        ymin, ymax = ax1.get_ylim()
-        rotuloanterior = d.rotulo_se
-        for _i, (capa, rotulo) in enumerate(zip(d.rotulos, d.rotulos_s[2:])):
-            ax1.axvspan(rotuloanterior, rotulo,
-                        facecolor=d.color[capa], alpha=0.25, ymin=.05, ymax=.9)
-            ax1.text((rotulo + rotuloanterior) / 2.0, ymax, "%i" % _i,
-                     fontsize=8, fontstyle='italic',
-                     horizontalalignment='center')
-            rotuloanterior = rotulo
-        # Rótulos de lineas de presiones
+        # Rótulos
         ax1.annotate(r'$P_{n}$',
                      xy=(d.rotulo_si + 0.002, d.P_si),
                      horizontalalignment='left', verticalalignment='top',
@@ -97,14 +110,10 @@ class CPTCanvas(FigureCanvasGTKCairo):
                      xy=(d.rotulo_si + 0.002, d.P_sat_si),
                      horizontalalignment='left', verticalalignment='baseline',
                      color='k', size='small')
-        # incrementar extensión de límites de ejes para hacer hueco
-        ymin, ymax = ax1.get_ylim()
-        length = ymax - ymin
-        ax1.set_ylim(ymin - length / 10.0, ymax + length / 5.0)
-        # Nuevo eje vertical de temperaturas
+        # Eje vertical de temperaturas
         ax2 = ax1.twinx()
         ax2.set_ylabel(u"Temperatura [°C]", fontdict=dict(color='r'))
-        # curva de temperaturas
+        # Curva de temperaturas
         ax2.plot(d.rotulos_s, d.temperaturas, 'r', linewidth=1.5)
         #fill_between(rotulos_s[1:-1], temperaturas[1:-1], color=(1,0,0,0.1))
         # Valores de T_si y T_se
@@ -116,11 +125,15 @@ class CPTCanvas(FigureCanvasGTKCairo):
                      horizontalalignment='left',
                      verticalalignment='top')
         ax2.yaxis.tick_right()
-        # extender eje para evitar coincidencia con curvas de presiones
+        # Dejar margen fuera de zona de trazado
+        ymin, ymax = ax1.get_ylim()
+        length = ymax - ymin
+        ax1.set_ylim(ymin - 0.1 * length, ymax + 0.2 * length)
+        # Dejar margen fuera de zona de trazado
         ymin, ymax = ax2.get_ylim()
         length = ymax - ymin
-        ax2.set_ylim(ymin - length / 10.0, ymax + length / 5.0)
-        # -- dibujo ---
+        ax2.set_ylim(ymin - 0.1 * length, ymax + 0.2 * length)
+        # Tamaño
         self.set_size_request(width, height)
 
     def save(self, filename='presionestempplot.png'):
@@ -135,6 +148,7 @@ class CPCanvas(FigureCanvasGTKCairo):
         self.fig = plt.figure()
         FigureCanvasGTKCairo.__init__(self, self.fig)
 
+
     def dibuja(self, d, width=600, height=400):
         """Representa Presiones de saturación vs. Presiones de vapor
         
@@ -145,7 +159,6 @@ class CPCanvas(FigureCanvasGTKCairo):
         
         d - contiene los datos para dibujar las gráficas
         """
-        # ============================ presiones ==========================
         x_c = [x for x, y in d.p_condensa]
         y_c = [y for x, y in d.p_condensa]
         # -- dibujo ---
@@ -154,40 +167,16 @@ class CPCanvas(FigureCanvasGTKCairo):
                       fontsize='large')
         ax1.set_xlabel(u"Espesor de aire equivalente [m]")
         ax1.set_ylabel(u"Presión de vapor [Pa]", fontdict=dict(color='b'))
-        ax1.text(0.1, 0.92, 'exterior',
-                 transform=ax1.transAxes,
-                 fontsize=10, fontstyle='italic', horizontalalignment='right')
-        ax1.text(0.9, 0.92, 'interior',
-                 transform=ax1.transAxes,
-                 fontsize=10, fontstyle='italic', horizontalalignment='left')
-        ax1.plot(x_c, y_c, 'b-', label='p_vap') # presiones efectivas
+        _dibujacerramiento(ax1, d.nombres, d.rotulos_ssat, d.color)
+        # presiones efectivas
+        ax1.plot(x_c, y_c, 'b-', label='p_vap')
+        #presiones de saturación
         ax1.plot(d.rotulos_ssat, d.presiones_sat[1:-1],
-                 'k-', label='p_sat', linewidth=1.5) #presiones de saturación
+                 'k-', label='p_sat', linewidth=1.5)
         #si hay condensaciones dibuja la linea original
         if len(d.p_condensa) > 2:
             ax1.plot(d.rotulos_ssat, d.presiones[1:-1], 'g--')
-        # Incrementar extensión de límites de ejes para hacer hueco
-        # además guardamos extremos del gráfico interior, sin margen
-        # para luego hacer rótulos, etc
-        xmin, xmax, ymin, ymax = ax1.axis()
-        lengthx = d.rotulo_ssati
-        ax1.axis([- 0.25 * lengthx, lengthx + 0.30 * lengthx,
-                  ymin - 0.20 * (ymax - ymin), ymax + 0.2 * (ymax - ymin)])
-        # Lineas de tramos de cerramiento
-        ax1.axvline(d.rotulo_ssate, linewidth=2, color='k', ymin=.05, ymax=.9)
-        for rotulo in d.rotulos_ssat[1:-1]:
-            ax1.axvline(rotulo, color='0.5', ymin=.05, ymax=.9)
-        ax1.axvline(d.rotulo_ssati, linewidth=2, color='k', ymin=.05, ymax=.9)
-        # Rellenos de materiales
-        rotuloanterior = d.rotulo_se
-        for _i, (capa, rotulo) in enumerate(zip(d.rotulos, d.rotulos_ssat[1:])):
-            ax1.axvspan(rotuloanterior, rotulo,
-                        facecolor=d.color[capa], alpha=0.25, ymin=.05, ymax=.9)
-            ax1.text((rotulo + rotuloanterior) / 2.0, ymax, "%i" % _i,
-                     fontsize=8, fontstyle='italic',
-                     horizontalalignment='center')
-            rotuloanterior = rotulo
-        # Lineas de tramos de cerramiento con condensaciones
+        # Lineas de tramos de cerramiento con condensaciones en rojo
         for rotulo in x_c[1:-1]:
             ax1.axvline(rotulo, linewidth=1.5, color='r', ymin=.05, ymax=.9)
         # Rótulos de lineas de presiones exteriores
@@ -216,7 +205,13 @@ class CPCanvas(FigureCanvasGTKCairo):
                      xy=(d.rotulo_ssati + 0.01, d.P_sat_si),
                      horizontalalignment='left', verticalalignment=va2,
                      color='k', size='small')
-        # -- dibujo ---
+        # Dejar margen fuera de zona de trazado
+        xmin, xmax, ymin, ymax = ax1.axis()
+        lengthx = d.rotulo_ssati #xmax = rotulo_ssati ;xmin = rotulo_ssate = 0
+        lengthy = ymax - ymin
+        ax1.axis([xmin - 0.3 * lengthx, xmax + 0.2 * lengthx,
+                  ymin - 0.1 * lengthy, ymax + 0.2 * lengthy])
+        # Tamaño
         self.set_size_request(width, height)
 
     def save(self, filename='presionesplot.png'):
