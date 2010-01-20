@@ -21,9 +21,9 @@ class GraphData(object):
         self.rotulos_ssat = muro.S_acumulados
         self.qc, self.p_condensa = muro.condensacion(climae.temp, climai.temp,
                                                      climae.HR, climai.HR)
-#        self.qe, self.p_evapora = muro.cantidadevaporacion(temp_ext, temp_int,
-#                                                           HR_ext, HR_int,
-#                                                           interfases=[2])
+#        self.qe, self.p_evapora = muro.evaporacion(temp_ext, temp_int,
+#                                                   HR_ext, HR_int,
+#                                                   interfases=[2])
         self.color = colores_capas(self.nombres)
 
         #nemotécnicas intermedias
