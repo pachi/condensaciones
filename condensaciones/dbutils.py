@@ -41,7 +41,8 @@ def parseblock(block):
     return _dict
 
 def parsefile(file):
-    #TODO: ampliar a listas de archivos para combinar bases de datos (eg. LIDER + URSA)
+    #TODO: ampliar a listas de archivos para combinar bases de datos (eg. LIDER
+    #+ URSA)
     lines = codecs.open(file, 'rb', 'iso-8859-1') #Las BBDD están en iso-8859-1
     datos = {}
     block = []
@@ -105,7 +106,8 @@ if __name__ == "__main__":
         datos = parsefile(file)
         print u"Archivo: %s" % file
         print u"Secciones:", datos.keys().sort()
-        print u"%i secciones y %i materiales en la sección 'default'" % (len(datos), len(datos['default']))
+        print (u"%i secciones y %i materiales en la sección "
+               u"'default'") % (len(datos), len(datos['default']))
         for index, material in enumerate(datos['default']):
             print material['MATERIAL']
         for dato in db2datos(file).keys():
