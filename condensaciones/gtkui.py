@@ -7,7 +7,7 @@ import pango
 import util
 import capas
 import comprobaciones
-from ptcanvas import CPTCanvas, CPCanvas
+from ptcanvas import CPTCanvas, CPCanvas, GraphData
 
 COLOR_OK = gtk.gdk.color_parse("#AACCAA")
 COLOR_BAD = gtk.gdk.color_parse("#CCAAAA")
@@ -110,8 +110,9 @@ class GtkCondensa(object):
                               ccheck and COLOR_BAD or COLOR_OK)
 
     def actualizagraficas(self):
-        self.grafico1.dibuja(self.muro, self.climae, self.climai)
-        self.grafico2.dibuja(self.muro, self.climae, self.climai)
+        gdata = GraphData(self.muro, self.climae, self.climai)
+        self.grafico1.dibuja(gdata)
+        self.grafico2.dibuja(gdata)
     
     def actualizatexto(self):
         "Mostrar texto"
