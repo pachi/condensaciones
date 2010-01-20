@@ -100,11 +100,11 @@ class CPTCanvas(FigureCanvasGTKCairo):
         # Presiones de saturación
         ax1.plot(d.rotulos_s, d.presiones_sat, 'k-', linewidth=0.5)
         # Rótulos
-        ax1.annotate(r'$P_{n}$',
+        ax1.annotate(u'$P_{n}$',
                      xy=(d.rotulo_si + 0.002, d.P_si),
                      horizontalalignment='left', verticalalignment='top',
                      color='b', size='small')
-        ax1.annotate(r'$P_{sat}$',
+        ax1.annotate(u'$P_{sat}$',
                      xy=(d.rotulo_si + 0.002, d.P_sat_si),
                      horizontalalignment='left', verticalalignment='baseline',
                      color='k', size='small')
@@ -115,10 +115,10 @@ class CPTCanvas(FigureCanvasGTKCairo):
         ax2.plot(d.rotulos_s, d.temperaturas, 'r', linewidth=1.5)
         #fill_between(rotulos_s[1:-1], temperaturas[1:-1], color=(1,0,0,0.1))
         # Valores de T_si y T_se
-        ax2.annotate(r'$T_{se}=%.1f°C$' % d.T_se,
+        ax2.annotate(u'$T_{se}=%.1f°C$' % d.T_se,
                      xy=(d.rotulo_se - 0.002, d.T_se),
                      horizontalalignment='right')
-        ax2.annotate(r'$T_{si}=%.1f°C$' % d.T_si,
+        ax2.annotate(u'$T_{si}=%.1f°C$' % d.T_si,
                      xy=(d.rotulo_si + 0.002, d.T_si),
                      horizontalalignment='left',
                      verticalalignment='top')
@@ -181,11 +181,11 @@ class CPCanvas(FigureCanvasGTKCairo):
             va1, va2 = 'top', 'baseline'
         else:
             va1, va2 = 'baseline', 'top'
-        ax1.annotate(r'$P_{n}$ = %iPa' % d.P_se,
+        ax1.annotate(u'$P_{n}$ = %iPa' % d.P_se,
                      xy=(d.rotulo_se - 0.01, d.P_se),
                      horizontalalignment='right', verticalalignment=va1,
                      color='b', size='small')
-        ax1.annotate(r'$P_{sat}$ = %iPa' % d.P_sat_se,
+        ax1.annotate(u'$P_{sat}$ = %iPa' % d.P_sat_se,
                      xy=(d.rotulo_se - 0.01, d.P_sat_se),
                      horizontalalignment='right', verticalalignment=va2,
                      color='k', size='small')
@@ -194,11 +194,11 @@ class CPCanvas(FigureCanvasGTKCairo):
             va1, va2 = 'top', 'baseline'
         else:
             va1, va2 = 'baseline', 'top'
-        ax1.annotate(r'$P_{n}$ = %iPa' % d.P_si,
+        ax1.annotate(u'$P_{n}$ = %iPa' % d.P_si,
                      xy=(d.rotulo_ssati + 0.01, d.P_si),
                      horizontalalignment='left', verticalalignment=va1,
                      color='b', size='small')
-        ax1.annotate(r'$P_{sat}$ = %iPa' % d.P_sat_si,
+        ax1.annotate(u'$P_{sat}$ = %iPa' % d.P_sat_si,
                      xy=(d.rotulo_ssati + 0.01, d.P_sat_si),
                      horizontalalignment='left', verticalalignment=va2,
                      color='k', size='small')
