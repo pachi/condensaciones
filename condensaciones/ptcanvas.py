@@ -3,14 +3,14 @@
 
 import matplotlib
 import matplotlib.pyplot as plt
-from matplotlib.backends.backend_gtkcairo import FigureCanvasGTKCairo as FigureCanvas
+from matplotlib.backends.backend_gtkcairo import FigureCanvasGTKCairo
 from util import colores_capas, add_margin
 
 #para mostrar bien las expresiones matemáticas / latex
 matplotlib.rc('mathtext', fontset='custom')
 
 class GraphData(object):
-    """Clase de almacén de datos para dibujar las gráficas"""
+    """Almacén de datos para dibujado de gráficas"""
     def __init__(self, muro, climae, climai):
         self.temperaturas = muro.temperaturas(climae.temp, climai.temp)
         self.presiones = muro.presiones(climae.temp, climai.temp,
@@ -19,9 +19,12 @@ class GraphData(object):
         self.rotulos = muro.nombres
         self.rotulos_s = add_margin(muro.espesores_acumulados)
         self.rotulos_ssat = muro.S_acumulados
-        self.qc, self.p_condensa = muro.condensacion(climae.temp, climai.temp, climae.HR, climai.HR)
-        #self.qe, self.p_evapora = muro.cantidadevaporacion(temp_ext, temp_int, HR_ext, HR_int, interfases=[2])
-        self.colordict = colores_capas(self.rotulos)
+        self.qc, self.p_condensa = muro.condensacion(climae.temp, climai.temp,
+                                                     climae.HR, climai.HR)
+#        self.qe, self.p_evapora = muro.cantidadevaporacion(temp_ext, temp_int,
+#                                                           HR_ext, HR_int,
+#                                                           interfases=[2])
+        self.color = colores_capas(self.rotulos)
 
         #nemotécnicas intermedias
         self.rotulo_se = self.rotulos_s[1]
@@ -35,16 +38,23 @@ class GraphData(object):
         self.T_se = self.temperaturas[1]
         self.T_si = self.temperaturas[-2]        
 
-class CPTCanvas(FigureCanvas):
+class CPTCanvas(FigureCanvasGTKCairo):
+    """Diagrama de presiones de saturación frente a presiones o temperaturas"""
     __gtype_name__ = 'CPTCanvas'
 
     def __init__(self):
         self.fig = plt.figure()
-        FigureCanvas.__init__(self, self.fig)
+        FigureCanvasGTKCairo.__init__(self, self.fig)
 
-    def dibuja(self, d, w=600, h=400):
-        """Representa Presiones de saturación vs. Presiones de vapor y temperaturas
-        en un diagrama capa/Presion de vapor y capa/Temp
+    def dibuja(self, d, width=600, height=400):
+        """Representa Presiones de saturación vs. Presiones de vapor o
+        temperaturas.
+        
+        El eje horizontal representa distancia desde la cara exterior del
+        cerramiento [m].
+        
+        El eje vertical izquierdo tiene unidades de presión de vapor [Pa]
+        El eje vertical derecho tiene unidades de temperatura [ºC]
         
         d - contiene los datos para dibujar las gráficas
         """
@@ -72,9 +82,8 @@ class CPTCanvas(FigureCanvas):
         ymin, ymax = ax1.get_ylim()
         rotuloanterior = d.rotulo_se
         for _i, (capa, rotulo) in enumerate(zip(d.rotulos, d.rotulos_s[2:])):
-            color = d.colordict[capa]
             ax1.axvspan(rotuloanterior, rotulo,
-                        facecolor=color, alpha=0.25, ymin=.05, ymax=.9)
+                        facecolor=d.color[capa], alpha=0.25, ymin=.05, ymax=.9)
             ax1.text((rotulo + rotuloanterior) / 2.0, ymax, "%i" % _i,
                      fontsize=8, fontstyle='italic',
                      horizontalalignment='center')
@@ -112,22 +121,27 @@ class CPTCanvas(FigureCanvas):
         length = ymax - ymin
         ax2.set_ylim(ymin - length / 10.0, ymax + length / 5.0)
         # -- dibujo ---
-        self.set_size_request(w, h)
+        self.set_size_request(width, height)
 
     def save(self, filename='presionestempplot.png'):
         # guardar y mostrar gráfica
         self.savefig(filename)
 
-class CPCanvas(FigureCanvas):
+class CPCanvas(FigureCanvasGTKCairo):
+    """Diagrama de presiones"""
     __gtype_name__ = 'CPCanvas'
 
     def __init__(self):
         self.fig = plt.figure()
-        FigureCanvas.__init__(self, self.fig)
+        FigureCanvasGTKCairo.__init__(self, self.fig)
 
-    def dibuja(self, d, w=600, h=400):
-        """Representa Presiones de saturación vs. Presiones de vapor en un
-        diagrama capa/Presion de vapor y capa/Temp
+    def dibuja(self, d, width=600, height=400):
+        """Representa Presiones de saturación vs. Presiones de vapor
+        
+        El eje horizontal representa es espesor de aire equivalente desde
+        la cara exterior del cerramiento [m].
+        
+        El eje vertical tiene unidades de presión de Vapor [Pa]
         
         d - contiene los datos para dibujar las gráficas
         """
@@ -153,15 +167,12 @@ class CPCanvas(FigureCanvas):
         if len(d.p_condensa) > 2:
             ax1.plot(d.rotulos_ssat, d.presiones[1:-1], 'g--')
         # Incrementar extensión de límites de ejes para hacer hueco
-        # además guardamos extremos del gráfico interior, sin márgen
+        # además guardamos extremos del gráfico interior, sin margen
         # para luego hacer rótulos, etc
         xmin, xmax, ymin, ymax = ax1.axis()
         lengthx = d.rotulo_ssati
-        lengthy = ymax - ymin
-        ax1.axis([- 0.25 * lengthx,
-                  lengthx + 0.30 * lengthx,
-                  ymin - 0.20 * lengthy,
-                  ymax + 0.2 * lengthy])
+        ax1.axis([- 0.25 * lengthx, lengthx + 0.30 * lengthx,
+                  ymin - 0.20 * (ymax - ymin), ymax + 0.2 * (ymax - ymin)])
         # Lineas de tramos de cerramiento
         ax1.axvline(d.rotulo_ssate, linewidth=2, color='k', ymin=.05, ymax=.9)
         for rotulo in d.rotulos_ssat[1:-1]:
@@ -170,9 +181,8 @@ class CPCanvas(FigureCanvas):
         # Rellenos de materiales
         rotuloanterior = d.rotulo_se
         for _i, (capa, rotulo) in enumerate(zip(d.rotulos, d.rotulos_ssat[1:])):
-            color = d.colordict[capa]
             ax1.axvspan(rotuloanterior, rotulo,
-                        facecolor=color, alpha=0.25, ymin=.05, ymax=.9)
+                        facecolor=d.color[capa], alpha=0.25, ymin=.05, ymax=.9)
             ax1.text((rotulo + rotuloanterior) / 2.0, ymax, "%i" % _i,
                      fontsize=8, fontstyle='italic',
                      horizontalalignment='center')
@@ -207,7 +217,7 @@ class CPCanvas(FigureCanvas):
                      horizontalalignment='left', verticalalignment=va2,
                      color='k', size='small')
         # -- dibujo ---
-        self.set_size_request(w, h)
+        self.set_size_request(width, height)
 
     def save(self, filename='presionesplot.png'):
         # guardar y mostrar gráfica
