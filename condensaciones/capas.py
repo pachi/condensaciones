@@ -23,6 +23,10 @@ class Cerramiento(object):
 
     @property
     def espesores_acumulados(self):
+        """Espesores físicos acumulados [m]
+        
+        Lista de coordenadas X geométricas de las interfases de cada capa.
+        """
         return [0.0] + [reduce(operator.add, self.espesores[:i])
                         for i in range(1, len(self.espesores)+1)]
 
@@ -48,7 +52,11 @@ class Cerramiento(object):
 
     @property
     def S_acumulados(self):
-        "Espesor de aire equivalente acumulado en cada capa de cerramiento [m]"
+        """Espesor de aire equivalente acumulado [m]
+        
+        Lista de coordenadas X en espesor de aire equivalente de las
+        interfases de capa.
+        """
         return [0.0] + [reduce(operator.add, self.S[:i])
                         for i in range(1,len(self.S)+1)]
 
