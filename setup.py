@@ -46,12 +46,15 @@ opts = {'py2exe': {
 data_files = [('', docfiles),
               ('data', datafilelist)] + matplotlib.get_py2exe_datafiles()
 
+long_description = open('README').read()
+
 setup(
     name = 'Acciones-CTE',
     author = 'Rafael Villar Burke',
     author_email='pachi@rvburke.com',
     url='http://www.rvburke.com',
     description = 'Aplicación para el cálculo de condensaciones según CTE',
+    long_description = long_description,
     version = '0.01',
     windows = [
         {'script': 'bin/run.py',
