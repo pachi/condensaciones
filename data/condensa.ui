@@ -186,31 +186,30 @@
       <!-- column-name nombre -->
       <column type="gchararray"/>
       <!-- column-name muro -->
-      <column type="GObject"/>
+      <column type="gchararray"/>
     </columns>
     <data>
       <row>
         <col id="0" translatable="yes">Muro1</col>
-        <col id="1"/>
+        <col id="1" translatable="yes">uno</col>
       </row>
       <row>
         <col id="0" translatable="yes">Muro2</col>
-        <col id="1"/>
+        <col id="1" translatable="yes">dos</col>
       </row>
       <row>
         <col id="0" translatable="yes">Muro3</col>
-        <col id="1"/>
+        <col id="1" translatable="yes">tres</col>
       </row>
       <row>
         <col id="0" translatable="yes">Muro4</col>
-        <col id="1"/>
+        <col id="1" translatable="yes">cuatro</col>
       </row>
     </data>
   </object>
   <object class="GtkDialog" id="dialogomuro">
     <property name="border_width">5</property>
     <property name="type_hint">normal</property>
-    <property name="has_separator">False</property>
     <child internal-child="vbox">
       <object class="GtkVBox" id="dialogo-seleccion">
         <property name="visible">True</property>
@@ -232,6 +231,8 @@
             </child>
             <child>
               <object class="GtkScrolledWindow" id="scrolledwindow1">
+                <property name="width_request">600</property>
+                <property name="height_request">300</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="hadjustment">adjustment1</property>
@@ -251,11 +252,28 @@
                     <signal name="cursor_changed" handler="on_tvmuro_cursor_changed"/>
                     <child>
                       <object class="GtkTreeViewColumn" id="nombrecolumn">
-                        <property name="title">Descripci&#xF3;n cerramiento</property>
+                        <property name="resizable">True</property>
+                        <property name="min_width">200</property>
+                        <property name="title">Nombre</property>
+                        <property name="expand">True</property>
                         <child>
                           <object class="GtkCellRendererText" id="cellrenderertext1"/>
                           <attributes>
                             <attribute name="text">0</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="descripcioncolumn">
+                        <property name="resizable">True</property>
+                        <property name="min_width">300</property>
+                        <property name="title">Descripci&#xF3;n del cerramiento</property>
+                        <property name="expand">True</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="cellrenderertext2"/>
+                          <attributes>
+                            <attribute name="text">1</attribute>
                           </attributes>
                         </child>
                       </object>
