@@ -150,8 +150,10 @@ class GtkCondensa(object):
 #        g, pevap = self.muro.evaporacion(temp_ext, temp_int,
 #                                         HR_ext, HR_int, interfases=[2])
         if not g:
-            g = 0.0
-        _text = u"Total: %.2f [g/m²mes]" % (2592000.0 * sum(g))
+            _sg = 0.0
+        else:
+            _sg = sum(g)
+        _text = u"Total: %.2f [g/m²mes]" % (2592000.0 * _sg)
         self.pie1.set_markup(_text)
         _text = (u"Cantidades condensadas: " +
                  u", ".join(["%.2f" % (2592000.0 * x,) for x in g]))
