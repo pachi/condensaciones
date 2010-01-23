@@ -160,12 +160,10 @@ class GtkCondensa(object):
     # -- Retrollamadas ventana principal --
     def on_botonmuro_clicked(self, widget):
         resultado = self.dlg.run()
-        # gtk.RESPONSE_ACCEPT == -3, gtk.RESPONSE_CANCEL == -6
+        # gtk.RESPONSE_ACCEPT vs gtk.RESPONSE_CANCEL
         if resultado == gtk.RESPONSE_ACCEPT:
             nombremuro = self.lblselected.get_text()
-            #TODO: Cambiar datos de muro
-            #self.muro = buscamurodesdenombre(nombremuro)
-            self.muro.nombre = nombremuro
+            self.muro = self.cerramientos[nombremuro]
             self.actualiza()
         self.dlg.hide()
 
