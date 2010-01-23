@@ -21,6 +21,8 @@
 #   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 #   02110-1301, USA.
 
+#TODO: Renombrar muros a cerramientos en glade y métodos
+
 import gtk
 import pango
 import util
@@ -35,7 +37,9 @@ class GtkCondensa(object):
         self.muro = muro
         self.climae = climae
         self.climai = climai
-
+        # Cerramientos disponibles
+        self.cerramientos = {}
+        # --- UI ---
         UIFILE = util.get_resource('..', 'data', 'condensa.ui')
         builder = gtk.Builder()
         builder.add_from_file(UIFILE)
@@ -87,10 +91,9 @@ class GtkCondensa(object):
     def cargamuros(self):
         #TODO: cargar datos de biblioteca
         from datos_ejemplo import muros
-        datosmuros = {}
         for muro in muros:
-            datosmuros[muro.nombre] = muro
-            self.lsmuros.append((muro.nombre, "prueba"))
+            self.cerramientos[muro.nombre] = muro
+            self.lsmuros.append((muro.nombre, muro.descripcion))
 
     def actualiza(self):
         self.actualizacabecera()
