@@ -26,8 +26,11 @@ import psicrom
 import materiales
 
 class Cerramiento(object):
-    def __init__(self, nombre, capas, Rse=None, Rsi=None):
+    def __init__(self, nombre, descripcion, capas, Rse=None, Rsi=None):
+        #TODO: Añadir tipo para seleccionar Rse y Rsi según sea horizontal,
+        #TODO: vertical, etc
         self.nombre = nombre
+        self.descripcion = descripcion
         self.capas = capas
         self.Rse = Rse
         self.Rsi = Rsi
@@ -207,7 +210,8 @@ if __name__ == "__main__":
 
     Rs_ext = 0.04
     Rs_int = 0.13
-    muro = Cerramiento("Cerramiento tipo", murocapas, Rs_ext, Rs_int)
+    muro = Cerramiento("Cerramiento tipo", "Descripción 1", murocapas,
+                       Rs_ext, Rs_int)
 
     temperaturas = muro.temperaturas(climae.temp, climai.temp)
     presiones_sat = muro.presionessat(climae.temp, climai.temp)
