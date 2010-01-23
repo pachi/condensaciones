@@ -188,24 +188,6 @@
       <!-- column-name muro -->
       <column type="gchararray"/>
     </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Muro1</col>
-        <col id="1" translatable="yes">uno</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Muro2</col>
-        <col id="1" translatable="yes">dos</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Muro3</col>
-        <col id="1" translatable="yes">tres</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Muro4</col>
-        <col id="1" translatable="yes">cuatro</col>
-      </row>
-    </data>
   </object>
   <object class="GtkDialog" id="dialogomuro">
     <property name="border_width">5</property>
