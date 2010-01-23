@@ -21,11 +21,9 @@
 #   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 #   02110-1301, USA.
 
-import os
 import gtk
 import pango
 import util
-import capas
 import comprobaciones
 from ptcanvas import CPTCanvas, CPCanvas, GraphData
 
@@ -92,9 +90,6 @@ class GtkCondensa(object):
         datosmuros = {}
         for muro in muros:
             datosmuros[muro.nombre] = muro
-            # XXX: No se puede cargar el muro porque la segunda columna debería
-            # XXX: ser un PyGobject, y no un Gobject nada más... (glade no
-            # XXX: permite seleccionar ese tipo)
             self.lsmuros.append((muro.nombre, "prueba"))
 
     def actualiza(self):
@@ -178,7 +173,8 @@ class GtkCondensa(object):
         self.lblselected.set_text(value)
 
 if __name__ == "__main__":
+    import cerramiento
     from datos_ejemplo import climae, climai, murocapas
-    muro = capas.Cerramiento("Cerramiento tipo", murocapas, 0.04, 0.13)
+    muro = cerramiento.Cerramiento("Cerramiento tipo", murocapas, 0.04, 0.13)
     app = GtkCondensa(muro, climae, climai)
     app.main()

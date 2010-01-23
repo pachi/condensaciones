@@ -28,12 +28,10 @@
 
 import sys
 import math
-from capas import *
-import operator
 
 def psat(temp):
     """Presión de saturación - temp en ºC"""
-    if temp >0.0:
+    if temp > 0.0:
         return 610.5 * math.exp(17.269 * temp / (237.3 + temp))
     else:
         return 610.5 * math.exp(21.875 * temp / (267.5 + temp))
@@ -98,28 +96,28 @@ def calculahrinthigrometria(temp_ext, temp_sint, hrext, higrometria):
     """
     # delta_p: exceso de presión interna
     if higrometria == 1:
-        if temp_ext <=0.0:
+        if temp_ext <= 0.0:
             delta_p = 270.0
         elif temp_ext < 20.0:
             delta_p = 270.0 - 13.5 * (20.0 - temp_ext)
         else:
             delta_p = 0.0
     elif higrometria == 2:
-        if temp_ext <=0.0:
+        if temp_ext <= 0.0:
             delta_p = 540.0
         elif temp_ext < 20.0:
             delta_p = 540.0 - 27.0 * (20.0 - temp_ext)
         else:
             delta_p = 0.0
     elif higrometria == 3:
-        if temp_ext <=0.0:
+        if temp_ext <= 0.0:
             delta_p = 810.0
         elif temp_ext < 20.0:
             delta_p = 810.0 - 40.5 * (20.0 - temp_ext)
         else:
             delta_p = 0.0
     elif higrometria == 4:
-        if temp_ext <=0.0:
+        if temp_ext <= 0.0:
             delta_p = 1080.0
         elif temp_ext < 20.0:
             delta_p = 1080.0 - 54.0 * (20.0 - temp_ext)
@@ -127,8 +125,7 @@ def calculahrinthigrometria(temp_ext, temp_sint, hrext, higrometria):
             delta_p = 0.0
     else:
         delta_p = 1300.0
-    return (100.0 * (psicrom.pvapor(temp_ext, hrext) + delta_p) /
-            psicrom.psat(temp_sint))
+    return (100.0 * (pvapor(temp_ext, hrext) + delta_p) / psat(temp_sint))
 
 def calculahrintCTE(temp_ext, temp_int, temp_sint, hrext, G, volumen, n):
     """Humedad relativa interior del mes de enero, dado el ritmo
@@ -148,8 +145,7 @@ def calculahrintCTE(temp_ext, temp_int, temp_sint, hrext, G, volumen, n):
     delta_v = G / (n * volumen)
     # Exceso de presión de vapor interna:
     delta_p = 462.0 * delta_v * (temp_int + temp_ext) / 2.0
-    return (100.0 * (psicrom.pvapor(temp_ext, hrext) + delta_p) /
-            psicrom.psat(temp_sint))
+    return (100.0 * (pvapor(temp_ext, hrext) + delta_p) / psat(temp_sint))
 
 def calculahrinthigrometriaCTE(higrometria):
     """Humedad relativa interior del mes de enero, según CTE
@@ -164,6 +160,7 @@ def calculahrinthigrometriaCTE(higrometria):
         raise "Higrometría no definida"
 
 if __name__ == "__main__":
+    import cerramiento
     from datos_ejemplo import climae, climai, murocapas
 
     higrometria = 3
@@ -171,7 +168,8 @@ if __name__ == "__main__":
     # Datos constructivos
     Rs_ext = 0.04
     Rs_int = 0.13
-    muro = Cerramiento("Cerramiento tipo", murocapas, Rs_ext, Rs_int)
+    muro = cerramiento.Cerramiento("Cerramiento tipo", murocapas,
+                                   Rs_ext, Rs_int)
     # datos calculados
     temp_sint = 19.0330684375
     G = 0.55 #higrometría 3

@@ -237,7 +237,7 @@ class CPCanvas(FigureCanvasGTKCairo):
 
 if __name__ == "__main__":
     import gtk
-    from capas import Cerramiento
+    from cerramiento import Cerramiento
     from datos_ejemplo import climae, climai, murocapas
 
     Rs_ext = 0.04

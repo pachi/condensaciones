@@ -21,7 +21,7 @@
 #   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 #   02110-1301, USA.
 
-import capas
+from cerramiento import Cerramiento
 
 class Clima(object):
     def __init__(self, temp, HR):
@@ -92,11 +92,11 @@ murocapas = capas1
 # --------- Lista de capas para empezar con datos -------------
 #TODO: ver si se cambia a muro + posición para evitar definir flujo de calor
 # con el muro en Cerramiento
-muro1 = capas.Cerramiento(u"Cerramiento tipo 1", capas1, 0.04, 0.13)
-muro2 = capas.Cerramiento(u"Cerramiento tipo 2", capas2, 0.04, 0.13)
-muro3 = capas.Cerramiento(u"Cerramiento tipo 3", capas3, 0.04, 0.13)
-muro4 = capas.Cerramiento(u"Cerramiento tipo 4", capas4, 0.04, 0.13)
-muro5 = capas.Cerramiento(u"Cerramiento tipo 5", capas5, 0.04, 0.13)
-muro6 = capas.Cerramiento(u"Cerramiento tipo 6", capas6, 0.04, 0.13)
+muro1 = Cerramiento(u"Cerramiento tipo 1", capas1, 0.04, 0.13)
+muro2 = Cerramiento(u"Cerramiento tipo 2", capas2, 0.04, 0.13)
+muro3 = Cerramiento(u"Cerramiento tipo 3", capas3, 0.04, 0.13)
+muro4 = Cerramiento(u"Cerramiento tipo 4", capas4, 0.04, 0.13)
+muro5 = Cerramiento(u"Cerramiento tipo 5", capas5, 0.04, 0.13)
+muro6 = Cerramiento(u"Cerramiento tipo 6", capas6, 0.04, 0.13)
 
 muros = [muro1, muro2, muro3, muro4, muro5, muro6]
