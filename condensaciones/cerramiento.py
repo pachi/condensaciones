@@ -26,9 +26,9 @@ import psicrom
 import materiales
 
 class Cerramiento(object):
-    def __init__(self, nombre, descripcion, capas, Rse=None, Rsi=None):
-        #TODO: Añadir tipo para seleccionar Rse y Rsi según sea horizontal,
-        #TODO: vertical, etc
+    def __init__(self, nombre, descripcion, capas,
+                 tipo=None, Rse=None, Rsi=None):
+        #TODO: Tipo selecciona Rse y Rsi según sea horizontal, vertical, etc
         self.nombre = nombre
         self.descripcion = descripcion
         self.capas = capas
