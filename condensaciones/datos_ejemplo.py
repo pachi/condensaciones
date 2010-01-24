@@ -90,8 +90,6 @@ valores6 = {"U":0.181, "S_total":801.28, "fRsi":0.36}
 murocapas = capas1
 
 # --------- Lista de capas para empezar con datos -------------
-#TODO: ver si se cambia a muro + posición para evitar definir flujo de calor
-# con el muro en Cerramiento
 muro1 = Cerramiento(u"Cerramiento 1",
                     u"1/2' LP + EPS 3cm + LH + Yeso",
                     capas1, 0.04, 0.13)
