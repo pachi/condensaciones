@@ -166,6 +166,8 @@ class GtkCondensa(object):
         if resultado == gtk.RESPONSE_ACCEPT:
             nombremuro = self.lblselected.get_text()
             self.muro = self.cerramientos[nombremuro]
+            self.grafico1.clear()
+            self.grafico2.clear()
             self.actualiza()
         self.dlg.hide()
 

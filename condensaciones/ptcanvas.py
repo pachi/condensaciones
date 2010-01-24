@@ -95,6 +95,10 @@ class CPTCanvas(FigureCanvasGTKCairo):
         self.fig = plt.figure()
         FigureCanvasGTKCairo.__init__(self, self.fig)
 
+    def clear(self):
+        self.fig.clear()
+        self.draw()
+
     def dibuja(self, d, width=600, height=400):
         """Representa Presiones de saturación vs. Presiones de vapor o
         temperaturas.
@@ -165,6 +169,10 @@ class CPCanvas(FigureCanvasGTKCairo):
     def __init__(self):
         self.fig = plt.figure()
         FigureCanvasGTKCairo.__init__(self, self.fig)
+
+    def clear(self):
+        self.fig.clear()
+        self.draw()
 
     def dibuja(self, d, width=600, height=400):
         """Representa Presiones de saturación vs. Presiones de vapor
