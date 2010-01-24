@@ -25,8 +25,7 @@
 import os, sys
 sys.path.append(os.path.abspath(os.path.join(os.path.abspath('.'), '..')))
 
-import condensaciones
-from condensaciones.capas import Cerramiento
+from condensaciones.cerramiento import Cerramiento
 from condensaciones.gtkui import GtkCondensa
 from condensaciones.datos_ejemplo import climae, climai, murocapas
 
