@@ -21,8 +21,6 @@
 #   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 #   02110-1301, USA.
 
-#TODO: Renombrar muros a cerramientos en glade y métodos
-
 import gtk
 import pango
 import util
@@ -126,6 +124,7 @@ class GtkCondensa(object):
         self.grafico2.dibuja(gdata)
     
     def actualizatexto(self):
+        """Actualiza texto descripción de cerramiento en ventana principal"""
         "Mostrar texto"
         m = self.muro
         _tb = self.murotextbuffer
@@ -145,6 +144,7 @@ class GtkCondensa(object):
             gtk.main_iteration()
 
     def actualizapie(self):
+        """Actualiza pie de ventana principal"""
         g, pcond = self.muro.condensacion(self.climae.temp, self.climai.temp,
                                           self.climae.HR, self.climai.HR)
 #        g, pevap = self.muro.evaporacion(temp_ext, temp_int,
@@ -159,8 +159,8 @@ class GtkCondensa(object):
                  u", ".join(["%.2f" % (2592000.0 * x,) for x in g]))
         self.pie2.set_markup(_text)
 
-    # -- Retrollamadas ventana principal --
     def on_botonmuro_clicked(self, widget):
+        """Abrir diálogo de selección de cerramiento"""
         resultado = self.dlg.run()
         # gtk.RESPONSE_ACCEPT vs gtk.RESPONSE_CANCEL
         if resultado == gtk.RESPONSE_ACCEPT:
@@ -171,8 +171,8 @@ class GtkCondensa(object):
             self.actualiza()
         self.dlg.hide()
 
-    # -- Retrollamadas diálogo muros --
     def on_tvmuro_cursor_changed(self, tv):
+        """Cambio de muro seleccionado en lista de diálogo de cerramientos"""
         _murotm, _murotm_iter = self.tvmuro.get_selection().get_selected()
         value = _murotm.get_value(_murotm_iter, 0)
         self.lblselected.set_text(value)
