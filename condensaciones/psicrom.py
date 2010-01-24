@@ -20,7 +20,27 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 #   02110-1301, USA.
-"""Relaciones psicrométricas"""
+"""Relaciones y cálculos psicrométricos
+
+Relaciones psicrométricos básicos:
+
+- Presión de saturación
+- Presión de vapor
+
+Cálculos psicrométricos:
+- Temperatura de localidad en función de la temperatura de la capital de
+  provincia.
+- Presión de saturación de una localidad en función de la diferencia de
+  altitud respecto a la capital de provincia.
+- Humedad relativa de una localidad en función de la diferencia de altitud
+  respecto a la capital de provincia.
+- Tasa de transferencia de vapor en un cerramiento.
+- Humedad relativa interior del mes de enero, dada la higrometría, humedad
+  relativa y temperaturas, según ISO EN 13788:2002.
+- Humedad relativa interior del mes de enero, dada la humedad relativa,
+  temperaturas y renovación de aire, según CTE.
+- Humedad relativa interior del mes de enero dada la higrometría, según CTE.
+"""
 
 # TODO: Hay que generalizar el cálculo de la presión exterior para la localidad
 # concreta? Sería mejor cambiar psatloc, temploc y hrloc a funciones que tengan
@@ -30,64 +50,82 @@ import sys
 import math
 
 def psat(temp):
-    """Presión de saturación - temp en ºC"""
+    """Presión de saturación del aire húmedo
+    
+    temp - temperatura del aire [ºC]
+    """
     if temp > 0.0:
         return 610.5 * math.exp(17.269 * temp / (237.3 + temp))
     else:
         return 610.5 * math.exp(21.875 * temp / (267.5 + temp))
 
 def pvapor(temp, humedad):
-    """Presión de vapor - temp en ºC y humedad en tanto por uno.
-        temp - temperatura media exterior para el mes dado
-        humedad - humedad relativa media para el mes dado.
+    """Presión de vapor del aire húmedo
+    
+    temp - Temperatura del aire [ºC]
+    humedad - humedad relativa del aire [tanto por uno].
+    
+    temp - temperatura media exterior para el mes dado [ºC]
+    humedad - humedad relativa media para el mes dado [%]
     """
     return (humedad / 100.0) * psat(temp)
 
 def temploc(temp, delta_alt):
     """Temperatura de la localidad en función de la temperatura de
-    la capital de provincia y la diferencia de altitud entre ellas.
-        temp - temperatura media exterior de la capital para el mes dado
-        delta_alt - altura de la localidad sobre la de la capital.
+    la capital de provincia y la diferencia de altitud entre ellas [ºC].
+    
+    temp - temperatura media exterior de la capital para el mes dado [ºC]
+    delta_alt - altura de la localidad sobre la de la capital [m]
     """
     return temp - 1.0 * delta_alt / 100.0
 
 def psatloc(temp, delta_alt):
     """Presión de saturación en una localidad situada a una altitud
-    distinta a la capital de provincia.
-        temp - temperatura media exterior de la capital para el mes dado
-        delta_alt - altura de la localidad sobre la de la capital.
+    distinta a la capital de provincia [Pa].
+    
+    temp - temperatura media exterior de la capital para el mes dado [ºC]
+    delta_alt - altura de la localidad sobre la de la capital [m]
     """
     return psat(temploc(temp, delta_alt))
 
 def hrloc(temp, humedad, delta_alt):
     """Humedad relativa para la localidad situada a una diferencia
-    de altitud dada sobre la capital de provincia.
-        temp - temperatura media exterior de la capital para el mes dado
-        humedad - humedad relativa media de la capital para el mes dado
-        delta_alt - altura de la localidad sobre la de la capital.
+    de altitud dada sobre la capital de provincia [%].
+    
+    temp - temperatura media exterior de la capital para el mes dado [ºC]
+    humedad - humedad relativa media de la capital para el mes dado [%]
+    delta_alt - altura de la localidad sobre la de la capital [m]
+    
+    Si la altura fuese negativa se debería tomar como altura la de la capital.
     """
-    return pvapor(temp, humedad) / ((psatloc(temp, delta_alt) * 
-                                     temploc(temp, delta_alt)))
+    if delta_alt < 0.0: delta_alt = 0
+    return 100.0 * (pvapor(temp, humedad) / psatloc(temp, delta_alt))
 
 def tasatransferenciavapor(pe, pi, Se, Si):
-    """Tasa de transferencia de vapor a través del cerramiento g/m2.s
-    Sirve para calcular condensada o evaporada entre interfases.
-        pe - presión de vapor exterior
-        pi - presión de vapor interior
-        Se - espesor de aire equivalente en pe
-        Si - espesor de aire equivalente en pi
-        delta0 -permeabilidad al vapor de agua del aire en relación a la
-            presión parcial de vapor (en g/m.s.Pa)x(tiempo)
+    """Tasa de transferencia de vapor a través del cerramiento [g/m2.s]
+    
+    Resulta útil para calcular condensada o evaporada entre interfases.
+    
+    pe - presión de vapor exterior [Pa]
+    pi - presión de vapor interior [Pa]
+    Se - espesor de aire equivalente en pe [m]
+    Si - espesor de aire equivalente en pi [m]
+    delta0 - permeabilidad al vapor de agua del aire en relación a la presión
+             parcial de vapor [g/m.s.Pa (por unidad de tiempo)]
     """
     delta0 = 2.0 * 10.0**(-7.0) #delta0 -> [g/(m.s.Pa)]
     if Si == Se:
         return sys.maxint
-    return delta0 * (pi - pe) / (Si - Se) #g/(m2.s)
+    return delta0 * (pi - pe) / (Si - Se) #[g/(m².s)]
 
-def calculahrinthigrometria(temp_ext, temp_sint, hrext, higrometria):
+def calculahrinthigrometriaISO(temp_ext, temp_sint, hrext, higrometria):
     """Humedad relativa interior del mes de enero, dado el ritmo
-    de producción de humedad interior según ISO EN 13788:2002
-    higrometría - ritmo de producción de la humedad interior
+    de producción de humedad interior (higrometría), según ISO EN 13788:2002
+    
+    temp_ext - Temperatura exterior
+    temps_int - Temperatura superficial interior
+    hrext - Humedad relativa exterior
+    higrometria - nivel del ritmo de producción de la humedad interior
         Higrometría 1 (zonas de almacenamiento): delta_p = 270 Pa
         Higrometría 2 (oficinas, tiendas): delta_p = 540 Pa
         Higrometría 3 (viviendas residencial): delta_p = 810 Pa
@@ -127,28 +165,35 @@ def calculahrinthigrometria(temp_ext, temp_sint, hrext, higrometria):
         delta_p = 1300.0
     return (100.0 * (pvapor(temp_ext, hrext) + delta_p) / psat(temp_sint))
 
-def calculahrintCTE(temp_ext, temp_int, temp_sint, hrext, G, volumen, n):
+def calculahrintCTE(temp_ext, temp_int, temp_sint, hrext, G, V, n):
     """Humedad relativa interior del mes de enero, dado el ritmo
     de producción de humedad interior y la tasa de renovación de aire,
-    para el cálculo de condensaciones superf.
-    temp_ext - temperatura exterior
-    temp_int - temperatura interior
-    temp_sint - temperatura superficial interior
-    n - tasa renovación de aire [h^-1]
-    V - Volumen de aire del local [m^3]
+    para el cálculo de condensaciones superficiales [%].
+    
+    temp_ext - temperatura exterior [ºC]
+    temp_int - temperatura interior [ºC]
+    temp_sint - temperatura superficial interior [ºC]
+    hrext - Humedad relativa del aire exterior [%]
     G - ritmo de producción de la humedad interior [kg/h]
-        higrometría 3 o inferior - 55%
-        higrometría 4 - 62%
-        hogrometría 5 - 70%
+    V - Volumen de aire del local [m³]
+    n - tasa renovación de aire [h^-1]
     """
     # Exceso de humedad interior:
-    delta_v = G / (n * volumen)
+    delta_v = G / (n * V)
     # Exceso de presión de vapor interna:
     delta_p = 462.0 * delta_v * (temp_int + temp_ext) / 2.0
     return (100.0 * (pvapor(temp_ext, hrext) + delta_p) / psat(temp_sint))
 
 def calculahrinthigrometriaCTE(higrometria):
-    """Humedad relativa interior del mes de enero, según CTE
+    """Humedad relativa interior del mes de enero dada la higrometría,
+    según CTE [%]
+    
+    higrometria - nivel del ritmo de producción de la humedad interior
+        Higrometría 1 (zonas de almacenamiento)
+        Higrometría 2 (oficinas, tiendas)
+        Higrometría 3 (viviendas residencial): HR = 55%
+        Higrometría 4 (viv. alta ocupación, rest., cocinas): HR = 62%
+        Higrometría 5 (lavanderías, piscinas, restaurantes): HR = 70%
     """
     if higrometria == 5:
         return 70.0
@@ -176,7 +221,7 @@ if __name__ == "__main__":
     volumen = 10 #m3
     n = 1 #[h^-1]
 
-    hrint = calculahrinthigrometria(climae.temp, temp_sint,
+    hrint = calculahrinthigrometriaISO(climae.temp, temp_sint,
                                     climae.HR, higrometria=higrometria) #65.86%
     hrintCTE = calculahrintCTE(climae.temp, climai.temp, temp_sint,
                                climae.HR, G, volumen, n)
