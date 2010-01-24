@@ -96,7 +96,7 @@ if __name__ == "__main__":
     from datos_ejemplo import climae, climai, murocapas
 
     muro = cerramiento.Cerramiento("Cerramiento tipo", "Descripción",
-                                   murocapas, 0.04, 0.13)
+                                   murocapas, Rse=0.04, Rsi=0.13)
     f_Rsi = fRsi(muro.U)
     f_Rsimin = fRsimin(climae.temp, climai.temp, climai.HR)
     c_sup = condensas(muro, climae.temp, climai.temp, climai.HR)

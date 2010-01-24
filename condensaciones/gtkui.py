@@ -181,6 +181,6 @@ if __name__ == "__main__":
     import cerramiento
     from datos_ejemplo import climae, climai, murocapas
     muro = cerramiento.Cerramiento("Cerramiento tipo", "Tipo",
-                                   murocapas, 0.04, 0.13)
+                                   murocapas, Rse=0.04, Rsi=0.13)
     app = GtkCondensa(muro, climae, climai)
     app.main()

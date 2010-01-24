@@ -210,8 +210,8 @@ if __name__ == "__main__":
 
     Rs_ext = 0.04
     Rs_int = 0.13
-    muro = Cerramiento("Cerramiento tipo", "Descripción 1", murocapas,
-                       Rs_ext, Rs_int)
+    muro = Cerramiento("Cerramiento tipo", "Descripción 1",
+                       murocapas, Rse=Rs_ext, Rsi=Rs_int)
 
     temperaturas = muro.temperaturas(climae.temp, climai.temp)
     presiones_sat = muro.presionessat(climae.temp, climai.temp)
