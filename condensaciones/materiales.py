@@ -28,7 +28,7 @@ CATALOGOPACHI = get_resource('../data/PCatalogo.bdc')
 CATALOGOCALENER = get_resource('../data/BDCatalogo.bdc')
 CATALOGOURSA = get_resource('../data/Catalogo_URSA.bdc')
 
-materiales = dbutils.db2datos([CATALOGOPACHI, CATALOGOCALENER, CATALOGOURSA])
+materiales = dbutils.db2data([CATALOGOPACHI, CATALOGOCALENER, CATALOGOURSA])
 
 def tipo(nombre):
     return materiales[nombre]['TYPE']

@@ -76,16 +76,16 @@ def parsefile(file):
         datos[section] = materiales[:]
     return datos
 
-def db2datos(files):
+def db2data(files):
     _resultado = {}
     if not isinstance(files, (tuple, list)):
         files = [files]
-    for file in files:
-        #print "Procesando %s" % file
-        datos = parsefile(file)
-        for material in datos[DEFAULT_SECTION]:
-            _nombre = material['MATERIAL']
-            _resultado[_nombre] = material.copy()
+    for _f in files:
+        #print "Procesando %s" % _f
+        _data = parsefile(_f)
+        for _material in _data[DEFAULT_SECTION]:
+            _nombre = _material['MATERIAL']
+            _resultado[_nombre] = _material.copy()
     return _resultado
 
 if __name__ == "__main__":
@@ -97,19 +97,19 @@ if __name__ == "__main__":
     else:
         argfile = sys.argv[1:]
     files = argfile or util.get_resource('../data/BDCatalogo.bdc')
-    db = db2datos(files)
+    db = db2data(files)
     print u"%i materiales generados" % len(db)
 
     if not isinstance(files, (tuple, list)):
         files = [files]
-    for file in files:
-        datos = parsefile(file)
-        print u"Archivo: %s" % file
+    for f in files:
+        datos = parsefile(f)
+        print u"Archivo: %s" % f
         print u"Secciones:", datos.keys().sort()
         print (u"%i secciones y %i materiales en la sección "
                u"'default'") % (len(datos), len(datos['default']))
         for index, material in enumerate(datos['default']):
             print material['MATERIAL']
-        for dato in db2datos(file).keys():
+        for dato in db2data(f).keys():
             print dato
-        print db2datos(file)
+        print db2data(f)
