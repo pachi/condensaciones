@@ -157,7 +157,7 @@ def calculahrinthigrometriaCTE(higrometria):
     elif higrometria <= 3:
         return 55.0
     else:
-        raise "Higrometría no definida"
+        raise ValueError("Higrometría no definida")
 
 if __name__ == "__main__":
     import cerramiento
