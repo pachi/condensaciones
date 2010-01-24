@@ -22,7 +22,8 @@
 #   02110-1301, USA.
 
 import matplotlib
-import matplotlib.pyplot as plt
+matplotlib.use('GTKCairo')
+from matplotlib.figure import Figure
 from matplotlib.backends.backend_gtkcairo import FigureCanvasGTKCairo
 from util import colores_capas, add_margin
 
@@ -92,7 +93,7 @@ class CPTCanvas(FigureCanvasGTKCairo):
     __gtype_name__ = 'CPTCanvas'
 
     def __init__(self):
-        self.fig = plt.figure()
+        self.fig = Figure()
         FigureCanvasGTKCairo.__init__(self, self.fig)
 
     def clear(self):
@@ -167,7 +168,7 @@ class CPCanvas(FigureCanvasGTKCairo):
     __gtype_name__ = 'CPCanvas'
 
     def __init__(self):
-        self.fig = plt.figure()
+        self.fig = Figure()
         FigureCanvasGTKCairo.__init__(self, self.fig)
 
     def clear(self):
