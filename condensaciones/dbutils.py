@@ -20,18 +20,46 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 #   02110-1301, USA.
-"""Funciones para leer bases de datos de materiales tipo LIDER y crear un
-diccionario con sus datos.
+"""Gestión de bases de data de materiales LIDER
+
+Permite leer, interpretar y crear un diccionario de acceso a los materiales y
+sus propiedades.
 """
 
 import codecs
 
-KEYWORDS = ('TEMPLARY',)
-SECTIONDELIMITER = '+++'
-COMMENT = '$'
 DEFAULT_SECTION = u'default'
 
 def parseblock(block):
+    """Divide bloques de la base de data
+    
+    La primera línea indica el nombre del elemento (e.g. "Ladrillo hueco
+    doble"), seguido de su tipo (e.g. MATERIAL).
+    
+    Las siguientes líneas indican una propiedad (e.g. TYPE, THICKNESS, NAME,
+    ...) y un valor (e.g. MATERIAL, 0.001, "Ladrillo hueco doble").
+    
+    Los nombres y tipos, así como propiedades y valores están separados por
+    símbolos '='. Las cadenas de texto se marcan entre comillas dobles.
+    
+    Cada bloque se termina con un par de puntos ('..').
+    
+    Ejemplo de bloque:
+    
+    "B_Vapor Z3 (d_1mm)" = MATERIAL
+    TYPE           = PROPERTIES
+    THICKNESS      = 0.001
+    CONDUCTIVITY   = 500
+    DENSITY        = 1
+    SPECIFIC-HEAT  = 1
+    VAPOUR-DIFFUSIVITY-FACTOR = 2030
+    NAME           = "B_Vapor Z3 (d_1mm)"
+    NAME_CALENER   = ""
+    GROUP          = "B_VAPOR"
+    IMAGE          = "asfalto.bmp"
+    LIBRARY        = NO
+    ..
+    """
     _dict = {}
     _nombre, _propiedad = block[0].split('=')
     _dict[_propiedad.strip(" \"")] = _nombre.strip(" \"")
@@ -40,11 +68,26 @@ def parseblock(block):
         _dict[_prop.strip(" \"")] = _dato.strip(" \"")
     return _dict
 
-def parsefile(file):
-    #TODO: ampliar a listas de archivos para combinar bases de datos (eg. LIDER
-    #+ URSA)
-    lines = codecs.open(file, 'rb', 'iso-8859-1') #Las BBDD están en iso-8859-1
-    datos = {}
+def parsefile(dbfile):
+    """Interpreta secciones de la base de data
+    
+    Las bases de data se almacenan con codificación ISO-8859-1 e incluyen los
+    siguientes elementos:
+    
+    Comentarios - Líneas que empiezan por '$'
+    Palabras clave - Definen propiedades de la base de data (e.g. TEMPLARY)
+    Secciones y subsecciones - El nombre de la sección se coloca entre líneas
+                               con símbolos '+++'
+    
+    Devuelve un diccionario indexado por secciones que contiene un diccionario
+    con los materiales de cada sección.
+    """
+    KEYWORDS = ('TEMPLARY',)
+    SECTIONDELIMITER = '+++'
+    COMMENT = '$'
+    
+    lines = codecs.open(dbfile, 'rb', 'iso-8859-1')
+    data = {}
     block = []
     materiales = []
     section = DEFAULT_SECTION
@@ -57,30 +100,37 @@ def parsefile(file):
             continue
         elif line.startswith(SECTIONDELIMITER):
             newsection = lines.next().strip()
-            datos[newsection] = []
+            data[newsection] = []
             lines.next() #el formato es delimitador // nombre // delimitador
-            if section in datos:
-                datos[section].append(materiales[:])
+            if section in data:
+                data[section].append(materiales[:])
             else:
-                datos[section] = materiales[:]
+                data[section] = materiales[:]
             section = newsection
             materiales = []
             continue
         else:
+            # Cuando llegamos al final de un bloque forzamos su interpretación
             if line.startswith('..'):
                 materiales.append(parseblock(block))
                 block = []
+            # en caso contrario seguimos añadiendo líneas
             else:
                 block.append(line)
     if materiales is not []: #si solamente hay sección default
-        datos[section] = materiales[:]
-    return datos
+        data[section] = materiales[:]
+    return data
 
-def db2data(files):
+def db2data(dbfiles):
+    """Convierte una lista de archivos de bases de datos a diccionario de datos
+    
+    El diccionario está indexado por el nombre del material e incluye el resto
+    de datos extraídos.
+    """ 
     _resultado = {}
-    if not isinstance(files, (tuple, list)):
-        files = [files]
-    for _f in files:
+    if not isinstance(dbfiles, (tuple, list)):
+        dbfiles = [dbfiles]
+    for _f in dbfiles:
         #print "Procesando %s" % _f
         _data = parsefile(_f)
         for _material in _data[DEFAULT_SECTION]:
