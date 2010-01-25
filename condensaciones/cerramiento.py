@@ -86,18 +86,18 @@ class Cerramiento(object):
 
     @property
     def S_total(self):
-        "Espesor de aire equivalente de todo el cerramiento [m]"
+        "Espesor de aire equivalente de todo el cerr [m]"
         return sum(self.S)
 
     @property
     def R_total(self):
-        """Resistencia térmica total del cerramiento [m²K/W]
+        """Resistencia térmica total del cerr [m²K/W]
         """
         return sum(self.R)
 
     @property
     def U(self):
-        """Transmitancia térmica del cerramiento [W/m²K]
+        """Transmitancia térmica del cerr [W/m²K]
         """
         return 1.0 / self.R_total
 
@@ -123,12 +123,12 @@ class Cerramiento(object):
         """
         _p_ext = psicrom.pvapor(temp_ext, HR_ext)
         _p_int = psicrom.pvapor(temp_int, HR_int)
-        # La presión exterior es constante, en el aire y sup ext de cerramiento
+        # La presión exterior es constante, en el aire y sup ext de cerr
         p_vapor = [_p_ext, _p_ext]
         for capa_Si in self.S:
             pres_j = p_vapor[-1] + (capa_Si * (_p_int - _p_ext) / self.S_total)
             p_vapor.append(pres_j)
-        # La presión interior es constante, en sup int de cerramiento y el aire
+        # La presión interior es constante, en sup int de cerr y el aire
         p_vapor.append(_p_int)
         return p_vapor
 
@@ -205,42 +205,42 @@ class Cerramiento(object):
         return _g, envolvente_inf
 
 if __name__ == "__main__":
-    from datos_ejemplo import climae, climai, murocapas
+    from datos_ejemplo import climae, climai, cerramientocapas
     from util import stringify
 
     Rs_ext = 0.04
     Rs_int = 0.13
-    muro = Cerramiento("Cerramiento tipo", "Descripción 1",
-                       murocapas, Rse=Rs_ext, Rsi=Rs_int)
+    cerr = Cerramiento("Cerramiento tipo", "Descripción 1",
+                       cerramientocapas, Rse=Rs_ext, Rsi=Rs_int)
 
-    temperaturas = muro.temperaturas(climae.temp, climai.temp)
-    presiones_sat = muro.presionessat(climae.temp, climai.temp)
-    presiones = muro.presiones(climae.temp, climai.temp, climae.HR, climai.HR)
+    temperaturas = cerr.temperaturas(climae.temp, climai.temp)
+    presiones_sat = cerr.presionessat(climae.temp, climai.temp)
+    presiones = cerr.presiones(climae.temp, climai.temp, climae.HR, climai.HR)
     p_ext = presiones[1]
     p_int = presiones[-1]
 
-    g, puntos_condensacion = muro.condensacion(climae.temp, climai.temp,
+    g, puntos_condensacion = cerr.condensacion(climae.temp, climai.temp,
                                                climae.HR, climai.HR)
     cantidad_condensada = sum(g)
     # indicamos evaporación en la interfase 2, pero en realidad habría que ver
     # en cuáles había antes condensaciones y realizar el cálculo en ellas.
-    g, puntos_evaporacion = muro.evaporacion(climae.temp, climai.temp,
+    g, puntos_evaporacion = cerr.evaporacion(climae.temp, climai.temp,
                                              climae.HR, climai.HR,
                                              interfases=[2])
     cantidad_evaporada = sum(g)
 
-    print u"Cerramiento:\n\t", muro.nombre
-    print u"Nombre capas:\n\t", "\n\t".join(muro.nombres)
+    print u"Cerramiento:\n\t", cerr.nombre
+    print u"Nombre capas:\n\t", "\n\t".join(cerr.nombres)
     print
-    print u"Espesores:\n\t", stringify(muro.espesores, 2)
-    print u"Espesores acumulados:\n\t", stringify(muro.espesores_acumulados, 2)
-    print u"R Capas:\n\t", stringify(muro.R, 2)
-    print u"S Capas:\n\t", stringify(muro.S, 2)
-    print u"S acumulados:\n\t", stringify(muro.S_acumulados, 2)
-    print u"S total:", muro.S_total # Espesor aire equivalente total (m), 2.16
-    print u"Rs_ext: %.3f\nRs_int: %.2f" % (muro.Rse, muro.Rsi)
-    print u"R_total: %.3f" % muro.R_total #("Resistencia total (m²K/W)", 1.25)
-    print u"U: %.3f" % muro.U # 0.80 W/m^2K = 1/Rtotal
+    print u"Espesores:\n\t", stringify(cerr.espesores, 2)
+    print u"Espesores acumulados:\n\t", stringify(cerr.espesores_acumulados, 2)
+    print u"R Capas:\n\t", stringify(cerr.R, 2)
+    print u"S Capas:\n\t", stringify(cerr.S, 2)
+    print u"S acumulados:\n\t", stringify(cerr.S_acumulados, 2)
+    print u"S total:", cerr.S_total # Espesor aire equivalente total (m), 2.16
+    print u"Rs_ext: %.3f\nRs_int: %.2f" % (cerr.Rse, cerr.Rsi)
+    print u"R_total: %.3f" % cerr.R_total #("Resistencia total (m²K/W)", 1.25)
+    print u"U: %.3f" % cerr.U # 0.80 W/m^2K = 1/Rtotal
     print
     print u"Temperaturas:\n\t", stringify(temperaturas, 1)
     print u"Presiones de vapor:\n\t", stringify(presiones, 1)

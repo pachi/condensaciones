@@ -203,16 +203,12 @@ def calculahrintCTE(temp_ext=None, temp_int=None, temp_sint=None,
     return (100.0 * (pvapor(temp_ext, hrext) + delta_p) / psat(temp_sint))
 
 if __name__ == "__main__":
-    import cerramiento
-    from datos_ejemplo import climae, climai, murocapas
+    from datos_ejemplo import climae, climai
 
     higrometria = 3
-
     # Datos constructivos
     Rs_ext = 0.04
     Rs_int = 0.13
-    muro = cerramiento.Cerramiento("Cerramiento tipo", "Descripción tipo",
-                                   murocapas, Rse=Rs_ext, Rsi=Rs_int)
     # datos calculados
     temp_sint = 19.0330684375
     G = 0.55 #higrometría 3

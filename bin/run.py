@@ -27,9 +27,9 @@ sys.path.append(os.path.abspath(os.path.join(os.path.abspath('.'), '..')))
 
 from condensaciones.cerramiento import Cerramiento
 from condensaciones.gtkui import GtkCondensa
-from condensaciones.datos_ejemplo import climae, climai, murocapas
+from condensaciones.datos_ejemplo import climae, climai, cerramientocapas
 
-muro = Cerramiento("Cerramiento tipo", "Descripción",
-                   murocapas, Rse=0.04, Rsi=0.13)
-app = GtkCondensa(muro, climae, climai)
+cerramiento = Cerramiento("Cerramiento tipo", "Descripción",
+                          cerramientocapas, Rse=0.04, Rsi=0.13)
+app = GtkCondensa(cerramiento, climae, climai)
 app.main()

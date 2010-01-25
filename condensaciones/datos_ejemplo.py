@@ -87,26 +87,26 @@ capas6 = [
         (u"Placa de yeso laminado [PYL] 750 < d < 900", 0.0125)]
 valores6 = {"U":0.181, "S_total":801.28, "fRsi":0.36}
 
-murocapas = capas1
+cerramientocapas = capas1
 
 # --------- Lista de capas para empezar con datos -------------
-muro1 = Cerramiento(u"Cerramiento 1",
+cerr1 = Cerramiento(u"Cerramiento 1",
                     u"1/2' LP + EPS 3cm + LH + Yeso",
                     capas1, Rse=0.04, Rsi=0.13)
-muro2 = Cerramiento(u"Cerramiento 2",
+cerr2 = Cerramiento(u"Cerramiento 2",
                     u"Granito 3cm + XPS 5cm + LHD + Yeso",
                     capas2, Rse=0.04, Rsi=0.13)
-muro3 = Cerramiento(u"Cerramiento 3",
+cerr3 = Cerramiento(u"Cerramiento 3",
                     u"Granito 3cm + XPS 5cm + LHD + BV + Yeso",
                     capas3, Rse=0.04, Rsi=0.13)
-muro4 = Cerramiento(u"Cerramiento 4",
+cerr4 = Cerramiento(u"Cerramiento 4",
                     u"XPS 5cm + MW 8cm + MW 4cm + PYL 1.25cm + PYL 1.25cm",
                     capas4, Rse=0.04, Rsi=0.13)
-muro5 = Cerramiento(u"Cerramiento 5",
+cerr5 = Cerramiento(u"Cerramiento 5",
                     u"EPS 5cm + PYL 1.5cm + MW 8cm + XPS 5cm + PYL 1.25cm + PYL 1.25cm",
                     capas5, Rse=0.04, Rsi=0.13)
-muro6 = Cerramiento(u"Cerramiento 6",
+cerr6 = Cerramiento(u"Cerramiento 6",
                     u"EPS 5cm + PYL 1.5cm + MW 8cm + BV + MW 4cm + PYL 1.25cm + PYL 1.25cm",
                     capas6, Rse=0.04, Rsi=0.13)
 
-muros = [muro1, muro2, muro3, muro4, muro5, muro6]
+cerramientos = [cerr1, cerr2, cerr3, cerr4, cerr5, cerr6]

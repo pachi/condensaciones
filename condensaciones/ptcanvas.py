@@ -32,17 +32,17 @@ matplotlib.rc('mathtext', fontset='custom')
 
 class GraphData(object):
     """Almacén de datos para dibujado de gráficas"""
-    def __init__(self, muro, climae, climai):
-        self.temperaturas = muro.temperaturas(climae.temp, climai.temp)
-        self.presiones = muro.presiones(climae.temp, climai.temp,
+    def __init__(self, cerr, climae, climai):
+        self.temperaturas = cerr.temperaturas(climae.temp, climai.temp)
+        self.presiones = cerr.presiones(climae.temp, climai.temp,
                                         climae.HR, climai.HR)
-        self.presiones_sat = muro.presionessat(climae.temp, climai.temp)
-        self.nombres = muro.nombres
-        self.rotulos_s = add_margin(muro.espesores_acumulados)
-        self.rotulos_ssat = muro.S_acumulados
-        self.qc, self.p_condensa = muro.condensacion(climae.temp, climai.temp,
+        self.presiones_sat = cerr.presionessat(climae.temp, climai.temp)
+        self.nombres = cerr.nombres
+        self.rotulos_s = add_margin(cerr.espesores_acumulados)
+        self.rotulos_ssat = cerr.S_acumulados
+        self.qc, self.p_condensa = cerr.condensacion(climae.temp, climai.temp,
                                                      climae.HR, climai.HR)
-#        self.qe, self.p_evapora = muro.evaporacion(temp_ext, temp_int,
+#        self.qe, self.p_evapora = cerr.evaporacion(temp_ext, temp_int,
 #                                                   HR_ext, HR_int,
 #                                                   interfases=[2])
         self.color = colores_capas(self.nombres)
@@ -61,7 +61,7 @@ class GraphData(object):
 
 
 def _dibujacerramiento(ax, nombrecapas, xcapas, colordict):
-    """Dibujado de muro
+    """Dibujado de cerramiento
     
     ax - ejes
     nombrecapas - nombres de capas del cerramiento
@@ -97,6 +97,7 @@ class CPTCanvas(FigureCanvasGTKCairo):
         FigureCanvasGTKCairo.__init__(self, self.fig)
 
     def clear(self):
+        """Limpia imagen de datos anteriores"""
         self.fig.clear()
         self.draw()
 
@@ -160,7 +161,7 @@ class CPTCanvas(FigureCanvasGTKCairo):
         self.set_size_request(width, height)
 
     def save(self, filename='presionestempplot.png'):
-        # guardar y mostrar gráfica
+        """Guardar y mostrar gráfica"""
         self.savefig(filename)
 
 class CPCanvas(FigureCanvasGTKCairo):
@@ -172,6 +173,7 @@ class CPCanvas(FigureCanvasGTKCairo):
         FigureCanvasGTKCairo.__init__(self, self.fig)
 
     def clear(self):
+        """Limpia imagen de datos anteriores"""
         self.fig.clear()
         self.draw()
 
@@ -241,19 +243,19 @@ class CPCanvas(FigureCanvasGTKCairo):
         self.set_size_request(width, height)
 
     def save(self, filename='presionesplot.png'):
-        # guardar y mostrar gráfica
+        """Guardar y mostrar gráfica"""
         self.savefig(filename)
 
 if __name__ == "__main__":
     import gtk
     from cerramiento import Cerramiento
-    from datos_ejemplo import climae, climai, murocapas
+    from datos_ejemplo import climae, climai, cerramientocapas
 
     Rs_ext = 0.04
     Rs_int = 0.13
-    muro = Cerramiento("Cerramiento tipo", "Descripción tipo",
-                       murocapas, Rse=Rs_ext, Rsi=Rs_int)
-    data = GraphData(muro, climae, climai)
+    cerr = Cerramiento("Cerramiento tipo", "Descripción tipo",
+                       cerramientocapas, Rse=Rs_ext, Rsi=Rs_int)
+    data = GraphData(cerr, climae, climai)
 
     w = gtk.Window()
     v = gtk.VBox()
