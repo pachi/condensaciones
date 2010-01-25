@@ -20,19 +20,34 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 #   02110-1301, USA.
-"""Clase Cerramiento
-
-Define una clase para modelizar un cerramiento tipo, formado por capas de
-distintos materiales con propiedades físicas características.
-"""
+"""Cerramiento - Clase para la modelización de un cerramiento tipo."""
 
 import operator
 import psicrom
 import materiales
 
 class Cerramiento(object):
+    """Clase Cerramiento
+    
+    Clase para modelizar un cerramiento tipo, multicapa, con cada capa definida
+    por su material y sus propiedades físicas.
+    """
     def __init__(self, nombre, descripcion, capas,
                  tipo=None, Rse=None, Rsi=None):
+        """Inicialización de cerramiento.
+        
+        nombre - Nombre del cerramiento
+        descripción - Descripción somera de la composición del cerramiento
+        capas - lista de tuplas con la descripción de las capas que forman
+                el cerramiento. Cada tupla define una capa, identificada por
+                su nombre y su espesor. La lista se ordena de exterior a
+                interior.
+        tipo - Tipo de cerramiento en relación a su disposición (horizontal,
+                vertical, cubierta, etc) y que sirve para definir de forma
+                implícita sus valores de resistencia superficial.
+        Rse - Resistencia superficial exterior
+        Rsi - Resistencia superficial interior
+        """
         #TODO: Tipo selecciona Rse y Rsi según sea horizontal, vertical, etc
         self.nombre = nombre
         self.descripcion = descripcion
