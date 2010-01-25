@@ -20,6 +20,11 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 #   02110-1301, USA.
+"""Clase Cerramiento
+
+Define una clase para modelizar un cerramiento tipo, formado por capas de
+distintos materiales con propiedades físicas características.
+"""
 
 import operator
 import psicrom
@@ -37,17 +42,17 @@ class Cerramiento(object):
 
     @property
     def nombres(self):
-        "Nombre de las capas"
+        """Lista de nombres de las capas"""
         return [nombre for nombre, e in self.capas]
 
     @property
     def espesores(self):
-        "Espesores de las capas [m]"
+        """Lista de espesores de las capas [m]"""
         return [e for nombre, e in self.capas]
 
     @property
     def espesores_acumulados(self):
-        """Espesores físicos acumulados [m]
+        """Lista de espesores físicos acumulados [m]
         
         Lista de coordenadas X geométricas de las interfases de cada capa.
         """
@@ -56,7 +61,7 @@ class Cerramiento(object):
 
     @property
     def R(self):
-        "Resistencia térmica de las capas [m²K/W]"
+        """Lista de resistencias térmicas de las capas [m²K/W]"""
         def _resist_capa(capa, e=None):
             tipo = materiales.tipo(capa)
             if tipo == 'PROPERTIES':
@@ -70,13 +75,13 @@ class Cerramiento(object):
 
     @property
     def S(self):
-        "Espesor de aire equivalente de las capas [m]"
+        """Lista de espesore de aire equivalente de las capas [m]"""
         return [e * materiales.difusividad(nombre)
                 for nombre, e in self.capas]
 
     @property
     def S_acumulados(self):
-        """Espesor de aire equivalente acumulado [m]
+        """Lista de espesores de aire equivalente acumulados en cada capa [m]
         
         Lista de coordenadas X en espesor de aire equivalente de las
         interfases de capa.
@@ -86,28 +91,28 @@ class Cerramiento(object):
 
     @property
     def S_total(self):
-        "Espesor de aire equivalente de todo el cerr [m]"
+        "Espesor de aire equivalente del cerramiento [m]"
         return sum(self.S)
 
     @property
     def R_total(self):
-        """Resistencia térmica total del cerr [m²K/W]
-        """
+        """Resistencia térmica total del cerramiento [m²K/W]"""
         return sum(self.R)
 
     @property
     def U(self):
-        """Transmitancia térmica del cerr [W/m²K]
-        """
+        """Transmitancia térmica del cerramiento [W/m²K]"""
         return 1.0 / self.R_total
 
     def temperaturas(self, temp_ext, temp_int):
-        """Devuelve lista de temperaturas [ºC]:
-        temperatura exterior, temperatura superficial exterior,
+        """Lista de temperaturas en el cerramiento [ºC]
+        
+        Devuelve la temperatura exterior, temperatura superficial exterior,
         temperaturas intersticiales, temperatura superficial interior
         y temperatura interior.
-            temp_ext - temperatura exterior media en el mes de enero
-            temp_int - temperatura interior de cálculo (20ºC)
+        
+        temp_ext - temperatura exterior media en el mes de enero
+        temp_int - temperatura interior de cálculo (20ºC)
         """
         _tlist = [temp_ext]
         for capa_Ri in self.R:
@@ -117,9 +122,15 @@ class Cerramiento(object):
         return _tlist
 
     def presiones(self, temp_ext, temp_int, HR_ext, HR_int):
-        """Devuelve una lista de presiones de vapor [Pa]
-        presión de vapor al exterior, presiones de vapor intermedias y presión
-        de vapor interior.
+        """Lista de presiones de vapor en el cerramiento [Pa]
+        
+        Devuelve la presión de vapor al exterior, presiones de vapor
+        intermedias y presión de vapor interior.
+        
+        temp_ext - Temperatura exterior del aire [ºC]
+        temp_int - Temperatura interior del aire [ºC]
+        HR_ext - Humedad relativa exterior del aire [%]
+        HR_int - Humedad relativa interior del aire [%]
         """
         _p_ext = psicrom.pvapor(temp_ext, HR_ext)
         _p_int = psicrom.pvapor(temp_int, HR_int)
@@ -133,14 +144,26 @@ class Cerramiento(object):
         return p_vapor
 
     def presionessat(self, temp_ext, temp_int):
-        "Presiones de saturación en cada capa [Pa]"
+        """Lista de presiones de saturación en el cerramiento [Pa]
+        
+        temp_ext - Temperatura exterior del aire [ºC]
+        temp_int - Temperatura interior del aire [ºC]
+        """
         _temperaturas = self.temperaturas(temp_ext, temp_int)
         return [psicrom.psat(t) for t in _temperaturas]
 
     def condensacion(self, temp_ext, temp_int, HR_ext, HR_int):
-        """Calcula cantidad de condensación y coordenadas (S, presión de vapor)
-        de los planos de condensación.
-        Devuelve g [g/m²s], puntos_condensacion
+        """Cantidad de condensación y coordenadas de condensación/presión
+            
+        Devuelve la cantidad de condensación en [g/m²s] y una lista de
+        tuplas con las coordenadas de los puntos de condensacion en [m] de
+        espesor de aire equivalente y la presión de vapor en ese punto
+        (S(i), p_vapor(i)).
+        
+        temp_ext - Temperatura exterior del aire [ºC]
+        temp_int - Temperatura interior del aire [ºC]
+        HR_ext - Humedad relativa exterior del aire [%]
+        HR_int - Humedad relativa interior del aire [%]
         """
         p = self.presiones(temp_ext, temp_int, HR_ext, HR_int)
         p_sat = self.presionessat(temp_ext, temp_int)
@@ -178,9 +201,17 @@ class Cerramiento(object):
         return _g, envolv_inf
 
     def evaporacion(self, temp_ext, temp_int, HR_ext, HR_int, interfases):
-        """Calcula cantidad de evaporacion y coordenadas (S, presión de vapor)
-        de los planos de evaporación.
-        Devuelve g [g/m²s], puntos_evaporacion
+        """Cantidad de evaporación y coordenadas de evaporación/presión
+        
+        Devuelve la cantidad de evaporación en [g/m²s] y una lista de
+        tuplas con las coordenadas de los puntos de evaporación en [m] de
+        espesor de aire equivalente y la presión de vapor en ese punto
+        (S(i), p_vapor(i)).
+        
+        temp_ext - Temperatura exterior del aire [ºC]
+        temp_int - Temperatura interior del aire [ºC]
+        HR_ext - Humedad relativa exterior del aire [%]
+        HR_int - Humedad relativa interior del aire [%]
         """
         p = self.presiones(temp_ext, temp_int, HR_ext, HR_int)
         p_sat = self.presionessat(temp_ext, temp_int)
