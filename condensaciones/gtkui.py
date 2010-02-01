@@ -20,6 +20,7 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 #   02110-1301, USA.
+"""Interfaz de usuario en GTK+"""
 
 import gtk
 import pango
@@ -31,7 +32,14 @@ COLOR_OK = gtk.gdk.color_parse("#AACCAA")
 COLOR_BAD = gtk.gdk.color_parse("#CCAAAA")
 
 class GtkCondensa(object):
-    def __init__(self, cerramiento, climae, climai):
+    """Aplicación"""
+    def __init__(self, cerramiento=None, climae=None, climai=None):
+        """Inicialización de datos e interfaz
+        
+        cerramiento - Cerramiento
+        climae - datos higrotérmicos del exterior
+        climai - datos higrotérmicos del interior
+        """
         self.cerramiento = cerramiento
         self.climae = climae
         self.climai = climai
@@ -84,10 +92,12 @@ class GtkCondensa(object):
         self.actualiza()
         
     def main(self):
+        """Arranca la aplicación"""
         self.w.show_all()
         gtk.main()
 
     def cargacerramientos(self):
+        """Carga datos de cerramientos"""
         #TODO: cargar datos de biblioteca
         from datos_ejemplo import cerramientos
         for _c in cerramientos:
@@ -95,12 +105,14 @@ class GtkCondensa(object):
             self.cerramientols.append((_c.nombre, _c.descripcion))
 
     def actualiza(self):
+        """Actualiza cabecera, gráficas, texto y pie de datos"""
         self.actualizacabecera()
         self.actualizagraficas()
         self.actualizatexto()
         self.actualizapie()
 
     def actualizacabecera(self):
+        """Actualiza texto de cabecera"""
         cerr = self.cerramiento
         ti = self.climai.temp
         hri = self.climai.HR
@@ -121,13 +133,13 @@ class GtkCondensa(object):
                               ccheck and COLOR_BAD or COLOR_OK)
 
     def actualizagraficas(self):
+        """Redibuja gráficos con nuevos datos"""
         gdata = GraphData(self.cerramiento, self.climae, self.climai)
         self.grafico1.dibuja(gdata)
         self.grafico2.dibuja(gdata)
     
     def actualizatexto(self):
         """Actualiza texto descripción de cerramiento en ventana principal"""
-        "Mostrar texto"
         _m = self.cerramiento
         _tb = self.cerramientotxtb
         _tb.set_text("")
@@ -176,8 +188,7 @@ class GtkCondensa(object):
 
     def on_cerramientotv_cursor_changed(self, tv):
         """Cambio de cerramiento seleccionado en lista de cerramientos"""
-        _cerrtv = self.cerramientotv
-        _cerrtm, _cerrtm_iter = _cerrtv.get_selection().get_selected()
+        _cerrtm, _cerrtm_iter = tv.get_selection().get_selected()
         _value = _cerrtm.get_value(_cerrtm_iter, 0)
         self.lblselected.set_text(_value)
 
