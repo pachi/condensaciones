@@ -20,12 +20,13 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 #   02110-1301, USA.
-"""Relaciones y cálculos psicrométricos
+"""Relaciones y cálculos psicrométricos según CTE DB-HE G.3
 
-Relaciones psicrométricos básicos:
+Relaciones psicrométricas básicas:
 
 - Presión de saturación
 - Presión de vapor
+- Humedad relativa interior
 
 Cálculos psicrométricos:
 - Temperatura de localidad en función de la temperatura de la capital de
@@ -50,7 +51,7 @@ import sys
 import math
 
 def psat(temp):
-    """Presión de saturación del aire húmedo
+    """Presión de saturación del aire húmedo [Pa]
     
     temp - temperatura del aire [ºC]
     """
@@ -60,19 +61,18 @@ def psat(temp):
         return 610.5 * math.exp(21.875 * temp / (267.5 + temp))
 
 def pvapor(temp, humedad):
-    """Presión de vapor del aire húmedo
+    """Presión de vapor del aire húmedo [Pa]
     
     temp - Temperatura del aire [ºC]
-    humedad - humedad relativa del aire [tanto por uno].
-    
-    temp - temperatura media exterior para el mes dado [ºC]
-    humedad - humedad relativa media para el mes dado [%]
+    humedad - humedad relativa del aire [%]
     """
     return (humedad / 100.0) * psat(temp)
 
 def temploc(temp, delta_alt):
-    """Temperatura de la localidad en función de la temperatura de
-    la capital de provincia y la diferencia de altitud entre ellas [ºC].
+    """Temperatura de una localidad no capital de provincia [ºC]
+    
+    Es función de la temperatura y diferencia de altitud con la capital de
+    provincia.
     
     temp - temperatura media exterior de la capital para el mes dado [ºC]
     delta_alt - altura de la localidad sobre la de la capital [m]
@@ -80,8 +80,10 @@ def temploc(temp, delta_alt):
     return temp - 1.0 * delta_alt / 100.0
 
 def psatloc(temp, delta_alt):
-    """Presión de saturación en una localidad situada a una altitud
-    distinta a la capital de provincia [Pa].
+    """Presión de saturación en una localidad no capital de provincia [Pa]
+    
+    Es función de la temperatura y diferencia de altitud con la capital de
+    provincia.
     
     temp - temperatura media exterior de la capital para el mes dado [ºC]
     delta_alt - altura de la localidad sobre la de la capital [m]
@@ -89,8 +91,10 @@ def psatloc(temp, delta_alt):
     return psat(temploc(temp, delta_alt))
 
 def hrloc(temp, humedad, delta_alt):
-    """Humedad relativa para la localidad situada a una diferencia
-    de altitud dada sobre la capital de provincia [%].
+    """Humedad relativa para la localidad no capital de provincia [%]
+    
+    Es función de la temperatura, humedad y diferencia de nivel con la capital
+    de provincia [%].
     
     temp - temperatura media exterior de la capital para el mes dado [ºC]
     humedad - humedad relativa media de la capital para el mes dado [%]
@@ -119,12 +123,14 @@ def tasatransferenciavapor(pe, pi, Se, Si):
     return delta0 * (pi - pe) / (Si - Se) #[g/(m².s)]
 
 def calculahrinthigrometriaISO(temp_ext, temp_sint, hrext, higrometria):
-    """Humedad relativa interior del mes de enero, dado el ritmo
-    de producción de humedad interior (higrometría), según ISO EN 13788:2002
+    """Humedad relativa interior [%] del mes de enero
     
-    temp_ext - Temperatura exterior
-    temps_int - Temperatura superficial interior
-    hrext - Humedad relativa exterior
+    Es función del ritmo de producción de humedad interior (higrometría),
+    definida según ISO EN 13788:2002
+    
+    temp_ext - Temperatura exterior [ºC]
+    temps_int - Temperatura superficial interior [ºC]
+    hrext - Humedad relativa exterior [%]
     higrometria - nivel del ritmo de producción de la humedad interior
         Higrometría 1 (zonas de almacenamiento): delta_p = 270 Pa
         Higrometría 2 (oficinas, tiendas): delta_p = 540 Pa
@@ -168,9 +174,11 @@ def calculahrinthigrometriaISO(temp_ext, temp_sint, hrext, higrometria):
 def calculahrintCTE(temp_ext=None, temp_int=None, temp_sint=None,
                     hrext=None, G=None, V=None, n=None,
                     higrometria=None):
-    """Humedad relativa interior [%] del mes de enero, dado el ritmo
-    de producción de humedad interior y la tasa de renovación de aire o,
-    alternativamente, la higrometría, según se define en el CTE.
+    """Humedad relativa interior [%] del mes de enero
+    
+    Es función del ritmo de producción de humedad interior y la tasa de
+    renovación de aire o, alternativamente, la higrometría, según se define
+    en el CTE.
     
     Útil para el cálculo de condensaciones superficiales.
 
