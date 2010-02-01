@@ -20,6 +20,10 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 #   02110-1301, USA.
+"""Módulo de definición de materiales y propiedades
+
+Toma los datos de las bases de datos definidas, haciéndolos accesibles a
+través del diccionario 'materiales'"""
 
 from util import get_resource
 import dbutils
@@ -31,15 +35,24 @@ CATALOGOURSA = get_resource('../data/Catalogo_URSA.bdc')
 materiales = dbutils.db2data([CATALOGOPACHI, CATALOGOCALENER, CATALOGOURSA])
 
 def tipo(nombre):
+    """Tipo de elemento en relación a su comportamiento térmico
+    
+    Puede ser de los tipos:
+    - PROPERTIES, definido por su conductividad térmica 'CONDUCTIVITY'
+    - RESISTANCE, definido por su resistencia térmica 'RESISTANCE'
+    """
     return materiales[nombre]['TYPE']
 
 def conductividad(nombre):
+    """Conductividad térmica del material [W/m.K]"""
     return float(materiales[nombre]['CONDUCTIVITY'])
 
 def resistencia(nombre):
+    """Resistencia térmica del material [m²/K.W]"""
     return float(materiales[nombre]['RESISTANCE'])
 
 def difusividad(nombre):
+    """Difusividad al vapor de agua del material"""
     return float(materiales[nombre]['VAPOUR-DIFFUSIVITY-FACTOR'])
 
 if __name__ == "__main__":
