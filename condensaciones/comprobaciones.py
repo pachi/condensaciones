@@ -85,18 +85,18 @@ if __name__ == "__main__":
     import cerramiento
     from datos_ejemplo import climae, climai, cerramientocapas
 
-    cerr = cerramiento.Cerramiento("Cerramiento tipo", "Descripción",
+    c = cerramiento.Cerramiento("Cerramiento tipo", "Descripción",
                                    cerramientocapas, Rse=0.04, Rsi=0.13)
-    f_Rsi = fRsi(cerr.U)
+    f_Rsi = fRsi(c.U)
     f_Rsimin = fRsimin(climae.temp, climai.temp, climai.HR)
-    c_sup = condensas(cerr, climae.temp, climai.temp, climai.HR)
-    c_int = condensai(cerr, climae.temp, climai.temp,
+    c_sup = condensas(c, climae.temp, climai.temp, climai.HR)
+    c_int = condensai(c, climae.temp, climai.temp,
                                      climae.HR, climai.HR)
-    c_soi = condensaciones(cerr, climae.temp, climai.temp,
+    c_soi = condensaciones(c, climae.temp, climai.temp,
                            climae.HR, climai.HR)
 
-    print u"Nombre: %s" % (cerr.nombre,)
-    print u"Capas: \n\t", "\n\t".join(cerr.nombres)
+    print u"Nombre: %s" % (c.nombre,)
+    print u"Capas: \n\t", "\n\t".join(c.nombres)
     print u"\nCondensaciones superficiales (%s)" % (c_sup and u"Sí" or u"No")
     print u"\tfRsi = %.2f, fRsimin = %.2f" % (f_Rsi, f_Rsimin)
     print u"Condensaciones intersticiales (%s)" % (c_int and u"Sí" or u"No")
