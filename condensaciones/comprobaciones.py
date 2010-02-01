@@ -54,9 +54,9 @@ def condensas(cerr, temp_ext, temp_int, HR_int):
     
     Devuelve True si existen condensaciones superficiales.
     """
-    # el CTE incluye tablas según zonas y clase de higrometría para fRsimin que
-    # están calculadas para la capital más desfavorable de cada zona y con
-    # HR=55%, 62%, 70%.
+    # el CTE incluye tablas según zonas y clase de higrometría para fRsimin
+    # que están calculadas para la capital más desfavorable de cada zona y
+    # con HR=55%, 62%, 70%.
     return fRsi(cerr.U) < fRsimin(temp_ext, temp_int, HR_int)
 
 def condensai(cerr, temp_ext, temp_int, HR_ext, HR_int):
@@ -65,20 +65,11 @@ def condensai(cerr, temp_ext, temp_int, HR_ext, HR_int):
     
     Devuelve True si existen condensaciones intersticiales.
     """
-#    presiones = cerr.presiones(temp_ext, temp_int, HR_ext, HR_int)
-#    presiones_sat = cerr.presionessat(temp_ext, temp_int)
-#    condensa = False
-#    for presion_i, presion_sat_i in zip(presiones, presiones_sat):
-#        if presion_i >= presion_sat_i:
-#            condensa = True
-#
-#TODO: Revisar condensaciones viendo si la cantidad condensada es susceptible
-# de evaporación o no
-    g, puntos_condensacion = cerr.condensacion(temp_ext, temp_int,
-                                               HR_ext, HR_int)
-#    g, puntos_evaporacion = cerr.evaporacion(temp_ext, temp_int,
-#                                             HR_ext, HR_int,
-#                                             interfases=[2])
+    #TODO: Revisar condensaciones viendo si la cantidad condensada es
+    # susceptible de evaporación o no
+    g, pcondensa = cerr.condensacion(temp_ext, temp_int, HR_ext, HR_int)
+    #g, pevapora = cerr.evaporacion(temp_ext, temp_int, HR_ext, HR_int,
+    #                                      interfases=[2])
     condensa = (sum(g) > 0.0)
     return condensa
 
