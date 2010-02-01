@@ -20,6 +20,7 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 #   02110-1301, USA.
+"""Módulo de dibujo y controles gráficos de la interfaz de usuario"""
 
 import matplotlib
 matplotlib.use('GTKCairo')
@@ -33,6 +34,12 @@ matplotlib.rc('mathtext', fontset='custom')
 class GraphData(object):
     """Almacén de datos para dibujado de gráficas"""
     def __init__(self, cerr, climae, climai):
+        """Inicializa el almacén de datos
+        
+        cerr - objeto Cerramiento
+        climae - objeto Clima para datos del exterior
+        cliai - objeto Clima para datos del interior
+        """
         self.temperaturas = cerr.temperaturas(climae.temp, climai.temp)
         self.presiones = cerr.presiones(climae.temp, climai.temp,
                                         climae.HR, climai.HR)
