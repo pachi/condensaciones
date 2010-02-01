@@ -20,13 +20,10 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 #   02110-1301, USA.
+"""Datos de ejemplo para cálculos térmicos, higrométricos y condensaciones"""
 
 from cerramiento import Cerramiento
-
-class Clima(object):
-    def __init__(self, temp, HR):
-        self.temp = float(temp)
-        self.HR = float(HR)
+from clima import Clima
 
 climae1 = Clima(10.7, 79) #datos enero Sevilla
 climae2 = Clima(5, 96) #datos para provocar condensaciones
