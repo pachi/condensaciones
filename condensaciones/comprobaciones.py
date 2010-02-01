@@ -33,20 +33,19 @@ def fRsimin(tempext, tempint, hrint):
     """Factor de temperatura de la superficie interior mínnimo aceptable de un
     puente térmico, cerramiento o partición interior.
     """
-    def calculatemp_simin(hrint):
-        p_i = hrint * 2337 / 100.0
-        p_sat = p_i / 0.8 # la humedad relativa no debería pasar de 0.80
-        # condición CTE (son las expresiones inversas de p_sat como f(temp)
-        if p_sat >= 610.5:
-            temp_si_min = (237.3 * math.log (p_sat / 610.5) /
-                           (17.269 - math.log (p_sat / 610.5)))
+    def tempsimin(hrint):
+        """Temperatura superficial mínima"""
+        # la humedad relativa no debería pasar de 0.80 y psat = pi / HR
+        psat = (hrint * 2337.0 / 100.0) / 0.8
+        # condición CTE (son las expresiones inversas de psat como f(temp)
+        _k = math.log (psat / 610.5)
+        if psat >= 610.5:
+            temp_si_min = 237.3 * _k / (17.269 - _k)
         else: # condición ISO 13788
-            temp_si_min = (265.5 * math.log (p_sat / 610.5) /
-                           (21.875 - math.log (p_sat / 610.5)))
+            temp_si_min = 265.5 * _k / (21.875 - _k)
         return temp_si_min
-    temp_si_min = calculatemp_simin(hrint)
     #XXX: comprobar si tempint = tempext?
-    return (temp_si_min - tempext) / (tempint - tempext)
+    return (tempsimin(hrint) - tempext) / (tempint - tempext)
 
 def condensas(cerr, temp_ext, temp_int, HR_int):
     """Comprueba la condición de existencia de condensaciones superficiales en
