@@ -235,7 +235,7 @@ class Cerramiento(object):
         Scapas = self.S
         x_jo = [0.0] + [reduce(operator.add, Scapas[:i]) 
                         for i in range(1,len(Scapas)+1)]
-        y_jo = ([p[1]] + [p for p in p_sat[2:-2]] + [p[-1]])
+        y_jo = ([p[1]] + [_p for _p in p_sat[2:-2]] + [p[-1]])
 
         puntos_evapora = [(x_jo[i], y_jo[i]) for i in interfases]
         envolvente_inf = ([(x_jo[0], y_jo[0])] + puntos_evapora +
