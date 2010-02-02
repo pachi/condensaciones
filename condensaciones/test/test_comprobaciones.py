@@ -27,9 +27,10 @@ from condensaciones.cerramiento import Cerramiento
 from condensaciones.clima import Clima
 import condensaciones.comprobaciones as comprobaciones
 
-#climae1 = Clima(10.7, 79) #datos enero Sevilla
 climae = Clima(5, 96) #T, HR
 climai = Clima(20.0, 55) #T, HR
+climae1 = Clima(10.7, 79) #datos enero Sevilla
+climai1 = Clima(20.0, 75) #T, HR
 
 capas1 = [(u"1/2 pie LP métrico o catalán 40 mm< G < 60 mm", 0.11),
           (u"Mortero de áridos ligeros [vermiculita perlita]", 0.01),
@@ -38,6 +39,7 @@ capas1 = [(u"1/2 pie LP métrico o catalán 40 mm< G < 60 mm", 0.11),
           (u"Enlucido de yeso 1000 < d < 1300", 0.01),]
 
 class  ComprobacionesTestCase(unittest.TestCase):
+    """Comprobaciones de condensación"""
     def setUp(self):
         """Module-level setup"""
         self.c1 = Cerramiento("Cerramiento tipo", "Descripción",
@@ -49,31 +51,59 @@ class  ComprobacionesTestCase(unittest.TestCase):
         self.assertAlmostEqual(_fRsi, 0.79907855, places=8)
 
     def test_fRsimin(self):
-        """Factor de temperatura superficial mínimo"""
+        """Factor de temperatura superficial mínimo - caso favorable"""
         _fRsimin = comprobaciones.fRsimin(climae.temp, climai.temp, climai.HR)
         self.assertAlmostEqual(_fRsimin, 0.60574531, places=8)
 
+    def test_fRsimin1(self):
+        """Factor de temperatura superficial mínimo - caso desfavorable"""
+        _fRsimin = comprobaciones.fRsimin(climae.temp,
+                                          climai1.temp, climai1.HR)
+        self.assertAlmostEqual(_fRsimin, 0.930793648, places=8)
+
     def test_condensas(self):
-        """Condensación superficial"""
+        """Condensación superficial - sin condensación"""
         _cs = comprobaciones.condensas(self.c1,
                                        climae.temp,
                                        climai.temp, climai.HR)
         self.assertFalse(_cs)
 
+    def test_condensas1(self):
+        """Condensación superficial - con condensación"""
+        _cs = comprobaciones.condensas(self.c1,
+                                       climae.temp,
+                                       climai1.temp, climai1.HR)
+        self.assertTrue(_cs)
+
     def test_condensai(self):
-        """Condensación intersticial"""
+        """Condensación intersticial - con condensación"""
         _ci = comprobaciones.condensai(self.c1,
                                        climae.temp, climai.temp,
                                        climae.HR, climai.HR)
         self.assertTrue(_ci)
 
+    def test_condensai1(self):
+        """Condensación intersticial - sin condensación"""
+        _ci = comprobaciones.condensai(self.c1,
+                                       climae1.temp, climai.temp,
+                                       climae1.HR, climai.HR)
+        self.assertFalse(_ci)
+
     def test_condensaciones(self):
-        """Condensaciones (superficial o intersticial)"""
+        """Condensaciones (superficial o intersticial) - con condensaciones"""
         _c = comprobaciones.condensaciones(self.c1,
                                            climae.temp, climai.temp,
                                            climae.HR, climai.HR)
         self.assertTrue(_c)
- 
+
+    def test_condensaciones1(self):
+        """Condensaciones (superficial o intersticial) - sin condensaciones"""
+        _c = comprobaciones.condensaciones(self.c1,
+                                           climae1.temp, climai.temp,
+                                           climae1.HR, climai.HR)
+        self.assertFalse(_c)
+
+
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(ComprobacionesTestCase)
     unittest.TextTestRunner(verbosity=2).run(suite)
