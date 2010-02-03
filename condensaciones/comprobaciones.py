@@ -102,7 +102,8 @@ def condensai(cerr, temp_ext, temp_int, HR_ext, HR_int):
 def condensaciones(cerr, temp_ext, temp_int, HR_ext, HR_int):
     """Existencia de condensaciones en un cerramiento
     
-    Devuelve True si existen condensaciones superficiales o intersticiales"""
+    Devuelve True si existen condensaciones superficiales o intersticiales
+    """
     ci = condensai(cerr, temp_ext, temp_int, HR_ext, HR_int)
     cs = condensas(cerr, temp_ext, temp_int, HR_int)
 
