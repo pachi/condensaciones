@@ -1,0 +1,47 @@
+$
+$ -----------------------------------
+$      Datos de Base de Datos
+$ -----------------------------------
+$
+"B_Vapor Z2 (d_1mm)" = MATERIAL
+    TYPE           = PROPERTIES
+    THICKNESS      = 0.001
+    CONDUCTIVITY   = 500
+    DENSITY        = 1
+    SPECIFIC-HEAT  = 1
+    VAPOUR-DIFFUSIVITY-FACTOR = 1350
+    NAME           = "B_Vapor Z3 (d_1mm)"
+    NAME_CALENER   = ""
+    GROUP          = "B_VAPOR"
+    IMAGE          = "asfalto.bmp"
+    LIBRARY        = NO
+..
+"B_Vapor Z3 (d_1mm)" = MATERIAL
+    TYPE           = PROPERTIES
+    THICKNESS      = 0.001
+    CONDUCTIVITY   = 500
+    DENSITY        = 1
+    SPECIFIC-HEAT  = 1
+    VAPOUR-DIFFUSIVITY-FACTOR = 2030
+    NAME           = "B_Vapor Z3 (d_1mm)"
+    NAME_CALENER   = ""
+    GROUP          = "B_VAPOR"
+    IMAGE          = "asfalto.bmp"
+    LIBRARY        = NO
+..
+"B_Vapor Al (d_0.008mm)" = MATERIAL
+    TYPE           = PROPERTIES
+    THICKNESS      = 0.000008
+    CONDUCTIVITY   = 230
+    DENSITY        = 2700
+    SPECIFIC-HEAT  = 880
+    VAPOUR-DIFFUSIVITY-FACTOR = 1E+8
+    NAME           = "B_Vapor Al (d_0.008mm)"
+    NAME_CALENER   = ""
+    GROUP          = "B_VAPOR"
+    IMAGE          = "metales.bmp"
+    LIBRARY        = NO
+..
+$ ------------------------------------------------------------------
+$ Final de la base de datos
+$ ------------------------------------------------------------------
