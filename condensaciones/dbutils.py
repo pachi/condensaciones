@@ -31,7 +31,7 @@ import codecs
 DEFAULT_SECTION = u'default'
 
 def parseblock(block):
-    """Divide bloques de la base de data
+    """Divide bloques de la base de datos recibidos como listas de datos
     
     La primera línea indica el nombre del elemento (e.g. "Ladrillo hueco
     doble"), seguido de su tipo (e.g. MATERIAL).
@@ -69,7 +69,7 @@ def parseblock(block):
     return _dict
 
 def parsefile(dbfile):
-    """Interpreta secciones de la base de data
+    """Interpreta secciones de la base de datos
     
     Las bases de data se almacenan con codificación ISO-8859-1 e incluyen los
     siguientes elementos:
