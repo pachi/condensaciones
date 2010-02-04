@@ -90,7 +90,7 @@ def parsefile(dbfile):
     data = {}
     block = []
     materiales = []
-    section = DEFAULT_SECTION
+    currentsection = DEFAULT_SECTION
 
     for line in lines:
         line = line.strip()
@@ -99,26 +99,26 @@ def parsefile(dbfile):
         elif line.startswith(KEYWORDS):
             continue
         elif line.startswith(SECTIONDELIMITER):
-            newsection = lines.next().strip()
-            data[newsection] = []
+            nextsection = lines.next().strip()
             lines.next() #el formato es delimitador // nombre // delimitador
-            if section in data:
-                data[section].append(materiales[:])
+            data[nextsection] = []
+            # Aparece nueva sección: guardar datos de materiales acumulados
+            if currentsection in data:
+                data[currentsection].append(materiales[:])
             else:
-                data[section] = materiales[:]
-            section = newsection
+                data[currentsection] = materiales[:]
+            currentsection = nextsection
             materiales = []
             continue
         else:
             # Cuando llegamos al final de un bloque forzamos su interpretación
-            if line.startswith('..'):
-                materiales.append(parseblock(block))
-                block = []
-            # en caso contrario seguimos añadiendo líneas
-            else:
+            block = []
+            while not line.startswith('..'):
                 block.append(line)
-    if materiales is not []: #si solamente hay sección default
-        data[section] = materiales[:]
+                line = lines.next().strip()
+            materiales.append(parseblock(block))
+    if not data.keys(): # solamente hay sección default 
+        data[currentsection] = materiales[:]
     return data
 
 def db2data(dbfiles):
