@@ -84,7 +84,7 @@ class Cerramiento(object):
             elif tipo == 'RESISTANCE':
                 return materiales.resistencia(capa)
             else:
-                raise
+                raise ValueError('Tipo de elemento desconocido')
         return [self.Rse] + [_resist_capa(nombre, e)
                              for nombre, e in self.capas] + [self.Rsi]
 
