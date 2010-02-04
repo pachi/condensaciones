@@ -167,8 +167,8 @@ class  CerramientoTestCase(unittest.TestCase):
                                                  climae.HR, climai.HR,
                                                  interfases=[2])
         cantidad_evaporada = sum(g) * 2592000.0 #[g/m2.mes]
-        #result_ce = 30.075454627910425
-        result_ce = 0.0
+        result_ce = 30.075454627910425
+        #result_ce = 0.0 #FIXME: Solucionar. Implementar bien cálculo
         self.assertEqual(cantidad_evaporada, result_ce)
 
 if __name__ == '__main__':
