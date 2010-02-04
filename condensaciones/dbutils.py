@@ -30,11 +30,11 @@ import codecs
 
 DEFAULT_SECTION = u'default'
 
-def parseblock(block):
+def parseblock(block, section=None):
     """Divide bloques de la base de datos recibidos como listas de datos
     
     La primera línea indica el nombre del elemento (e.g. "Ladrillo hueco
-    doble"), seguido de su tipo (e.g. MATERIAL).
+    doble"), seguido de su tipo (e.g. MATERIAL, GLASS-TYPE, NAME-FRAME).
     
     Las siguientes líneas indican una propiedad (e.g. TYPE, THICKNESS, NAME,
     ...) y un valor (e.g. MATERIAL, 0.001, "Ladrillo hueco doble").
@@ -101,14 +101,9 @@ def parsefile(dbfile):
         elif line.startswith(SECTIONDELIMITER):
             nextsection = lines.next().strip()
             lines.next() #el formato es delimitador // nombre // delimitador
-            data[nextsection] = []
-            # Aparece nueva sección: guardar datos de materiales acumulados
-            if currentsection in data:
-                data[currentsection].append(materiales[:])
-            else:
-                data[currentsection] = materiales[:]
-            currentsection = nextsection
+            data[currentsection] = materiales[:]
             materiales = []
+            currentsection = nextsection
             continue
         else:
             # Cuando llegamos al final de un bloque forzamos su interpretación
