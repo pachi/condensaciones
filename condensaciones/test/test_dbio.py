@@ -23,7 +23,6 @@
 """Tests del módulo condensaciones.dbutils"""
 
 import unittest
-import cStringIO
 import condensaciones.dbutils as dbutils
 
 datablock = ['"B_Vapor Z3 (d_1mm)" = MATERIAL',
