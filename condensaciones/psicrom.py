@@ -106,7 +106,7 @@ def hrloc(temp, humedad, deltah):
         deltah = 0
     return 100.0 * (pvapor(temp, humedad) / psatloc(temp, deltah))
 
-def tasatransferenciavapor(pe, pi, Se, Si):
+def g(pe, pi, Se, Si):
     """Tasa de transferencia de vapor a través del cerramiento [g/m2.s]
     
     Resulta útil para calcular condensada o evaporada entre interfases.
@@ -123,7 +123,7 @@ def tasatransferenciavapor(pe, pi, Se, Si):
         return sys.maxint
     return delta0 * (pi - pe) / (Si - Se) #[g/(m².s)]
 
-def calculahrinthigrometriaISO(text, tsint, hrext, higrometria):
+def hrintISO(text, tsint, hrext, higrometria):
     """Humedad relativa interior [%] del mes de enero
     
     Es función del ritmo de producción de humedad interior (higrometría),
@@ -172,7 +172,7 @@ def calculahrinthigrometriaISO(text, tsint, hrext, higrometria):
         delta_p = 1300.0
     return (100.0 * (pvapor(text, hrext) + delta_p) / psat(tsint))
 
-def calculahrintCTE(text=None, tint=None, tsint=None,
+def hrintCTE(text=None, tint=None, tsint=None,
                     hrext=None, G=None, V=None, n=None,
                     higrometria=None):
     """Humedad relativa interior [%] del mes de enero
@@ -208,5 +208,6 @@ def calculahrintCTE(text=None, tint=None, tsint=None,
     # Exceso de humedad interior:
     deltav = G / (n * V)
     # Exceso de presión de vapor interna:
+    # Constante de gas para el vapor de agua Rv = 462 [Pa.m³/K.kg]
     delta_p = 462.0 * deltav * (tint + text) / 2.0
     return (100.0 * (pvapor(text, hrext) + delta_p) / psat(tsint))

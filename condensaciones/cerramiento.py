@@ -208,11 +208,9 @@ class Cerramiento(object):
         _xj = [x for x, y in envolv_inf]
         _yj = [y for x, y in envolv_inf]
         # condensaciones g/m2.s
-        _g = [(psicrom.tasatransferenciavapor(_yj[n+1], _yj[n+2],
-                                             _xj[n+1], _xj[n+2]) -
-            psicrom.tasatransferenciavapor(_yj[n], _yj[n+1],
-                                           _xj[n], _xj[n+1]))
-            for n in range(len(_yj) - 2)]
+        _g = [(psicrom.g(_yj[n+1], _yj[n+2], _xj[n+1], _xj[n+2]) -
+               psicrom.g(_yj[n], _yj[n+1], _xj[n], _xj[n+1]))
+               for n in range(len(_yj) - 2)]
         return _g, envolv_inf
 
     def evaporacion(self, temp_ext, temp_int, HR_ext, HR_int, interfases):
@@ -243,9 +241,7 @@ class Cerramiento(object):
         x_j = [x for x, y in envolvente_inf]
         y_j = [y for x, y in envolvente_inf]
         # evaporaciones g/m2.s
-        _g = [(psicrom.tasatransferenciavapor(y_j[n+1], y_j[n+2],
-                                             x_j[n+1], x_j[n+2]) -
-            psicrom.tasatransferenciavapor(y_j[n], y_j[n+1],
-                                           x_j[n], x_j[n+1]))
-            for n in range(len(y_j) - 2)]
+        _g = [(psicrom.g(y_j[n+1], y_j[n+2], x_j[n+1], x_j[n+2]) -
+               psicrom.g(y_j[n], y_j[n+1], x_j[n], x_j[n+1]))
+               for n in range(len(y_j) - 2)]
         return _g, envolvente_inf

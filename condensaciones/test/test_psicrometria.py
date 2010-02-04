@@ -27,31 +27,29 @@ import condensaciones.psicrom as psicrom
 
 class  PsicromTestCase(unittest.TestCase):
     """Comprobaciones de condensación"""
-    def test_calculahrinthigrometriaISO(self):
+    def test_hrintISO(self):
         """Humedad relativa interior - método ISO EN 13788:2002"""
         temp_sint = 19.0330684375
-        hrint = psicrom.calculahrinthigrometriaISO(5, temp_sint,
-                                                   96, higrometria=3)
+        hrint = psicrom.hrintISO(5, temp_sint, 96, higrometria=3)
         self.assertAlmostEqual(hrint, 47.23481837, places=8)
 
-    def test_calculahrintCTE1(self):
+    def test_hrintCTE1(self):
         """Humedad relativa interior - método CTE datos ambientales"""
         temp_sint = 19.0330684375
         G = 0.55 #higrometría 3
         n = 1 # renovaciones/hora [h^-1]
         volumen = 10 #volumen recinto [m³]
-        hrintCTE = psicrom.calculahrintCTE(5, 20, temp_sint,
-                                           96, G, volumen, n)
+        hrintCTE = psicrom.hrintCTE(5, 20, temp_sint, 96, G, volumen, n)
         self.assertAlmostEqual(hrintCTE, 52.46614215, places=8)
 
-    def test_calculahrintCTE2(self):
+    def test_hrintCTE2(self):
         """Humedad relativa interior - método CTE higrometría"""
-        hrintCTE2 = psicrom.calculahrintCTE(higrometria=3)
+        hrintCTE2 = psicrom.hrintCTE(higrometria=3)
         self.assertAlmostEqual(hrintCTE2, 55.00, places=8)
 
     def test_tasatransferenciavapor(self):
         """Tasa de transferencia de vapor"""
-        g_total = 3600.0 * psicrom.tasatransferenciavapor(1016.00114017,
+        g_total = 3600.0 * psicrom.g(1016.00114017,
                                                           1285.32312909,
                                                           0.0, 2.16)
         self.assertAlmostEqual(g_total, 0.08977400, places=8) # g/m2.s
