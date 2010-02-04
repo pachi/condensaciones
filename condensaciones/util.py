@@ -20,6 +20,7 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 #   02110-1301, USA.
+"""Módulo de utilidades varias"""
 
 import os
 import colorsys
@@ -30,19 +31,17 @@ def get_resource(*path_list):
     return os.path.abspath(os.path.join(APPROOT, *path_list))
 
 def stringify(alist, prec):
+    "Convierte lista de números a representación con precisión fija" 
     _format = '%%.%if' % prec
     return "[" + ", ".join([_format % item for item in alist]) + "]"
 
 def colorlist(steps):
-    clist = []
-    salto_color = 0.0
-    for i in range(steps):
-        color = colorsys.hls_to_rgb(salto_color, .6, .8)
-        clist.append(color)
-        salto_color += 1.0 / steps
-    return clist
+    "Devuelte una lista de colores de n elementos"
+    saltos = [x / float(steps) for x in range(steps)]
+    return [colorsys.hls_to_rgb(salto, .6, .8) for salto in saltos]
 
 def colores_capas(lista_capas):
+    "Crea un diccionario asignando a cada capa un color"
     capas_distintas = set(lista_capas)
     colordict = {}
     for nombre, color in zip(capas_distintas, colorlist(len(capas_distintas))):
@@ -50,5 +49,5 @@ def colores_capas(lista_capas):
     return colordict
 
 def add_margin(lista, margen_lateral=0.025):
-    "Añade un margen a una lista"
+    "Añade a una lista númerica elementos final e inicial separados un margen"
     return ([lista[0] - margen_lateral] + lista + [lista[-1] + margen_lateral])
