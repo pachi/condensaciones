@@ -20,7 +20,8 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 #   02110-1301, USA.
-"""Módulo de comprobaciones higrométricas según CTE DB-HE Apéndice G"""
+"""Módulo de comprobaciones higrométricas según CTE DB-HE Apéndice G
+e ISO 13788:2002"""
 
 import math
 
