@@ -119,8 +119,6 @@ def g(pe, pi, Se, Si):
              parcial de vapor [g/m.s.Pa (por unidad de tiempo)]
     """
     delta0 = 2.0 * 10.0**(-7.0) #delta0 -> [g/(m.s.Pa)]
-    if Si == Se:
-        return sys.maxint
     return delta0 * (pi - pe) / (Si - Se) #[g/(m².s)]
 
 def hrintISO(text, tsint, hrext, higrometria):
