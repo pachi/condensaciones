@@ -58,9 +58,36 @@ class  PsicromTestCase(unittest.TestCase):
 
     def test_hrintISO(self):
         """Humedad relativa interior - método ISO EN 13788:2002"""
-        temp_sint = 19.0330684375
-        hrint = psicrom.hrintISO(5, temp_sint, 96, higrometria=3)
-        self.assertAlmostEqual(hrint, 47.23481837, places=8)
+        hrint1a = psicrom.hrintISO(-1, 19, 96, higrometria=1)
+        self.assertAlmostEqual(hrint1a, 36.87790179, places=8)
+        hrint1b = psicrom.hrintISO(5, 19, 96, higrometria=1)
+        self.assertAlmostEqual(hrint1b, 41.18523016, places=8)
+        hrint1c = psicrom.hrintISO(25, 19, 96, higrometria=1)
+        self.assertAlmostEqual(hrint1c, 138.39134625, places=8)
+        
+        hrint2a = psicrom.hrintISO(-1, 19, 96, higrometria=2)
+        self.assertAlmostEqual(hrint2a, 49.17213702, places=8)
+        hrint2b = psicrom.hrintISO(5, 19, 96, higrometria=2)
+        self.assertAlmostEqual(hrint2b, 44.25878897, places=8)
+        hrint2c = psicrom.hrintISO(25, 19, 96, higrometria=2)
+        self.assertAlmostEqual(hrint2c, 138.39134625, places=8)
+        
+        hrint3a = psicrom.hrintISO(-1, 19, 96, higrometria=3)
+        self.assertAlmostEqual(hrint3a, 61.46637226, places=8)
+        hrint3b = psicrom.hrintISO(5, 19, 96, higrometria=3)
+        self.assertAlmostEqual(hrint3b, 47.33234778, places=8)
+        hrint3c = psicrom.hrintISO(25, 19, 96, higrometria=3)
+        self.assertAlmostEqual(hrint3c, 138.39134625, places=8)
+        
+        hrint4a = psicrom.hrintISO(-1, 19, 96, higrometria=4)
+        self.assertAlmostEqual(hrint4a, 73.76060750, places=8)
+        hrint4b = psicrom.hrintISO(5, 19, 96, higrometria=4)
+        self.assertAlmostEqual(hrint4b, 50.40590659, places=8)
+        hrint4c = psicrom.hrintISO(25, 19, 96, higrometria=4)
+        self.assertAlmostEqual(hrint4c, 138.39134625, places=8)
+        
+        hrint5a = psicrom.hrintISO(-1, 19, 96, higrometria=5)
+        self.assertAlmostEqual(hrint5a, 83.77813250, places=8)
 
     def test_hrintCTE1(self):
         """Humedad relativa interior - método CTE datos ambientales"""
@@ -75,6 +102,8 @@ class  PsicromTestCase(unittest.TestCase):
         """Humedad relativa interior - método CTE higrometría"""
         hrintCTE2 = psicrom.hrintCTE(higrometria=3)
         self.assertAlmostEqual(hrintCTE2, 55.00, places=8)
+        self.assertRaises(ValueError, psicrom.hrintCTE, higrometria=6)
+        self.assertRaises(ValueError, psicrom.hrintCTE)
 
     def test_g(self):
         """Tasa de transferencia de vapor"""

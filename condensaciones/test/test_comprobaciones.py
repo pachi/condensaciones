@@ -61,6 +61,13 @@ class  ComprobacionesTestCase(unittest.TestCase):
                                           climai1.temp, climai1.HR)
         self.assertAlmostEqual(_fRsimin, 0.930793648, places=8)
 
+    def test_fRsimin2(self):
+        """Factor de temperatura superficial mínimo - caso ISO"""
+        _fRsimin = comprobaciones.fRsimin(climae.temp,
+                                          climai1.temp, 20)
+        self.assertAlmostEqual(_fRsimin, -0.36882331, places=8)
+        self.assertRaises(ValueError, comprobaciones.fRsimin, 20, 20)
+
     def test_condensas(self):
         """Condensación superficial - sin condensación"""
         _cs = comprobaciones.condensas(self.c1,
