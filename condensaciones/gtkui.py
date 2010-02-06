@@ -53,7 +53,8 @@ class GtkCondensa(object):
         self.w = builder.get_object('window1')
         # - cabecera -
         self.cfondo = builder.get_object('cfondo')
-        self.ctitulo = builder.get_object('ctitulo')
+        self.nombre = builder.get_object('nombre_cerramiento')
+        self.descripcion = builder.get_object('descripcion_cerramiento')        
         self.csubtitulo1 = builder.get_object('csubtitulo1')
         self.csubtitulo2 = builder.get_object('csubtitulo2')
         # - gráficas -
@@ -76,11 +77,15 @@ class GtkCondensa(object):
         # - pie -
         self.pie1 = builder.get_object('pie1')
         self.pie2 = builder.get_object('pie2')
+        # - pestaña de capas -
+        self.rse = builder.get_object('Rsevalue')
+        self.rsi = builder.get_object('Rsivalue')
+        self.capasls = builder.get_object('capas_liststore')
         # Controles de diálogo de selección de cerramientos
         self.dlg = builder.get_object('cerramientodlg')
         self.cerramientotv = builder.get_object('cerramientotv')
         self.lblselected = builder.get_object('lblselected')
-        self.cerramientols = builder.get_object('cerramientoliststore')
+        self.cerramientols = builder.get_object('cerramientos_liststore')
 
         smap = {"on_window_destroy": gtk.main_quit,
                 "on_cerramientobtn_clicked": self.on_cerramientobtn_clicked,
@@ -110,6 +115,7 @@ class GtkCondensa(object):
         self.actualizagraficas()
         self.actualizatexto()
         self.actualizapie()
+        self.actualizacapas()
 
     def actualizacabecera(self):
         """Actualiza texto de cabecera"""
@@ -121,8 +127,8 @@ class GtkCondensa(object):
         fRsi = comprobaciones.fRsi(cerr.U)
         fRsimin = comprobaciones.fRsimin(te, ti, hri)
         ccheck = comprobaciones.condensaciones(cerr, te, ti, hre, hri)
-        _text = u'<span size="x-large">%s</span>' % cerr.nombre
-        self.ctitulo.set_markup(_text)
+        self.nombre.set_text(cerr.nombre)
+        self.descripcion.set_text(cerr.descripcion)
         _text = (u'U = %.2f W/m²K, f<sub>Rsi</sub> ='
                  u' %.2f, f<sub>Rsi,min</sub> = %.2f')
         self.csubtitulo1.set_markup(_text % (cerr.U, fRsi, fRsimin))
@@ -173,6 +179,15 @@ class GtkCondensa(object):
         _text = (u"Cantidades condensadas: " +
                  u", ".join(["%.2f" % (2592000.0 * x,) for x in g]))
         self.pie2.set_markup(_text)
+
+    def actualizacapas(self):
+        """Actualiza pestaña de capas con descripción, capas, Rse, Rsi"""
+        cerr = self.cerramiento
+        self.rse.set_text("%.2f" % float(cerr.Rse))
+        self.rsi.set_text("%.2f" % float(cerr.Rsi))
+        self.capasls.clear()
+        for nombre, e, R in zip(cerr.nombres, cerr.espesores, cerr.R):
+            self.capasls.append((nombre, e, R))
 
     def on_cerramientobtn_clicked(self, widget):
         """Abrir diálogo de selección de cerramiento"""
