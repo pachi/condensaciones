@@ -485,11 +485,25 @@
             <child>
               <object class="GtkLabel" id="label1">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">Selecci&#xF3;n de Cerramiento</property>
+                <property name="label" translatable="yes">Cerramiento seleccionado</property>
               </object>
               <packing>
                 <property name="expand">False</property>
                 <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="lblselected">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Cerramiento tipo</property>
+                <attributes>
+                  <attribute name="weight" value="bold"/>
+                  <attribute name="size" value="200"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="position">1</property>
               </packing>
             </child>
             <child>
@@ -545,16 +559,6 @@
                 </child>
               </object>
               <packing>
-                <property name="position">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel" id="lblselected">
-                <property name="visible">True</property>
-                <property name="label" translatable="yes">Ninguno</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
                 <property name="position">2</property>
               </packing>
             </child>
