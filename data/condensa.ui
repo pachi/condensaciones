@@ -358,10 +358,12 @@
                         <property name="title">Nombre</property>
                         <property name="expand">True</property>
                         <child>
-                          <object class="GtkCellRendererText" id="ctnombre">
+                          <object class="GtkCellRendererCombo" id="ctnombre">
                             <property name="xpad">5</property>
                             <property name="editable">True</property>
                             <property name="style">italic</property>
+                            <property name="model">materiales_liststore</property>
+                            <property name="text_column">0</property>
                           </object>
                           <attributes>
                             <attribute name="text">1</attribute>

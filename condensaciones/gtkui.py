@@ -113,14 +113,14 @@ class GtkCondensa(object):
         gtk.main()
 
     def cargacerramientos(self):
-        """Carga datos de cerramientos"""
-        #TODO: cargar datos de biblioteca
+        """Carga datos de materiales y cerramientos"""
+        for material in materiales.materiales.keys():
+            self.materialesls.append((material,))
+        #TODO: cargar datos de biblioteca de cerramientos
         from datos_ejemplo import cerramientos
         for c in cerramientos:
             self.cerramientos[c.nombre] = c
             self.cerramientols.append((c.nombre, c.descripcion))
-        for material in materiales.materiales.keys():
-            self.materialesls.append((material,))
         n = len(materiales.materiales)
         m = len(cerramientos)
         txt = u"Cargados %i materiales, %i cerramientos" % (n, m)
