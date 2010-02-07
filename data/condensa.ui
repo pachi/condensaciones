@@ -11,23 +11,6 @@
       <column type="gchararray"/>
     </columns>
   </object>
-  <object class="GtkListStore" id="capas_liststore">
-    <columns>
-      <!-- column-name nombre -->
-      <column type="gchararray"/>
-      <!-- column-name espesor -->
-      <column type="gchararray"/>
-      <!-- column-name R -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Nombre capa 1</col>
-        <col id="1" translatable="yes">0,01</col>
-        <col id="2" translatable="yes">0,01</col>
-      </row>
-    </data>
-  </object>
   <object class="GtkWindow" id="window1">
     <child>
       <object class="GtkVBox" id="vbox2">
@@ -71,7 +54,7 @@
                 <child>
                   <object class="GtkLabel" id="csubtitulo1">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">label</property>
+                    <property name="label" translatable="yes">U = 0.00 W/m&#xB2;K, f&lt;sub&gt;Rsi&lt;/sub&gt; = 0.00, f&lt;sub&gt;Rsi,min&lt;/sub&gt; = 0.00</property>
                     <property name="use_markup">True</property>
                   </object>
                   <packing>
@@ -81,7 +64,7 @@
                 <child>
                   <object class="GtkLabel" id="csubtitulo2">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">label</property>
+                    <property name="label" translatable="yes">T&lt;sub&gt;int&lt;/sub&gt; = 0.00&#xB0;C, HR&lt;sub&gt;int&lt;/sub&gt; = 0.0%, T&lt;sub&gt;ext&lt;/sub&gt; = 0.00&#xB0;C, HR&lt;sub&gt;ext&lt;/sub&gt; = 0.0%</property>
                     <property name="use_markup">True</property>
                   </object>
                   <packing>
@@ -273,14 +256,13 @@
                     <property name="model">capas_liststore</property>
                     <property name="search_column">1</property>
                     <child>
-                      <object class="GtkTreeViewColumn" id="nombrecolumn1">
-                        <property name="spacing">1</property>
-                        <property name="title">Nombre</property>
-                        <property name="expand">True</property>
+                      <object class="GtkTreeViewColumn" id="idcolumn">
+                        <property name="title">n&#xBA;</property>
                         <child>
-                          <object class="GtkCellRendererText" id="ctnombre">
-                            <property name="editable">True</property>
-                            <property name="style">italic</property>
+                          <object class="GtkCellRendererText" id="ctid">
+                            <property name="cell_background_gdk">#eb84eb84eb84</property>
+                            <property name="xpad">5</property>
+                            <property name="foreground_gdk">#4e565fe3ae14</property>
                           </object>
                           <attributes>
                             <attribute name="text">0</attribute>
@@ -289,14 +271,14 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkTreeViewColumn" id="espesorcolumn">
-                        <property name="spacing">1</property>
-                        <property name="title">Espesor [m]</property>
-                        <property name="alignment">0.5</property>
+                      <object class="GtkTreeViewColumn" id="nombrecolumn2">
+                        <property name="title">Nombre</property>
+                        <property name="expand">True</property>
                         <child>
-                          <object class="GtkCellRendererText" id="ctespesor">
-                            <property name="alignment">center</property>
+                          <object class="GtkCellRendererText" id="ctnombre">
+                            <property name="xpad">5</property>
                             <property name="editable">True</property>
+                            <property name="style">italic</property>
                           </object>
                           <attributes>
                             <attribute name="text">1</attribute>
@@ -305,14 +287,14 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkTreeViewColumn" id="treeviewcolumn1">
-                        <property name="spacing">1</property>
-                        <property name="title">R [m&#xB2;K/W]</property>
+                      <object class="GtkTreeViewColumn" id="espesorcolumn">
+                        <property name="title">Espesor [m]</property>
                         <property name="alignment">0.5</property>
                         <child>
-                          <object class="GtkCellRendererText" id="R">
-                            <property name="cell_background_gdk">#eb84eb84eb84</property>
+                          <object class="GtkCellRendererText" id="ctespesor">
+                            <property name="xpad">5</property>
                             <property name="alignment">center</property>
+                            <property name="editable">True</property>
                           </object>
                           <attributes>
                             <attribute name="text">2</attribute>
@@ -320,9 +302,24 @@
                         </child>
                       </object>
                     </child>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="rcolumn">
+                        <property name="title">R [m&#xB2;K/W]</property>
+                        <property name="alignment">0.5</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="R">
+                            <property name="cell_background_gdk">#eb84eb84eb84</property>
+                            <property name="xpad">4</property>
+                            <property name="alignment">center</property>
+                          </object>
+                          <attributes>
+                            <attribute name="text">3</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
                   </object>
                   <packing>
-                    <property name="padding">1</property>
                     <property name="position">1</property>
                   </packing>
                 </child>
@@ -427,7 +424,7 @@
             <child>
               <object class="GtkLabel" id="pie1">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">condensaci&#xF3;n total</property>
+                <property name="label" translatable="yes">Total: 0.00 [g/m&#xB2;mes]</property>
                 <property name="use_markup">True</property>
               </object>
               <packing>
@@ -437,7 +434,7 @@
             <child>
               <object class="GtkLabel" id="pie2">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">puntos de condensaci&#xF3;n</property>
+                <property name="label" translatable="yes">Cantidades condensadas: [0.00, 0.00, 0.00]</property>
                 <property name="use_markup">True</property>
               </object>
               <packing>
@@ -452,6 +449,26 @@
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkListStore" id="capas_liststore">
+    <columns>
+      <!-- column-name id -->
+      <column type="gchararray"/>
+      <!-- column-name nombre -->
+      <column type="gchararray"/>
+      <!-- column-name espesor -->
+      <column type="gchararray"/>
+      <!-- column-name R -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">0</col>
+        <col id="1" translatable="yes">Nombre capa 1</col>
+        <col id="2" translatable="yes">0,01</col>
+        <col id="3" translatable="yes">0,01</col>
+      </row>
+    </data>
   </object>
   <object class="GtkDialog" id="cerramientodlg">
     <property name="border_width">5</property>

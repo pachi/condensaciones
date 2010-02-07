@@ -66,14 +66,21 @@ class GtkCondensa(object):
         self.cerramientotxtb.create_tag("titulo",
                                         weight=pango.WEIGHT_BOLD,
                                         scale=pango.SCALE_X_LARGE)
+        self.cerramientotxtb.create_tag("titulo2",
+                                        style=pango.STYLE_ITALIC,
+                                        scale=pango.SCALE_LARGE)
+        self.cerramientotxtb.create_tag("subtitulo",
+                                        #underline=pango.UNDERLINE_SINGLE,
+                                        weight=pango.WEIGHT_BOLD,
+                                        scale=pango.SCALE_LARGE,)
         self.cerramientotxtb.create_tag("capa",
-                                        weight=pango.WEIGHT_BOLD)
+                                        weight=pango.WEIGHT_BOLD,
+                                        foreground="#777777")
         self.cerramientotxtb.create_tag("datoscapa",
                                         style=pango.STYLE_ITALIC,
                                         indent=30)
         self.cerramientotxtb.create_tag("resultados",
-                                        foreground='blue',
-                                        scale=pango.SCALE_LARGE)
+                                        foreground='blue')
         # - pie -
         self.pie1 = builder.get_object('pie1')
         self.pie2 = builder.get_object('pie2')
@@ -111,32 +118,61 @@ class GtkCondensa(object):
 
     def actualiza(self):
         """Actualiza cabecera, gráficas, texto y pie de datos"""
+        self.calcula()
         self.actualizacabecera()
-        self.actualizagraficas()
-        self.actualizainforme()
         self.actualizapie()
         self.actualizacapas()
+        self.actualizagraficas()
+        self.actualizainforme()
+
+    def calcula(self):
+        c = self.cerramiento
+        ti, hri = self.climai.temp, self.climai.HR
+        te, hre = self.climae.temp, self.climae.HR
+        self.fRsi = comprobaciones.fRsi(c.U)
+        self.fRsimin = comprobaciones.fRsimin(te, ti, hri)
+        self.ccheck = comprobaciones.condensaciones(c, te, ti, hre, hri)
+        self.cs = comprobaciones.condensas(c, te, ti, hri)
+        self.ci = comprobaciones.condensai(c, te, ti, hre, hri)
+        self.g, pcond = c.condensacion(te, ti, hre, hri)
+        #g, pevap = c.evaporacion(te, ti, hre, hri, interfases=[2])
+        if not self.g:
+            self.totalg = 0.0
+        else:
+            self.totalg = sum(self.g)
 
     def actualizacabecera(self):
         """Actualiza texto de cabecera"""
-        cerr = self.cerramiento
-        ti = self.climai.temp
-        hri = self.climai.HR
-        te = self.climae.temp
-        hre = self.climae.HR
-        fRsi = comprobaciones.fRsi(cerr.U)
-        fRsimin = comprobaciones.fRsimin(te, ti, hri)
-        ccheck = comprobaciones.condensaciones(cerr, te, ti, hre, hri)
-        self.nombre.set_text(cerr.nombre)
-        self.descripcion.set_text(cerr.descripcion)
+        self.nombre.set_text(self.cerramiento.nombre)
+        self.descripcion.set_text(self.cerramiento.descripcion)
         _text = (u'U = %.2f W/m²K, f<sub>Rsi</sub> ='
                  u' %.2f, f<sub>Rsi,min</sub> = %.2f')
-        self.csubtitulo1.set_markup(_text % (cerr.U, fRsi, fRsimin))
+        self.csubtitulo1.set_markup(_text % (self.cerramiento.U,
+                                             self.fRsi, self.fRsimin))
         _text = (u'T<sub>int</sub> = %.2f°C, HR<sub>int</sub> = %.1f%%, '
                  u'T<sub>ext</sub> = %.2f°C, HR<sub>ext</sub> = %.1f%%')
-        self.csubtitulo2.set_markup(_text % (ti, hri, te, hre))
+        self.csubtitulo2.set_markup(_text % (self.climai.temp, self.climai.HR,
+                                             self.climae.temp, self.climae.HR))
         self.cfondo.modify_bg(gtk.STATE_NORMAL,
-                              ccheck and COLOR_BAD or COLOR_OK)
+                              self.ccheck and COLOR_BAD or COLOR_OK)
+
+    def actualizapie(self):
+        """Actualiza pie de ventana principal"""
+        SEGUNDOSPORMES = 2592000.0
+        _text = u"Total: %.2f [g/m²mes]" % (SEGUNDOSPORMES * self.totalg)
+        self.pie1.set_markup(_text)
+        _text = (u"Cantidades condensadas: " +
+                 u", ".join(["%.2f" % (SEGUNDOSPORMES * x,) for x in self.g]))
+        self.pie2.set_markup(_text)
+
+    def actualizacapas(self):
+        """Actualiza pestaña de capas con descripción, capas, Rse, Rsi"""
+        cerr = self.cerramiento
+        self.rse.set_text("%.2f" % float(cerr.Rse))
+        self.rsi.set_text("%.2f" % float(cerr.Rsi))
+        self.capasls.clear()
+        for i, (nombre, e, R) in enumerate(zip(cerr.nombres, cerr.espesores, cerr.R)):
+            self.capasls.append((i, nombre, "%.3f" % e, "%.4f" % R))
 
     def actualizagraficas(self):
         """Redibuja gráficos con nuevos datos"""
@@ -149,45 +185,39 @@ class GtkCondensa(object):
         _m = self.cerramiento
         _tb = self.cerramientotxtb
         _tb.set_text("")
-        _txt = "%s\n\n" % _m.nombre
-        _tb.insert_with_tags_by_name(_tb.get_start_iter(), _txt, 'titulo')
-        _cerrtxt = (u"\nR_total: %.3f [m²K/W]\n"
-                    u"S_total = %.3f [m]\nU = %.3f [W/m²K]")
-        for nombre, e, R, S in zip(_m.nombres, _m.espesores, _m.R, _m.S):
-            _txt = u"%s:\n" % nombre
-            _tb.insert_with_tags_by_name(_tb.get_end_iter(), _txt, 'capa')
+        _tb.insert_with_tags_by_name(_tb.get_start_iter(),
+                                      u"%s\n" % _m.nombre, 'titulo')
+        _tb.insert_with_tags_by_name(_tb.get_end_iter(),
+                                      u"%s\n\n" % _m.descripcion, 'titulo2')
+        # Capas
+        _tb.insert_with_tags_by_name(_tb.get_end_iter(),
+                                      u"Descripción\n", 'subtitulo')
+        for i, (nombre, e, R, S) in enumerate(zip(_m.nombres, _m.espesores,
+                                                  _m.R, _m.S)):
+            _tb.insert_with_tags_by_name(_tb.get_end_iter(),
+                                         u"%i - %s:\n" % (i, nombre), 'capa')
             _txt = u"%.3f [m]\nR=%.3f [m²K/W]\nS=%.3f [m]\n" % (e, R, S)
             _tb.insert_with_tags_by_name(_tb.get_end_iter(), _txt, 'datoscapa')
-        _txt = _cerrtxt % (_m.R_total, _m.S_total, _m.U)
+        # Resultados
+        _tb.insert_with_tags_by_name(_tb.get_end_iter(),
+                                      u"\nResultados\n", 'subtitulo')
+        _txt = (u"R_total: %.3f [m²K/W]\n"
+                u"S_total = %.3f [m]\n"
+                u"U = %.3f [W/m²K]\n"
+                u"f_Rsi = %.2f\n"
+                u"f_Rsimin = %.2f\n") % (_m.R_total, _m.S_total, _m.U,
+                                       self.fRsi, self.fRsimin)
         _tb.insert_with_tags_by_name(_tb.get_end_iter(), _txt, 'resultados')
+        # Condensaciones
+        cs = self.cs and "Sí" or "No"
+        ci = self.ci and "Sí" or "No"
+        _tb.insert_with_tags_by_name(_tb.get_end_iter(),
+                                     (u"\nCondensaciones superficiales: %s\n"
+                                      u"Condensaciones intersticiales: %s\n"
+                                     ) % (cs, ci),
+                                     'resultados')
         while gtk.events_pending():
             gtk.main_iteration()
-
-    def actualizapie(self):
-        """Actualiza pie de ventana principal"""
-        _cerr = self.cerramiento
-        g, pcond = _cerr.condensacion(self.climae.temp, self.climai.temp,
-                                      self.climae.HR, self.climai.HR)
-#        g, pevap = _cerr.evaporacion(temp_ext, temp_int,
-#                                     HR_ext, HR_int, interfases=[2])
-        if not g:
-            _sg = 0.0
-        else:
-            _sg = sum(g)
-        _text = u"Total: %.2f [g/m²mes]" % (2592000.0 * _sg)
-        self.pie1.set_markup(_text)
-        _text = (u"Cantidades condensadas: " +
-                 u", ".join(["%.2f" % (2592000.0 * x,) for x in g]))
-        self.pie2.set_markup(_text)
-
-    def actualizacapas(self):
-        """Actualiza pestaña de capas con descripción, capas, Rse, Rsi"""
-        cerr = self.cerramiento
-        self.rse.set_text("%.2f" % float(cerr.Rse))
-        self.rsi.set_text("%.2f" % float(cerr.Rsi))
-        self.capasls.clear()
-        for nombre, e, R in zip(cerr.nombres, cerr.espesores, cerr.R):
-            self.capasls.append((nombre, "%.3f" % e, "%.4f" % R))
 
     def on_cerramientobtn_clicked(self, widget):
         """Abrir diálogo de selección de cerramiento"""
