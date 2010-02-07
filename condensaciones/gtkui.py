@@ -95,8 +95,8 @@ class GtkCondensa(object):
         self.cerramientols = builder.get_object('cerramientos_liststore')
 
         smap = {"on_window_destroy": gtk.main_quit,
-                "on_cerramientobtn_clicked": self.on_cerramientobtn_clicked,
-                "on_cerramientotv_cursor_changed": self.on_cerramientotv_cursor_changed,
+                "on_cbtn_clicked": self.on_cerramientobtn_clicked,
+                "on_ctv_cursor_changed": self.on_cerramientotv_cursor_changed,
                 }
         builder.connect_signals(smap)
         
@@ -112,9 +112,9 @@ class GtkCondensa(object):
         """Carga datos de cerramientos"""
         #TODO: cargar datos de biblioteca
         from datos_ejemplo import cerramientos
-        for _c in cerramientos:
-            self.cerramientos[_c.nombre] = _c
-            self.cerramientols.append((_c.nombre, _c.descripcion))
+        for c in cerramientos:
+            self.cerramientos[c.nombre] = c
+            self.cerramientols.append((c.nombre, c.descripcion))
 
     def actualiza(self):
         """Actualiza cabecera, gráficas, texto y pie de datos"""
@@ -145,33 +145,33 @@ class GtkCondensa(object):
         """Actualiza texto de cabecera"""
         self.nombre.set_text(self.cerramiento.nombre)
         self.descripcion.set_text(self.cerramiento.descripcion)
-        _text = (u'U = %.2f W/m²K, f<sub>Rsi</sub> ='
+        txt = (u'U = %.2f W/m²K, f<sub>Rsi</sub> ='
                  u' %.2f, f<sub>Rsi,min</sub> = %.2f')
-        self.csubtitulo1.set_markup(_text % (self.cerramiento.U,
-                                             self.fRsi, self.fRsimin))
-        _text = (u'T<sub>int</sub> = %.2f°C, HR<sub>int</sub> = %.1f%%, '
+        self.csubtitulo1.set_markup(txt % (self.cerramiento.U,
+                                           self.fRsi, self.fRsimin))
+        txt = (u'T<sub>int</sub> = %.2f°C, HR<sub>int</sub> = %.1f%%, '
                  u'T<sub>ext</sub> = %.2f°C, HR<sub>ext</sub> = %.1f%%')
-        self.csubtitulo2.set_markup(_text % (self.climai.temp, self.climai.HR,
-                                             self.climae.temp, self.climae.HR))
+        self.csubtitulo2.set_markup(txt % (self.climai.temp, self.climai.HR,
+                                           self.climae.temp, self.climae.HR))
         self.cfondo.modify_bg(gtk.STATE_NORMAL,
                               self.ccheck and COLOR_BAD or COLOR_OK)
 
     def actualizapie(self):
         """Actualiza pie de ventana principal"""
         SEGUNDOSPORMES = 2592000.0
-        _text = u"Total: %.2f [g/m²mes]" % (SEGUNDOSPORMES * self.totalg)
-        self.pie1.set_markup(_text)
-        _text = (u"Cantidades condensadas: " +
+        txt = u"Total: %.2f [g/m²mes]" % (SEGUNDOSPORMES * self.totalg)
+        self.pie1.set_markup(txt)
+        txt = (u"Cantidades condensadas: " +
                  u", ".join(["%.2f" % (SEGUNDOSPORMES * x,) for x in self.g]))
-        self.pie2.set_markup(_text)
+        self.pie2.set_markup(txt)
 
     def actualizacapas(self):
         """Actualiza pestaña de capas con descripción, capas, Rse, Rsi"""
-        cerr = self.cerramiento
-        self.rse.set_text("%.2f" % float(cerr.Rse))
-        self.rsi.set_text("%.2f" % float(cerr.Rsi))
+        c = self.cerramiento
+        self.rse.set_text("%.2f" % float(c.Rse))
+        self.rsi.set_text("%.2f" % float(c.Rsi))
         self.capasls.clear()
-        for i, (nombre, e, R) in enumerate(zip(cerr.nombres, cerr.espesores, cerr.R)):
+        for i, (nombre, e, R) in enumerate(zip(c.nombres, c.espesores, c.R)):
             self.capasls.append((i, nombre, "%.3f" % e, "%.4f" % R))
 
     def actualizagraficas(self):
@@ -182,36 +182,36 @@ class GtkCondensa(object):
     
     def actualizainforme(self):
         """Actualiza texto descripción de cerramiento en ventana principal"""
-        _m = self.cerramiento
-        _tb = self.cerramientotxtb
-        _tb.set_text("")
-        _tb.insert_with_tags_by_name(_tb.get_start_iter(),
-                                      u"%s\n" % _m.nombre, 'titulo')
-        _tb.insert_with_tags_by_name(_tb.get_end_iter(),
-                                      u"%s\n\n" % _m.descripcion, 'titulo2')
+        m = self.cerramiento
+        tb = self.cerramientotxtb
+        tb.set_text("")
+        tb.insert_with_tags_by_name(tb.get_start_iter(),
+                                      u"%s\n" % m.nombre, 'titulo')
+        tb.insert_with_tags_by_name(tb.get_end_iter(),
+                                      u"%s\n\n" % m.descripcion, 'titulo2')
         # Capas
-        _tb.insert_with_tags_by_name(_tb.get_end_iter(),
+        tb.insert_with_tags_by_name(tb.get_end_iter(),
                                       u"Descripción\n", 'subtitulo')
-        for i, (nombre, e, R, S) in enumerate(zip(_m.nombres, _m.espesores,
-                                                  _m.R, _m.S)):
-            _tb.insert_with_tags_by_name(_tb.get_end_iter(),
+        for i, (nombre, e, R, S) in enumerate(zip(m.nombres, m.espesores,
+                                                  m.R, m.S)):
+            tb.insert_with_tags_by_name(tb.get_end_iter(),
                                          u"%i - %s:\n" % (i, nombre), 'capa')
-            _txt = u"%.3f [m]\nR=%.3f [m²K/W]\nS=%.3f [m]\n" % (e, R, S)
-            _tb.insert_with_tags_by_name(_tb.get_end_iter(), _txt, 'datoscapa')
+            txt = u"%.3f [m]\nR=%.3f [m²K/W]\nS=%.3f [m]\n" % (e, R, S)
+            tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'datoscapa')
         # Resultados
-        _tb.insert_with_tags_by_name(_tb.get_end_iter(),
+        tb.insert_with_tags_by_name(tb.get_end_iter(),
                                       u"\nResultados\n", 'subtitulo')
-        _txt = (u"R_total: %.3f [m²K/W]\n"
+        txt = (u"R_total: %.3f [m²K/W]\n"
                 u"S_total = %.3f [m]\n"
                 u"U = %.3f [W/m²K]\n"
                 u"f_Rsi = %.2f\n"
-                u"f_Rsimin = %.2f\n") % (_m.R_total, _m.S_total, _m.U,
+                u"f_Rsimin = %.2f\n") % (m.R_total, m.S_total, m.U,
                                        self.fRsi, self.fRsimin)
-        _tb.insert_with_tags_by_name(_tb.get_end_iter(), _txt, 'resultados')
+        tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'resultados')
         # Condensaciones
         cs = self.cs and "Sí" or "No"
         ci = self.ci and "Sí" or "No"
-        _tb.insert_with_tags_by_name(_tb.get_end_iter(),
+        tb.insert_with_tags_by_name(tb.get_end_iter(),
                                      (u"\nCondensaciones superficiales: %s\n"
                                       u"Condensaciones intersticiales: %s\n"
                                      ) % (cs, ci),
@@ -233,14 +233,14 @@ class GtkCondensa(object):
 
     def on_cerramientotv_cursor_changed(self, tv):
         """Cambio de cerramiento seleccionado en lista de cerramientos"""
-        _cerrtm, _cerrtm_iter = tv.get_selection().get_selected()
-        _value = _cerrtm.get_value(_cerrtm_iter, 0)
-        self.lblselected.set_text(_value)
+        cerrtm, cerrtm_iter = tv.get_selection().get_selected()
+        value = cerrtm.get_value(cerrtm_iter, 0)
+        self.lblselected.set_text(value)
 
 if __name__ == "__main__":
     from cerramiento import Cerramiento
     from datos_ejemplo import climae, climai, cerramientocapas
-    cerr = Cerramiento("Cerramiento tipo", "Tipo",
+    c = Cerramiento("Cerramiento tipo", "Tipo",
                        cerramientocapas, Rse=0.04, Rsi=0.13)
-    app = GtkCondensa(cerr, climae, climai)
+    app = GtkCondensa(c, climae, climai)
     app.main()
