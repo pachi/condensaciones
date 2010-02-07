@@ -26,6 +26,7 @@ import gtk
 import pango
 import util
 import comprobaciones
+import materiales
 from ptcanvas import CPTCanvas, CPCanvas, GraphData
 
 COLOR_OK = gtk.gdk.color_parse("#AACCAA")
@@ -51,6 +52,7 @@ class GtkCondensa(object):
         builder.add_from_file(UIFILE)
         # Controles ventana principal
         self.w = builder.get_object('window1')
+        self.statusbar = builder.get_object('statusbar')
         # - cabecera -
         self.cfondo = builder.get_object('cfondo')
         self.nombre = builder.get_object('nombre_cerramiento')
@@ -93,6 +95,8 @@ class GtkCondensa(object):
         self.cerramientotv = builder.get_object('cerramientotv')
         self.lblselected = builder.get_object('lblselected')
         self.cerramientols = builder.get_object('cerramientos_liststore')
+        # Materiales
+        self.materialesls = builder.get_object('materiales_liststore')
 
         smap = {"on_window_destroy": gtk.main_quit,
                 "on_cbtn_clicked": self.on_cerramientobtn_clicked,
@@ -115,6 +119,12 @@ class GtkCondensa(object):
         for c in cerramientos:
             self.cerramientos[c.nombre] = c
             self.cerramientols.append((c.nombre, c.descripcion))
+        for material in materiales.materiales.keys():
+            self.materialesls.append((material,))
+        n = len(materiales.materiales)
+        m = len(cerramientos)
+        txt = u"Cargados %i materiales, %i cerramientos" % (n, m)
+        self.statusbar.push(0, txt)
 
     def actualiza(self):
         """Actualiza cabecera, gráficas, texto y pie de datos"""
@@ -126,6 +136,7 @@ class GtkCondensa(object):
         self.actualizainforme()
 
     def calcula(self):
+        """Calcula resultados para usarlos en presentación"""
         c = self.cerramiento
         ti, hri = self.climai.temp, self.climai.HR
         te, hre = self.climae.temp, self.climae.HR
@@ -240,7 +251,7 @@ class GtkCondensa(object):
 if __name__ == "__main__":
     from cerramiento import Cerramiento
     from datos_ejemplo import climae, climai, cerramientocapas
-    c = Cerramiento("Cerramiento tipo", "Tipo",
+    _c = Cerramiento("Cerramiento tipo", "Tipo",
                        cerramientocapas, Rse=0.04, Rsi=0.13)
-    app = GtkCondensa(c, climae, climai)
+    app = GtkCondensa(_c, climae, climai)
     app.main()

@@ -11,11 +11,94 @@
       <column type="gchararray"/>
     </columns>
   </object>
+  <object class="GtkListStore" id="capas_liststore">
+    <columns>
+      <!-- column-name id -->
+      <column type="gchararray"/>
+      <!-- column-name nombre -->
+      <column type="gchararray"/>
+      <!-- column-name espesor -->
+      <column type="gchararray"/>
+      <!-- column-name R -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">0</col>
+        <col id="1" translatable="yes">Nombre capa 1</col>
+        <col id="2" translatable="yes">0,01</col>
+        <col id="3" translatable="yes">0,01</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="materiales_liststore">
+    <columns>
+      <!-- column-name nombre -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
   <object class="GtkWindow" id="window1">
     <child>
       <object class="GtkVBox" id="vbox2">
         <property name="visible">True</property>
         <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkToolbar" id="toolbar1">
+            <property name="visible">True</property>
+            <property name="icon_size">1</property>
+            <child>
+              <object class="GtkToolButton" id="cerramselectbtn">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Cerramientos</property>
+                <property name="use_underline">True</property>
+                <property name="stock_id">gtk-find</property>
+                <signal name="clicked" handler="on_cbtn_clicked"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToolButton" id="editacapasbtn">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Edita Capas</property>
+                <property name="use_underline">True</property>
+                <property name="stock_id">gtk-edit</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkSeparatorToolItem" id="separatortoolitem1">
+                <property name="visible">True</property>
+                <property name="draw">False</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToolButton" id="exitbutton">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Salir</property>
+                <property name="use_underline">True</property>
+                <property name="stock_id">gtk-quit</property>
+                <signal name="clicked" handler="on_window_destroy"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
         <child>
           <object class="GtkEventBox" id="cfondo">
             <property name="visible">True</property>
@@ -76,7 +159,7 @@
           </object>
           <packing>
             <property name="expand">False</property>
-            <property name="position">0</property>
+            <property name="position">1</property>
           </packing>
         </child>
         <child>
@@ -401,19 +484,6 @@
             </child>
           </object>
           <packing>
-            <property name="position">1</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="botoncerramiento">
-            <property name="label" translatable="yes">Seleccionar muro</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <signal name="clicked" handler="on_cbtn_clicked"/>
-          </object>
-          <packing>
-            <property name="expand">False</property>
             <property name="position">2</property>
           </packing>
         </child>
@@ -447,28 +517,18 @@
             <property name="position">3</property>
           </packing>
         </child>
+        <child>
+          <object class="GtkStatusbar" id="statusbar">
+            <property name="visible">True</property>
+            <property name="spacing">2</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="position">4</property>
+          </packing>
+        </child>
       </object>
     </child>
-  </object>
-  <object class="GtkListStore" id="capas_liststore">
-    <columns>
-      <!-- column-name id -->
-      <column type="gchararray"/>
-      <!-- column-name nombre -->
-      <column type="gchararray"/>
-      <!-- column-name espesor -->
-      <column type="gchararray"/>
-      <!-- column-name R -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">0</col>
-        <col id="1" translatable="yes">Nombre capa 1</col>
-        <col id="2" translatable="yes">0,01</col>
-        <col id="3" translatable="yes">0,01</col>
-      </row>
-    </data>
   </object>
   <object class="GtkDialog" id="cerramientodlg">
     <property name="border_width">5</property>
@@ -626,4 +686,8 @@
     <property name="page_size">10</property>
   </object>
   <object class="GtkTextBuffer" id="cerramientotxtb"/>
+  <object class="GtkImage" id="image1">
+    <property name="visible">True</property>
+    <property name="stock">gtk-missing-image</property>
+  </object>
 </interface>
