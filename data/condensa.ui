@@ -3,6 +3,31 @@
   <requires lib="gtk+" version="2.16"/>
   <!-- interface-requires condensaciones 0.0 -->
   <!-- interface-naming-policy project-wide -->
+  <object class="GtkListStore" id="cerramientos_liststore">
+    <columns>
+      <!-- column-name nombre -->
+      <column type="gchararray"/>
+      <!-- column-name muro -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkListStore" id="capas_liststore">
+    <columns>
+      <!-- column-name nombre -->
+      <column type="gchararray"/>
+      <!-- column-name espesor -->
+      <column type="gchararray"/>
+      <!-- column-name R -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Nombre capa 1</col>
+        <col id="1" translatable="yes">0,01</col>
+        <col id="2" translatable="yes">0,01</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkWindow" id="window1">
     <child>
       <object class="GtkVBox" id="vbox2">
@@ -76,77 +101,54 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <child>
-              <object class="GtkScrolledWindow" id="muroscrolledwindow">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="hscrollbar_policy">automatic</property>
-                <property name="vscrollbar_policy">automatic</property>
-                <child>
-                  <object class="GtkTextView" id="cerramientotextview">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="wrap_mode">word-char</property>
-                    <property name="buffer">cerramientotxtb</property>
-                  </object>
-                </child>
-              </object>
-            </child>
-            <child type="tab">
-              <object class="GtkLabel" id="label0">
-                <property name="visible">True</property>
-                <property name="label" translatable="yes">Cerramiento</property>
-              </object>
-              <packing>
-                <property name="tab_fill">False</property>
-              </packing>
-            </child>
-            <child>
               <object class="GtkVBox" id="vbdatoscapas">
                 <property name="visible">True</property>
                 <property name="orientation">vertical</property>
                 <child>
-                  <object class="GtkTreeView" id="capas_treeview">
+                  <object class="GtkHBox" id="resist_superficiales_vbox">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="model">capas_liststore</property>
                     <child>
-                      <object class="GtkTreeViewColumn" id="nombrecolumn1">
-                        <property name="title">Nombre</property>
+                      <object class="GtkVBox" id="vbox5">
+                        <property name="visible">True</property>
+                        <property name="orientation">vertical</property>
                         <child>
-                          <object class="GtkCellRendererText" id="ctnombre"/>
-                          <attributes>
-                            <attribute name="text">0</attribute>
-                          </attributes>
+                          <object class="GtkLabel" id="Rsevalue1">
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <property name="xpad">8</property>
+                            <property name="ypad">2</property>
+                            <property name="label" translatable="yes">Resistencia superficial exterior</property>
+                            <attributes>
+                              <attribute name="style" value="normal"/>
+                            </attributes>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="Rsivalue1">
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <property name="xpad">8</property>
+                            <property name="ypad">2</property>
+                            <property name="label" translatable="yes">Resistencia superficial exterior</property>
+                            <attributes>
+                              <attribute name="style" value="normal"/>
+                            </attributes>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="position">1</property>
+                          </packing>
                         </child>
                       </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="position">0</property>
+                      </packing>
                     </child>
-                    <child>
-                      <object class="GtkTreeViewColumn" id="espesorcolumn">
-                        <property name="title">Espesor [m]</property>
-                        <child>
-                          <object class="GtkCellRendererText" id="ctespesor"/>
-                          <attributes>
-                            <attribute name="text">1</attribute>
-                          </attributes>
-                        </child>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkTreeViewColumn" id="treeviewcolumn1">
-                        <property name="title">R [m&#xB2;K/W]</property>
-                        <child>
-                          <object class="GtkCellRendererText" id="R"/>
-                        </child>
-                      </object>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkHBox" id="hbox3">
-                    <property name="visible">True</property>
                     <child>
                       <object class="GtkVBox" id="vbox3">
                         <property name="visible">True</property>
@@ -157,7 +159,7 @@
                             <property name="xalign">0</property>
                             <property name="xpad">8</property>
                             <property name="ypad">2</property>
-                            <property name="label" translatable="yes">Rse:</property>
+                            <property name="label" translatable="yes">Rse =</property>
                             <attributes>
                               <attribute name="weight" value="bold"/>
                             </attributes>
@@ -173,7 +175,7 @@
                             <property name="xalign">0</property>
                             <property name="xpad">8</property>
                             <property name="ypad">2</property>
-                            <property name="label" translatable="yes">Rsi:</property>
+                            <property name="label" translatable="yes">Rsi =</property>
                             <attributes>
                               <attribute name="weight" value="bold"/>
                             </attributes>
@@ -186,7 +188,7 @@
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="position">0</property>
+                        <property name="position">1</property>
                       </packing>
                     </child>
                     <child>
@@ -202,6 +204,7 @@
                             <property name="label" translatable="yes">valor Rse</property>
                           </object>
                           <packing>
+                            <property name="expand">False</property>
                             <property name="position">0</property>
                           </packing>
                         </child>
@@ -214,24 +217,116 @@
                             <property name="label" translatable="yes">valor Rsi</property>
                           </object>
                           <packing>
+                            <property name="expand">False</property>
                             <property name="position">1</property>
                           </packing>
                         </child>
                       </object>
                       <packing>
-                        <property name="position">1</property>
+                        <property name="expand">False</property>
+                        <property name="position">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkVBox" id="vbox6">
+                        <property name="visible">True</property>
+                        <property name="orientation">vertical</property>
+                        <child>
+                          <object class="GtkLabel" id="Rsevalue2">
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <property name="xpad">8</property>
+                            <property name="ypad">2</property>
+                            <property name="label" translatable="yes"> [m&#xB2;/K/W]</property>
+                          </object>
+                          <packing>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="Rsivalue2">
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <property name="xpad">8</property>
+                            <property name="ypad">2</property>
+                            <property name="label" translatable="yes"> [m&#xB2;/K/W]</property>
+                          </object>
+                          <packing>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="position">3</property>
                       </packing>
                     </child>
                   </object>
                   <packing>
                     <property name="expand">False</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkTreeView" id="capas_treeview">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="model">capas_liststore</property>
+                    <property name="search_column">1</property>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="nombrecolumn1">
+                        <property name="spacing">1</property>
+                        <property name="title">Nombre</property>
+                        <property name="expand">True</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="ctnombre">
+                            <property name="editable">True</property>
+                            <property name="style">italic</property>
+                          </object>
+                          <attributes>
+                            <attribute name="text">0</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="espesorcolumn">
+                        <property name="spacing">1</property>
+                        <property name="title">Espesor [m]</property>
+                        <property name="alignment">0.5</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="ctespesor">
+                            <property name="alignment">center</property>
+                            <property name="editable">True</property>
+                          </object>
+                          <attributes>
+                            <attribute name="text">1</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="treeviewcolumn1">
+                        <property name="spacing">1</property>
+                        <property name="title">R [m&#xB2;K/W]</property>
+                        <property name="alignment">0.5</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="R">
+                            <property name="cell_background_gdk">#eb84eb84eb84</property>
+                            <property name="alignment">center</property>
+                          </object>
+                          <attributes>
+                            <attribute name="text">2</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="padding">1</property>
                     <property name="position">1</property>
                   </packing>
                 </child>
               </object>
-              <packing>
-                <property name="position">1</property>
-              </packing>
             </child>
             <child type="tab">
               <object class="GtkLabel" id="label4">
@@ -239,7 +334,6 @@
                 <property name="label" translatable="yes">Capas</property>
               </object>
               <packing>
-                <property name="position">3</property>
                 <property name="tab_fill">False</property>
               </packing>
             </child>
@@ -248,7 +342,7 @@
                 <property name="visible">True</property>
               </object>
               <packing>
-                <property name="position">2</property>
+                <property name="position">1</property>
               </packing>
             </child>
             <child type="tab">
@@ -257,7 +351,7 @@
                 <property name="label" translatable="yes">Presiones y temperaturas</property>
               </object>
               <packing>
-                <property name="position">2</property>
+                <property name="position">1</property>
                 <property name="tab_fill">False</property>
               </packing>
             </child>
@@ -266,13 +360,42 @@
                 <property name="visible">True</property>
               </object>
               <packing>
-                <property name="position">3</property>
+                <property name="position">2</property>
               </packing>
             </child>
             <child type="tab">
               <object class="GtkLabel" id="label3">
                 <property name="visible">True</property>
                 <property name="label" translatable="yes">Presiones de vapor</property>
+              </object>
+              <packing>
+                <property name="position">2</property>
+                <property name="tab_fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkScrolledWindow" id="muroscrolledwindow">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="hscrollbar_policy">automatic</property>
+                <property name="vscrollbar_policy">automatic</property>
+                <child>
+                  <object class="GtkTextView" id="cerramientotextview">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="wrap_mode">word-char</property>
+                    <property name="buffer">cerramientotxtb</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="position">3</property>
+              </packing>
+            </child>
+            <child type="tab">
+              <object class="GtkLabel" id="label0">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Informe</property>
               </object>
               <packing>
                 <property name="position">3</property>
@@ -329,31 +452,6 @@
         </child>
       </object>
     </child>
-  </object>
-  <object class="GtkListStore" id="cerramientos_liststore">
-    <columns>
-      <!-- column-name nombre -->
-      <column type="gchararray"/>
-      <!-- column-name muro -->
-      <column type="gchararray"/>
-    </columns>
-  </object>
-  <object class="GtkListStore" id="capas_liststore">
-    <columns>
-      <!-- column-name nombre -->
-      <column type="gchararray"/>
-      <!-- column-name espesor -->
-      <column type="gchararray"/>
-      <!-- column-name R -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">Nombre capa 1</col>
-        <col id="1" translatable="yes">0,01</col>
-        <col id="2" translatable="yes"/>
-      </row>
-    </data>
   </object>
   <object class="GtkDialog" id="cerramientodlg">
     <property name="border_width">5</property>

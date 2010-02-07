@@ -113,7 +113,7 @@ class GtkCondensa(object):
         """Actualiza cabecera, gráficas, texto y pie de datos"""
         self.actualizacabecera()
         self.actualizagraficas()
-        self.actualizatexto()
+        self.actualizainforme()
         self.actualizapie()
         self.actualizacapas()
 
@@ -144,7 +144,7 @@ class GtkCondensa(object):
         self.grafico1.dibuja(gdata)
         self.grafico2.dibuja(gdata)
     
-    def actualizatexto(self):
+    def actualizainforme(self):
         """Actualiza texto descripción de cerramiento en ventana principal"""
         _m = self.cerramiento
         _tb = self.cerramientotxtb
@@ -187,7 +187,7 @@ class GtkCondensa(object):
         self.rsi.set_text("%.2f" % float(cerr.Rsi))
         self.capasls.clear()
         for nombre, e, R in zip(cerr.nombres, cerr.espesores, cerr.R):
-            self.capasls.append((nombre, e, R))
+            self.capasls.append((nombre, "%.3f" % e, "%.4f" % R))
 
     def on_cerramientobtn_clicked(self, widget):
         """Abrir diálogo de selección de cerramiento"""
@@ -208,9 +208,9 @@ class GtkCondensa(object):
         self.lblselected.set_text(_value)
 
 if __name__ == "__main__":
-    import cerramiento
+    from cerramiento import Cerramiento
     from datos_ejemplo import climae, climai, cerramientocapas
-    cerr = cerramiento.Cerramiento("Cerramiento tipo", "Tipo",
-                                   cerramientocapas, Rse=0.04, Rsi=0.13)
+    cerr = Cerramiento("Cerramiento tipo", "Tipo",
+                       cerramientocapas, Rse=0.04, Rsi=0.13)
     app = GtkCondensa(cerr, climae, climai)
     app.main()
