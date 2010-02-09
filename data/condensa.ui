@@ -364,6 +364,7 @@
                             <property name="style">italic</property>
                             <property name="model">materiales_liststore</property>
                             <property name="text_column">0</property>
+                            <signal name="changed" handler="on_ctnombre_changed"/>
                           </object>
                           <attributes>
                             <attribute name="text">1</attribute>

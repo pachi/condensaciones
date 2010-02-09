@@ -101,6 +101,7 @@ class GtkCondensa(object):
         smap = {"on_window_destroy": gtk.main_quit,
                 "on_cbtn_clicked": self.on_cerramientobtn_clicked,
                 "on_ctv_cursor_changed": self.on_cerramientotv_cursor_changed,
+                "on_ctnombre_changed": self.on_ctnombre_changed,
                 }
         builder.connect_signals(smap)
         
@@ -114,7 +115,9 @@ class GtkCondensa(object):
 
     def cargacerramientos(self):
         """Carga datos de materiales y cerramientos"""
-        for material in materiales.materiales.keys():
+        mats = materiales.materiales.keys()
+        mats.sort()
+        for material in mats:
             self.materialesls.append((material,))
         #TODO: cargar datos de biblioteca de cerramientos
         from datos_ejemplo import cerramientos
@@ -247,6 +250,24 @@ class GtkCondensa(object):
         cerrtm, cerrtm_iter = tv.get_selection().get_selected()
         value = cerrtm.get_value(cerrtm_iter, 0)
         self.lblselected.set_text(value)
+
+    def on_ctnombre_changed(self, combo, path_string, new_iter):
+        """Cambio de capa en el combo"""
+        #TODO: crear materiales en db para usar valores aquí.
+        def _resist_capa(capa, e=None):
+            tipo = materiales.tipo(capa)
+            if tipo == 'PROPERTIES':
+                return e / materiales.conductividad(capa)
+            elif tipo == 'RESISTANCE':
+                return materiales.resistencia(capa)
+            else:
+                raise ValueError('Tipo de elemento desconocido')
+        oldi = self.capasls[path_string][0]
+        text = self.materialesls[new_iter][0]
+        olde = self.capasls[path_string][2]
+        #FIXME: usar valor de material y tomar datos inciales, no del modelo
+        newR = "%.3f" % _resist_capa(text, float(olde))
+        self.capasls[path_string] = (oldi, text, olde, newR) 
 
 if __name__ == "__main__":
     from cerramiento import Cerramiento
