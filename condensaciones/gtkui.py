@@ -186,7 +186,10 @@ class GtkCondensa(object):
         self.rse.set_text("%.2f" % float(c.Rse))
         self.rsi.set_text("%.2f" % float(c.Rsi))
         self.capasls.clear()
-        for i, (nombre, e, R) in enumerate(zip(c.nombres, c.espesores, c.R)):
+        for i, (nombre, e, R) in enumerate(zip(c.nombres,
+                                               c.espesores,
+                                               c.R[1:-1] #quitamos Rse, Rsi
+                                               )):
             self.capasls.append((i, nombre, "%.3f" % e, "%.4f" % R))
 
     def actualizagraficas(self):
