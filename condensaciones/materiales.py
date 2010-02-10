@@ -20,20 +20,20 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 #   02110-1301, USA.
-"""Módulo de definición de materiales y propiedades
-
-Toma los datos de las bases de datos definidas, haciéndolos accesibles a
-través del diccionario 'materiales'"""
+"""Módulo de definición de materiales y propiedades"""
 
 from util import get_resource
-import dbutils
+from dbutils import db2data
 
 CATALOGOPACHI = get_resource('../data/PCatalogo.bdc')
 CATALOGOCALENER = get_resource('../data/BDCatalogo.bdc')
 CATALOGOURSA = get_resource('../data/Catalogo_URSA.bdc')
 
-materiales = dbutils.db2data([CATALOGOPACHI, CATALOGOCALENER, CATALOGOURSA])
+materiales, grupos = db2data([CATALOGOPACHI, CATALOGOCALENER, CATALOGOURSA])
 
+#===============================================================================
+# Funciones auxiliares
+#===============================================================================
 def tipo(nombre):
     """Tipo de elemento en relación a su comportamiento térmico
     
@@ -41,19 +41,19 @@ def tipo(nombre):
     - PROPERTIES, definido por su conductividad térmica 'CONDUCTIVITY'
     - RESISTANCE, definido por su resistencia térmica 'RESISTANCE'
     """
-    return materiales[nombre]['TYPE']
+    return materiales[nombre].type
 
 def conductividad(nombre):
     """Conductividad térmica del material [W/m.K]"""
-    return float(materiales[nombre]['CONDUCTIVITY'])
+    return float(materiales[nombre].conductivity)
 
 def resistencia(nombre):
     """Resistencia térmica del material [m²/K.W]"""
-    return float(materiales[nombre]['RESISTANCE'])
+    return float(materiales[nombre].resistance)
 
 def difusividad(nombre):
     """Difusividad al vapor de agua del material"""
-    return float(materiales[nombre]['VAPOUR-DIFFUSIVITY-FACTOR'])
+    return float(materiales[nombre].mu)
 
 if __name__ == "__main__":
     print materiales

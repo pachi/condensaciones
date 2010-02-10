@@ -24,7 +24,7 @@
 
 import operator
 import psicrom
-import materiales
+from materiales import materiales
 
 class Cerramiento(object):
     """Clase Cerramiento
@@ -78,11 +78,11 @@ class Cerramiento(object):
     def R(self):
         """Lista de resistencias térmicas de las capas [m²K/W]"""
         def _resist_capa(capa, e=None):
-            tipo = materiales.tipo(capa)
+            tipo = materiales[capa].type
             if tipo == 'PROPERTIES':
-                return e / materiales.conductividad(capa)
+                return e / materiales[capa].conductivity
             elif tipo == 'RESISTANCE':
-                return materiales.resistencia(capa)
+                return materiales[capa].resistance
             else:
                 raise ValueError('Tipo de elemento desconocido')
         return [self.Rse] + [_resist_capa(nombre, e)
@@ -91,7 +91,7 @@ class Cerramiento(object):
     @property
     def S(self):
         """Lista de espesore de aire equivalente de las capas [m]"""
-        return [e * materiales.difusividad(nombre)
+        return [e * materiales[nombre].mu
                 for nombre, e in self.capas]
 
     @property

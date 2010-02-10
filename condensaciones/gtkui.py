@@ -115,7 +115,8 @@ class GtkCondensa(object):
 
     def cargacerramientos(self):
         """Carga datos de materiales y cerramientos"""
-        mats = materiales.materiales.keys()
+        self.materiales = materiales.materiales
+        mats = self.materiales.keys()
         mats.sort()
         for material in mats:
             self.materialesls.append((material,))
@@ -124,7 +125,7 @@ class GtkCondensa(object):
         for c in cerramientos:
             self.cerramientos[c.nombre] = c
             self.cerramientols.append((c.nombre, c.descripcion))
-        n = len(materiales.materiales)
+        n = len(self.materiales)
         m = len(cerramientos)
         txt = u"Cargados %i materiales, %i cerramientos" % (n, m)
         self.statusbar.push(0, txt)
@@ -255,11 +256,12 @@ class GtkCondensa(object):
         """Cambio de capa en el combo"""
         #TODO: crear materiales en db para usar valores aquí.
         def _resist_capa(capa, e=None):
-            tipo = materiales.tipo(capa)
+            mat = self.materiales[capa]
+            tipo = mat.type
             if tipo == 'PROPERTIES':
-                return e / materiales.conductividad(capa)
+                return e / mat.conductivity
             elif tipo == 'RESISTANCE':
-                return materiales.resistencia(capa)
+                return mat.resistance
             else:
                 raise ValueError('Tipo de elemento desconocido')
         oldi = self.capasls[path_string][0]
