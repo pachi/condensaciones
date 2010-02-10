@@ -26,7 +26,6 @@ import gtk
 import pango
 import util
 import comprobaciones
-import materiales
 from ptcanvas import CPTCanvas, CPCanvas, GraphData
 
 COLOR_OK = gtk.gdk.color_parse("#AACCAA")
@@ -115,17 +114,15 @@ class GtkCondensa(object):
 
     def cargacerramientos(self):
         """Carga datos de materiales y cerramientos"""
-        self.materiales = materiales.materiales
-        mats = self.materiales.keys()
+        from datos_ejemplo import cerramientos, materiales
+        mats = materiales.keys()
         mats.sort()
         for material in mats:
             self.materialesls.append((material,))
-        #TODO: cargar datos de biblioteca de cerramientos
-        from datos_ejemplo import cerramientos
         for c in cerramientos:
             self.cerramientos[c.nombre] = c
             self.cerramientols.append((c.nombre, c.descripcion))
-        n = len(self.materiales)
+        n = len(materiales)
         m = len(cerramientos)
         txt = u"Cargados %i materiales, %i cerramientos" % (n, m)
         self.statusbar.push(0, txt)
@@ -256,23 +253,17 @@ class GtkCondensa(object):
         self.lblselected.set_text(value)
 
     def on_ctnombre_changed(self, combo, path_string, new_iter):
-        """Cambio de capa en el combo"""
-        #TODO: crear materiales en db para usar valores aquí.
-        def _resist_capa(capa, e=None):
-            mat = self.materiales[capa]
-            tipo = mat.type
-            if tipo == 'PROPERTIES':
-                return e / mat.conductivity
-            elif tipo == 'RESISTANCE':
-                return mat.resistance
-            else:
-                raise ValueError('Tipo de elemento desconocido')
-        oldi = self.capasls[path_string][0]
-        text = self.materialesls[new_iter][0]
-        olde = self.capasls[path_string][2]
-        #FIXME: usar valor de material y tomar datos inciales, no del modelo
-        newR = "%.3f" % _resist_capa(text, float(olde))
-        self.capasls[path_string] = (oldi, text, olde, newR) 
+        """Cambio de capa en el combo
+        
+        combo - Comboboxcellrenderer que cambia
+        path_string - ruta del combo en el treeview
+        new_iter - ruta del nuevo valor en el modelo del combo
+        """
+        capaindex = int(self.capasls[path_string][0])
+        ecapa = self.cerramiento.capas[capaindex][1]
+        newtext = self.materialesls[new_iter][0].decode('utf-8')
+        self.cerramiento.capas[capaindex] = (newtext, float(ecapa))
+        self.actualiza() 
 
 if __name__ == "__main__":
     from cerramiento import Cerramiento
