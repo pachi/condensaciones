@@ -192,7 +192,9 @@ class GtkCondensa(object):
     def actualizagraficas(self):
         """Redibuja gráficos con nuevos datos"""
         gdata = GraphData(self.cerramiento, self.climae, self.climai)
+        self.grafico1.clear()
         self.grafico1.dibuja(gdata)
+        self.grafico2.clear()
         self.grafico2.dibuja(gdata)
     
     def actualizainforme(self):
@@ -241,8 +243,6 @@ class GtkCondensa(object):
         if resultado == gtk.RESPONSE_ACCEPT:
             nombrecerr = self.lblselected.get_text()
             self.cerramiento = self.cerramientos[nombrecerr]
-            self.grafico1.clear()
-            self.grafico2.clear()
             self.actualiza()
         self.dlg.hide()
 
