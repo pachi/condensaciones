@@ -52,6 +52,9 @@ class Cerramiento(object):
         self.nombre = nombre
         self.descripcion = descripcion
         self.capas = capas
+        for nombre, e in capas:
+            if nombre not in materiales.keys():
+                raise ValueError('Material desconocido: %s' % nombre)
         self.Rse = Rse
         self.Rsi = Rsi
 
