@@ -80,7 +80,7 @@ class Cerramiento(object):
     @property
     def R(self):
         """Lista de resistencias térmicas de las capas [m²K/W]"""
-        def _resist_capa(capa, e=None):
+        def Ri(capa, e=None):
             tipo = materiales[capa].type
             if tipo == 'PROPERTIES':
                 return e / materiales[capa].conductivity
@@ -88,7 +88,7 @@ class Cerramiento(object):
                 return materiales[capa].resistance
             else:
                 raise ValueError('Tipo de elemento desconocido')
-        return [self.Rse] + [_resist_capa(nombre, e)
+        return [self.Rse] + [Ri(nombre, e)
                              for nombre, e in self.capas] + [self.Rsi]
 
     @property
