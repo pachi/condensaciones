@@ -54,7 +54,7 @@ parsedblock = {'MATERIAL': 'B_Vapor Z3 (d_1mm)',
 
 DB = "./PCatalogo.bdc"
 
-parsedDB = {u'default':
+parsedfile = {u'default':
             [{u'GROUP': u'B_VAPOR',
               u'NAME': u'B_Vapor Z3 (d_1mm)',
               u'DENSITY': u'1', u'SPECIFIC-HEAT': u'1',
@@ -78,49 +78,42 @@ parsedDB = {u'default':
               u'IMAGE': u'metales.bmp', u'CONDUCTIVITY': u'230'}
             ]}
 
-DBdict = {u'B_Vapor Al (d_0.008mm)': 
-                {u'GROUP': u'B_VAPOR', u'NAME': u'B_Vapor Al (d_0.008mm)',
-                 u'DENSITY': u'2700', u'SPECIFIC-HEAT': u'880',
-                 u'MATERIAL': u'B_Vapor Al (d_0.008mm)', u'NAME_CALENER': u'',
-                 u'LIBRARY': u'NO', u'THICKNESS': u'0.000008',
-                 u'VAPOUR-DIFFUSIVITY-FACTOR': u'1E+8', u'TYPE': u'PROPERTIES',
-                 u'IMAGE': u'metales.bmp', u'CONDUCTIVITY': u'230'},
-          u'B_Vapor Z2 (d_1mm)': 
-                {u'GROUP': u'B_VAPOR', u'NAME': u'B_Vapor Z3 (d_1mm)',
-                 u'DENSITY': u'1', u'SPECIFIC-HEAT': u'1',
-                 u'MATERIAL': u'B_Vapor Z2 (d_1mm)', u'NAME_CALENER': u'',
-                 u'LIBRARY': u'NO', u'THICKNESS': u'0.001',
-                 u'VAPOUR-DIFFUSIVITY-FACTOR': u'1350', u'TYPE': u'PROPERTIES',
-                 u'IMAGE': u'asfalto.bmp', u'CONDUCTIVITY': u'500'},
-          u'B_Vapor Z3 (d_1mm)': 
-                {u'GROUP': u'B_VAPOR', u'NAME': u'B_Vapor Z3 (d_1mm)',
-                 u'DENSITY': u'1', u'SPECIFIC-HEAT': u'1',
-                 u'MATERIAL': u'B_Vapor Z3 (d_1mm)', u'NAME_CALENER': u'',
-                 u'LIBRARY': u'NO', u'THICKNESS': u'0.001',
-                 u'VAPOUR-DIFFUSIVITY-FACTOR': u'2030', u'TYPE': u'PROPERTIES',
-                 u'IMAGE': u'asfalto.bmp', u'CONDUCTIVITY': u'500'}
-          }
-
 class  DBTestCase(unittest.TestCase):
     """Comprobaciones de interpretación de datos"""
     def setUp(self):
         """Module-level setup"""
         self.block = datablock
+        self.parsedblock = dbutils.parseblock(self.block)
+        self.parsedfile = dbutils.parsefile(DB)
+        self.materials, self.groups = dbutils.db2data(DB)
 
     def test_parseblock(self):
-        """Interpreta bloque de datos"""
-        result = dbutils.parseblock(self.block)
-        self.assertEqual(result, parsedblock)
+        """Interpretación de bloque de datos"""
+        self.assertEqual(self.parsedblock, parsedblock)
 
     def test_parsefile(self):
-        """Interpreta archivo de datos"""
-        result = dbutils.parsefile(DB)
-        self.assertEqual(result, parsedDB)
+        """Interpretación de archivo de datos"""
+        self.assertEqual(self.parsedfile, parsedfile)
 
     def test_db2data(self):
-        """Convierte datos a diccionario"""
-        result = dbutils.db2data(DB)
-        self.assertEqual(result, DBdict)
+        """Conversión de datos a diccionarios"""
+        keys = [u'B_Vapor Al (d_0.008mm)', u'B_Vapor Z3 (d_1mm)']
+        mk = self.materials.keys()
+        mk.sort()
+        groupdata = list(self.groups.values()[0])
+        groupdata.sort()
+        self.assertEqual(mk, keys)
+        self.assertEqual(groupdata, keys)
+
+    def test_db2data2(self):
+        """Conversión de elementos a objetos"""
+        m = self.materials[u'B_Vapor Al (d_0.008mm)']
+        self.assertEqual(m.name, u'B_Vapor Al (d_0.008mm)')
+        self.assertEqual(m.group, u'B_VAPOR')
+        self.assertEqual(m.type, u'PROPERTIES')
+        self.assertEqual(m.conductivity, 230.0)
+        self.assertEqual(m.thickness, 0.000008)
+        self.assertEqual(m.mu, 1.0e8)
 
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(DBTestCase)

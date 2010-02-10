@@ -28,9 +28,65 @@ sus propiedades.
 
 import codecs
 
+#===============================================================================
+# Clases base para representar elementos de las BBDD de Lider
+#===============================================================================
+class Material(object):
+    """Material tipo"""
+    klass = 'MATERIAL'
+    def __init__(self, name, group, mtype, mu):
+        """Inicialización de datos generales
+        
+        name - nombre del material
+        group - grupo genérico al que pertenece el material
+        mtype - tipo de material [RESISTANCE|PROPERTIES|SHADING-COEF]
+        mu - difusividad al vapor de agua
+        """
+        self.name = name
+        self.group = group
+        self.type = None
+        # Difusividad al vapor de agua del material
+        self.mu = mu
+        #self.name_calener = ''
+        #self.image = 'asfalto.bmp'
+        #self.library = False
+
+class PropertiesMaterial(Material):
+    """Material de tipo Properties"""
+    def __init__(self, name, group, mu, conductivity, thickness=None):
+        """Inicialización de datos generales
+        
+        conductivity - conductividad térmica [W/m.K]
+        thickness - espesor del elemento [m]
+        """
+        Material.__init__(self, name, group, type, mu)
+        self.type = 'PROPERTIES'
+        self.thickness = thickness #[m]
+        self.conductivity = conductivity #[W/m.K]
+        #self.density = 1#properties
+        #self.specific_heat = 1#properties
+        #self.thickness_min =  .04#properties
+        #self.thickness_max =  .06#properties
+
+class ResistanceMaterial(Material):
+    """Material de tipo Resistance"""
+    def __init__(self, name, group, mu, resistance):
+        """Inicialización de datos generales
+        
+        resistance - resistencia térmica [m²/K.W]
+        """
+        Material.__init__(self, name, group, type, mu)
+        self.type = 'RESISTANCE'
+        self.resistance = resistance #[m²/K.W]
+        #self.thickness_change = False#resistance
+
+#===============================================================================
+# Funciones para transformar BBDD de Lider a objetos Python
+#===============================================================================
+
 DEFAULT_SECTION = u'default'
 
-def parseblock(block, section=None):
+def parseblock(block):
     """Divide bloques de la base de datos recibidos como listas de datos
     
     La primera línea indica el nombre del elemento (e.g. "Ladrillo hueco
@@ -122,13 +178,26 @@ def db2data(dbfiles):
     El diccionario está indexado por el nombre del material e incluye el resto
     de datos extraídos.
     """ 
-    _resultado = {}
+    materials = {}
+    groups = {}
     if not isinstance(dbfiles, (tuple, list)):
         dbfiles = [dbfiles]
     for _f in dbfiles:
         #print "Procesando %s" % _f
-        _data = parsefile(_f)
-        for _material in _data[DEFAULT_SECTION]:
-            _nombre = _material['MATERIAL']
-            _resultado[_nombre] = _material.copy()
-    return _resultado
+        rawmaterials = parsefile(_f)
+        for rm in rawmaterials[DEFAULT_SECTION]:
+            mtype = rm['TYPE'].strip()
+            name = rm['NAME'].strip()
+            group = rm['GROUP'].strip()
+            mu = float(rm['VAPOUR-DIFFUSIVITY-FACTOR'].strip())
+            if mtype == 'PROPERTIES':
+                conductivity = float(rm['CONDUCTIVITY'].strip())
+                thickness = float(rm['THICKNESS'].strip())
+                mat = PropertiesMaterial(name, group, mu,
+                                         conductivity, thickness)
+            elif mtype == 'RESISTANCE':
+                resistance = float(rm['RESISTANCE'].strip())
+                mat = ResistanceMaterial(name, group, mu, resistance)
+            groups.setdefault(group, set()).add(name)
+            materials[name] = mat
+    return materials, groups
