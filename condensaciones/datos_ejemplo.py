@@ -22,7 +22,7 @@
 #   02110-1301, USA.
 """Datos de ejemplo para cálculos térmicos, higrométricos y condensaciones"""
 
-from cerramiento import Cerramiento
+from cerramiento import Cerramiento, materiales
 from clima import Clima
 
 climae1 = Clima(10.7, 79) #datos enero Sevilla
