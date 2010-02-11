@@ -29,7 +29,7 @@ from condensaciones.cerramiento import Cerramiento
 from condensaciones.gtkui import GtkCondensa
 from condensaciones.datos_ejemplo import climae, climai, cerramientocapas
 
-cerramiento = Cerramiento("Cerramiento tipo", "Descripción",
+cerramiento = Cerramiento(u"Cerramiento tipo", u"Descripción",
                           cerramientocapas, Rse=0.04, Rsi=0.13)
 app = GtkCondensa(cerramiento, climae, climai)
 app.main()
