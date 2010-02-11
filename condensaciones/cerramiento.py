@@ -78,6 +78,17 @@ class Cerramiento(object):
                         for i in range(1, len(self.espesores)+1)]
 
     @property
+    def K(self):
+        """Lista de conductividades térmicas de las capas [W/mK]"""
+        def Ki(capa):
+            tipo = materiales[capa].type
+            if tipo == 'PROPERTIES':
+                return materiales[capa].conductivity
+            else:
+                return None
+        return [Ki(nombre) for nombre, e in self.capas]
+
+    @property
     def R(self):
         """Lista de resistencias térmicas de las capas [m²K/W]"""
         def Ri(capa, e=None):

@@ -33,16 +33,17 @@ COLOR_BAD = gtk.gdk.color_parse("#CCAAAA")
 
 class GtkCondensa(object):
     """Aplicación"""
-    def __init__(self, cerramiento=None, climae=None, climai=None):
+    def __init__(self, cerramiento=None, climaext=None, climaint=None):
         """Inicialización de datos e interfaz
         
         cerramiento - Cerramiento
         climae - datos higrotérmicos del exterior
         climai - datos higrotérmicos del interior
         """
-        self.cerramiento = cerramiento
-        self.climae = climae
-        self.climai = climai
+        self.cerramiento = cerramiento # Cerramiento actual
+        self.modificado = False # Cerramiento modificado vs estado inicial
+        self.climae = climaext
+        self.climai = climaint
         # Cerramientos disponibles
         self.cerramientos = {}
         # --- UI ---
@@ -101,6 +102,7 @@ class GtkCondensa(object):
                 "on_cbtn_clicked": self.on_cerramientobtn_clicked,
                 "on_ctv_cursor_changed": self.on_cerramientotv_cursor_changed,
                 "on_ctnombre_changed": self.on_ctnombre_changed,
+                "on_ctespesor_changed": self.on_ctespesor_changed,
                 }
         builder.connect_signals(smap)
         
@@ -183,11 +185,12 @@ class GtkCondensa(object):
         self.rse.set_text("%.2f" % float(c.Rse))
         self.rsi.set_text("%.2f" % float(c.Rsi))
         self.capasls.clear()
-        for i, (nombre, e, R) in enumerate(zip(c.nombres,
+        for i, (nombre, e, K, R) in enumerate(zip(c.nombres,
                                                c.espesores,
+                                               c.K,
                                                c.R[1:-1] #quitamos Rse, Rsi
                                                )):
-            self.capasls.append((i, nombre, "%.3f" % e, "%.4f" % R))
+            self.capasls.append((i, nombre, "%.3f" % e, "%.4f" % K, "%.4f" % R))
 
     def actualizagraficas(self):
         """Redibuja gráficos con nuevos datos"""
@@ -252,18 +255,36 @@ class GtkCondensa(object):
         value = cerrtm.get_value(cerrtm_iter, 0)
         self.lblselected.set_text(value)
 
-    def on_ctnombre_changed(self, combo, path_string, new_iter):
+    def on_ctnombre_changed(self, cr, path, new_iter):
         """Cambio de capa en el combo
         
-        combo - Comboboxcellrenderer que cambia
-        path_string - ruta del combo en el treeview
+        cr - Comboboxcellrenderer con contenido modificado
+        path - ruta del combo en el treeview
         new_iter - ruta del nuevo valor en el modelo del combo
         """
-        capaindex = int(self.capasls[path_string][0])
+        capaindex = int(self.capasls[path][0])
         ecapa = self.cerramiento.capas[capaindex][1]
         newtext = self.materialesls[new_iter][0].decode('utf-8')
         self.cerramiento.capas[capaindex] = (newtext, float(ecapa))
+        self.modificado = True
         self.actualiza() 
+
+    def on_ctespesor_changed(self, cr, path, new_text):
+        """Cambio de capa en la entrada de espesor
+        
+        cr - cellrenderertext que cambia
+        path - ruta del cellrenderer en el treeview
+        new_text - nuevo texto en la celda de texto
+        """
+        capaindex = int(self.capasls[path][0])
+        ncapa = self.cerramiento.capas[capaindex][0]
+        try:
+            newe = float(new_text)
+            self.cerramiento.capas[capaindex] = (ncapa, newe)
+            self.modificado = True
+            self.actualiza()
+        except ValueError:
+            pass 
 
 if __name__ == "__main__":
     from cerramiento import Cerramiento

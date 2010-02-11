@@ -22,8 +22,14 @@
 #   02110-1301, USA.
 """Módulo de utilidades varias"""
 
-import os
+import os, sys
 import colorsys
+
+def get_main_dir():
+    """Find main dir even for py2exe frozen modules"""
+    if hasattr(sys, "frozen"): #py2exe frozen module
+        return os.path.dirname(sys.executable)
+    return os.path.dirname(sys.argv[0])
 
 def get_resource(*path_list):
     "Localiza un recurso del proyecto en base al directorio base del paquete"
