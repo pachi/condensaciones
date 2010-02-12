@@ -40,7 +40,19 @@ datafilelist = ['data/condensa.ui',
                 'data/BDCatalogo.bdc',
                 'data/Catalogo_URSA.bdc',
                 'data/PCatalogo.bdc']
-includes = ['cairo', 'pango', 'pangocairo', 'atk', 'gobject']
+
+classifiers = [
+    'Development Status :: 4 - Beta',
+    'Intended Audience :: Education',
+    'Intended Audience :: Science/Research',
+    'Intended Audience :: Developers',
+    'License :: OSI Approved :: GNU General Public License (GPL)',
+    'Operating System :: Microsoft :: Windows',
+    'Operating System :: POSIX',
+    'Natural Language :: Spanish',
+    'Topic :: Scientific/Engineering',
+    'Programming Language :: Python']
+includes = ['cairo', 'pango', 'pangocairo', 'atk', 'gobject', 'gio']
 excludes = ['_wxagg', '_fltkagg', '_cocoaagg', '_gtkagg',
             'email', 'logging', 'PyQt4', 'nose', 'wx', 'scipy',
             'tcl', 'Tkinter', 'compiler']
@@ -53,8 +65,7 @@ dllexcludes = [
             'libpangowin32-1.0-0.dll', 'libcairo-2.dll',
             'libfontconfig-1.dll', 'libpangoft2-1.0-0.dll',
             'libxml2.dll', 'zlib1.dll', 'libglade-2.0-0.dll',
-            'libpangocairo-1.0-0.dll', 'tck85.dll', 'tk85.dll']
-
+            'libpangocairo-1.0-0.dll', 'tcl85.dll', 'tk85.dll']
 opts = {'py2exe': {
                    'packages': ['encodings', 'matplotlib', 'pytz'],
                    'includes': includes,
