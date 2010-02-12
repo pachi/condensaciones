@@ -28,12 +28,16 @@ import colorsys
 def get_main_dir():
     """Find main dir even for py2exe frozen modules"""
     if hasattr(sys, "frozen"): #py2exe frozen module
-        return os.path.dirname(sys.executable)
-    return os.path.dirname(sys.argv[0])
+        md = os.path.dirname(sys.executable)
+    else:
+        # normal run
+        md = os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]), '..'))
+    return md
+
+APPROOT = get_main_dir() #os.path.dirname(__file__)
 
 def get_resource(*path_list):
     "Localiza un recurso del proyecto en base al directorio base del paquete"
-    APPROOT = os.path.dirname(__file__)
     return os.path.abspath(os.path.join(APPROOT, *path_list))
 
 def stringify(alist, prec):

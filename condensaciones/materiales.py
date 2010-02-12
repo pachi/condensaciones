@@ -25,9 +25,9 @@
 from util import get_resource
 from dbutils import db2data
 
-CATALOGOPACHI = get_resource('../data/PCatalogo.bdc')
-CATALOGOCALENER = get_resource('../data/BDCatalogo.bdc')
-CATALOGOURSA = get_resource('../data/Catalogo_URSA.bdc')
+CATALOGOPACHI = get_resource('data/PCatalogo.bdc')
+CATALOGOCALENER = get_resource('data/BDCatalogo.bdc')
+CATALOGOURSA = get_resource('data/Catalogo_URSA.bdc')
 
 materiales, grupos = db2data([CATALOGOPACHI, CATALOGOCALENER, CATALOGOURSA])
 

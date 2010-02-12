@@ -47,7 +47,7 @@ class GtkCondensa(object):
         # Cerramientos disponibles
         self.cerramientos = {}
         # --- UI ---
-        UIFILE = util.get_resource('..', 'data', 'condensa.ui')
+        UIFILE = util.get_resource('data', 'condensa.ui')
         builder = gtk.Builder()
         builder.add_from_file(UIFILE)
         # Controles ventana principal
