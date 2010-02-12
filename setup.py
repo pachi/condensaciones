@@ -33,8 +33,9 @@
 
 from distutils.core import setup
 import py2exe
-import matplotlib
+from matplotlib import get_py2exe_datafiles
 
+__version__ = "0.01"
 docfiles = ['README', 'NEWS', 'INSTALL', 'COPYING']
 datafilelist = ['data/condensa.ui',
                 'data/BDCatalogo.bdc',
@@ -71,28 +72,22 @@ opts = {'py2exe': {
                    'includes': includes,
                    'excludes': excludes,
                    'dll_excludes': dllexcludes,
-                   'skip_archive': True,
+                   #'skip_archive': True,
                    }
         }
-
-data_files = [('', docfiles),
-              ('data', datafilelist)] + matplotlib.get_py2exe_datafiles()
-
-long_description = open('README').read()
+data_files = [('', docfiles), ('data', datafilelist)] + get_py2exe_datafiles()
 
 setup(
-    name = 'Acciones-CTE',
-    author = 'Rafael Villar Burke',
+    name='Acciones-CTE',
+    version=__version__,
+    author='Rafael Villar Burke',
     author_email='pachi@rvburke.com',
     url='http://www.rvburke.com',
-    description = 'Aplicación para el cálculo de condensaciones según CTE',
-    long_description = long_description,
-    version = '0.01',
-    windows = [
-        {'script': 'bin/run.py',
-        #'icon_resources': [(1, 'notepad.exe')]
-        }
-    ],
+    description='Aplicación para el cálculo de condensaciones según CTE',
+    long_description=open('README').read(),
+    license="GPL",
+    #scripts=['bin/run.py'],
+    windows=[{'script':'bin/run.py', 'icon_resources':[(1, 'data/logo.ico')]}],
     packages=['condensaciones'],
     options=opts,
     data_files=data_files
