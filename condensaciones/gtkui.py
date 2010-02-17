@@ -221,6 +221,14 @@ class GtkCondensa(object):
         # Resultados
         tb.insert_with_tags_by_name(tb.get_end_iter(),
                                       u"\nResultados\n", 'subtitulo')
+        self.grafico1.save('g1.png')
+        pb1 = gtk.gdk.pixbuf_new_from_file_at_size('g1.png', 600, 400)
+        tb.insert_pixbuf(tb.get_end_iter(), pb1)
+        self.grafico2.save('g2.png')
+        tb.insert(tb.get_end_iter(), u"\n\n")
+        pb2 = gtk.gdk.pixbuf_new_from_file_at_size('g2.png', 600, 400)
+        tb.insert_pixbuf(tb.get_end_iter(), pb2)
+        tb.insert(tb.get_end_iter(), u"\n\n")
         txt = (u"R_total: %.3f [m²K/W]\n"
                 u"S_total = %.3f [m]\n"
                 u"U = %.3f [W/m²K]\n"
@@ -284,7 +292,7 @@ class GtkCondensa(object):
             self.modificado = True
             self.actualiza()
         except ValueError:
-            pass 
+            pass
 
 if __name__ == "__main__":
     from cerramiento import Cerramiento

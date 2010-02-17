@@ -167,11 +167,10 @@ class CPTCanvas(FigureCanvasGTKCairo):
         ax2.set_ylim(ymin - 0.1 * length, ymax + 0.2 * length)
         # Tamaño
         self.set_size_request(width, height)
-        self.draw()
 
     def save(self, filename='presionestempplot.png'):
         """Guardar y mostrar gráfica"""
-        self.savefig(filename)
+        self.fig.savefig(filename)
 
 class CPCanvas(FigureCanvasGTKCairo):
     """Diagrama de presiones"""
@@ -251,11 +250,10 @@ class CPCanvas(FigureCanvasGTKCairo):
                   ymin - 0.1 * lengthy, ymax + 0.2 * lengthy])
         # Tamaño
         self.set_size_request(width, height)
-        self.draw()
 
     def save(self, filename='presionesplot.png'):
         """Guardar y mostrar gráfica"""
-        self.savefig(filename)
+        self.fig.savefig(filename)
 
 if __name__ == "__main__":
     import gtk
