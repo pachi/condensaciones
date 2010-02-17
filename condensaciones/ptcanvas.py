@@ -118,10 +118,11 @@ class CPTCanvas(FigureCanvasGTKCairo):
         El eje vertical izquierdo tiene unidades de presión de vapor [Pa]
         El eje vertical derecho tiene unidades de temperatura [ºC]
         
-        d - contiene los datos para dibujar las gráficas
+        d - GraphData, contiene los datos para dibujar las gráficas
         """
         # ================== presiones y temperaturas =====================
         # -- dibujo ---
+        self.fig.set_facecolor('w') # Fondo blanco en vez de gris
         ax1 = self.fig.add_subplot(111) # 1 fila, 1 columna, dibujo 1
         ax1.set_title(u"Presiones de vapor y temperaturas", fontsize='large')
         ax1.set_xlabel(u"Distancia [m]")
@@ -166,6 +167,7 @@ class CPTCanvas(FigureCanvasGTKCairo):
         ax2.set_ylim(ymin - 0.1 * length, ymax + 0.2 * length)
         # Tamaño
         self.set_size_request(width, height)
+        self.draw()
 
     def save(self, filename='presionestempplot.png'):
         """Guardar y mostrar gráfica"""
@@ -192,11 +194,12 @@ class CPCanvas(FigureCanvasGTKCairo):
         
         El eje vertical tiene unidades de presión de Vapor [Pa]
         
-        d - contiene los datos para dibujar las gráficas
+        d - GraphData, contiene los datos para dibujar las gráficas
         """
         x_c = [x for x, y in d.p_condensa]
         y_c = [y for x, y in d.p_condensa]
         # -- dibujo ---
+        self.fig.set_facecolor('w') # Fondo blanco en vez de gris
         ax1 = self.fig.add_subplot(111) # 1 fila, 1 columna, dibujo 1
         ax1.set_title(u"Presiones de vapor (efectiva y de saturación)",
                       fontsize='large')
@@ -248,6 +251,7 @@ class CPCanvas(FigureCanvasGTKCairo):
                   ymin - 0.1 * lengthy, ymax + 0.2 * lengthy])
         # Tamaño
         self.set_size_request(width, height)
+        self.draw()
 
     def save(self, filename='presionesplot.png'):
         """Guardar y mostrar gráfica"""
