@@ -27,6 +27,7 @@ import pango
 import util
 import comprobaciones
 from ptcanvas import CPTCanvas, CPCanvas, GraphData
+import webbrowser
 
 COLOR_OK = gtk.gdk.color_parse("#AACCAA")
 COLOR_BAD = gtk.gdk.color_parse("#CCAAAA")
@@ -106,6 +107,7 @@ class GtkCondensa(object):
                 }
         builder.connect_signals(smap)
         
+        gtk.link_button_set_uri_hook(self.open_url)
         self.cargacerramientos()
         self.actualiza()
         
@@ -247,6 +249,9 @@ class GtkCondensa(object):
         while gtk.events_pending():
             gtk.main_iteration()
 
+    def open_url(self, button, url):
+        webbrowser.open(url)
+        
     def on_cerramientobtn_clicked(self, widget):
         """Abrir diálogo de selección de cerramiento"""
         resultado = self.dlg.run()
