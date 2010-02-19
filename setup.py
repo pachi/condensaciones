@@ -87,7 +87,7 @@ setup(
     long_description=open('README').read(),
     license="GPL",
     #scripts=['bin/run.py'],
-    windows=[{'script':'bin/run.py', 'icon_resources':[(1, 'data/logo.ico')]}],
+    windows=[{'script':'bin/condensa', 'icon_resources':[(1, 'data/logo.ico')]}],
     packages=['condensaciones'],
     options=opts,
     data_files=data_files
