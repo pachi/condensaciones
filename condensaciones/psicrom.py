@@ -47,7 +47,6 @@ Cálculos psicrométricos:
 # concreta? Sería mejor cambiar psatloc, temploc y hrloc a funciones que tengan
 # delta_alt = None y se usen siempre?
 
-import sys
 import math
 
 def psat(temp):
