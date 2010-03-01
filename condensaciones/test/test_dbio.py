@@ -22,6 +22,7 @@
 #   02110-1301, USA.
 """Tests del módulo condensaciones.dbutils"""
 
+import os
 import unittest
 import condensaciones.dbutils as dbutils
 
@@ -52,7 +53,7 @@ parsedblock = {'MATERIAL': 'B_Vapor Z3 (d_1mm)',
                'IMAGE': 'asfalto.bmp',
                'LIBRARY': 'NO',}
 
-DB = "./PCatalogo.bdc"
+DB = os.path.abspath("./PCatalogo.bdc")
 
 parsedfile = {u'default':
             [{u'GROUP': u'B_VAPOR',
