@@ -176,7 +176,7 @@
                 <child>
                   <object class="GtkImage" id="image2">
                     <property name="visible">True</property>
-                    <property name="pixbuf">Firewall-32.png</property>
+                    <property name="pixbuf">splash.png</property>
                   </object>
                   <packing>
                     <property name="position">0</property>

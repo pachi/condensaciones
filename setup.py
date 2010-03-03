@@ -35,12 +35,13 @@ from distutils.core import setup
 import py2exe
 from matplotlib import get_py2exe_datafiles
 
-__version__ = "0.01"
+__version__ = "0.1"
 docfiles = ['README', 'NEWS', 'INSTALL', 'COPYING']
 datafilelist = ['data/condensa.ui',
                 'data/BDCatalogo.bdc',
                 'data/Catalogo_URSA.bdc',
-                'data/PCatalogo.bdc']
+                'data/PCatalogo.bdc',
+                'data/splash.png']
 
 classifiers = [
     'Development Status :: 4 - Beta',
