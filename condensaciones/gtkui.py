@@ -250,6 +250,7 @@ class GtkCondensa(object):
             gtk.main_iteration()
 
     def open_url(self, button, url):
+        """Abre dirección web en navegador predeterminado"""
         webbrowser.open(url)
         
     def on_cerramientobtn_clicked(self, widget):
