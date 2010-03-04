@@ -92,6 +92,7 @@ class GtkCondensa(object):
     def main(self):
         """Arranca la aplicación"""
         self.builder.get_object('window1').show_all()
+        self.statusbar.push(0, u"Aplicación inicializada")
         gtk.main()
 
     def cargacerramientos(self):
