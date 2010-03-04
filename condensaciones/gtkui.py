@@ -252,6 +252,8 @@ class GtkCondensa(object):
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'nota')
         while gtk.events_pending():
             gtk.main_iteration()
+    
+    # Selección de ambientes - diálogo ---------------------------------------
 
     def ambienteselecciona(self, widget):
         """Abre diálogo de selección de ambientes"""
@@ -283,7 +285,7 @@ class GtkCondensa(object):
             self.statusbar.push(0, txt)
         self.adlg.hide()
     
-    # Selección de cerramientos - diálogo -------------------------------------
+    # Selección de cerramientos - diálogo ------------------------------------
     
     def cerramientoselecciona(self, widget):
         """Abre diálogo de selección de cerramiento"""
