@@ -379,10 +379,14 @@ class GtkCondensa(object):
                 self.actualiza()
                 print "Baja capa"
 
-if __name__ == "__main__":
-    from cerramiento import Cerramiento
-    from datos_ejemplo import climae, climai, cerramientocapas
-    _c = Cerramiento("Cerramiento tipo", "Tipo",
-                       cerramientocapas, Rse=0.04, Rsi=0.13)
-    app = GtkCondensa(_c, climae, climai)
-    app.main()
+    def on_notebook_switch_page(self, notebook, page, pagenum):
+        CREDITOS, CAPAS, GRAFICAPT, GRAFICAPV, INFORME = 0, 1, 2, 3, 4
+        if pagenum == GRAFICAPT or pagenum == GRAFICAPV:
+            if self.gredrawpending:
+                self.actualizagraficas()
+                self.gredrawpending = False
+        elif pagenum == INFORME:
+            if self.gredrawpending:
+                self.actualizagraficas()
+                self.gredrawpending = False
+            self.actualizainforme()
