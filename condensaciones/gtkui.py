@@ -44,22 +44,17 @@ class GtkCondensa(object):
         self.climae = climaext #FIXME: or Clima() para evitar valor None?
         self.climai = climaint #FIXME: or Clima() para evitar valor None?
         self.cerramientos = {} # Cerramientos disponibles
-        # --- UI ---
         UIFILE = util.get_resource('data', 'condensa.ui')
         self.builder = gtk.Builder()
         self.builder.add_from_file(UIFILE)
-        # Controles ventana principal
         self.statusbar = self.builder.get_object('statusbar')
         self.graficaprestemp = self.builder.get_object('prestemp_canvas')
         self.graficapresiones = self.builder.get_object('presiones_canvas')
         self.informetxtbuffer = self.builder.get_object('informe_txtbuffer')
         self.createtexttags()
-        # Lista de capas del cerramiento activo y vista de capas
         self.capasls = self.builder.get_object('capas_liststore')
         self.capastv = self.builder.get_object('capas_treeview')
-        # Lista de materiales cargados de bases de datos
         self.materialesls = self.builder.get_object('materiales_liststore')
-        # Lista de cerramientos disponibles en la biblioteca
         self.cerramientols = self.builder.get_object('cerramientos_liststore')
         self.adlg = self.builder.get_object('ambiente_dlg')
         self.dlg = self.builder.get_object('cerramiento_dlg')
@@ -89,12 +84,11 @@ class GtkCondensa(object):
         tb.create_tag("titulo2",
                       style=pango.STYLE_ITALIC, scale=pango.SCALE_LARGE)
         tb.create_tag("subtitulo",
-                      #underline=pango.UNDERLINE_SINGLE,
                       weight=pango.WEIGHT_BOLD, scale=pango.SCALE_LARGE,)
-        tb.create_tag("capa",
-                      weight=pango.WEIGHT_BOLD, foreground="#777777")
+        tb.create_tag("capa", weight=pango.WEIGHT_BOLD, foreground="#777777")
         tb.create_tag("datoscapa", style=pango.STYLE_ITALIC, indent=30)
-        tb.create_tag("resultados", foreground='blue')
+        tb.create_tag("resultados", scale=pango.SCALE_MEDIUM, foreground='blue')
+        tb.create_tag("nota", scale=pango.SCALE_SMALL)
 
     def main(self):
         """Arranca la aplicación"""
@@ -122,8 +116,6 @@ class GtkCondensa(object):
         self.actualizacabecera()
         self.actualizapie()
         self.actualizacapas()
-        #self.actualizagraficas()
-        #self.actualizainforme()
 
     def calcula(self):
         """Calcula resultados para usarlos en presentación"""
@@ -320,7 +312,6 @@ class GtkCondensa(object):
 
     def on_cerramientotv_cursor_changed(self, tv):
         """Cambia cerramiento seleccionado en lista de cerramientos"""
-        #tv = builder.get_object('cerramientotv')
         cerrtm, cerrtm_iter = tv.get_selection().get_selected()
         value = cerrtm.get_value(cerrtm_iter, 0)
         lblselected = self.builder.get_object('lblselected')
@@ -386,7 +377,7 @@ class GtkCondensa(object):
         cerrtm, cerrtm_iter = self.capastv.get_selection().get_selected()
         if cerrtm_iter:
             capai = int(cerrtm.get_value(cerrtm_iter, 0))
-            ncapatuple = self.cerramiento.capas.pop(capai)
+            self.cerramiento.capas.pop(capai)
             self.actualiza()
             self.gredrawpending = True
             if capai == 0: capai = 1
