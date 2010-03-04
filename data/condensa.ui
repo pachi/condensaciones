@@ -191,6 +191,8 @@
                 <child>
                   <object class="GtkImage" id="image2">
                     <property name="visible">True</property>
+                    <property name="xpad">10</property>
+                    <property name="ypad">10</property>
                     <property name="pixbuf">splash.png</property>
                   </object>
                   <packing>
