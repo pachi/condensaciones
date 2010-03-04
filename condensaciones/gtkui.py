@@ -79,9 +79,6 @@ class GtkCondensa(object):
                                         indent=30)
         self.cerramientotxtb.create_tag("resultados",
                                         foreground='blue')
-        # - pie -
-        self.pie1 = builder.get_object('pie1')
-        self.pie2 = builder.get_object('pie2')
         # - pestaña de capas -
         self.rse = builder.get_object('Rsevalue')
         self.rsi = builder.get_object('Rsivalue')
@@ -176,10 +173,12 @@ class GtkCondensa(object):
         """Actualiza pie de ventana principal"""
         SEGUNDOSPORMES = 2592000.0
         txt = u"Total: %.2f [g/m²mes]" % (SEGUNDOSPORMES * self.totalg)
-        self.pie1.set_markup(txt)
+        pie1 = self.builder.get_object('pie1')
+        pie1.set_markup(txt)
         txt = (u"Cantidades condensadas: " +
                  u", ".join(["%.2f" % (SEGUNDOSPORMES * x,) for x in self.g]))
-        self.pie2.set_markup(txt)
+        pie2 = self.builder.get_object('pie2')
+        pie2.set_markup(txt)
 
     def actualizacapas(self):
         """Actualiza pestaña de capas con descripción, capas, Rse, Rsi"""
