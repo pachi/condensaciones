@@ -95,7 +95,6 @@ class GtkCondensa(object):
         # Controles de diálogo de selección de cerramientos
         self.dlg = builder.get_object('cerramientodlg')
         self.cerramientotv = builder.get_object('cerramientotv')
-        self.lblselected = builder.get_object('lblselected')
         self.cerramientols = builder.get_object('cerramientos_liststore')
         # Materiales
         self.materialesls = builder.get_object('materiales_liststore')
@@ -256,10 +255,11 @@ class GtkCondensa(object):
         
     def on_cerramientobtn_clicked(self, widget):
         """Abrir diálogo de selección de cerramiento"""
+        lblselected = self.builder.get_object('lblselected')
         resultado = self.dlg.run()
         # gtk.RESPONSE_ACCEPT vs gtk.RESPONSE_CANCEL
         if resultado == gtk.RESPONSE_ACCEPT:
-            nombrecerr = self.lblselected.get_text()
+            nombrecerr = lblselected.get_text()
             self.cerramiento = self.cerramientos[nombrecerr]
             self.actualiza()
         self.dlg.hide()
@@ -268,7 +268,8 @@ class GtkCondensa(object):
         """Cambio de cerramiento seleccionado en lista de cerramientos"""
         cerrtm, cerrtm_iter = tv.get_selection().get_selected()
         value = cerrtm.get_value(cerrtm_iter, 0)
-        self.lblselected.set_text(value)
+        lblselected = self.builder.get_object('lblselected')
+        lblselected.set_text(value)
 
     def on_ctnombre_changed(self, cr, path, new_iter):
         """Cambio de capa en el combo
