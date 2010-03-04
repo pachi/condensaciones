@@ -166,10 +166,10 @@ class GtkCondensa(object):
                  u' %.2f, f<sub>Rsi,min</sub> = %.2f')
         self.csubtitulo1.set_markup(txt % (self.cerramiento.U,
                                            self.fRsi, self.fRsimin))
-        txt = (u'T<sub>int</sub> = %.2f°C, HR<sub>int</sub> = %.1f%%, '
-                 u'T<sub>ext</sub> = %.2f°C, HR<sub>ext</sub> = %.1f%%')
-        self.csubtitulo2.set_markup(txt % (self.climai.temp, self.climai.HR,
-                                           self.climae.temp, self.climae.HR))
+        txt = (u'T<sub>ext</sub> = %.2f°C, HR<sub>ext</sub> = %.1f%%, '
+               u'T<sub>int</sub> = %.2f°C, HR<sub>int</sub> = %.1f%%')
+        self.csubtitulo2.set_markup(txt % (self.climae.temp, self.climae.HR,
+                                           self.climai.temp, self.climai.HR))
         self.cfondo.modify_bg(gtk.STATE_NORMAL,
                               self.ccheck and COLOR_BAD or COLOR_OK)
 
