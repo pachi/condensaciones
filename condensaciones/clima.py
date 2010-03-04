@@ -24,7 +24,7 @@
 
 class Clima(object):
     """Clase para almacenamiento de datos de temperatura, humedad, etc"""
-    def __init__(self, temp, HR):
+    def __init__(self, temp=20.0, HR=55.0):
         """Inicialización de datos
         
         temp - temperatura [ºC]
