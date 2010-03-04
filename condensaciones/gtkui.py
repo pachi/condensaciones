@@ -43,8 +43,8 @@ class GtkCondensa(object):
         """
         self.cerramiento = cerramiento # Cerramiento actual
         self.modificado = False # Cerramiento modificado vs estado inicial
-        self.climae = climaext
-        self.climai = climaint
+        self.climae = climaext #FIXME: or Clima() para evitar valor None?
+        self.climai = climaint #FIXME: or Clima() para evitar valor None?
         # Cerramientos disponibles
         self.cerramientos = {}
         # --- UI ---
