@@ -61,27 +61,8 @@ class GtkCondensa(object):
         # - texto -
         self.textview = builder.get_object('cerramientotextview')
         self.cerramientotxtb = builder.get_object('cerramientotxtb')
-        self.cerramientotxtb.create_tag("titulo",
-                                        weight=pango.WEIGHT_BOLD,
-                                        scale=pango.SCALE_X_LARGE)
-        self.cerramientotxtb.create_tag("titulo2",
-                                        style=pango.STYLE_ITALIC,
-                                        scale=pango.SCALE_LARGE)
-        self.cerramientotxtb.create_tag("subtitulo",
-                                        #underline=pango.UNDERLINE_SINGLE,
-                                        weight=pango.WEIGHT_BOLD,
-                                        scale=pango.SCALE_LARGE,)
-        self.cerramientotxtb.create_tag("capa",
-                                        weight=pango.WEIGHT_BOLD,
-                                        foreground="#777777")
-        self.cerramientotxtb.create_tag("datoscapa",
-                                        style=pango.STYLE_ITALIC,
-                                        indent=30)
-        self.cerramientotxtb.create_tag("resultados",
-                                        foreground='blue')
-        # - pestaña de capas -
-        self.rse = builder.get_object('Rsevalue')
-        self.rsi = builder.get_object('Rsivalue')
+        self.createtexttags()
+        # Lista de capas de un cerramiento
         self.capasls = builder.get_object('capas_liststore')
         # Controles de diálogo de selección de cerramientos
         self.dlg = builder.get_object('cerramientodlg')
@@ -101,7 +82,21 @@ class GtkCondensa(object):
         gtk.link_button_set_uri_hook(self.open_url)
         self.cargacerramientos()
         self.actualiza()
-        
+
+    def createtexttags(self):
+        tb = self.cerramientotxtb
+        tb.create_tag("titulo",
+                      weight=pango.WEIGHT_BOLD, scale=pango.SCALE_X_LARGE)
+        tb.create_tag("titulo2",
+                      style=pango.STYLE_ITALIC, scale=pango.SCALE_LARGE)
+        tb.create_tag("subtitulo",
+                      #underline=pango.UNDERLINE_SINGLE,
+                      weight=pango.WEIGHT_BOLD, scale=pango.SCALE_LARGE,)
+        tb.create_tag("capa",
+                      weight=pango.WEIGHT_BOLD, foreground="#777777")
+        tb.create_tag("datoscapa", style=pango.STYLE_ITALIC, indent=30)
+        tb.create_tag("resultados", foreground='blue')
+
     def main(self):
         """Arranca la aplicación"""
         self.w.show_all()
@@ -182,9 +177,11 @@ class GtkCondensa(object):
 
     def actualizacapas(self):
         """Actualiza pestaña de capas con descripción, capas, Rse, Rsi"""
+        rse = self.builder.get_object('Rsevalue')
+        rsi = self.builder.get_object('Rsivalue')
         c = self.cerramiento
-        self.rse.set_text("%.2f" % float(c.Rse))
-        self.rsi.set_text("%.2f" % float(c.Rsi))
+        rse.set_text("%.2f" % float(c.Rse))
+        rsi.set_text("%.2f" % float(c.Rsi))
         self.capasls.clear()
         for i, (nombre, e, K, R) in enumerate(zip(c.nombres,
                                                c.espesores,
