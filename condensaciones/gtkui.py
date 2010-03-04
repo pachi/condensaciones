@@ -279,11 +279,14 @@ class GtkCondensa(object):
         new_iter - ruta del nuevo valor en el modelo del combo
         """
         capaindex = int(self.capasls[path][0])
-        ecapa = self.cerramiento.capas[capaindex][1]
+        oldtext, ecapa = self.cerramiento.capas[capaindex]
         newtext = self.materialesls[new_iter][0].decode('utf-8')
         self.cerramiento.capas[capaindex] = (newtext, float(ecapa))
         self.modificado = True
-        self.actualiza() 
+        try:
+            self.actualiza()
+        except:
+            self.cerramiento.capas[capaindex] = (oldtext, float(ecapa))
 
     def on_ctespesor_changed(self, cr, path, new_text):
         """Cambio de capa en la entrada de espesor
