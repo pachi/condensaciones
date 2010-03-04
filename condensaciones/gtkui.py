@@ -45,31 +45,30 @@ class GtkCondensa(object):
         self.modificado = False # Cerramiento modificado vs estado inicial
         self.climae = climaext #FIXME: or Clima() para evitar valor None?
         self.climai = climaint #FIXME: or Clima() para evitar valor None?
-        # Cerramientos disponibles
-        self.cerramientos = {}
+        self.cerramientos = {} # Cerramientos disponibles
         # --- UI ---
         UIFILE = util.get_resource('data', 'condensa.ui')
         builder = gtk.Builder()
         builder.add_from_file(UIFILE)
         self.builder = builder
         # Controles ventana principal
-        self.w = builder.get_object('window1')
         self.statusbar = builder.get_object('statusbar')
         # - gráficas -
         self.grafico1 = builder.get_object('cptcanvas1')
         self.grafico2 = builder.get_object('cpcanvas1')
         # - texto -
-        self.textview = builder.get_object('cerramientotextview')
         self.cerramientotxtb = builder.get_object('cerramientotxtb')
         self.createtexttags()
-        # Lista de capas de un cerramiento
+        # Lista de capas del cerramiento activo
         self.capasls = builder.get_object('capas_liststore')
+        # Lista de materiales cargados de bases de datos
+        self.materialesls = builder.get_object('materiales_liststore')
+        # Controles de diálogo de selección de ambientes
+        self.adlg = builder.get_object('ambientedlg')
         # Controles de diálogo de selección de cerramientos
         self.dlg = builder.get_object('cerramientodlg')
-        self.cerramientotv = builder.get_object('cerramientotv')
+        # Lista de cerramientos disponibles en la biblioteca
         self.cerramientols = builder.get_object('cerramientos_liststore')
-        # Materiales
-        self.materialesls = builder.get_object('materiales_liststore')
 
         smap = {"on_window_destroy": gtk.main_quit,
                 "on_cbtn_clicked": self.on_cerramientobtn_clicked,
@@ -84,6 +83,7 @@ class GtkCondensa(object):
         self.actualiza()
 
     def createtexttags(self):
+        # textview = builder.get_object('cerramientotextview')
         tb = self.cerramientotxtb
         tb.create_tag("titulo",
                       weight=pango.WEIGHT_BOLD, scale=pango.SCALE_X_LARGE)
@@ -99,7 +99,7 @@ class GtkCondensa(object):
 
     def main(self):
         """Arranca la aplicación"""
-        self.w.show_all()
+        self.builder.get_object('window1').show_all()
         gtk.main()
 
     def cargacerramientos(self):
@@ -262,6 +262,7 @@ class GtkCondensa(object):
 
     def on_cerramientotv_cursor_changed(self, tv):
         """Cambio de cerramiento seleccionado en lista de cerramientos"""
+        #tv = builder.get_object('cerramientotv')
         cerrtm, cerrtm_iter = tv.get_selection().get_selected()
         value = cerrtm.get_value(cerrtm_iter, 0)
         lblselected = self.builder.get_object('lblselected')
