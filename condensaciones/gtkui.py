@@ -56,16 +56,17 @@ class GtkCondensa(object):
         # - texto -
         self.cerramientotxtb = self.builder.get_object('cerramientotxtb')
         self.createtexttags()
-        # Lista de capas del cerramiento activo
+        # Lista de capas del cerramiento activo y vista de capas
         self.capasls = self.builder.get_object('capas_liststore')
+        self.capastv = self.builder.get_object('capas_treeview')
         # Lista de materiales cargados de bases de datos
         self.materialesls = self.builder.get_object('materiales_liststore')
+        # Lista de cerramientos disponibles en la biblioteca
+        self.cerramientols = self.builder.get_object('cerramientos_liststore')
         # Controles de diálogo de selección de ambientes
         self.adlg = self.builder.get_object('ambientedlg')
         # Controles de diálogo de selección de cerramientos
         self.dlg = self.builder.get_object('cerramientodlg')
-        # Lista de cerramientos disponibles en la biblioteca
-        self.cerramientols = self.builder.get_object('cerramientos_liststore')
 
         smap = {"on_window_destroy": gtk.main_quit,
                 "on_cbtn_clicked": self.on_cerramientobtn_clicked,
@@ -73,6 +74,10 @@ class GtkCondensa(object):
                 "on_ctv_cursor_changed": self.on_cerramientotv_cursor_changed,
                 "on_ctnombre_changed": self.on_ctnombre_changed,
                 "on_ctespesor_changed": self.on_ctespesor_changed,
+                "on_capaaddbtn_clicked": self.on_capaaddbtn_clicked,
+                "on_caparemovebtn_clicked": self.on_caparemovebtn_clicked,
+                "on_capaupbtn_clicked": self.on_capaupbtn_clicked,
+                "on_capadownbtn_clicked": self.on_capadownbtn_clicked,
                 }
         self.builder.connect_signals(smap)
         
@@ -81,6 +86,7 @@ class GtkCondensa(object):
         self.actualiza()
 
     def createtexttags(self):
+        """Crea marcas de texto para estilos en textbuffer"""
         # textview = builder.get_object('cerramientotextview')
         tb = self.cerramientotxtb
         tb.create_tag("titulo",
@@ -188,6 +194,7 @@ class GtkCondensa(object):
                                                c.R[1:-1] #quitamos Rse, Rsi
                                                )):
             self.capasls.append((i, nombre, "%.3f" % e, "%.4f" % K, "%.4f" % R))
+        #self.capastv.set_cursor('0')
 
     def actualizagraficas(self):
         """Redibuja gráficos con nuevos datos"""
@@ -247,9 +254,11 @@ class GtkCondensa(object):
     def open_url(self, button, url):
         """Abre dirección web en navegador predeterminado"""
         webbrowser.open(url)
+    
+    # Selección de ambientes - diálogo ----------------------------------------
 
     def on_ambientebtn_clicked(self, widget):
-        """Abrir diálogo de selección de ambientes"""
+        """Abre diálogo de selección de ambientes"""
         localidad = self.builder.get_object('localidadentry')
         te = self.builder.get_object('tempextentry')
         hre = self.builder.get_object('hrextentry')
@@ -270,9 +279,11 @@ class GtkCondensa(object):
             self.climai.HR = float(hri.get_text())
             self.actualiza()
         self.adlg.hide()
-        
+    
+    # Selección de cerramientos - diálogo -------------------------------------
+    
     def on_cerramientobtn_clicked(self, widget):
-        """Abrir diálogo de selección de cerramiento"""
+        """Abre diálogo de selección de cerramiento"""
         lblselected = self.builder.get_object('lblselected')
         resultado = self.dlg.run()
         # gtk.RESPONSE_ACCEPT vs gtk.RESPONSE_CANCEL
@@ -283,13 +294,15 @@ class GtkCondensa(object):
         self.dlg.hide()
 
     def on_cerramientotv_cursor_changed(self, tv):
-        """Cambio de cerramiento seleccionado en lista de cerramientos"""
+        """Cambia cerramiento seleccionado en lista de cerramientos"""
         #tv = builder.get_object('cerramientotv')
         cerrtm, cerrtm_iter = tv.get_selection().get_selected()
         value = cerrtm.get_value(cerrtm_iter, 0)
         lblselected = self.builder.get_object('lblselected')
         lblselected.set_text(value)
 
+    # Retrollamadas de modificación de capas ----------------------------------
+ 
     def on_ctnombre_changed(self, cr, path, new_iter):
         """Cambio de capa en el combo
         
@@ -323,6 +336,48 @@ class GtkCondensa(object):
             self.actualiza()
         except ValueError:
             pass
+
+    def on_capaaddbtn_clicked(self, btn):
+        """Añade capa a cerramiento"""
+        cerrtm, cerrtm_iter = self.capastv.get_selection().get_selected()
+        if cerrtm_iter:
+            capaindex = int(cerrtm.get_value(cerrtm_iter, 0))
+            #duplicamos propiedades de capa actual
+            ncapatuple = self.cerramiento.capas[capaindex]
+            self.cerramiento.capas.insert(capaindex + 1, ncapatuple)
+            self.actualiza()
+            print "Añade capa %i" % capaindex
+
+    def on_caparemovebtn_clicked(self, btn):
+        """Elimina capa seleccionada de cerramiento"""
+        cerrtm, cerrtm_iter = self.capastv.get_selection().get_selected()
+        if cerrtm_iter:
+            capaindex = int(cerrtm.get_value(cerrtm_iter, 0))
+            ncapatuple = self.cerramiento.capas.pop(capaindex)
+            self.actualiza()
+            print "Quita capa %i" % capaindex
+
+    def on_capaupbtn_clicked(self, btn):
+        """Sube capa seleccionada de cerramiento"""
+        cerrtm, cerrtm_iter = self.capastv.get_selection().get_selected()
+        if cerrtm_iter:
+            capai = int(cerrtm.get_value(cerrtm_iter, 0))
+            if capai > 0:
+                cp = self.cerramiento.capas
+                cp[capai - 1], cp[capai] = cp[capai], cp[capai - 1]
+                self.actualiza()
+                print "Sube capa"
+
+    def on_capadownbtn_clicked(self, btn):
+        """Baja capa seleccionada de cerramiento"""
+        cerrtm, cerrtm_iter = self.capastv.get_selection().get_selected()
+        if cerrtm_iter:
+            capai = int(cerrtm.get_value(cerrtm_iter, 0))
+            if capai + 1 < len(self.cerramiento.capas):
+                cp = self.cerramiento.capas
+                cp[capai + 1], cp[capai] = cp[capai], cp[capai + 1]
+                self.actualiza()
+                print "Baja capa"
 
 if __name__ == "__main__":
     from cerramiento import Cerramiento
