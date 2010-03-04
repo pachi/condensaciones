@@ -72,6 +72,7 @@ class GtkCondensa(object):
 
         smap = {"on_window_destroy": gtk.main_quit,
                 "on_cbtn_clicked": self.on_cerramientobtn_clicked,
+                "on_abtn_clicked": self.on_ambientebtn_clicked,
                 "on_ctv_cursor_changed": self.on_cerramientotv_cursor_changed,
                 "on_ctnombre_changed": self.on_ctnombre_changed,
                 "on_ctespesor_changed": self.on_ctespesor_changed,
@@ -248,6 +249,29 @@ class GtkCondensa(object):
     def open_url(self, button, url):
         """Abre dirección web en navegador predeterminado"""
         webbrowser.open(url)
+
+    def on_ambientebtn_clicked(self, widget):
+        """Abrir diálogo de selección de ambientes"""
+        localidad = self.builder.get_object('localidadentry')
+        te = self.builder.get_object('tempextentry')
+        hre = self.builder.get_object('hrextentry')
+        ti = self.builder.get_object('tempintentry')
+        hri = self.builder.get_object('hrintentry')
+        
+        localidad.set_text('Localidad')
+        te.set_text("%.2f" % self.climae.temp)
+        hre.set_text("%.2f" % self.climae.HR)
+        ti.set_text("%.2f" % self.climai.temp)
+        hri.set_text("%.2f" % self.climai.HR)
+        resultado = self.adlg.run()
+        # gtk.RESPONSE_ACCEPT vs gtk.RESPONSE_CANCEL
+        if resultado == gtk.RESPONSE_ACCEPT:
+            self.climae.temp = float(te.get_text())
+            self.climae.HR = float(hre.get_text())
+            self.climai.temp = float(ti.get_text())
+            self.climai.HR = float(hri.get_text())
+            self.actualiza()
+        self.adlg.hide()
         
     def on_cerramientobtn_clicked(self, widget):
         """Abrir diálogo de selección de cerramiento"""
