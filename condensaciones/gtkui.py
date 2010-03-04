@@ -55,12 +55,6 @@ class GtkCondensa(object):
         # Controles ventana principal
         self.w = builder.get_object('window1')
         self.statusbar = builder.get_object('statusbar')
-        # - cabecera -
-        self.cfondo = builder.get_object('cfondo')
-        self.nombre = builder.get_object('nombre_cerramiento')
-        self.descripcion = builder.get_object('descripcion_cerramiento')        
-        self.csubtitulo1 = builder.get_object('csubtitulo1')
-        self.csubtitulo2 = builder.get_object('csubtitulo2')
         # - gráficas -
         self.grafico1 = builder.get_object('cptcanvas1')
         self.grafico2 = builder.get_object('cpcanvas1')
@@ -159,18 +153,24 @@ class GtkCondensa(object):
 
     def actualizacabecera(self):
         """Actualiza texto de cabecera"""
-        self.nombre.set_text(self.cerramiento.nombre)
-        self.descripcion.set_text(self.cerramiento.descripcion)
+        cfondo = self.builder.get_object('cfondo')
+        cnombre = self.builder.get_object('nombre_cerramiento')
+        cdescripcion = self.builder.get_object('descripcion_cerramiento')
+        csubtitulo1 = self.builder.get_object('csubtitulo1')
+        csubtitulo2 = self.builder.get_object('csubtitulo2')
+        
+        cnombre.set_text(self.cerramiento.nombre)
+        cdescripcion.set_text(self.cerramiento.descripcion)
         txt = (u'U = %.2f W/m²K, f<sub>Rsi</sub> ='
                  u' %.2f, f<sub>Rsi,min</sub> = %.2f')
-        self.csubtitulo1.set_markup(txt % (self.cerramiento.U,
-                                           self.fRsi, self.fRsimin))
+        csubtitulo1.set_markup(txt % (self.cerramiento.U,
+                                      self.fRsi, self.fRsimin))
         txt = (u'T<sub>ext</sub> = %.2f°C, HR<sub>ext</sub> = %.1f%%, '
                u'T<sub>int</sub> = %.2f°C, HR<sub>int</sub> = %.1f%%')
-        self.csubtitulo2.set_markup(txt % (self.climae.temp, self.climae.HR,
-                                           self.climai.temp, self.climai.HR))
-        self.cfondo.modify_bg(gtk.STATE_NORMAL,
-                              self.ccheck and COLOR_BAD or COLOR_OK)
+        csubtitulo2.set_markup(txt % (self.climae.temp, self.climae.HR,
+                                      self.climai.temp, self.climai.HR))
+        cfondo.modify_bg(gtk.STATE_NORMAL,
+                         self.ccheck and COLOR_BAD or COLOR_OK)
 
     def actualizapie(self):
         """Actualiza pie de ventana principal"""
