@@ -27,8 +27,7 @@ import pango
 import util
 import comprobaciones
 from ptcanvas import CPTCanvas, CPCanvas, GraphData
-import webbrowser
-
+import webbrowser, datetime
 
 class GtkCondensa(object):
     """Aplicación"""
@@ -51,11 +50,9 @@ class GtkCondensa(object):
         self.builder.add_from_file(UIFILE)
         # Controles ventana principal
         self.statusbar = self.builder.get_object('statusbar')
-        # - gráficas -
-        self.grafico1 = self.builder.get_object('cptcanvas1')
-        self.grafico2 = self.builder.get_object('cpcanvas1')
-        # - texto -
-        self.cerramientotxtb = self.builder.get_object('cerramientotxtb')
+        self.graficaprestemp = self.builder.get_object('prestemp_canvas')
+        self.graficapresiones = self.builder.get_object('presiones_canvas')
+        self.informetxtbuffer = self.builder.get_object('informe_txtbuffer')
         self.createtexttags()
         # Lista de capas del cerramiento activo y vista de capas
         self.capasls = self.builder.get_object('capas_liststore')
@@ -89,8 +86,7 @@ class GtkCondensa(object):
 
     def createtexttags(self):
         """Crea marcas de texto para estilos en textbuffer"""
-        # textview = builder.get_object('cerramientotextview')
-        tb = self.cerramientotxtb
+        tb = self.informetxtbuffer
         tb.create_tag("titulo",
                       weight=pango.WEIGHT_BOLD, scale=pango.SCALE_X_LARGE)
         tb.create_tag("titulo2",
@@ -200,55 +196,72 @@ class GtkCondensa(object):
     def actualizagraficas(self):
         """Redibuja gráficos con nuevos datos"""
         gdata = GraphData(self.cerramiento, self.climae, self.climai)
-        self.grafico1.clear()
-        self.grafico1.dibuja(gdata)
-        self.grafico2.clear()
-        self.grafico2.dibuja(gdata)
+        self.graficaprestemp.clear()
+        self.graficaprestemp.dibuja(gdata)
+        self.graficapresiones.clear()
+        self.graficapresiones.dibuja(gdata)
     
     def actualizainforme(self):
         """Actualiza texto descripción de cerramiento en ventana principal"""
         m = self.cerramiento
-        tb = self.cerramientotxtb
+        tb = self.informetxtbuffer
         tb.set_text("")
+        # Denominación cerramiento
         tb.insert_with_tags_by_name(tb.get_start_iter(),
                                       u"%s\n" % m.nombre, 'titulo')
         tb.insert_with_tags_by_name(tb.get_end_iter(),
                                       u"%s\n\n" % m.descripcion, 'titulo2')
-        # Capas
-        tb.insert_with_tags_by_name(tb.get_end_iter(),
-                                      u"Descripción\n", 'subtitulo')
+        # Condiciones ambientales
+        txt = u"Condiciones de cálculo\n"
+        tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'subtitulo')
+        txt = (u"Temperatura exterior: %.1f [ºC]\n"
+               u"Humedad relativa exterior: %.1f [%%]\n"
+               u"Temperatura interior: %.1f [ºC]\n"
+               u"Humedad relativa interior: %.1f [%%]\n\n"
+               u"Resistencia superficial exterior: %.2f [m²K/W]\n"
+               u"Resistencia superficial exterior: %.2f [m²K/W]\n\n"
+               ) % (self.climae.temp, self.climae.HR,
+                    self.climai.temp, self.climai.HR,
+                    self.cerramiento.Rse, self.cerramiento.Rsi)
+        tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'datoscapa')
+        # Cerramiento
+        txt = u"Descripción del cerramiento\n"
+        tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'subtitulo')
         for i, (nombre, e, R, S) in enumerate(zip(m.nombres, m.espesores,
                                                   m.R, m.S)):
-            tb.insert_with_tags_by_name(tb.get_end_iter(),
-                                         u"%i - %s:\n" % (i, nombre), 'capa')
+            txt = u"%i - %s:\n" % (i, nombre)
+            tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'capa')
             txt = u"%.3f [m]\nR=%.3f [m²K/W]\nS=%.3f [m]\n" % (e, R, S)
             tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'datoscapa')
         # Resultados
-        tb.insert_with_tags_by_name(tb.get_end_iter(),
-                                      u"\nResultados\n", 'subtitulo')
-        self.grafico1.save('g1.png')
+        txt = u"\nResultados\n"
+        tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'subtitulo')
+        self.graficaprestemp.save('g1.png')
         pb1 = gtk.gdk.pixbuf_new_from_file_at_size('g1.png', 600, 400)
         tb.insert_pixbuf(tb.get_end_iter(), pb1)
-        self.grafico2.save('g2.png')
+        self.graficapresiones.save('g2.png')
         tb.insert(tb.get_end_iter(), u"\n\n")
         pb2 = gtk.gdk.pixbuf_new_from_file_at_size('g2.png', 600, 400)
         tb.insert_pixbuf(tb.get_end_iter(), pb2)
         tb.insert(tb.get_end_iter(), u"\n\n")
-        txt = (u"R_total: %.3f [m²K/W]\n"
-                u"S_total = %.3f [m]\n"
-                u"U = %.3f [W/m²K]\n"
-                u"f_Rsi = %.2f\n"
-                u"f_Rsimin = %.2f\n") % (m.R_total, m.S_total, m.U,
-                                       self.fRsi, self.fRsimin)
+        txt = (u"R_total: %.3f [m²K/W]\nS_total = %.3f [m]\n"
+               u"U = %.3f [W/m²K]\nf_Rsi = %.2f\nf_Rsimin = %.2f\n"
+               ) % (m.R_total, m.S_total, m.U, self.fRsi, self.fRsimin)
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'resultados')
         # Condensaciones
         cs = self.cs and "Sí" or "No"
         ci = self.ci and "Sí" or "No"
-        tb.insert_with_tags_by_name(tb.get_end_iter(),
-                                     (u"\nCondensaciones superficiales: %s\n"
-                                      u"Condensaciones intersticiales: %s\n"
-                                     ) % (cs, ci),
-                                     'resultados')
+        txt = (u"\n¿Existen condensaciones superficiales?: %s\n"
+               u"¿Existen condensaciones intersticiales?: %s\n") % (cs, ci)
+        tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'resultados')
+        # Nota de generación
+        today = datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")
+        txt = (u"\n\nInforme generado por 'Condensa' "
+               u"(www.rvburke.com/condensaciones.html) el %s\n\n"
+               u"'Condensa' es software libre que se distribuye bajo licencia "
+               u"GPLv2 o posterior.\n"
+               u"Copyright (c) 2009-2010 Rafael Villar Burke\n") % today
+        tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'nota')
         while gtk.events_pending():
             gtk.main_iteration()
 

@@ -499,7 +499,7 @@
                     </child>
                     <child>
                       <object class="GtkTreeViewColumn" id="espesorcolumn">
-                        <property name="title">Espesor [m]</property>
+                        <property name="title">e [m]</property>
                         <property name="alignment">0.5</property>
                         <child>
                           <object class="GtkCellRendererText" id="ctespesor">
@@ -565,7 +565,7 @@
               </packing>
             </child>
             <child>
-              <object class="CPTCanvas" id="cptcanvas1">
+              <object class="CPTCanvas" id="prestemp_canvas">
                 <property name="visible">True</property>
               </object>
               <packing>
@@ -583,7 +583,7 @@
               </packing>
             </child>
             <child>
-              <object class="CPCanvas" id="cpcanvas1">
+              <object class="CPCanvas" id="presiones_canvas">
                 <property name="visible">True</property>
               </object>
               <packing>
@@ -607,11 +607,11 @@
                 <property name="hscrollbar_policy">automatic</property>
                 <property name="vscrollbar_policy">automatic</property>
                 <child>
-                  <object class="GtkTextView" id="cerramientotextview">
+                  <object class="GtkTextView" id="informe_textview">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="wrap_mode">word-char</property>
-                    <property name="buffer">cerramientotxtb</property>
+                    <property name="buffer">informe_txtbuffer</property>
                   </object>
                 </child>
               </object>
@@ -832,7 +832,7 @@
     <property name="page_increment">10</property>
     <property name="page_size">10</property>
   </object>
-  <object class="GtkTextBuffer" id="cerramientotxtb"/>
+  <object class="GtkTextBuffer" id="informe_txtbuffer"/>
   <object class="GtkImage" id="image1">
     <property name="visible">True</property>
     <property name="stock">gtk-missing-image</property>
