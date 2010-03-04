@@ -59,20 +59,19 @@ class GtkCondensa(object):
         self.adlg = self.builder.get_object('ambiente_dlg')
         self.dlg = self.builder.get_object('cerramiento_dlg')
         smap = {"on_window_destroy": gtk.main_quit,
-                "on_cbtn_clicked": self.on_cerramientobtn_clicked,
-                "on_abtn_clicked": self.on_ambientebtn_clicked,
-                "on_ctv_cursor_changed": self.on_cerramientotv_cursor_changed,
-                "on_ctnombre_changed": self.on_ctnombre_changed,
-                "on_ctespesor_changed": self.on_ctespesor_changed,
-                "on_capaaddbtn_clicked": self.on_capaaddbtn_clicked,
-                "on_caparemovebtn_clicked": self.on_caparemovebtn_clicked,
-                "on_capaupbtn_clicked": self.on_capaupbtn_clicked,
-                "on_capadownbtn_clicked": self.on_capadownbtn_clicked,
-                "on_notebook_switch_page": self.on_notebook_switch_page,
+                "on_abtn_clicked": self.ambienteselecciona,
+                "on_cbtn_clicked": self.cerramientoselecciona,
+                "on_ctv_cursor_changed": self.cerramientoactiva,
+                "on_ctnombre_changed": self.capacambiamaterial,
+                "on_ctespesor_changed": self.capacambiaespesor,
+                "on_capaaddbtn_clicked": self.capaadd,
+                "on_caparemovebtn_clicked": self.caparemove,
+                "on_capaupbtn_clicked": self.capaup,
+                "on_capadownbtn_clicked": self.capadown,
+                "on_notebook_switch_page": self.cambiahoja,
                 }
         self.builder.connect_signals(smap)
-        
-        gtk.link_button_set_uri_hook(self.open_url)
+        gtk.link_button_set_uri_hook(lambda b, u: webbrowser.open(u))
         self.cargacerramientos()
         self.actualiza()
 
@@ -254,13 +253,7 @@ class GtkCondensa(object):
         while gtk.events_pending():
             gtk.main_iteration()
 
-    def open_url(self, button, url):
-        """Abre dirección web en navegador predeterminado"""
-        webbrowser.open(url)
-    
-    # Selección de ambientes - diálogo ----------------------------------------
-
-    def on_ambientebtn_clicked(self, widget):
+    def ambienteselecciona(self, widget):
         """Abre diálogo de selección de ambientes"""
         localidad = self.builder.get_object('localidadentry')
         te = self.builder.get_object('tempextentry')
@@ -292,7 +285,7 @@ class GtkCondensa(object):
     
     # Selección de cerramientos - diálogo -------------------------------------
     
-    def on_cerramientobtn_clicked(self, widget):
+    def cerramientoselecciona(self, widget):
         """Abre diálogo de selección de cerramiento"""
         lblselected = self.builder.get_object('lblselected')
         resultado = self.dlg.run()
@@ -310,7 +303,7 @@ class GtkCondensa(object):
             self.statusbar.push(0, txt % nombrecerr)
         self.dlg.hide()
 
-    def on_cerramientotv_cursor_changed(self, tv):
+    def cerramientoactiva(self, tv):
         """Cambia cerramiento seleccionado en lista de cerramientos"""
         cerrtm, cerrtm_iter = tv.get_selection().get_selected()
         value = cerrtm.get_value(cerrtm_iter, 0)
@@ -319,8 +312,8 @@ class GtkCondensa(object):
 
     # Retrollamadas de modificación de capas ----------------------------------
  
-    def on_ctnombre_changed(self, cr, path, new_iter):
-        """Cambio de material de la capa en el combo
+    def capacambiamaterial(self, cr, path, new_iter):
+        """Cambio de material de la capa en el combo de la vista de capas
         
         cr - Comboboxcellrenderer con contenido modificado
         path - ruta del combo en el treeview
@@ -339,8 +332,8 @@ class GtkCondensa(object):
         except:
             self.cerramiento.capas[capaindex] = (oldtext, float(ecapa))
 
-    def on_ctespesor_changed(self, cr, path, new_text):
-        """Cambio de capa en la entrada de espesor
+    def capacambiaespesor(self, cr, path, new_text):
+        """Cambio de espesor en la vista de capas
         
         cr - cellrenderertext que cambia
         path - ruta del cellrenderer en el treeview
@@ -359,8 +352,8 @@ class GtkCondensa(object):
         except ValueError:
             pass
 
-    def on_capaaddbtn_clicked(self, btn):
-        """Añade capa a cerramiento"""
+    def capaadd(self, btn):
+        """Añade capa a cerramiento en vista de capas"""
         cerrtm, cerrtm_iter = self.capastv.get_selection().get_selected()
         if cerrtm_iter:
             capai = int(cerrtm.get_value(cerrtm_iter, 0))
@@ -372,8 +365,8 @@ class GtkCondensa(object):
             self.capastv.set_cursor(capai + 1)
             self.statusbar.push(0, u"Añadida capa %i" % capai + 1)
 
-    def on_caparemovebtn_clicked(self, btn):
-        """Elimina capa seleccionada de cerramiento"""
+    def caparemove(self, btn):
+        """Elimina capa seleccionada de cerramiento en vista de capas"""
         cerrtm, cerrtm_iter = self.capastv.get_selection().get_selected()
         if cerrtm_iter:
             capai = int(cerrtm.get_value(cerrtm_iter, 0))
@@ -384,8 +377,8 @@ class GtkCondensa(object):
             self.capastv.set_cursor(capai - 1)
             self.statusbar.push(0, u"Eliminada capa %i" % capai)
 
-    def on_capaupbtn_clicked(self, btn):
-        """Sube capa seleccionada de cerramiento"""
+    def capaup(self, btn):
+        """Sube capa seleccionada de cerramiento en vista de capas"""
         cerrtm, cerrtm_iter = self.capastv.get_selection().get_selected()
         if cerrtm_iter:
             capai = int(cerrtm.get_value(cerrtm_iter, 0))
@@ -397,8 +390,8 @@ class GtkCondensa(object):
                 self.capastv.set_cursor(capai - 1)
                 self.statusbar.push(0, u"Desplazada capa %i" % capai)
 
-    def on_capadownbtn_clicked(self, btn):
-        """Baja capa seleccionada de cerramiento"""
+    def capadown(self, btn):
+        """Baja capa seleccionada de cerramiento en vista de capas"""
         cerrtm, cerrtm_iter = self.capastv.get_selection().get_selected()
         if cerrtm_iter:
             capai = int(cerrtm.get_value(cerrtm_iter, 0))
@@ -410,7 +403,8 @@ class GtkCondensa(object):
                 self.capastv.set_cursor(capai + 1)
                 self.statusbar.push(0, u"Desplazada capa %i" % capai)
 
-    def on_notebook_switch_page(self, notebook, page, pagenum):
+    def cambiahoja(self, notebook, page, pagenum):
+        """Cambia hoja activa en la interfaz y actualiza gráficas si procede"""
         CREDITOS, CAPAS, GRAFICAPT, GRAFICAPV, INFORME = 0, 1, 2, 3, 4
         if pagenum == GRAFICAPT or pagenum == GRAFICAPV:
             if self.gredrawpending:
