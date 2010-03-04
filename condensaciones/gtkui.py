@@ -350,7 +350,7 @@ class GtkCondensa(object):
             self.modificado = True
             self.actualiza()
             self.gredrawpending = True
-            u"Modificado espesor de capa %i a %f [m]"
+            txt = u"Modificado espesor de capa %i a %f [m]"
             self.statusbar.push(0, txt % (capaindex, newe))
         except ValueError:
             pass
