@@ -31,7 +31,7 @@ import webbrowser, datetime
 
 class GtkCondensa(object):
     """Aplicación"""
-    def __init__(self, cerramiento=None, climaext=None, climaint=None):
+    def __init__(self, cerramiento, climaext, climaint):
         """Inicialización de datos e interfaz
         
         cerramiento - Cerramiento
@@ -39,11 +39,11 @@ class GtkCondensa(object):
         climai - datos higrotérmicos del interior
         """
         self.cerramiento = cerramiento # Cerramiento actual
-        self.modificado = False # Cerramiento modificado vs estado inicial
-        self.gredrawpending = True # Faltan por redibujar las gráficas?
-        self.climae = climaext #FIXME: or Clima() para evitar valor None?
-        self.climai = climaint #FIXME: or Clima() para evitar valor None?
-        self.cerramientos = {} # Cerramientos disponibles
+        self.climae = climaext
+        self.climai = climaint
+        self.cerramientomodificado = False
+        self.graphsredrawpending = True
+        self.cerramientosDB = {}
         UIFILE = util.get_resource('data', 'condensa.ui')
         self.builder = gtk.Builder()
         self.builder.add_from_file(UIFILE)
@@ -103,7 +103,7 @@ class GtkCondensa(object):
         for material in mats:
             self.materialesls.append((material,))
         for c in cerramientos:
-            self.cerramientos[c.nombre] = c
+            self.cerramientosDB[c.nombre] = c
             self.cerramientols.append((c.nombre, c.descripcion))
         n = len(materiales)
         m = len(cerramientos)
@@ -298,7 +298,7 @@ class GtkCondensa(object):
         # gtk.RESPONSE_ACCEPT vs gtk.RESPONSE_CANCEL
         if resultado == gtk.RESPONSE_ACCEPT:
             nombrecerr = lblselected.get_text()
-            self.cerramiento = self.cerramientos[nombrecerr]
+            self.cerramiento = self.cerramientosDB[nombrecerr]
             self.actualiza()
             #XXX: Se podría retrasar si fuese necesario por rendimiento
             #XXX: Además no se redibujan bien si se está mostrando una pestaña
@@ -329,10 +329,10 @@ class GtkCondensa(object):
         oldtext, ecapa = self.cerramiento.capas[capaindex]
         newtext = self.materialesls[new_iter][0].decode('utf-8')
         self.cerramiento.capas[capaindex] = (newtext, float(ecapa))
-        self.modificado = True
+        self.cerramientomodificado = True
         try:
             self.actualiza()
-            self.gredrawpending = True
+            self.graphsredrawpending = True
             txt = u"Modificado material de capa %i"
             self.statusbar.push(0, txt % capaindex)
         except:
@@ -350,9 +350,9 @@ class GtkCondensa(object):
         try:
             newe = float(new_text)
             self.cerramiento.capas[capaindex] = (ncapa, newe)
-            self.modificado = True
+            self.cerramientomodificado = True
             self.actualiza()
-            self.gredrawpending = True
+            self.graphsredrawpending = True
             txt = u"Modificado espesor de capa %i a %f [m]"
             self.statusbar.push(0, txt % (capaindex, newe))
         except ValueError:
@@ -367,7 +367,7 @@ class GtkCondensa(object):
             ncapatuple = self.cerramiento.capas[capai]
             self.cerramiento.capas.insert(capai + 1, ncapatuple)
             self.actualiza()
-            self.gredrawpending = True
+            self.graphsredrawpending = True
             self.capastv.set_cursor(capai + 1)
             self.statusbar.push(0, u"Añadida capa %i" % capai + 1)
 
@@ -378,7 +378,7 @@ class GtkCondensa(object):
             capai = int(cerrtm.get_value(cerrtm_iter, 0))
             self.cerramiento.capas.pop(capai)
             self.actualiza()
-            self.gredrawpending = True
+            self.graphsredrawpending = True
             if capai == 0: capai = 1
             self.capastv.set_cursor(capai - 1)
             self.statusbar.push(0, u"Eliminada capa %i" % capai)
@@ -392,7 +392,7 @@ class GtkCondensa(object):
                 cp = self.cerramiento.capas
                 cp[capai - 1], cp[capai] = cp[capai], cp[capai - 1]
                 self.actualiza()
-                self.gredrawpending = True
+                self.graphsredrawpending = True
                 self.capastv.set_cursor(capai - 1)
                 self.statusbar.push(0, u"Desplazada capa %i" % capai)
 
@@ -405,7 +405,7 @@ class GtkCondensa(object):
                 cp = self.cerramiento.capas
                 cp[capai + 1], cp[capai] = cp[capai], cp[capai + 1]
                 self.actualiza()
-                self.gredrawpending = True
+                self.graphsredrawpending = True
                 self.capastv.set_cursor(capai + 1)
                 self.statusbar.push(0, u"Desplazada capa %i" % capai)
 
@@ -413,11 +413,11 @@ class GtkCondensa(object):
         """Cambia hoja activa en la interfaz y actualiza gráficas si procede"""
         CREDITOS, CAPAS, GRAFICAPT, GRAFICAPV, INFORME = 0, 1, 2, 3, 4
         if pagenum == GRAFICAPT or pagenum == GRAFICAPV:
-            if self.gredrawpending:
+            if self.graphsredrawpending:
                 self.actualizagraficas()
-                self.gredrawpending = False
+                self.graphsredrawpending = False
         elif pagenum == INFORME:
-            if self.gredrawpending:
+            if self.graphsredrawpending:
                 self.actualizagraficas()
-                self.gredrawpending = False
+                self.graphsredrawpending = False
             self.actualizainforme()
