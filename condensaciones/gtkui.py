@@ -220,10 +220,10 @@ class GtkCondensa(object):
                                                   m.R, m.S)):
             txt = u"%i - %s:\n" % (i, nombre)
             tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'capa')
-            txt = u"%.3f [m]\nR=%.3f [m²K/W]\nS=%.3f [m]\n" % (e, R, S)
+            txt = u"%.3f [m]\nR=%.3f [m²K/W]\nS=%.3f [m]\n\n" % (e, R, S)
             tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'datoscapa')
-        # Resultados
-        txt = u"\nResultados\n"
+        # Gráficas
+        txt = u"Gráficas\n"
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'subtitulo')
         self.graficaprestemp.save('g1.png')
         pb1 = gtk.gdk.pixbuf_new_from_file_at_size('g1.png', 600, 400)
@@ -233,6 +233,9 @@ class GtkCondensa(object):
         pb2 = gtk.gdk.pixbuf_new_from_file_at_size('g2.png', 600, 400)
         tb.insert_pixbuf(tb.get_end_iter(), pb2)
         tb.insert(tb.get_end_iter(), u"\n\n")
+        # Resultados
+        txt = u"Resultados\n"
+        tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'subtitulo')
         txt = (u"R_total: %.3f [m²K/W]\nS_total = %.3f [m]\n"
                u"U = %.3f [W/m²K]\nf_Rsi = %.2f\nf_Rsimin = %.2f\n"
                ) % (m.R_total, m.S_total, m.U, self.fRsi, self.fRsimin)
@@ -243,7 +246,7 @@ class GtkCondensa(object):
         txt = (u"\n¿Existen condensaciones superficiales?: %s\n"
                u"¿Existen condensaciones intersticiales?: %s\n") % (cs, ci)
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'resultados')
-        # Nota de generación
+        # Nota copyright
         today = datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")
         txt = (u"\n\nInforme generado por 'Condensa' "
                u"(www.rvburke.com/condensaciones.html) el %s\n\n"
