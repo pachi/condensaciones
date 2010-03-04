@@ -41,6 +41,7 @@ class GtkCondensa(object):
         """
         self.cerramiento = cerramiento # Cerramiento actual
         self.modificado = False # Cerramiento modificado vs estado inicial
+        self.gredrawpending = True # Faltan por redibujar las gráficas?
         self.climae = climaext #FIXME: or Clima() para evitar valor None?
         self.climai = climaint #FIXME: or Clima() para evitar valor None?
         self.cerramientos = {} # Cerramientos disponibles
@@ -78,6 +79,7 @@ class GtkCondensa(object):
                 "on_caparemovebtn_clicked": self.on_caparemovebtn_clicked,
                 "on_capaupbtn_clicked": self.on_capaupbtn_clicked,
                 "on_capadownbtn_clicked": self.on_capadownbtn_clicked,
+                "on_notebook_switch_page": self.on_notebook_switch_page,
                 }
         self.builder.connect_signals(smap)
         
@@ -127,8 +129,8 @@ class GtkCondensa(object):
         self.actualizacabecera()
         self.actualizapie()
         self.actualizacapas()
-        self.actualizagraficas()
-        self.actualizainforme()
+        #self.actualizagraficas()
+        #self.actualizainforme()
 
     def calcula(self):
         """Calcula resultados para usarlos en presentación"""
@@ -194,7 +196,6 @@ class GtkCondensa(object):
                                                c.R[1:-1] #quitamos Rse, Rsi
                                                )):
             self.capasls.append((i, nombre, "%.3f" % e, "%.4f" % K, "%.4f" % R))
-        #self.capastv.set_cursor('0')
 
     def actualizagraficas(self):
         """Redibuja gráficos con nuevos datos"""
@@ -278,6 +279,13 @@ class GtkCondensa(object):
             self.climai.temp = float(ti.get_text())
             self.climai.HR = float(hri.get_text())
             self.actualiza()
+            #XXX: Se podría retrasar si fuese necesario por rendimiento
+            #XXX: Además no se redibujan bien si se está mostrando una pestaña
+            #XXX: gráfica.
+            self.actualizagraficas()
+            self.actualizainforme()
+            txt = u"Seleccionadas nuevas condiciones ambientales"
+            self.statusbar.push(0, txt)
         self.adlg.hide()
     
     # Selección de cerramientos - diálogo -------------------------------------
@@ -291,6 +299,13 @@ class GtkCondensa(object):
             nombrecerr = lblselected.get_text()
             self.cerramiento = self.cerramientos[nombrecerr]
             self.actualiza()
+            #XXX: Se podría retrasar si fuese necesario por rendimiento
+            #XXX: Además no se redibujan bien si se está mostrando una pestaña
+            #XXX: gráfica.
+            self.actualizagraficas()
+            self.actualizainforme()
+            txt = u"Seleccionado nuevo cerramiento activo: %s"
+            self.statusbar.push(0, txt % nombrecerr)
         self.dlg.hide()
 
     def on_cerramientotv_cursor_changed(self, tv):
@@ -304,7 +319,7 @@ class GtkCondensa(object):
     # Retrollamadas de modificación de capas ----------------------------------
  
     def on_ctnombre_changed(self, cr, path, new_iter):
-        """Cambio de capa en el combo
+        """Cambio de material de la capa en el combo
         
         cr - Comboboxcellrenderer con contenido modificado
         path - ruta del combo en el treeview
@@ -317,6 +332,9 @@ class GtkCondensa(object):
         self.modificado = True
         try:
             self.actualiza()
+            self.gredrawpending = True
+            txt = u"Modificado material de capa %i"
+            self.statusbar.push(0, txt % capaindex)
         except:
             self.cerramiento.capas[capaindex] = (oldtext, float(ecapa))
 
@@ -334,6 +352,9 @@ class GtkCondensa(object):
             self.cerramiento.capas[capaindex] = (ncapa, newe)
             self.modificado = True
             self.actualiza()
+            self.gredrawpending = True
+            u"Modificado espesor de capa %i a %f [m]"
+            self.statusbar.push(0, txt % (capaindex, newe))
         except ValueError:
             pass
 
@@ -341,21 +362,26 @@ class GtkCondensa(object):
         """Añade capa a cerramiento"""
         cerrtm, cerrtm_iter = self.capastv.get_selection().get_selected()
         if cerrtm_iter:
-            capaindex = int(cerrtm.get_value(cerrtm_iter, 0))
+            capai = int(cerrtm.get_value(cerrtm_iter, 0))
             #duplicamos propiedades de capa actual
-            ncapatuple = self.cerramiento.capas[capaindex]
-            self.cerramiento.capas.insert(capaindex + 1, ncapatuple)
+            ncapatuple = self.cerramiento.capas[capai]
+            self.cerramiento.capas.insert(capai + 1, ncapatuple)
             self.actualiza()
-            print "Añade capa %i" % capaindex
+            self.gredrawpending = True
+            self.capastv.set_cursor(capai + 1)
+            self.statusbar.push(0, u"Añadida capa %i" % capai + 1)
 
     def on_caparemovebtn_clicked(self, btn):
         """Elimina capa seleccionada de cerramiento"""
         cerrtm, cerrtm_iter = self.capastv.get_selection().get_selected()
         if cerrtm_iter:
-            capaindex = int(cerrtm.get_value(cerrtm_iter, 0))
-            ncapatuple = self.cerramiento.capas.pop(capaindex)
+            capai = int(cerrtm.get_value(cerrtm_iter, 0))
+            ncapatuple = self.cerramiento.capas.pop(capai)
             self.actualiza()
-            print "Quita capa %i" % capaindex
+            self.gredrawpending = True
+            if capai == 0: capai = 1
+            self.capastv.set_cursor(capai - 1)
+            self.statusbar.push(0, u"Eliminada capa %i" % capai)
 
     def on_capaupbtn_clicked(self, btn):
         """Sube capa seleccionada de cerramiento"""
@@ -366,7 +392,9 @@ class GtkCondensa(object):
                 cp = self.cerramiento.capas
                 cp[capai - 1], cp[capai] = cp[capai], cp[capai - 1]
                 self.actualiza()
-                print "Sube capa"
+                self.gredrawpending = True
+                self.capastv.set_cursor(capai - 1)
+                self.statusbar.push(0, u"Desplazada capa %i" % capai)
 
     def on_capadownbtn_clicked(self, btn):
         """Baja capa seleccionada de cerramiento"""
@@ -377,7 +405,9 @@ class GtkCondensa(object):
                 cp = self.cerramiento.capas
                 cp[capai + 1], cp[capai] = cp[capai], cp[capai + 1]
                 self.actualiza()
-                print "Baja capa"
+                self.gredrawpending = True
+                self.capastv.set_cursor(capai + 1)
+                self.statusbar.push(0, u"Desplazada capa %i" % capai)
 
     def on_notebook_switch_page(self, notebook, page, pagenum):
         CREDITOS, CAPAS, GRAFICAPT, GRAFICAPV, INFORME = 0, 1, 2, 3, 4
