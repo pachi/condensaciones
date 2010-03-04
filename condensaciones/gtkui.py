@@ -20,7 +20,7 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 #   02110-1301, USA.
-"""Interfaz de usuario en GTK+"""
+"""Interfaz de usuario de Condensaciones en GTK+"""
 
 import gtk
 import pango
@@ -29,8 +29,6 @@ import comprobaciones
 from ptcanvas import CPTCanvas, CPCanvas, GraphData
 import webbrowser
 
-COLOR_OK = gtk.gdk.color_parse("#AACCAA")
-COLOR_BAD = gtk.gdk.color_parse("#CCAAAA")
 
 class GtkCondensa(object):
     """Aplicación"""
@@ -48,27 +46,26 @@ class GtkCondensa(object):
         self.cerramientos = {} # Cerramientos disponibles
         # --- UI ---
         UIFILE = util.get_resource('data', 'condensa.ui')
-        builder = gtk.Builder()
-        builder.add_from_file(UIFILE)
-        self.builder = builder
+        self.builder = gtk.Builder()
+        self.builder.add_from_file(UIFILE)
         # Controles ventana principal
-        self.statusbar = builder.get_object('statusbar')
+        self.statusbar = self.builder.get_object('statusbar')
         # - gráficas -
-        self.grafico1 = builder.get_object('cptcanvas1')
-        self.grafico2 = builder.get_object('cpcanvas1')
+        self.grafico1 = self.builder.get_object('cptcanvas1')
+        self.grafico2 = self.builder.get_object('cpcanvas1')
         # - texto -
-        self.cerramientotxtb = builder.get_object('cerramientotxtb')
+        self.cerramientotxtb = self.builder.get_object('cerramientotxtb')
         self.createtexttags()
         # Lista de capas del cerramiento activo
-        self.capasls = builder.get_object('capas_liststore')
+        self.capasls = self.builder.get_object('capas_liststore')
         # Lista de materiales cargados de bases de datos
-        self.materialesls = builder.get_object('materiales_liststore')
+        self.materialesls = self.builder.get_object('materiales_liststore')
         # Controles de diálogo de selección de ambientes
-        self.adlg = builder.get_object('ambientedlg')
+        self.adlg = self.builder.get_object('ambientedlg')
         # Controles de diálogo de selección de cerramientos
-        self.dlg = builder.get_object('cerramientodlg')
+        self.dlg = self.builder.get_object('cerramientodlg')
         # Lista de cerramientos disponibles en la biblioteca
-        self.cerramientols = builder.get_object('cerramientos_liststore')
+        self.cerramientols = self.builder.get_object('cerramientos_liststore')
 
         smap = {"on_window_destroy": gtk.main_quit,
                 "on_cbtn_clicked": self.on_cerramientobtn_clicked,
@@ -77,7 +74,7 @@ class GtkCondensa(object):
                 "on_ctnombre_changed": self.on_ctnombre_changed,
                 "on_ctespesor_changed": self.on_ctespesor_changed,
                 }
-        builder.connect_signals(smap)
+        self.builder.connect_signals(smap)
         
         gtk.link_button_set_uri_hook(self.open_url)
         self.cargacerramientos()
@@ -146,24 +143,25 @@ class GtkCondensa(object):
 
     def actualizacabecera(self):
         """Actualiza texto de cabecera"""
-        cfondo = self.builder.get_object('cfondo')
         cnombre = self.builder.get_object('nombre_cerramiento')
-        cdescripcion = self.builder.get_object('descripcion_cerramiento')
-        csubtitulo1 = self.builder.get_object('csubtitulo1')
-        csubtitulo2 = self.builder.get_object('csubtitulo2')
-        
         cnombre.set_text(self.cerramiento.nombre)
+        cdescripcion = self.builder.get_object('descripcion_cerramiento')
         cdescripcion.set_text(self.cerramiento.descripcion)
         txt = (u'U = %.2f W/m²K, f<sub>Rsi</sub> ='
                  u' %.2f, f<sub>Rsi,min</sub> = %.2f')
+        csubtitulo1 = self.builder.get_object('csubtitulo1')
         csubtitulo1.set_markup(txt % (self.cerramiento.U,
                                       self.fRsi, self.fRsimin))
         txt = (u'T<sub>ext</sub> = %.2f°C, HR<sub>ext</sub> = %.1f%%, '
                u'T<sub>int</sub> = %.2f°C, HR<sub>int</sub> = %.1f%%')
+        csubtitulo2 = self.builder.get_object('csubtitulo2')
         csubtitulo2.set_markup(txt % (self.climae.temp, self.climae.HR,
                                       self.climai.temp, self.climai.HR))
-        cfondo.modify_bg(gtk.STATE_NORMAL,
-                         self.ccheck and COLOR_BAD or COLOR_OK)
+        COLOR_OK = gtk.gdk.color_parse("#AACCAA")
+        COLOR_BAD = gtk.gdk.color_parse("#CCAAAA")
+        state_color = self.ccheck and COLOR_BAD or COLOR_OK
+        cfondo = self.builder.get_object('cfondo')
+        cfondo.modify_bg(gtk.STATE_NORMAL, state_color)
 
     def actualizapie(self):
         """Actualiza pie de ventana principal"""
