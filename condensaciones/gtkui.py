@@ -61,11 +61,8 @@ class GtkCondensa(object):
         self.materialesls = self.builder.get_object('materiales_liststore')
         # Lista de cerramientos disponibles en la biblioteca
         self.cerramientols = self.builder.get_object('cerramientos_liststore')
-        # Controles de diálogo de selección de ambientes
-        self.adlg = self.builder.get_object('ambientedlg')
-        # Controles de diálogo de selección de cerramientos
-        self.dlg = self.builder.get_object('cerramientodlg')
-
+        self.adlg = self.builder.get_object('ambiente_dlg')
+        self.dlg = self.builder.get_object('cerramiento_dlg')
         smap = {"on_window_destroy": gtk.main_quit,
                 "on_cbtn_clicked": self.on_cerramientobtn_clicked,
                 "on_abtn_clicked": self.on_ambientebtn_clicked,
