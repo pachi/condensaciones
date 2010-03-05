@@ -367,7 +367,7 @@ class GtkCondensa(object):
             self.actualiza()
             self.graphsredrawpending = True
             self.capastv.set_cursor(capai + 1)
-            self.statusbar.push(0, u"Añadida capa %i" % capai + 1)
+            self.statusbar.push(0, u"Añadida capa %i" % (capai + 1))
 
     def caparemove(self, btn):
         """Elimina capa seleccionada de cerramiento en vista de capas"""
