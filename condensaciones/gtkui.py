@@ -26,7 +26,7 @@ import gtk
 import pango
 import util
 import comprobaciones
-from ptcanvas import CPTCanvas, CPCanvas, GraphData
+from ptcanvas import CPTCanvas, CPCanvas, GraphData, get_pixbuf_from_canvas
 import webbrowser, datetime
 
 class GtkCondensa(object):
@@ -225,12 +225,10 @@ class GtkCondensa(object):
         # Gráficas
         txt = u"Gráficas\n"
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'subtitulo')
-        self.graficaprestemp.save('g1.png')
-        pb1 = gtk.gdk.pixbuf_new_from_file_at_size('g1.png', 600, 400)
+        pb1 = get_pixbuf_from_canvas(self.graficaprestemp, 600)
         tb.insert_pixbuf(tb.get_end_iter(), pb1)
         tb.insert(tb.get_end_iter(), u"\n\n")
-        self.graficapresiones.save('g2.png')
-        pb2 = gtk.gdk.pixbuf_new_from_file_at_size('g2.png', 600, 400)
+        pb2 = get_pixbuf_from_canvas(self.graficapresiones, 600)
         tb.insert_pixbuf(tb.get_end_iter(), pb2)
         tb.insert(tb.get_end_iter(), u"\n\n")
         # Resultados

@@ -22,6 +22,7 @@
 #   02110-1301, USA.
 """Módulo de dibujo y controles gráficos de la interfaz de usuario"""
 
+import gtk
 import matplotlib
 matplotlib.use('GTKCairo')
 from matplotlib.figure import Figure
@@ -254,6 +255,27 @@ class CPCanvas(FigureCanvasGTKCairo):
     def save(self, filename='presionesplot.png'):
         """Guardar y mostrar gráfica"""
         self.fig.savefig(filename)
+
+def get_pixbuf_from_canvas(canvas, destwidth=None):
+    """Devuelve un pixbuf a partir de un canvas de Matplotlib
+    
+    destwidth - ancho del pixbuf de destino
+    """
+    w, h = canvas.get_width_height()
+    oldpixmap = canvas._pixmap
+    if not destwidth:
+        destwidth = w
+    pixmap = gtk.gdk.Pixmap (None, w, h, depth=24)
+    cm = pixmap.get_colormap()
+    canvas._renderer.set_pixmap(pixmap) # mpl backend_gtkcairo
+    canvas._render_figure(pixmap, w, h) # mpl backend_gtk
+    pixbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, False, 8, w, h)
+    pixbuf.get_from_drawable(pixmap, cm, 0, 0, 0, 0, w, h)
+    destheight = h * destwidth / w
+    scaledpixbuf = pixbuf.scale_simple(destwidth, destheight,
+                                       gtk.gdk.INTERP_HYPER)
+    canvas._renderer.set_pixmap(oldpixmap)
+    return scaledpixbuf
 
 if __name__ == "__main__":
     import gtk
