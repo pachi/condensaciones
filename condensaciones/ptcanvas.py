@@ -262,7 +262,11 @@ def get_pixbuf_from_canvas(canvas, destwidth=None):
     destwidth - ancho del pixbuf de destino
     """
     w, h = canvas.get_width_height()
-    oldpixmap = canvas._pixmap
+    #Antes de mostrarse la gráfica en una de las pestañas no existe el _pixmap
+    #pero al generar el informe queremos que se dibuje en uno fuera de pantalla
+    oldpixmap = None
+    if hasattr(canvas, '_pixmap'):
+        oldpixmap = canvas._pixmap
     if not destwidth:
         destwidth = w
     pixmap = gtk.gdk.Pixmap (None, w, h, depth=24)
@@ -274,7 +278,8 @@ def get_pixbuf_from_canvas(canvas, destwidth=None):
     destheight = h * destwidth / w
     scaledpixbuf = pixbuf.scale_simple(destwidth, destheight,
                                        gtk.gdk.INTERP_HYPER)
-    canvas._renderer.set_pixmap(oldpixmap)
+    if oldpixmap:
+        canvas._renderer.set_pixmap(oldpixmap)
     return scaledpixbuf
 
 if __name__ == "__main__":
