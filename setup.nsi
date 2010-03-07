@@ -70,6 +70,28 @@ Section -Main SEC0000
     SetOutPath $INSTDIR
     SetOverwrite on
     File /r dist\*
+;    SetOutPath $INSTDIR\bin
+    File /r C:\winp\Gtk+\bin\freetype6.dll
+    File /r C:\winp\Gtk+\bin\intl.dll
+    File /r C:\winp\Gtk+\bin\libatk-1.0-0.dll
+    File /r C:\winp\Gtk+\bin\libcairo-2.dll
+    File /r C:\winp\Gtk+\bin\libexpat-1.dll
+    File /r C:\winp\Gtk+\bin\libfontconfig-1.dll
+    File /r C:\winp\Gtk+\bin\libgailutil-18.dll
+    File /r C:\winp\Gtk+\bin\libgdk_pixbuf-2.0-0.dll
+    File /r C:\winp\Gtk+\bin\libgdk-win32-2.0-0.dll
+    File /r C:\winp\Gtk+\bin\libgio-2.0-0.dll
+    File /r C:\winp\Gtk+\bin\libglib-2.0-0.dll
+    File /r C:\winp\Gtk+\bin\libgmodule-2.0-0.dll
+    File /r C:\winp\Gtk+\bin\libgobject-2.0-0.dll
+    File /r C:\winp\Gtk+\bin\libgthread-2.0-0.dll
+    File /r C:\winp\Gtk+\bin\libgtk-win32-2.0-0.dll
+    File /r C:\winp\Gtk+\bin\libpango-1.0-0.dll
+    File /r C:\winp\Gtk+\bin\libpangocairo-1.0-0.dll
+    File /r C:\winp\Gtk+\bin\libpangoft2-1.0-0.dll
+    File /r C:\winp\Gtk+\bin\libpangowin32-1.0-0.dll
+    File /r C:\winp\Gtk+\bin\libpng14-14.dll
+    File /r C:\winp\Gtk+\bin\zlib1.dll
     SetOutPath $INSTDIR\etc
     File /r C:\winp\Gtk+\etc\*
     SetOutPath $INSTDIR\lib
@@ -78,8 +100,8 @@ Section -Main SEC0000
 ;    File /r C:\winp\Gtk+\lib\glib-2.0\*.dll
 ;    SetOutPath $INSTDIR\lib\gtk-2.0
 ;    File /r C:\winp\Gtk+\lib\gtk-2.0\*.dll
-    SetOutPath $INSTDIR\share\themes
-    File /r C:\winp\Gtk+\share\themes\*
+    SetOutPath $INSTDIR\share\themes\MS-Windows
+    File /r C:\winp\Gtk+\share\themes\MS-Windows\*
     SetOutPath $INSTDIR\share\locale\es
     File /r C:\winp\Gtk+\share\locale\es\*
     WriteRegStr HKLM "${REGKEY}\Components" Main 1
