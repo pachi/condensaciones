@@ -180,7 +180,9 @@ class GtkCondensa(object):
                                                c.K,
                                                c.R[1:-1] #quitamos Rse, Rsi
                                                )):
-            self.capasls.append((i, nombre, "%.3f" % e, "%.4f" % K, "%.4f" % R))
+            # En materiales "resistivos" no está definido K
+            Ktext = u"-" if K is None else u"%.4f" % K
+            self.capasls.append((i, nombre, u"%.3f" % e, Ktext, u"%.4f" % R))
 
     def actualizagraficas(self):
         """Redibuja gráficos con nuevos datos"""
