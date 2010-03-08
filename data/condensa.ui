@@ -472,6 +472,7 @@
                           <object class="GtkCellRendererText" id="ctid">
                             <property name="cell_background_gdk">#eb84eb84eb84</property>
                             <property name="xpad">5</property>
+                            <property name="alignment">center</property>
                             <property name="foreground_gdk">#4e565fe3ae14</property>
                           </object>
                           <attributes>
