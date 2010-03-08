@@ -328,6 +328,10 @@ class GtkCondensa(object):
         capaindex = int(self.capasls[path][0])
         oldtext, ecapa = self.cerramiento.capas[capaindex]
         newtext = self.materialesls[new_iter][0].decode('utf-8')
+        #TODO: Detecta si es material resistivo y pon espesor a None. Si no,
+        #TODO: poner espesor por defecto.
+#        newmaterial = materiales[newtext]
+#        ecapa = None if newmaterial.type == 'RESISTANCE' else float(ecapa)
         self.cerramiento.capas[capaindex] = (newtext, float(ecapa))
         self.cerramientomodificado = True
         try:
