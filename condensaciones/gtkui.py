@@ -163,7 +163,7 @@ class GtkCondensa(object):
         pie1 = self.builder.get_object('pie1')
         pie1.set_markup(txt)
         txt = (u"Cantidades condensadas: " +
-                 u", ".join(["%.2f" % (SEGUNDOSPORMES * x,) for x in self.g]))
+                 u", ".join([u"%.2f" % (SEGUNDOSPORMES * x,) for x in self.g]))
         pie2 = self.builder.get_object('pie2')
         pie2.set_markup(txt)
 
@@ -172,8 +172,8 @@ class GtkCondensa(object):
         rse = self.builder.get_object('Rsevalue')
         rsi = self.builder.get_object('Rsivalue')
         c = self.cerramiento
-        rse.set_text("%.2f" % float(c.Rse))
-        rsi.set_text("%.2f" % float(c.Rsi))
+        rse.set_text(u"%.2f" % float(c.Rse))
+        rsi.set_text(u"%.2f" % float(c.Rsi))
         self.capasls.clear()
         for i, (nombre, e, K, R) in enumerate(zip(c.nombres,
                                                c.espesores,
@@ -241,8 +241,8 @@ class GtkCondensa(object):
                ) % (m.R_total, m.S_total, m.U, self.fRsi, self.fRsimin)
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'resultados')
         # Condensaciones
-        cs = self.cs and "Sí" or "No"
-        ci = self.ci and "Sí" or "No"
+        cs = self.cs and u"Sí" or u"No"
+        ci = self.ci and u"Sí" or u"No"
         txt = (u"\n¿Existen condensaciones superficiales?: %s\n"
                u"¿Existen condensaciones intersticiales?: %s\n") % (cs, ci)
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'resultados')
@@ -268,10 +268,10 @@ class GtkCondensa(object):
         hri = self.builder.get_object('hrintentry')
         
         localidad.set_text('Localidad')
-        te.set_text("%.2f" % self.climae.temp)
-        hre.set_text("%.2f" % self.climae.HR)
-        ti.set_text("%.2f" % self.climai.temp)
-        hri.set_text("%.2f" % self.climai.HR)
+        te.set_text(u"%.2f" % self.climae.temp)
+        hre.set_text(u"%.2f" % self.climae.HR)
+        ti.set_text(u"%.2f" % self.climai.temp)
+        hri.set_text(u"%.2f" % self.climai.HR)
         resultado = self.adlg.run()
         # gtk.RESPONSE_ACCEPT vs gtk.RESPONSE_CANCEL
         if resultado == gtk.RESPONSE_ACCEPT:
