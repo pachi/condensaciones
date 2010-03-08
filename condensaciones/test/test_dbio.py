@@ -53,7 +53,8 @@ parsedblock = {'MATERIAL': 'B_Vapor Z3 (d_1mm)',
                'IMAGE': 'asfalto.bmp',
                'LIBRARY': 'NO',}
 
-DB = os.path.abspath("./PCatalogo.bdc")
+this_dir = os.path.dirname(__file__)
+DB = os.path.join(this_dir, "./PCatalogo.bdc")
 
 parsedfile = {u'default':
             [{u'GROUP': u'B_VAPOR',
