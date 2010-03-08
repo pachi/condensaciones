@@ -92,7 +92,7 @@ class GtkCondensa(object):
     def main(self):
         """Arranca la aplicación"""
         self.builder.get_object('window1').show_all()
-        self.statusbar.push(0, u"Aplicación inicializada")
+        self.statusbar.push(0, "Aplicación inicializada")
         gtk.main()
 
     def cargacerramientos(self):
@@ -107,7 +107,7 @@ class GtkCondensa(object):
             self.cerramientols.append((c.nombre, c.descripcion))
         n = len(materiales)
         m = len(cerramientos)
-        txt = u"Cargados %i materiales, %i cerramientos" % (n, m)
+        txt = "Cargados %i materiales, %i cerramientos" % (n, m)
         self.statusbar.push(0, txt)
 
     def actualiza(self):
@@ -140,13 +140,13 @@ class GtkCondensa(object):
         cnombre.set_text(self.cerramiento.nombre)
         cdescripcion = self.builder.get_object('descripcion_cerramiento')
         cdescripcion.set_text(self.cerramiento.descripcion)
-        txt = (u'U = %.2f W/m²K, f<sub>Rsi</sub> ='
-                 u' %.2f, f<sub>Rsi,min</sub> = %.2f')
+        txt = ('U = %.2f W/m²K, f<sub>Rsi</sub> ='
+               ' %.2f, f<sub>Rsi,min</sub> = %.2f')
         csubtitulo1 = self.builder.get_object('csubtitulo1')
         csubtitulo1.set_markup(txt % (self.cerramiento.U,
                                       self.fRsi, self.fRsimin))
-        txt = (u'T<sub>ext</sub> = %.2f°C, HR<sub>ext</sub> = %.1f%%, '
-               u'T<sub>int</sub> = %.2f°C, HR<sub>int</sub> = %.1f%%')
+        txt = ('T<sub>ext</sub> = %.2f°C, HR<sub>ext</sub> = %.1f%%, '
+               'T<sub>int</sub> = %.2f°C, HR<sub>int</sub> = %.1f%%')
         csubtitulo2 = self.builder.get_object('csubtitulo2')
         csubtitulo2.set_markup(txt % (self.climae.temp, self.climae.HR,
                                       self.climai.temp, self.climai.HR))
@@ -159,11 +159,11 @@ class GtkCondensa(object):
     def actualizapie(self):
         """Actualiza pie de ventana principal"""
         SEGUNDOSPORMES = 2592000.0
-        txt = u"Total: %.2f [g/m²mes]" % (SEGUNDOSPORMES * self.totalg)
+        txt = "Total: %.2f [g/m²mes]" % (SEGUNDOSPORMES * self.totalg)
         pie1 = self.builder.get_object('pie1')
         pie1.set_markup(txt)
-        txt = (u"Cantidades condensadas: " +
-                 u", ".join([u"%.2f" % (SEGUNDOSPORMES * x,) for x in self.g]))
+        txt = ("Cantidades condensadas: " +
+               ", ".join(["%.2f" % (SEGUNDOSPORMES * x,) for x in self.g]))
         pie2 = self.builder.get_object('pie2')
         pie2.set_markup(txt)
 
@@ -172,8 +172,8 @@ class GtkCondensa(object):
         rse = self.builder.get_object('Rsevalue')
         rsi = self.builder.get_object('Rsivalue')
         c = self.cerramiento
-        rse.set_text(u"%.2f" % float(c.Rse))
-        rsi.set_text(u"%.2f" % float(c.Rsi))
+        rse.set_text("%.2f" % float(c.Rse))
+        rsi.set_text("%.2f" % float(c.Rsi))
         self.capasls.clear()
         for i, (nombre, e, K, R) in enumerate(zip(c.nombres,
                                                c.espesores,
@@ -181,8 +181,9 @@ class GtkCondensa(object):
                                                c.R[1:-1] #quitamos Rse, Rsi
                                                )):
             # En materiales "resistivos" no está definido K
-            Ktext = u"-" if K is None else u"%.4f" % K
-            self.capasls.append((i, nombre, u"%.3f" % e, Ktext, u"%.4f" % R))
+            Ktext = "-" if K is None else "%.4f" % K
+            self.capasls.append(("%i" % i, nombre,
+                                 "%.3f" % e, Ktext, "%.4f" % R))
 
     def actualizagraficas(self):
         """Redibuja gráficos con nuevos datos"""
@@ -199,60 +200,60 @@ class GtkCondensa(object):
         tb.set_text("")
         # Denominación cerramiento
         tb.insert_with_tags_by_name(tb.get_start_iter(),
-                                      u"%s\n" % m.nombre, 'titulo')
+                                    "%s\n" % m.nombre, 'titulo')
         tb.insert_with_tags_by_name(tb.get_end_iter(),
-                                      u"%s\n\n" % m.descripcion, 'titulo2')
+                                    "%s\n\n" % m.descripcion, 'titulo2')
         # Condiciones ambientales
-        txt = u"Condiciones de cálculo\n"
+        txt = "Condiciones de cálculo\n"
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'subtitulo')
-        txt = (u"Temperatura exterior: %.1f [ºC]\n"
-               u"Humedad relativa exterior: %.1f [%%]\n"
-               u"Temperatura interior: %.1f [ºC]\n"
-               u"Humedad relativa interior: %.1f [%%]\n\n"
-               u"Resistencia superficial exterior: %.2f [m²K/W]\n"
-               u"Resistencia superficial exterior: %.2f [m²K/W]\n\n"
+        txt = ("Temperatura exterior: %.1f [ºC]\n"
+               "Humedad relativa exterior: %.1f [%%]\n"
+               "Temperatura interior: %.1f [ºC]\n"
+               "Humedad relativa interior: %.1f [%%]\n\n"
+               "Resistencia superficial exterior: %.2f [m²K/W]\n"
+               "Resistencia superficial exterior: %.2f [m²K/W]\n\n"
                ) % (self.climae.temp, self.climae.HR,
                     self.climai.temp, self.climai.HR,
                     self.cerramiento.Rse, self.cerramiento.Rsi)
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'datoscapa')
         # Cerramiento
-        txt = u"Descripción del cerramiento\n"
+        txt = "Descripción del cerramiento\n"
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'subtitulo')
         for i, (nombre, e, R, S) in enumerate(zip(m.nombres, m.espesores,
                                                   m.R, m.S)):
-            txt = u"%i - %s:\n" % (i, nombre)
+            txt = "%i - %s:\n" % (i, nombre)
             tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'capa')
-            txt = u"%.3f [m]\nR=%.3f [m²K/W]\nS=%.3f [m]\n\n" % (e, R, S)
+            txt = "%.3f [m]\nR=%.3f [m²K/W]\nS=%.3f [m]\n\n" % (e, R, S)
             tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'datoscapa')
         # Gráficas
-        txt = u"Gráficas\n"
+        txt = "Gráficas\n"
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'subtitulo')
         pb1 = get_pixbuf_from_canvas(self.graficaprestemp, 600)
         tb.insert_pixbuf(tb.get_end_iter(), pb1)
-        tb.insert(tb.get_end_iter(), u"\n\n")
+        tb.insert(tb.get_end_iter(), "\n\n")
         pb2 = get_pixbuf_from_canvas(self.graficapresiones, 600)
         tb.insert_pixbuf(tb.get_end_iter(), pb2)
-        tb.insert(tb.get_end_iter(), u"\n\n")
+        tb.insert(tb.get_end_iter(), "\n\n")
         # Resultados
-        txt = u"Resultados\n"
+        txt = "Resultados\n"
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'subtitulo')
-        txt = (u"R_total: %.3f [m²K/W]\nS_total = %.3f [m]\n"
-               u"U = %.3f [W/m²K]\nf_Rsi = %.2f\nf_Rsimin = %.2f\n"
+        txt = ("R_total: %.3f [m²K/W]\nS_total = %.3f [m]\n"
+               "U = %.3f [W/m²K]\nf_Rsi = %.2f\nf_Rsimin = %.2f\n"
                ) % (m.R_total, m.S_total, m.U, self.fRsi, self.fRsimin)
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'resultados')
         # Condensaciones
-        cs = self.cs and u"Sí" or u"No"
-        ci = self.ci and u"Sí" or u"No"
-        txt = (u"\n¿Existen condensaciones superficiales?: %s\n"
-               u"¿Existen condensaciones intersticiales?: %s\n") % (cs, ci)
+        cs = self.cs and "Sí" or "No"
+        ci = self.ci and "Sí" or "No"
+        txt = ("\n¿Existen condensaciones superficiales?: %s\n"
+               "¿Existen condensaciones intersticiales?: %s\n") % (cs, ci)
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'resultados')
         # Nota copyright
         today = datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")
-        txt = (u"\n\nInforme generado por 'Condensa' "
-               u"(www.rvburke.com/condensaciones.html) el %s\n\n"
-               u"'Condensa' es software libre que se distribuye bajo licencia "
-               u"GPLv2 o posterior.\n"
-               u"Copyright (c) 2009-2010 Rafael Villar Burke\n") % today
+        txt = ("\n\nInforme generado por 'Condensa' "
+               "(www.rvburke.com/condensaciones.html) el %s\n\n"
+               "'Condensa' es software libre que se distribuye bajo licencia "
+               "GPLv2 o posterior.\n"
+               "Copyright (c) 2009-2010 Rafael Villar Burke\n") % today
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'nota')
         while gtk.events_pending():
             gtk.main_iteration()
@@ -268,10 +269,10 @@ class GtkCondensa(object):
         hri = self.builder.get_object('hrintentry')
         
         localidad.set_text('Localidad')
-        te.set_text(u"%.2f" % self.climae.temp)
-        hre.set_text(u"%.2f" % self.climae.HR)
-        ti.set_text(u"%.2f" % self.climai.temp)
-        hri.set_text(u"%.2f" % self.climai.HR)
+        te.set_text("%.2f" % self.climae.temp)
+        hre.set_text("%.2f" % self.climae.HR)
+        ti.set_text("%.2f" % self.climai.temp)
+        hri.set_text("%.2f" % self.climai.HR)
         resultado = self.adlg.run()
         # gtk.RESPONSE_ACCEPT vs gtk.RESPONSE_CANCEL
         if resultado == gtk.RESPONSE_ACCEPT:
@@ -285,7 +286,7 @@ class GtkCondensa(object):
             #XXX: gráfica.
             self.actualizagraficas()
             self.actualizainforme()
-            txt = u"Seleccionadas nuevas condiciones ambientales"
+            txt = "Seleccionadas nuevas condiciones ambientales"
             self.statusbar.push(0, txt)
         self.adlg.hide()
     
@@ -305,7 +306,7 @@ class GtkCondensa(object):
             #XXX: gráfica.
             self.actualizagraficas()
             self.actualizainforme()
-            txt = u"Seleccionado nuevo cerramiento activo: %s"
+            txt = "Seleccionado nuevo cerramiento activo: %s"
             self.statusbar.push(0, txt % nombrecerr)
         self.dlg.hide()
 
@@ -337,7 +338,7 @@ class GtkCondensa(object):
         try:
             self.actualiza()
             self.graphsredrawpending = True
-            txt = u"Modificado material de capa %i"
+            txt = "Modificado material de capa %i"
             self.statusbar.push(0, txt % capaindex)
         except:
             self.cerramiento.capas[capaindex] = (oldtext, float(ecapa))
@@ -357,7 +358,7 @@ class GtkCondensa(object):
             self.cerramientomodificado = True
             self.actualiza()
             self.graphsredrawpending = True
-            txt = u"Modificado espesor de capa %i a %f [m]"
+            txt = "Modificado espesor de capa %i a %f [m]"
             self.statusbar.push(0, txt % (capaindex, newe))
         except ValueError:
             pass
@@ -373,7 +374,7 @@ class GtkCondensa(object):
             self.actualiza()
             self.graphsredrawpending = True
             self.capastv.set_cursor(capai + 1)
-            self.statusbar.push(0, u"Añadida capa %i" % (capai + 1))
+            self.statusbar.push(0, "Añadida capa %i" % (capai + 1))
 
     def caparemove(self, btn):
         """Elimina capa seleccionada de cerramiento en vista de capas"""
@@ -385,7 +386,7 @@ class GtkCondensa(object):
             self.graphsredrawpending = True
             if capai == 0: capai = 1
             self.capastv.set_cursor(capai - 1)
-            self.statusbar.push(0, u"Eliminada capa %i" % capai)
+            self.statusbar.push(0, "Eliminada capa %i" % capai)
 
     def capaup(self, btn):
         """Sube capa seleccionada de cerramiento en vista de capas"""
@@ -398,7 +399,7 @@ class GtkCondensa(object):
                 self.actualiza()
                 self.graphsredrawpending = True
                 self.capastv.set_cursor(capai - 1)
-                self.statusbar.push(0, u"Desplazada capa %i" % capai)
+                self.statusbar.push(0, "Desplazada capa %i" % capai)
 
     def capadown(self, btn):
         """Baja capa seleccionada de cerramiento en vista de capas"""
@@ -411,7 +412,7 @@ class GtkCondensa(object):
                 self.actualiza()
                 self.graphsredrawpending = True
                 self.capastv.set_cursor(capai + 1)
-                self.statusbar.push(0, u"Desplazada capa %i" % capai)
+                self.statusbar.push(0, "Desplazada capa %i" % capai)
 
     def cambiahoja(self, notebook, page, pagenum):
         """Cambia hoja activa en la interfaz y actualiza gráficas si procede"""
