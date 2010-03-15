@@ -331,21 +331,21 @@ class GtkCondensa(object):
         new_iter - ruta del nuevo valor en el modelo del combo
         """
         capaindex = int(self.capasls[path][0])
-        oldtext, ecapa = self.cerramiento.capas[capaindex]
-        newtext = self.materialesls[new_iter][0].decode('utf-8')
+        capaname, capae = self.cerramiento.capas[capaindex]
+        newname = self.materialesls[new_iter][0].decode('utf-8')
         #TODO: Detecta si es material resistivo y pon espesor a None. Si no,
         #TODO: poner espesor por defecto.
-#        newmaterial = materiales[newtext]
-#        ecapa = None if newmaterial.type == 'RESISTANCE' else float(ecapa)
-        self.cerramiento.capas[capaindex] = (newtext, float(ecapa))
-        self.cerramientomodificado = True
+#        newmaterial = materiales[newname]
+#        capae = None if newmaterial.type == 'RESISTANCE' else float(capae)
         try:
+            self.cerramiento.capas[capaindex] = (newname, float(capae))
+            self.cerramientomodificado = True
             self.actualiza()
             self.graphsredrawpending = True
             txt = "Modificado material de capa %i" % capaindex
             self.statusbar.push(0, txt)
         except:
-            self.cerramiento.capas[capaindex] = (oldtext, float(ecapa))
+            self.cerramiento.capas[capaindex] = (capaname, float(capae))
 
     def capacambiaespesor(self, cr, path, new_text):
         """Cambio de espesor en la vista de capas
@@ -355,17 +355,18 @@ class GtkCondensa(object):
         new_text - nuevo texto en la celda de texto
         """
         capaindex = int(self.capasls[path][0])
-        ncapa = self.cerramiento.capas[capaindex][0]
+        capaname, capae = self.cerramiento.capas[capaindex]
         try:
             newe = float(new_text)
-            self.cerramiento.capas[capaindex] = (ncapa, newe)
+        except ValueError:
+            return
+        if newe != capae:
+            self.cerramiento.capas[capaindex] = (capaname, newe)
             self.cerramientomodificado = True
             self.actualiza()
             self.graphsredrawpending = True
             txt = "Modificado espesor de capa %i a %f [m]"
             self.statusbar.push(0, txt % (capaindex, newe))
-        except ValueError:
-            pass
 
     def capaadd(self, btn):
         """Añade capa a cerramiento en vista de capas"""
