@@ -419,9 +419,13 @@ class GtkCondensa(object):
                 self.statusbar.push(0, "Desplazada capa %i" % capai)
 
     def capacambiarse(self, entry, event=None):
-        """Toma valor de Rse al activar o cambiar el foco"""
-        newrse = float(entry.props.text)
+        """Toma valor de Rse al activar entry o cambiar el foco"""
         oldrse = self.cerramiento.Rse
+        try:
+            newrse = float(entry.props.text)
+        except ValueError:
+            entry.props.text = oldrse
+            return
         if newrse != oldrse:
             self.cerramiento.Rse = newrse
             self.statusbar.push(0, "Nuevo Rse: %.2f" % newrse)
@@ -430,9 +434,13 @@ class GtkCondensa(object):
             self.actualiza()
 
     def capacambiarsi(self, entry, event=None):
-        """Toma valor de Rsi al activar o cambiar el foco"""
-        newrsi = float(entry.props.text)
+        """Toma valor de Rsi al activar entry o cambiar el foco"""
         oldrsi = self.cerramiento.Rsi
+        try:
+            newrsi = float(entry.props.text)
+        except ValueError:
+            entry.props.text = oldrsi
+            return
         if newrsi != oldrsi:
             self.cerramiento.Rsi = newrsi
             self.statusbar.push(0, "Nuevo Rsi: %.2f" % newrsi)
