@@ -68,6 +68,10 @@ class GtkCondensa(object):
                 "on_caparemovebtn_clicked": self.caparemove,
                 "on_capaupbtn_clicked": self.capaup,
                 "on_capadownbtn_clicked": self.capadown,
+                "on_rsevalue_activate": self.capacambiarse,
+                "on_rsevalue_focusout": self.capacambiarse,
+                "on_rsivalue_activate": self.capacambiarsi,
+                "on_rsivalue_focusout": self.capacambiarsi,
                 "on_notebook_switch_page": self.cambiahoja,
                 }
         self.builder.connect_signals(smap)
@@ -257,7 +261,7 @@ class GtkCondensa(object):
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'nota')
         while gtk.events_pending():
             gtk.main_iteration()
-    
+
     # Selección de ambientes - diálogo ---------------------------------------
 
     def ambienteselecciona(self, widget):
@@ -413,6 +417,28 @@ class GtkCondensa(object):
                 self.graphsredrawpending = True
                 self.capastv.set_cursor(capai + 1)
                 self.statusbar.push(0, "Desplazada capa %i" % capai)
+
+    def capacambiarse(self, entry, event=None):
+        """Toma valor de Rse al activar o cambiar el foco"""
+        newrse = float(entry.props.text)
+        oldrse = self.cerramiento.Rse
+        if newrse != oldrse:
+            self.cerramiento.Rse = newrse
+            self.statusbar.push(0, "Nuevo Rse: %.2f" % newrse)
+            self.cerramientomodificado = True
+            self.graphsredrawpending = True
+            self.actualiza()
+
+    def capacambiarsi(self, entry, event=None):
+        """Toma valor de Rsi al activar o cambiar el foco"""
+        newrsi = float(entry.props.text)
+        oldrsi = self.cerramiento.Rsi
+        if newrsi != oldrsi:
+            self.cerramiento.Rsi = newrsi
+            self.statusbar.push(0, "Nuevo Rsi: %.2f" % newrsi)
+            self.cerramientomodificado = True
+            self.graphsredrawpending = True
+            self.actualiza()
 
     # Retrollamadas generales -------------------------------------------------
 

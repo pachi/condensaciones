@@ -53,6 +53,7 @@
             <child>
               <object class="GtkToolButton" id="cerramselectbtn">
                 <property name="visible">True</property>
+                <property name="has_focus">True</property>
                 <property name="label" translatable="yes">Cerramientos</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-find</property>
@@ -321,28 +322,36 @@
                         <property name="visible">True</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <object class="GtkLabel" id="Rsevalue">
+                          <object class="GtkEntry" id="Rsevalue">
                             <property name="visible">True</property>
-                            <property name="xalign">0</property>
-                            <property name="xpad">8</property>
-                            <property name="ypad">2</property>
-                            <property name="label" translatable="yes">valor Rse</property>
+                            <property name="can_focus">True</property>
+                            <property name="tooltip_text" translatable="yes">Resistencia suferficial cara exterior</property>
+                            <property name="has_frame">False</property>
+                            <property name="invisible_char">&#x25CF;</property>
+                            <property name="width_chars">5</property>
+                            <property name="text" translatable="yes">valor Rse</property>
+                            <property name="xalign">0.5</property>
+                            <signal name="focus_out_event" handler="on_rsevalue_focusout"/>
+                            <signal name="activate" handler="on_rsevalue_activate"/>
                           </object>
                           <packing>
-                            <property name="expand">False</property>
                             <property name="position">0</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="Rsivalue">
+                          <object class="GtkEntry" id="Rsivalue">
                             <property name="visible">True</property>
-                            <property name="xalign">0</property>
-                            <property name="xpad">8</property>
-                            <property name="ypad">2</property>
-                            <property name="label" translatable="yes">valor Rsi</property>
+                            <property name="can_focus">True</property>
+                            <property name="tooltip_text" translatable="yes">Resistencia suferficial cara interior</property>
+                            <property name="has_frame">False</property>
+                            <property name="invisible_char">&#x25CF;</property>
+                            <property name="width_chars">5</property>
+                            <property name="text" translatable="yes">valor Rse</property>
+                            <property name="xalign">0.5</property>
+                            <signal name="focus_out_event" handler="on_rsivalue_focusout"/>
+                            <signal name="activate" handler="on_rsivalue_activate"/>
                           </object>
                           <packing>
-                            <property name="expand">False</property>
                             <property name="position">1</property>
                           </packing>
                         </child>
@@ -357,7 +366,7 @@
                         <property name="visible">True</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <object class="GtkLabel" id="Rsevalue2">
+                          <object class="GtkLabel" id="Rseunitslabel">
                             <property name="visible">True</property>
                             <property name="xalign">0</property>
                             <property name="xpad">8</property>
@@ -369,7 +378,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="Rsivalue2">
+                          <object class="GtkLabel" id="Rsiunitslabel">
                             <property name="visible">True</property>
                             <property name="xalign">0</property>
                             <property name="xpad">8</property>
