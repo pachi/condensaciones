@@ -414,6 +414,8 @@ class GtkCondensa(object):
                 self.capastv.set_cursor(capai + 1)
                 self.statusbar.push(0, "Desplazada capa %i" % capai)
 
+    # Retrollamadas generales -------------------------------------------------
+
     def cambiahoja(self, notebook, page, pagenum):
         """Cambia hoja activa en la interfaz y actualiza gráficas si procede"""
         CREDITOS, CAPAS, GRAFICAPT, GRAFICAPV, INFORME = 0, 1, 2, 3, 4
