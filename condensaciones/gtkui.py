@@ -182,8 +182,8 @@ class GtkCondensa(object):
                                                )):
             # En materiales "resistivos" no está definido K
             Ktext = "-" if K is None else "%.4f" % K
-            self.capasls.append(("%i" % i, nombre,
-                                 "%.3f" % e, Ktext, "%.4f" % R))
+            d = ("%i" % i, nombre, "%.3f" % e, Ktext, "%.4f" % R)
+            self.capasls.append(d)
 
     def actualizagraficas(self):
         """Redibuja gráficos con nuevos datos"""
@@ -338,8 +338,8 @@ class GtkCondensa(object):
         try:
             self.actualiza()
             self.graphsredrawpending = True
-            txt = "Modificado material de capa %i"
-            self.statusbar.push(0, txt % capaindex)
+            txt = "Modificado material de capa %i" % capaindex
+            self.statusbar.push(0, txt)
         except:
             self.cerramiento.capas[capaindex] = (oldtext, float(ecapa))
 
