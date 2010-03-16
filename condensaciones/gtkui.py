@@ -185,7 +185,7 @@ class GtkCondensa(object):
                                                c.R[1:-1] #quitamos Rse, Rsi
                                                )):
             # En materiales "resistivos" no está definido K
-            Ktext = "-" if K is None else "%.4f" % K
+            Ktext = "-" if not K else "%.4f" % K
             d = ("%i" % i, nombre, "%.3f" % e, Ktext, "%.4f" % R)
             self.capasls.append(d)
 
