@@ -1,1 +1,18 @@
-Cambios en la nueva versión:
+==============
+Condensaciones
+==============
+
+Condensaciones © 2009-2010 Rafael Villar Burke
+
+Cambios en la versión
+=====================
+
+0.1 (Feb. 2010)
+---------------
+- Versión inicial
+
+0.2 (Mar. 2010)
+---------------
+- Edición de las resistencias superficiales 
+- Uso de materiales resistivos en capas de cerramiento (p.e. cámaras de aire)
+- Enlace a la aplicación desde el menú principal [win32]

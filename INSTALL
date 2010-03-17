@@ -1,13 +1,41 @@
-Cómo instalar este programa:
+==============
+Condensaciones
+==============
 
-1)Usando el ejecutable:
-    El programa no precisa de instalación especial.
-    Se puede ejecutar directamente el archivo condensa.exe.
+Condensaciones © 2009-2010 Rafael Villar Burke
 
-2)Desde una copia del código fuente
-    Dependencias:
-        Python
-        ConfigParser
-        Matplotlib (+Numpy)
-        PyGTK (+ Pygobject + Pycairo)
-        GTK+
+Dependencias
+============
+
+La aplicación hace uso de las siguientes liberías:
+- Python (>=2.5)
+- Numpy (>=1.4)
+- Matplotlib (>=0.99)
+- GTK+ (>=2.18)
+- PyGObject (>=2.20) 
+- PyGTK (>=2.16)
+
+Instalación y ejecución del programa
+====================================
+
+Es posible ejecutar la aplicación sin necesidad de instalarla en el sistema si
+este satisface las dependencias.
+
+Para ejecutar la aplicación basta con llamar al script ``bin/condensa``.
+
+Por ejemplo, si nos encontramos en el directorio base::
+
+    $ python bin/condensa
+
+Windows
+-------
+
+La forma más sencilla de instalar y ejecutar el programa es mediante el
+instalador precompilado.
+
+El instalador incluye todas las dependencias necesarias y crea una entrada en
+el menú de aplicaciones del sistema desde la que es posible ejecutar o
+desinstalar la aplicación.
+
+Alternativamente, la aplicación se puede iniciar ejecutando el archivo
+``condensa.exe``, disponible en el directorio de instalación.
