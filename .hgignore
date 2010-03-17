@@ -1,8 +1,7 @@
 syntax: glob
 dist/*
 build/*
-articulos/*
-fichas/*
+misc/*
 *~
 *.bak
 *.pyc
