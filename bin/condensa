@@ -23,7 +23,9 @@
 """Script de arranque de la aplicación sin necesidad de instalarla"""
 
 import os, sys
-sys.path.append(os.path.abspath(os.path.join(os.path.abspath('.'), '..')))
+if not hasattr(sys, 'frozen'):
+    currpath = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    sys.path.append(currpath)
 
 from condensaciones.cerramiento import Cerramiento
 from condensaciones.gtkui import GtkCondensa
