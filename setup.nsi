@@ -3,6 +3,9 @@
 
 Name Condensaciones
 
+# Solicitar instalación como admin para copiar enlaces en carpeta de sistema
+RequestExecutionLevel admin
+
 # Usar lzma para comprimir - Lo seleccionamos en las preferencias
 # SetCompressor /SOLID lzma
 # Usar UPX para reducir tamaño del instalador
@@ -10,7 +13,7 @@ Name Condensaciones
 
 # General Symbol Definitions
 !define REGKEY "SOFTWARE\$(^Name)"
-!define VERSION 0.1
+!define VERSION 0.2
 !define COMPANY "Rafael Villar Burke <pachi@rvburke.com>"
 !define URL http://www.rvburke.com
 
@@ -22,7 +25,7 @@ Name Condensaciones
 !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME StartMenuGroup
 !define MUI_STARTMENUPAGE_DEFAULTFOLDER Condensaciones
 !define MUI_FINISHPAGE_RUN $INSTDIR\condensa.exe
-!define MUI_FINISHPAGE_SHOWREADME $INSTDIR\README
+!define MUI_FINISHPAGE_SHOWREADME 'README'
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall-full.ico"
 
 # Included files
@@ -37,11 +40,13 @@ Var StartMenuGroup
 
 # Installer pages
 !insertmacro MUI_PAGE_WELCOME
-!insertmacro MUI_PAGE_LICENSE dist\COPYING
+!insertmacro MUI_PAGE_LICENSE 'COPYING'
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_STARTMENU Application $StartMenuGroup
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_PAGE_FINISH
+
+# Uninstaller pages
 !insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_INSTFILES
 
@@ -49,7 +54,7 @@ Var StartMenuGroup
 !insertmacro MUI_LANGUAGE SpanishInternational
 
 # Installer attributes
-OutFile condensaciones-0.1-setup.exe
+OutFile condensaciones-${VERSION}-setup.exe
 InstallDir $PROGRAMFILES\Condensaciones
 CRCCheck on
 XPStyle on
@@ -70,36 +75,12 @@ Section -Main SEC0000
     SetOutPath $INSTDIR
     SetOverwrite on
     File /r dist\*
-;    SetOutPath $INSTDIR\bin
-    File /r C:\winp\Gtk+\bin\freetype6.dll
-    File /r C:\winp\Gtk+\bin\intl.dll
-    File /r C:\winp\Gtk+\bin\libatk-1.0-0.dll
-    File /r C:\winp\Gtk+\bin\libcairo-2.dll
-    File /r C:\winp\Gtk+\bin\libexpat-1.dll
-    File /r C:\winp\Gtk+\bin\libfontconfig-1.dll
-    File /r C:\winp\Gtk+\bin\libgailutil-18.dll
-    File /r C:\winp\Gtk+\bin\libgdk_pixbuf-2.0-0.dll
-    File /r C:\winp\Gtk+\bin\libgdk-win32-2.0-0.dll
-    File /r C:\winp\Gtk+\bin\libgio-2.0-0.dll
-    File /r C:\winp\Gtk+\bin\libglib-2.0-0.dll
-    File /r C:\winp\Gtk+\bin\libgmodule-2.0-0.dll
-    File /r C:\winp\Gtk+\bin\libgobject-2.0-0.dll
-    File /r C:\winp\Gtk+\bin\libgthread-2.0-0.dll
-    File /r C:\winp\Gtk+\bin\libgtk-win32-2.0-0.dll
-    File /r C:\winp\Gtk+\bin\libpango-1.0-0.dll
-    File /r C:\winp\Gtk+\bin\libpangocairo-1.0-0.dll
-    File /r C:\winp\Gtk+\bin\libpangoft2-1.0-0.dll
-    File /r C:\winp\Gtk+\bin\libpangowin32-1.0-0.dll
-    File /r C:\winp\Gtk+\bin\libpng14-14.dll
-    File /r C:\winp\Gtk+\bin\zlib1.dll
+    # Copiamos los archivos de configuración de Gtk+, temas y locales
+    # que no localiza setup.py py2exe
     SetOutPath $INSTDIR\etc
     File /r C:\winp\Gtk+\etc\*
     SetOutPath $INSTDIR\lib
     File /r C:\winp\Gtk+\lib\*.dll
-;    SetOutPath $INSTDIR\lib\glib-2.0
-;    File /r C:\winp\Gtk+\lib\glib-2.0\*.dll
-;    SetOutPath $INSTDIR\lib\gtk-2.0
-;    File /r C:\winp\Gtk+\lib\gtk-2.0\*.dll
     SetOutPath $INSTDIR\share\themes\MS-Windows
     File /r C:\winp\Gtk+\share\themes\MS-Windows\*
     SetOutPath $INSTDIR\share\locale\es
@@ -108,6 +89,8 @@ Section -Main SEC0000
 SectionEnd
 
 Section -post SEC0001
+    # Enlaces en all users en vez del usuario actual
+    SetShellVarContext all
     WriteRegStr HKLM "${REGKEY}" Path $INSTDIR
     SetOutPath $INSTDIR
     WriteUninstaller $INSTDIR\uninstall.exe
@@ -142,15 +125,12 @@ done${UNSECTION_ID}:
 # Uninstaller sections
 Section /o -un.Main UNSEC0000
     RmDir /r /REBOOTOK $INSTDIR
-    RmDir /r /REBOOTOK $INSTDIR
-    Delete /REBOOTOK $INSTDIR\*
-    RmDir /r /REBOOTOK $INSTDIR\lib
-    RmDir /r /REBOOTOK $INSTDIR\etc
-    RmDir /r /REBOOTOK $INSTDIR\share
     DeleteRegValue HKLM "${REGKEY}\Components" Main
 SectionEnd
 
 Section -un.post UNSEC0001
+    # Enlaces en all users en vez del usuario actual
+    SetShellVarContext all
     DeleteRegKey HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\$(^Name)"
     Delete /REBOOTOK "$SMPROGRAMS\$StartMenuGroup\Uninstall $(^Name).lnk"
     Delete /REBOOTOK "$SMPROGRAMS\$StartmenuGroup\$(^Name).lnk"

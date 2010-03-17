@@ -58,16 +58,7 @@ includes = ['cairo', 'pango', 'pangocairo', 'atk', 'gobject', 'gio']
 excludes = ['_wxagg', '_fltkagg', '_cocoaagg', '_gtkagg',
             'email', 'logging', 'PyQt4', 'nose', 'wx', 'scipy',
             'tcl', 'Tkinter', 'compiler']
-dllexcludes = [
-            'iconv.dll','intl.dll','libatk-1.0-0.dll',
-            'libgdk_pixbuf-2.0-0.dll','libgdk-win32-2.0-0.dll',
-            'libglib-2.0-0.dll','libgmodule-2.0-0.dll',
-            'libgobject-2.0-0.dll','libgthread-2.0-0.dll',
-            'libgtk-win32-2.0-0.dll','libpango-1.0-0.dll',
-            'libpangowin32-1.0-0.dll', 'libcairo-2.dll',
-            'libfontconfig-1.dll', 'libpangoft2-1.0-0.dll',
-            'libxml2.dll', 'zlib1.dll', 'libglade-2.0-0.dll',
-            'libpangocairo-1.0-0.dll', 'tcl85.dll', 'tk85.dll']
+dllexcludes = ['iconv.dll', 'libxml2.dll', 'tcl85.dll', 'tk85.dll']
 opts = {'py2exe': {
                    'packages': ['encodings', 'matplotlib', 'pytz'],
                    'includes': includes,
