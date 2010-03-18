@@ -317,7 +317,7 @@ class GtkCondensa(object):
     def cerramientoactiva(self, tv):
         """Cambia cerramiento seleccionado en lista de cerramientos"""
         cerrtm, cerrtm_iter = tv.get_selection().get_selected()
-        value = cerrtm.get_value(cerrtm_iter, 0)
+        value = cerrtm[cerrtm_iter][0]
         lblselected = self.builder.get_object('lblselected')
         lblselected.set_text(value)
 
@@ -372,7 +372,7 @@ class GtkCondensa(object):
         """Añade capa a cerramiento en vista de capas"""
         cerrtm, cerrtm_iter = self.capastv.get_selection().get_selected()
         if cerrtm_iter:
-            capai = int(cerrtm.get_value(cerrtm_iter, 0))
+            capai = int(cerrtm[cerrtm_iter][0])
             #duplicamos propiedades de capa actual
             ncapatuple = self.cerramiento.capas[capai]
             self.cerramiento.capas.insert(capai + 1, ncapatuple)
@@ -385,7 +385,7 @@ class GtkCondensa(object):
         """Elimina capa seleccionada de cerramiento en vista de capas"""
         cerrtm, cerrtm_iter = self.capastv.get_selection().get_selected()
         if cerrtm_iter:
-            capai = int(cerrtm.get_value(cerrtm_iter, 0))
+            capai = int(cerrtm[cerrtm_iter][0])
             self.cerramiento.capas.pop(capai)
             self.actualiza()
             self.graphsredrawpending = True
@@ -397,7 +397,7 @@ class GtkCondensa(object):
         """Sube capa seleccionada de cerramiento en vista de capas"""
         cerrtm, cerrtm_iter = self.capastv.get_selection().get_selected()
         if cerrtm_iter:
-            capai = int(cerrtm.get_value(cerrtm_iter, 0))
+            capai = int(cerrtm[cerrtm_iter][0])
             if capai > 0:
                 cp = self.cerramiento.capas
                 cp[capai - 1], cp[capai] = cp[capai], cp[capai - 1]
@@ -410,7 +410,7 @@ class GtkCondensa(object):
         """Baja capa seleccionada de cerramiento en vista de capas"""
         cerrtm, cerrtm_iter = self.capastv.get_selection().get_selected()
         if cerrtm_iter:
-            capai = int(cerrtm.get_value(cerrtm_iter, 0))
+            capai = int(cerrtm[cerrtm_iter][0])
             if capai + 1 < len(self.cerramiento.capas):
                 cp = self.cerramiento.capas
                 cp[capai + 1], cp[capai] = cp[capai], cp[capai + 1]
