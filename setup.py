@@ -36,38 +36,25 @@ import py2exe
 from matplotlib import get_py2exe_datafiles
 
 __version__ = "0.1"
-docfiles = ['README', 'NEWS', 'INSTALL', 'COPYING']
-datafilelist = ['data/condensa.ui',
-                'data/BDCatalogo.bdc',
-                'data/Catalogo_URSA.bdc',
-                'data/PCatalogo.bdc',
-                'data/splash.png']
 
-classifiers = [
-    'Development Status :: 4 - Beta',
-    'Intended Audience :: Education',
-    'Intended Audience :: Science/Research',
-    'Intended Audience :: Developers',
-    'License :: OSI Approved :: GNU General Public License (GPL)',
-    'Operating System :: Microsoft :: Windows',
-    'Operating System :: POSIX',
-    'Natural Language :: Spanish',
-    'Topic :: Scientific/Engineering',
-    'Programming Language :: Python']
-includes = ['cairo', 'pango', 'pangocairo', 'atk', 'gobject', 'gio']
-excludes = ['_wxagg', '_fltkagg', '_cocoaagg', '_gtkagg',
-            'email', 'logging', 'PyQt4', 'nose', 'wx', 'scipy',
-            'tcl', 'Tkinter', 'compiler']
-dllexcludes = ['iconv.dll', 'libxml2.dll', 'tcl85.dll', 'tk85.dll']
+data_files = [('', ['README', 'NEWS', 'INSTALL', 'COPYING']),
+              ('data', ['data/condensa.ui', 'data/BDCatalogo.bdc',
+                        'data/Catalogo_URSA.bdc', 'data/PCatalogo.bdc',
+                        'data/splash.png']
+              )] + get_py2exe_datafiles()
+
 opts = {'py2exe': {
                    'packages': ['encodings', 'matplotlib', 'pytz'],
-                   'includes': includes,
-                   'excludes': excludes,
-                   'dll_excludes': dllexcludes,
+                   'includes': ['cairo', 'pango', 'pangocairo',
+                                'atk', 'gobject', 'gio'],
+                   'excludes': ['_wxagg', '_fltkagg', '_cocoaagg', '_gtkagg',
+                                'email', 'logging', 'PyQt4', 'nose', 'wx',
+                                'scipy', 'tcl', 'Tkinter', 'compiler'],
+                   'dll_excludes': ['iconv.dll', 'libxml2.dll',
+                                    'tcl85.dll', 'tk85.dll'],
                    #'skip_archive': True,
                    }
         }
-data_files = [('', docfiles), ('data', datafilelist)] + get_py2exe_datafiles()
 
 setup(
     name='Acciones-CTE',
@@ -83,5 +70,16 @@ setup(
               'icon_resources':[(1, 'data/logo.ico')]}],
     packages=['condensaciones', 'condensaciones.test'],
     options=opts,
-    data_files=data_files
+    data_files=data_files,
+    classifiers = [
+        'Development Status :: 4 - Beta',
+        'Intended Audience :: Education',
+        'Intended Audience :: Science/Research',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: GNU General Public License (GPL)',
+        'Operating System :: Microsoft :: Windows',
+        'Operating System :: POSIX',
+        'Natural Language :: Spanish',
+        'Topic :: Scientific/Engineering',
+        'Programming Language :: Python']
 )
