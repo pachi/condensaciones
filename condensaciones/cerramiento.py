@@ -67,6 +67,11 @@ class Cerramiento(object):
     def espesores(self):
         """Lista de espesores de las capas [m]"""
         return [e for nombre, e in self.capas]
+    
+    @property
+    def e(self):
+        """Espesor total [m]"""
+        return reduce(operator.add, self.espesores)
 
     @property
     def espesores_acumulados(self):

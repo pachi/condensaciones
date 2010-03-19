@@ -162,9 +162,11 @@ class GtkCondensa(object):
         """Actualiza pestaña de capas con descripción, capas, Rse, Rsi"""
         rse = self.builder.get_object('Rsevalue')
         rsi = self.builder.get_object('Rsivalue')
+        etotal = self.builder.get_object('espesortotal')
         c = self.cerramiento
-        rse.set_text("%.2f" % float(c.Rse))
-        rsi.set_text("%.2f" % float(c.Rsi))
+        rse.props.text = "%.2f" % float(c.Rse)
+        rsi.props. text = "%.2f" % float(c.Rsi)
+        etotal.props.label = "%.3f" % c.e
         self.capasls.clear()
         for i, (nombre, e, K, R) in enumerate(zip(c.nombres,
                                                c.espesores,
@@ -216,6 +218,8 @@ class GtkCondensa(object):
             tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'capa')
             txt = "%.3f [m]\nR=%.3f [m²K/W]\nS=%.3f [m]\n\n" % (e, R, S)
             tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'datoscapa')
+        txt = "Espesor total del cerramiento: %.3f m\n\n" % m.e
+        tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'capa')
         # Gráficas
         txt = "Gráficas\n"
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'subtitulo')
