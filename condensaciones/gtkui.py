@@ -128,19 +128,19 @@ class GtkCondensa(object):
     def actualizacabecera(self):
         """Actualiza texto de cabecera"""
         cnombre = self.builder.get_object('nombre_cerramiento')
-        cnombre.set_text(self.cerramiento.nombre)
         cdescripcion = self.builder.get_object('descripcion_cerramiento')
-        cdescripcion.set_text(self.cerramiento.descripcion)
+        csubtitulo1 = self.builder.get_object('csubtitulo1')
+        csubtitulo2 = self.builder.get_object('csubtitulo2')
+        cnombre.props.label = self.cerramiento.nombre
+        cdescripcion.props.label = self.cerramiento.descripcion
         txt = ('U = %.2f W/m²K, f<sub>Rsi</sub> ='
                ' %.2f, f<sub>Rsi,min</sub> = %.2f')
-        csubtitulo1 = self.builder.get_object('csubtitulo1')
-        csubtitulo1.set_markup(txt % (self.cerramiento.U,
-                                      self.fRsi, self.fRsimin))
+        csubtitulo1.props.label = txt % (self.cerramiento.U,
+                                         self.fRsi, self.fRsimin)
         txt = ('T<sub>ext</sub> = %.2f°C, HR<sub>ext</sub> = %.1f%%, '
                'T<sub>int</sub> = %.2f°C, HR<sub>int</sub> = %.1f%%')
-        csubtitulo2 = self.builder.get_object('csubtitulo2')
-        csubtitulo2.set_markup(txt % (self.climae.temp, self.climae.HR,
-                                      self.climai.temp, self.climai.HR))
+        csubtitulo2.props.label = txt % (self.climae.temp, self.climae.HR,
+                                         self.climai.temp, self.climai.HR)
         COLOR_OK = gtk.gdk.color_parse("#AACCAA")
         COLOR_BAD = gtk.gdk.color_parse("#CCAAAA")
         state_color = self.ccheck and COLOR_BAD or COLOR_OK
@@ -149,14 +149,13 @@ class GtkCondensa(object):
 
     def actualizapie(self):
         """Actualiza pie de ventana principal"""
-        SEGUNDOSPORMES = 2592000.0
-        txt = "Total: %.2f [g/m²mes]" % (SEGUNDOSPORMES * self.totalg)
         pie1 = self.builder.get_object('pie1')
-        pie1.set_markup(txt)
-        txt = ("Cantidades condensadas: " +
-               ", ".join(["%.2f" % (SEGUNDOSPORMES * x,) for x in self.g]))
         pie2 = self.builder.get_object('pie2')
-        pie2.set_markup(txt)
+        _K = 2592000.0 # segundos por mes
+        pie1.props.label = "Total: %.2f [g/m²mes]" % (_K * self.totalg)
+        txt = ("Cantidades condensadas: " +
+               ", ".join(["%.2f" % (_K * x,) for x in self.g]))
+        pie2.props.label = txt
 
     def actualizacapas(self):
         """Actualiza pestaña de capas con descripción, capas, Rse, Rsi"""
@@ -190,7 +189,7 @@ class GtkCondensa(object):
         """Actualiza texto descripción de cerramiento en ventana principal"""
         m = self.cerramiento
         tb = self.informetxtbuffer
-        tb.set_text("")
+        tb.props.text = ""
         # Denominación cerramiento
         tb.insert_with_tags_by_name(tb.get_start_iter(),
                                     "%s\n" % m.nombre, 'titulo')
@@ -216,7 +215,7 @@ class GtkCondensa(object):
                                                   m.R, m.S)):
             txt = "%i - %s:\n" % (i, nombre)
             tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'capa')
-            txt = "%.3f [m]\nR=%.3f [m²K/W]\nS=%.3f [m]\n\n" % (e, R, S)
+            txt = "%.3f [m]\nR=%.3f [m²K/W]\nS=%.3f [m]\n" % (e, R, S)
             tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'datoscapa')
         txt = "Espesor total del cerramiento: %.3f m\n\n" % m.e
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'capa')
@@ -263,18 +262,18 @@ class GtkCondensa(object):
         ti = self.builder.get_object('tempintentry')
         hri = self.builder.get_object('hrintentry')
         
-        localidad.set_text('Localidad')
-        te.set_text("%.2f" % self.climae.temp)
-        hre.set_text("%.2f" % self.climae.HR)
-        ti.set_text("%.2f" % self.climai.temp)
-        hri.set_text("%.2f" % self.climai.HR)
+        localidad.props.text = 'Localidad'
+        te.props.text = "%.2f" % self.climae.temp
+        hre.props.text ="%.2f" % self.climae.HR
+        ti.props.text = "%.2f" % self.climai.temp
+        hri.props.text = "%.2f" % self.climai.HR
         resultado = self.adlg.run()
         # gtk.RESPONSE_ACCEPT vs gtk.RESPONSE_CANCEL
         if resultado == gtk.RESPONSE_ACCEPT:
-            self.climae.temp = float(te.get_text())
-            self.climae.HR = float(hre.get_text())
-            self.climai.temp = float(ti.get_text())
-            self.climai.HR = float(hri.get_text())
+            self.climae.temp = float(te.props.text)
+            self.climae.HR = float(hre.props.text)
+            self.climai.temp = float(ti.props.text)
+            self.climai.HR = float(hri.props.text)
             self.actualiza()
             #XXX: Se podría retrasar si fuese necesario por rendimiento
             #XXX: Además no se redibujan bien si se está mostrando una pestaña
@@ -293,7 +292,7 @@ class GtkCondensa(object):
         resultado = self.dlg.run()
         # gtk.RESPONSE_ACCEPT vs gtk.RESPONSE_CANCEL
         if resultado == gtk.RESPONSE_ACCEPT:
-            nombrecerr = lblselected.get_text()
+            nombrecerr = lblselected.props.label
             self.cerramiento = self.cerramientosDB[nombrecerr]
             self.actualiza()
             #XXX: Se podría retrasar si fuese necesario por rendimiento
@@ -310,7 +309,7 @@ class GtkCondensa(object):
         cerrtm, cerrtm_iter = tv.get_selection().get_selected()
         value = cerrtm[cerrtm_iter][0]
         lblselected = self.builder.get_object('lblselected')
-        lblselected.set_text(value)
+        lblselected.props.label = value
 
     # Retrollamadas de modificación de capas ----------------------------------
  
