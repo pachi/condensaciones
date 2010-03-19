@@ -58,23 +58,7 @@ class GtkCondensa(object):
         self.cerramientols = self.builder.get_object('cerramientos_liststore')
         self.adlg = self.builder.get_object('ambiente_dlg')
         self.dlg = self.builder.get_object('cerramiento_dlg')
-        smap = {"on_window_destroy": gtk.main_quit,
-                "on_abtn_clicked": self.ambienteselecciona,
-                "on_cbtn_clicked": self.cerramientoselecciona,
-                "on_ctv_cursor_changed": self.cerramientoactiva,
-                "on_ctnombre_changed": self.capacambiamaterial,
-                "on_ctespesor_changed": self.capacambiaespesor,
-                "on_capaaddbtn_clicked": self.capaadd,
-                "on_caparemovebtn_clicked": self.caparemove,
-                "on_capaupbtn_clicked": self.capaup,
-                "on_capadownbtn_clicked": self.capadown,
-                "on_rsevalue_activate": self.capacambiarse,
-                "on_rsevalue_focusout": self.capacambiarse,
-                "on_rsivalue_activate": self.capacambiarsi,
-                "on_rsivalue_focusout": self.capacambiarsi,
-                "on_notebook_switch_page": self.cambiahoja,
-                }
-        self.builder.connect_signals(smap)
+        self.builder.connect_signals(self)
         gtk.link_button_set_uri_hook(lambda b, u: webbrowser.open(u))
         self.cargacerramientos()
         self.actualiza()
@@ -92,6 +76,9 @@ class GtkCondensa(object):
         tb.create_tag("datoscapa", style=pango.STYLE_ITALIC, indent=30)
         tb.create_tag("resultados", scale=pango.SCALE_MEDIUM, foreground='blue')
         tb.create_tag("nota", scale=pango.SCALE_SMALL)
+
+    def quit(self, w):
+        gtk.main_quit()
 
     def main(self):
         """Arranca la aplicación"""

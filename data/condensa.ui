@@ -57,7 +57,7 @@
                 <property name="label" translatable="yes">Cerramientos</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-find</property>
-                <signal name="clicked" handler="on_cbtn_clicked"/>
+                <signal name="clicked" handler="cerramientoselecciona"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -70,7 +70,7 @@
                 <property name="label" translatable="yes">Ambientes</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-refresh</property>
-                <signal name="clicked" handler="on_abtn_clicked"/>
+                <signal name="clicked" handler="ambienteselecciona"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -104,7 +104,7 @@
                 <property name="label" translatable="yes">Salir</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-quit</property>
-                <signal name="clicked" handler="on_window_destroy"/>
+                <signal name="clicked" handler="quit"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -184,7 +184,7 @@
           <object class="GtkNotebook" id="notebook">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
-            <signal name="switch_page" handler="on_notebook_switch_page"/>
+            <signal name="switch_page" handler="cambiahoja"/>
             <child>
               <object class="GtkVBox" id="vbox7">
                 <property name="visible">True</property>
@@ -331,8 +331,8 @@
                             <property name="width_chars">5</property>
                             <property name="text" translatable="yes">valor Rse</property>
                             <property name="xalign">0.5</property>
-                            <signal name="focus_out_event" handler="on_rsevalue_focusout"/>
-                            <signal name="activate" handler="on_rsevalue_activate"/>
+                            <signal name="focus_out_event" handler="capacambiarse"/>
+                            <signal name="activate" handler="capacambiarse"/>
                           </object>
                           <packing>
                             <property name="position">0</property>
@@ -348,8 +348,8 @@
                             <property name="width_chars">5</property>
                             <property name="text" translatable="yes">valor Rse</property>
                             <property name="xalign">0.5</property>
-                            <signal name="focus_out_event" handler="on_rsivalue_focusout"/>
-                            <signal name="activate" handler="on_rsivalue_activate"/>
+                            <signal name="focus_out_event" handler="capacambiarsi"/>
+                            <signal name="activate" handler="capacambiarsi"/>
                           </object>
                           <packing>
                             <property name="position">1</property>
@@ -410,7 +410,7 @@
                         <property name="visible">True</property>
                         <property name="use_underline">True</property>
                         <property name="stock_id">gtk-add</property>
-                        <signal name="clicked" handler="on_capaaddbtn_clicked"/>
+                        <signal name="clicked" handler="capaadd"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -422,7 +422,7 @@
                         <property name="visible">True</property>
                         <property name="use_underline">True</property>
                         <property name="stock_id">gtk-remove</property>
-                        <signal name="clicked" handler="on_caparemovebtn_clicked"/>
+                        <signal name="clicked" handler="caparemove"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -434,7 +434,7 @@
                         <property name="visible">True</property>
                         <property name="use_underline">True</property>
                         <property name="stock_id">gtk-go-up</property>
-                        <signal name="clicked" handler="on_capaupbtn_clicked"/>
+                        <signal name="clicked" handler="capaup"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -446,7 +446,7 @@
                         <property name="visible">True</property>
                         <property name="use_underline">True</property>
                         <property name="stock_id">gtk-go-down</property>
-                        <signal name="clicked" handler="on_capadownbtn_clicked"/>
+                        <signal name="clicked" handler="capadown"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -501,7 +501,7 @@
                             <property name="style">italic</property>
                             <property name="model">materiales_liststore</property>
                             <property name="text_column">0</property>
-                            <signal name="changed" handler="on_ctnombre_changed"/>
+                            <signal name="changed" handler="capacambiamaterial"/>
                           </object>
                           <attributes>
                             <attribute name="text">1</attribute>
@@ -518,7 +518,7 @@
                             <property name="xpad">5</property>
                             <property name="alignment">center</property>
                             <property name="editable">True</property>
-                            <signal name="edited" handler="on_ctespesor_changed"/>
+                            <signal name="edited" handler="capacambiaespesor"/>
                           </object>
                           <attributes>
                             <attribute name="text">2</attribute>
@@ -745,7 +745,7 @@
                     <property name="headers_clickable">False</property>
                     <property name="rules_hint">True</property>
                     <property name="search_column">0</property>
-                    <signal name="cursor_changed" handler="on_ctv_cursor_changed"/>
+                    <signal name="cursor_changed" handler="cerramientoactiva"/>
                     <child>
                       <object class="GtkTreeViewColumn" id="nombrecolumn">
                         <property name="resizable">True</property>
