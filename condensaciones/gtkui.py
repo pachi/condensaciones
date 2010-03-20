@@ -167,14 +167,16 @@ class GtkCondensa(object):
         rsi.props. text = "%.2f" % float(c.Rsi)
         etotal.props.label = "%.3f" % c.e
         self.capasls.clear()
-        for i, (nombre, e, K, R) in enumerate(zip(c.nombres,
+        for i, (nombre, e, K, R, mu, S) in enumerate(zip(c.nombres,
                                                c.espesores,
                                                c.K,
-                                               c.R[1:-1] #quitamos Rse, Rsi
-                                               )):
+                                               c.R[1:-1], #quitamos Rse, Rsi
+                                               c.mu,
+                                               c.S)):
             # En materiales "resistivos" no está definido K
             Ktext = "-" if not K else "%.4f" % K
-            d = ("%i" % i, nombre, "%.3f" % e, Ktext, "%.4f" % R)
+            d = ("%i" % i, nombre, "%.3f" % e, Ktext,
+                 "%.4f" % R, "%i" % mu, "%.3f" % S)
             self.capasls.append(d)
 
     def actualizagraficas(self):
@@ -211,11 +213,12 @@ class GtkCondensa(object):
         # Cerramiento
         txt = "Descripción del cerramiento\n"
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'subtitulo')
-        for i, (nombre, e, R, S) in enumerate(zip(m.nombres, m.espesores,
-                                                  m.R, m.S)):
+        for i, (nombre, e, R, mu, S) in enumerate(zip(m.nombres, m.espesores,
+                                                  m.R, m.mu, m.S)):
             txt = "%i - %s:\n" % (i, nombre)
             tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'capa')
-            txt = "%.3f [m]\nR=%.3f [m²K/W]\nS=%.3f [m]\n" % (e, R, S)
+            txt = "%.3f [m]\nR=%.3f [m²K/W]\nμ=%i\nS=%.3f [m]\n" % (e, R,
+                                                                    mu, S)
             tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'datoscapa')
         txt = "Espesor total del cerramiento: %.3f m\n\n" % m.e
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'capa')

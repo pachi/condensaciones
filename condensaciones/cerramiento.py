@@ -83,6 +83,11 @@ class Cerramiento(object):
                         for i in range(1, len(self.espesores)+1)]
 
     @property
+    def mu(self):
+        """Lista de difusividades al vapor de las capas [-]"""
+        return [materiales[nombre].mu for nombre, e in self.capas]
+
+    @property
     def K(self):
         """Lista de conductividades térmicas de las capas [W/mK]"""
         def Ki(capa):

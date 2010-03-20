@@ -29,6 +29,10 @@
       <column type="gchararray"/>
       <!-- column-name R -->
       <column type="gchararray"/>
+      <!-- column-name mu -->
+      <column type="gchararray"/>
+      <!-- column-name S -->
+      <column type="gchararray"/>
     </columns>
     <data>
       <row>
@@ -37,6 +41,8 @@
         <col id="2" translatable="yes">0,01</col>
         <col id="3" translatable="yes">0,01</col>
         <col id="4" translatable="yes">0,01</col>
+        <col id="5" translatable="yes">10</col>
+        <col id="6" translatable="yes">0,01</col>
       </row>
     </data>
   </object>
@@ -481,7 +487,6 @@
                           <object class="GtkCellRendererText" id="ctid">
                             <property name="cell_background_gdk">#eb84eb84eb84</property>
                             <property name="xpad">5</property>
-                            <property name="alignment">center</property>
                             <property name="foreground_gdk">#4e565fe3ae14</property>
                           </object>
                           <attributes>
@@ -515,8 +520,6 @@
                         <property name="alignment">0.5</property>
                         <child>
                           <object class="GtkCellRendererText" id="ctespesor">
-                            <property name="xpad">5</property>
-                            <property name="alignment">center</property>
                             <property name="editable">True</property>
                             <signal name="edited" handler="capacambiaespesor"/>
                           </object>
@@ -529,8 +532,10 @@
                     <child>
                       <object class="GtkTreeViewColumn" id="kcolumn">
                         <property name="title">K [W/mK]</property>
+                        <property name="alignment">0.5</property>
                         <child>
                           <object class="GtkCellRendererText" id="K">
+                            <property name="cell_background_gdk">#eb84eb84eb84</property>
                             <property name="xpad">4</property>
                             <property name="alignment">center</property>
                           </object>
@@ -549,9 +554,41 @@
                             <property name="cell_background_gdk">#eb84eb84eb84</property>
                             <property name="xpad">4</property>
                             <property name="alignment">center</property>
+                            <property name="background_gdk">#eb84eb84eb84</property>
                           </object>
                           <attributes>
                             <attribute name="text">4</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="mucolumn">
+                        <property name="title">&#x3BC; [-]</property>
+                        <property name="alignment">0.5</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="mu">
+                            <property name="cell_background_gdk">#eb84eb84eb84</property>
+                            <property name="xpad">4</property>
+                            <property name="alignment">center</property>
+                          </object>
+                          <attributes>
+                            <attribute name="text">5</attribute>
+                          </attributes>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="scolumn">
+                        <property name="title">S [m]</property>
+                        <property name="alignment">0.5</property>
+                        <child>
+                          <object class="GtkCellRendererText" id="S">
+                            <property name="cell_background_gdk">#eb84eb84eb84</property>
+                            <property name="xpad">4</property>
+                          </object>
+                          <attributes>
+                            <attribute name="text">6</attribute>
                           </attributes>
                         </child>
                       </object>
