@@ -232,7 +232,8 @@ class GtkCondensa(object):
         txt = "Resultados\n"
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'subtitulo')
         txt = ("R_total: %.3f [m²K/W]\nS_total = %.3f [m]\n"
-               "U = %.3f [W/m²K]\nf_Rsi = %.2f\nf_Rsimin = %.2f\n"
+               "Transmitancia térmica total: U = %.3f [W/m²K]\n"
+               "f_Rsi = %.2f\nf_Rsimin = %.2f\n"
                ) % (m.R_total, m.S_total, m.U, self.fRsi, self.fRsimin)
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'resultados')
         # Condensaciones
