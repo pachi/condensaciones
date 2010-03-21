@@ -21,15 +21,9 @@
 #   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 #   02110-1301, USA.
 #
-# setup para crear los ejecutables de windows
-# el ejecutable y sus dependencias se incluyen en el directorio
-# 'dist' que genera el programa
-# Para 'compilar' el código ejecutar este script usando:
-# python setup.py py2exe
-# Recordar cambiar el archivo
-# C:\winp\Python26\Lib\site-packages\matplotlib\mpl-data\matplotlibrc
-# al reinstalar matplotlib para que indique como default backend GTKCairo:
-# backend      : GTKCairo
+# Py2EXE: python setup.py py2exe
+# Indicar en $PYTHONDIR\Lib\site-packages\matplotlib\mpl-data\matplotlibrc
+# como default backend GTKCairo -> "backend: GTKCairo"
 
 from distutils.core import setup
 import py2exe
