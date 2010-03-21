@@ -39,13 +39,11 @@ data_files = [('', ['README', 'NEWS', 'INSTALL', 'COPYING']),
 
 opts = {'py2exe': {
                    'packages': ['encodings', 'matplotlib', 'pytz'],
-                   'includes': ['cairo', 'pango', 'pangocairo',
-                                'atk', 'gobject', 'gio'],
+                   'includes': 'cairo, pango, pangocairo, atk, gobject, gio',
                    'excludes': ['_wxagg', '_fltkagg', '_cocoaagg', '_gtkagg',
                                 'email', 'logging', 'PyQt4', 'nose', 'wx',
                                 'scipy', 'tcl', 'Tkinter', 'compiler'],
-                   'dll_excludes': ['iconv.dll', 'libxml2.dll',
-                                    'tcl85.dll', 'tk85.dll'],
+                   'dll_excludes': 'iconv.dll,libxml2.dll,tcl85.dll,tk85.dll',
                    #'skip_archive': True,
                    }
         }
