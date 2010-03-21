@@ -60,6 +60,7 @@ setup(
     #scripts=['bin/run.py'],
     windows=[{'script':'bin/condensa',
               'icon_resources':[(1, 'data/logo.ico')]}],
+    scripts=['bin/condensa',],
     packages=['condensaciones', 'condensaciones.test'],
     options=opts,
     data_files=data_files,
