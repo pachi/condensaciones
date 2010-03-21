@@ -25,8 +25,10 @@
 # Indicar en $PYTHONDIR\Lib\site-packages\matplotlib\mpl-data\matplotlibrc
 # como default backend GTKCairo -> "backend: GTKCairo"
 
+import sys
 from distutils.core import setup
-import py2exe
+if sys.platform == 'win32':
+    import py2exe
 from matplotlib import get_py2exe_datafiles
 
 __version__ = "0.1"
