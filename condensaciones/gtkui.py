@@ -347,13 +347,14 @@ class GtkCondensa(object):
         new_text - nuevo texto en la celda de texto
         """
         capaindex = int(self.capasls[path][0])
-        capaname, capae = self.model.c.capas[capaindex]
+        currentname = self.capasls[path][1].decode('utf-8')
+        currente = float(self.capasls[path][2])
         try:
             newe = float(new_text)
         except ValueError:
             return
-        if newe != capae:
-            self.model.c.capas[capaindex] = (capaname, newe)
+        if newe != currente:
+            self.model.c.capas[capaindex] = (currentname, newe)
             self.cerramientomodificado = True
             self.actualiza()
             self.graphsredrawpending = True
