@@ -100,6 +100,11 @@ class GtkCondensa(object):
         tb.create_tag("datoscapa", style=pango.STYLE_ITALIC, indent=30)
         tb.create_tag("resultados", scale=pango.SCALE_MEDIUM, foreground='blue')
         tb.create_tag("nota", scale=pango.SCALE_SMALL)
+    
+    def title(self):
+        modifiedmark = "*" if self.cerramientomodificado else ""
+        txt = "Condensaciones - %s%s" % (self.model.c.nombre, modifiedmark)
+        self.builder.get_object('window').set_title(txt)
 
     def quit(self, w):
         gtk.main_quit()
@@ -127,6 +132,7 @@ class GtkCondensa(object):
 
     def actualiza(self):
         """Actualiza cabecera, gráficas, texto y pie de datos"""
+        self.title()
         self.model.calcula()
         self.actualizacabecera()
         self.actualizapie()
