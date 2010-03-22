@@ -46,7 +46,7 @@
       </row>
     </data>
   </object>
-  <object class="GtkWindow" id="window1">
+  <object class="GtkWindow" id="window">
     <property name="width_request">650</property>
     <child>
       <object class="GtkVBox" id="vbox2">
