@@ -169,6 +169,10 @@ class CPTCanvas(FigureCanvasGTKCairo):
         # Tamaño
         self.set_size_request(width, height)
 
+    def pixbuf(self, destwidth=600):
+        """Obtén un pixbuf a partir del canvas actual"""
+        return get_pixbuf_from_canvas(self, destwidth)
+
     def save(self, filename='presionestempplot.png'):
         """Guardar y mostrar gráfica"""
         self.fig.savefig(filename)
@@ -251,6 +255,10 @@ class CPCanvas(FigureCanvasGTKCairo):
                   ymin - 0.1 * lengthy, ymax + 0.2 * lengthy])
         # Tamaño
         self.set_size_request(width, height)
+
+    def pixbuf(self, destwidth=600):
+        """Obtén un pixbuf a partir del canvas actual"""
+        return get_pixbuf_from_canvas(self, destwidth)
 
     def save(self, filename='presionesplot.png'):
         """Guardar y mostrar gráfica"""
