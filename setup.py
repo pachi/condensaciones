@@ -31,7 +31,7 @@ if sys.platform == 'win32':
     import py2exe
 from matplotlib import get_py2exe_datafiles
 
-__version__ = "0.1"
+__version__ = "0.3"
 
 data_files = [('', ['README', 'NEWS', 'INSTALL', 'COPYING']),
               ('data', ['data/condensa.ui', 'data/BDCatalogo.bdc',
