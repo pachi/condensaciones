@@ -29,12 +29,91 @@ import comprobaciones
 from ptcanvas import CPTCanvas, CPCanvas, GraphData
 import webbrowser, datetime
 
+#Modelo
+import clima
+from datos_ejemplo import cerramientos, materiales
+
 class Model(object):
     def __init__(self, cerramiento, climaext, climaint):
         """Constructor de modelo"""
         self.c = cerramiento
         self.climae = climaext
         self.climai = climaint
+        self.materiales = []
+        self.cerramientos = []
+        self.cerramientosDB = {}
+        self.cargadata()
+        self.cerramientomodificado = False
+
+    def cargadata(self):
+        """Carga datos de materiales y cerramientos"""
+        self.cerramientos = cerramientos
+        #TODO: generar jerarquía de materiales en dbutils en lugar de crear
+        #TODO: lista ordenada aquí.
+        self.materiales = materiales.keys()
+        self.materiales.sort()
+        self.cerramientosDB = dict((c.nombre, c) for c in cerramientos)
+
+    def set_cerramiento(self, cname):
+        """Selecciona cerramiento activo a partir de su nombre"""
+        self.c = self.cerramientosDB[cname]
+
+    def set_climae(self, te, HRe):
+        """Setter de clima exterior para detectar modificación"""
+        self.climae = clima.Clima(te, HRe)
+        #self.calcula()
+
+    def set_climai(self, ti, HRi):
+        """Setter de clima interior para detectar modificación"""
+        self.climai = clima.Clima(ti, HRi)
+        #self.calcula()
+    
+    def set_capa(self, index, name, e):
+        """Establece tupla de capa según índice. d es una tupla de datos"""
+        #TODO: Con material resistivo pon espesor None, o espesor por defecto.
+#        newmaterial = materiales[newname]
+#        capae = None if newmaterial.type == 'RESISTANCE' else float(capae)
+        self.c.capas[index] = (name, e)
+        self.cerramientomodificado = True
+
+    def capasdata(self):
+        """Devuelve iterador por capa con: i, (nombre, espesor, K, R, mu, S)"""
+        # quitamos Rse, Rsi en c.R con c.R[1:-1]
+        return enumerate(zip(self.c.nombres, self.c.espesores,
+                             self.c.K, self.c.R[1:-1], self.c.mu, self.c.S))
+
+    def capaadd(self, index):
+        """Añade capa tras posición index"""
+        ncapatuple = self.c.capas[index]
+        self.c.capas.insert(index + 1, ncapatuple)
+        self.cerramientomodificado = True
+    
+    def caparemove(self, index):
+        """Elimina capa en posición index"""
+        self.c.capas.pop(index)
+        self.cerramientomodificado = True
+    
+    def capaup(self, index):
+        """Sube capa en posición index"""
+        cp = self.c.capas
+        cp[index - 1], cp[index] = cp[index], cp[index - 1]
+        self.cerramientomodificado = True
+    
+    def capadown(self, index):
+        """Baja capa en posición index"""
+        cp = self.c.capas
+        cp[index + 1], cp[index] = cp[index], cp[index + 1]
+        self.cerramientomodificado = True
+    
+    def set_Rse(self, newRse):
+        """Cambia Rse"""
+        self.c.Rse = newRse
+        self.cerramientomodificado = True
+    
+    def set_Rsi(self, newRsi):
+        """Cambia Rsi"""
+        self.c.Rsi = newRsi
+        self.cerramientomodificado = True
 
     def calcula(self):
         """Calcula resultados para usarlos en presentación"""
@@ -49,12 +128,6 @@ class Model(object):
         #self.g, self.pevap = self.c.evaporacion(te,ti,hre,hri,interfases=[2])
         self.totalg = 0.0 if not self.g else sum(self.g)
 
-    def capasdata(self):
-        """Devuelve iterador por capa con: i, (nombre, espesor, K, R, mu, S)"""
-        # quitamos Rse, Rsi en c.R con c.R[1:-1]
-        return enumerate(zip(self.c.nombres, self.c.espesores,
-                             self.c.K, self.c.R[1:-1], self.c.mu, self.c.S))
-
 class GtkCondensa(object):
     """Aplicación"""
     def __init__(self, cerramiento, climaext, climaint):
@@ -65,13 +138,10 @@ class GtkCondensa(object):
         climai - datos higrotérmicos del interior
         """
         self.model = Model(cerramiento, climaext, climaint)
-        self.cerramientomodificado = False
         self.graphsredrawpending = True
-        self.cerramientosDB = {}
         UIFILE = util.get_resource('data', 'condensa.ui')
         self.builder = gtk.Builder()
         self.builder.add_from_file(UIFILE)
-        self.statusbar = self.builder.get_object('statusbar')
         self.graficaprestemp = self.builder.get_object('prestemp_canvas')
         self.graficapresiones = self.builder.get_object('presiones_canvas')
         self.informetxtbuffer = self.builder.get_object('informe_txtbuffer')
@@ -80,12 +150,10 @@ class GtkCondensa(object):
         self.capastv = self.builder.get_object('capas_treeview')
         self.materialesls = self.builder.get_object('materiales_liststore')
         self.cerramientols = self.builder.get_object('cerramientos_liststore')
-        self.adlg = self.builder.get_object('ambiente_dlg')
         self.dlg = self.builder.get_object('cerramiento_dlg')
         self.builder.connect_signals(self)
         gtk.link_button_set_uri_hook(lambda b, u: webbrowser.open(u))
-        self.cargacerramientos()
-        self.actualiza()
+        self.cargadata()
 
     def createtexttags(self):
         """Crea marcas de texto para estilos en textbuffer"""
@@ -100,9 +168,20 @@ class GtkCondensa(object):
         tb.create_tag("datoscapa", style=pango.STYLE_ITALIC, indent=30)
         tb.create_tag("resultados", scale=pango.SCALE_MEDIUM, foreground='blue')
         tb.create_tag("nota", scale=pango.SCALE_SMALL)
+
+    def cargadata(self):
+        """Carga datos de materiales y cerramientos"""
+        for material in self.model.materiales:
+            self.materialesls.append((material,))
+        for c in self.model.cerramientos:
+            self.cerramientols.append((c.nombre, c.descripcion))
+        n = len(self.model.materiales)
+        m = len(self.model.cerramientos)
+        txt = "Cargados %i materiales, %i cerramientos" % (n, m)
+        self.actualiza(txt)
     
     def title(self):
-        modifiedmark = "*" if self.cerramientomodificado else ""
+        modifiedmark = "*" if self.model.cerramientomodificado else ""
         txt = "Condensaciones - %s%s" % (self.model.c.nombre, modifiedmark)
         self.builder.get_object('window').set_title(txt)
 
@@ -112,31 +191,20 @@ class GtkCondensa(object):
     def main(self):
         """Arranca la aplicación"""
         self.builder.get_object('window').show_all()
-        self.statusbar.push(0, "Aplicación inicializada")
         gtk.main()
 
-    def cargacerramientos(self):
-        """Carga datos de materiales y cerramientos"""
-        from datos_ejemplo import cerramientos, materiales
-        mats = materiales.keys()
-        mats.sort()
-        for material in mats:
-            self.materialesls.append((material,))
-        for c in cerramientos:
-            self.cerramientosDB[c.nombre] = c
-            self.cerramientols.append((c.nombre, c.descripcion))
-        n = len(materiales)
-        m = len(cerramientos)
-        txt = "Cargados %i materiales, %i cerramientos" % (n, m)
-        self.statusbar.push(0, txt)
-
-    def actualiza(self):
+    def actualiza(self, txt=None, updategraphs=False):
         """Actualiza cabecera, gráficas, texto y pie de datos"""
+        if txt:
+            self.builder.get_object('statusbar').push(0, txt)
         self.title()
         self.model.calcula()
         self.actualizacabecera()
         self.actualizapie()
         self.actualizacapas()
+        if updategraphs:
+            self.actualizagraficas()
+            self.actualizainforme()
 
     def actualizacabecera(self):
         """Actualiza texto de cabecera"""
@@ -162,13 +230,12 @@ class GtkCondensa(object):
 
     def actualizapie(self):
         """Actualiza pie de ventana principal"""
-        pie1 = self.builder.get_object('pie1')
-        pie2 = self.builder.get_object('pie2')
         _K = 2592000.0 # segundos por mes
-        pie1.props.label = "Total: %.2f [g/m²mes]" % (_K * self.model.totalg)
+        txt = "Total: %.2f [g/m²mes]" % (_K * self.model.totalg)
+        self.builder.get_object('pie1').props.label = txt
         txt = ("Cantidades condensadas: " +
                ", ".join(["%.2f" % (_K * x,) for x in self.model.g]))
-        pie2.props.label = txt
+        self.builder.get_object('pie2').props.label = txt
 
     def actualizacapas(self):
         """Actualiza pestaña de capas con descripción, capas, Rse, Rsi"""
@@ -221,8 +288,8 @@ class GtkCondensa(object):
         for i, (nombre, e, K, R, mu, S) in self.model.capasdata():
             txt = "%i - %s:\n" % (i, nombre)
             tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'capa')
-            txt = "%.3f [m]\nR=%.3f [m²K/W]\nμ=%i\nS=%.3f [m]\n" % (e, R,
-                                                                    mu, S)
+            txt = ("%.3f [m]\nR=%.3f [m²K/W]\n"
+                   "μ=%i\nS=%.3f [m]\n" % (e, R, mu, S))
             tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'datoscapa')
         txt = "Espesor total del cerramiento: %.3f m\n\n" % self.model.c.e
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'capa')
@@ -263,33 +330,25 @@ class GtkCondensa(object):
 
     def ambienteselecciona(self, widget):
         """Abre diálogo de selección de ambientes"""
+        adialog = self.builder.get_object('ambiente_dlg')
         localidad = self.builder.get_object('localidadentry')
         te = self.builder.get_object('tempextentry')
         hre = self.builder.get_object('hrextentry')
         ti = self.builder.get_object('tempintentry')
         hri = self.builder.get_object('hrintentry')
-        
         localidad.props.text = 'Localidad'
         te.props.text = "%.2f" % self.model.climae.temp
         hre.props.text ="%.2f" % self.model.climae.HR
         ti.props.text = "%.2f" % self.model.climai.temp
         hri.props.text = "%.2f" % self.model.climai.HR
-        resultado = self.adlg.run()
+        resultado = adialog.run()
         # gtk.RESPONSE_ACCEPT vs gtk.RESPONSE_CANCEL
         if resultado == gtk.RESPONSE_ACCEPT:
-            self.model.climae.temp = float(te.props.text)
-            self.model.climae.HR = float(hre.props.text)
-            self.model.climai.temp = float(ti.props.text)
-            self.model.climai.HR = float(hri.props.text)
-            self.actualiza()
-            #XXX: Se podría retrasar si fuese necesario por rendimiento
-            #XXX: Además no se redibujan bien si se está mostrando una pestaña
-            #XXX: gráfica.
-            self.actualizagraficas()
-            self.actualizainforme()
+            self.model.set_climae(float(te.props.text), float(hre.props.text))
+            self.model.set_climai(float(ti.props.text), float(hri.props.text))
             txt = "Seleccionadas nuevas condiciones ambientales"
-            self.statusbar.push(0, txt)
-        self.adlg.hide()
+            self.actualiza(txt, updategraphs=True)
+        adialog.hide()
     
     # Selección de cerramientos - diálogo ------------------------------------
     
@@ -300,15 +359,9 @@ class GtkCondensa(object):
         # gtk.RESPONSE_ACCEPT vs gtk.RESPONSE_CANCEL
         if resultado == gtk.RESPONSE_ACCEPT:
             nombrecerr = lblselected.props.label
-            self.model.c = self.cerramientosDB[nombrecerr]
-            self.actualiza()
-            #XXX: Se podría retrasar si fuese necesario por rendimiento
-            #XXX: Además no se redibujan bien si se está mostrando una pestaña
-            #XXX: gráfica.
-            self.actualizagraficas()
-            self.actualizainforme()
-            txt = "Seleccionado nuevo cerramiento activo: %s"
-            self.statusbar.push(0, txt % nombrecerr)
+            self.model.set_cerramiento(nombrecerr)
+            txt = "Seleccionado nuevo cerramiento activo: %s" % nombrecerr
+            self.actualiza(txt, updategraphs=True)
         self.dlg.hide()
 
     def cerramientoactiva(self, tv):
@@ -327,21 +380,12 @@ class GtkCondensa(object):
         new_iter - ruta del nuevo valor en el modelo del combo
         """
         capaindex = int(self.capasls[path][0])
-        capaname, capae = self.model.c.capas[capaindex]
+        currentname, currente = self.model.c.capas[capaindex]
         newname = self.materialesls[new_iter][0].decode('utf-8')
-        #TODO: Detecta si es material resistivo y pon espesor a None. Si no,
-        #TODO: poner espesor por defecto.
-#        newmaterial = materiales[newname]
-#        capae = None if newmaterial.type == 'RESISTANCE' else float(capae)
-        try:
-            self.model.c.capas[capaindex] = (newname, float(capae))
-            self.cerramientomodificado = True
-            self.actualiza()
-            self.graphsredrawpending = True
-            txt = "Modificado material de capa %i" % capaindex
-            self.statusbar.push(0, txt)
-        except:
-            self.model.c.capas[capaindex] = (capaname, float(capae))
+        if newname != currentname:
+            self.model.set_capa(capaindex, newname, float(currente))
+            msg = "Modificado material de capa %i: %s" % (capaindex, newname)
+            self.actualiza(msg)
 
     def capacambiaespesor(self, cr, path, new_text):
         """Cambio de espesor en la vista de capas
@@ -358,37 +402,28 @@ class GtkCondensa(object):
         except ValueError:
             return
         if newe != currente:
-            self.model.c.capas[capaindex] = (currentname, newe)
-            self.cerramientomodificado = True
-            self.actualiza()
-            self.graphsredrawpending = True
-            txt = "Modificado espesor de capa %i a %f [m]"
-            self.statusbar.push(0, txt % (capaindex, newe))
+            self.model.set_capa(capaindex, currentname, newe)
+            msg = "Modificado espesor de capa %i a %f [m]" % (capaindex, newe)
+            self.actualiza(msg)
 
     def capaadd(self, btn):
         """Añade capa a cerramiento en vista de capas"""
         cerrtm, cerrtm_iter = self.capastv.get_selection().get_selected()
         if cerrtm_iter:
             capai = int(cerrtm[cerrtm_iter][0])
-            #duplicamos propiedades de capa actual
-            ncapatuple = self.model.c.capas[capai]
-            self.model.c.capas.insert(capai + 1, ncapatuple)
-            self.actualiza()
-            self.graphsredrawpending = True
+            self.model.capaadd(capai)
             self.capastv.set_cursor(capai + 1)
-            self.statusbar.push(0, "Añadida capa %i" % (capai + 1))
+            self.actualiza("Añadida capa %i" % (capai + 1))
 
     def caparemove(self, btn):
         """Elimina capa seleccionada de cerramiento en vista de capas"""
         cerrtm, cerrtm_iter = self.capastv.get_selection().get_selected()
         if cerrtm_iter:
             capai = int(cerrtm[cerrtm_iter][0])
-            self.model.c.capas.pop(capai)
-            self.actualiza()
-            self.graphsredrawpending = True
+            self.model.caparemove(capai)
             if capai == 0: capai = 1
             self.capastv.set_cursor(capai - 1)
-            self.statusbar.push(0, "Eliminada capa %i" % capai)
+            self.actualiza("Eliminada capa %i" % capai)
 
     def capaup(self, btn):
         """Sube capa seleccionada de cerramiento en vista de capas"""
@@ -396,12 +431,9 @@ class GtkCondensa(object):
         if cerrtm_iter:
             capai = int(cerrtm[cerrtm_iter][0])
             if capai > 0:
-                cp = self.model.c.capas
-                cp[capai - 1], cp[capai] = cp[capai], cp[capai - 1]
-                self.actualiza()
-                self.graphsredrawpending = True
+                self.model.capaup(capai)
                 self.capastv.set_cursor(capai - 1)
-                self.statusbar.push(0, "Desplazada capa %i" % capai)
+                self.actualiza("Desplazada capa %i" % capai)
 
     def capadown(self, btn):
         """Baja capa seleccionada de cerramiento en vista de capas"""
@@ -409,12 +441,9 @@ class GtkCondensa(object):
         if cerrtm_iter:
             capai = int(cerrtm[cerrtm_iter][0])
             if capai + 1 < len(self.model.c.capas):
-                cp = self.model.c.capas
-                cp[capai + 1], cp[capai] = cp[capai], cp[capai + 1]
-                self.actualiza()
-                self.graphsredrawpending = True
+                self.model.capadown(capai)
                 self.capastv.set_cursor(capai + 1)
-                self.statusbar.push(0, "Desplazada capa %i" % capai)
+                self.actualiza("Desplazada capa %i" % capai)
 
     def capacambiarse(self, entry, event=None):
         """Toma valor de Rse al activar entry o cambiar el foco"""
@@ -425,11 +454,8 @@ class GtkCondensa(object):
             entry.props.text = oldrse
             return
         if newrse != oldrse:
-            self.model.c.Rse = newrse
-            self.statusbar.push(0, "Nuevo Rse: %.2f" % newrse)
-            self.cerramientomodificado = True
-            self.graphsredrawpending = True
-            self.actualiza()
+            self.model.set_Rse(newrse)
+            self.actualiza("Nuevo Rse: %.2f" % newrse)
 
     def capacambiarsi(self, entry, event=None):
         """Toma valor de Rsi al activar entry o cambiar el foco"""
@@ -440,11 +466,8 @@ class GtkCondensa(object):
             entry.props.text = oldrsi
             return
         if newrsi != oldrsi:
-            self.model.c.Rsi = newrsi
-            self.statusbar.push(0, "Nuevo Rsi: %.2f" % newrsi)
-            self.cerramientomodificado = True
-            self.graphsredrawpending = True
-            self.actualiza()
+            self.model.set_Rsi(newrsi)
+            self.actualiza("Nuevo Rsi: %.2f" % newrsi)
 
     # Retrollamadas generales -------------------------------------------------
 
@@ -452,11 +475,7 @@ class GtkCondensa(object):
         """Cambia hoja activa en la interfaz y actualiza gráficas si procede"""
         CREDITOS, CAPAS, GRAFICAPT, GRAFICAPV, INFORME = 0, 1, 2, 3, 4
         if pagenum == GRAFICAPT or pagenum == GRAFICAPV:
-            if self.graphsredrawpending:
-                self.actualizagraficas()
-                self.graphsredrawpending = False
+            self.actualizagraficas()
         elif pagenum == INFORME:
-            if self.graphsredrawpending:
-                self.actualizagraficas()
-                self.graphsredrawpending = False
+            self.actualizagraficas()
             self.actualizainforme()
