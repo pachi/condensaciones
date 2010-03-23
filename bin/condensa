@@ -29,8 +29,7 @@ if not hasattr(sys, 'frozen'):
     currpath = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
     sys.path.append(currpath)
 else:
-    def ignorer(*args, **kwargs): pass
-    warnings.showwarning = ignorer
+    warnings.simplefilter('ignore')
 
 from condensaciones.cerramiento import Cerramiento
 from condensaciones.gtkui import GtkCondensa
