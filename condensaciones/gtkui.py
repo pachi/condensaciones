@@ -144,20 +144,17 @@ class GtkCondensa(object):
         self.ui.add_from_file(UIFILE)
         self.graficaprestemp = self.ui.get_object('prestemp_canvas')
         self.graficapresiones = self.ui.get_object('presiones_canvas')
-        self.informetxtbuffer = self.ui.get_object('informe_txtbuffer')
         self.createtexttags()
         self.capasls = self.ui.get_object('capas_liststore')
         self.capastv = self.ui.get_object('capas_treeview')
         self.materialesls = self.ui.get_object('materiales_liststore')
-        self.cerramientols = self.ui.get_object('cerramientos_liststore')
-        self.dlg = self.ui.get_object('cerramiento_dlg')
         self.ui.connect_signals(self)
         gtk.link_button_set_uri_hook(lambda b, u: webbrowser.open(u))
         self.cargadata()
 
     def createtexttags(self):
         """Crea marcas de texto para estilos en textbuffer"""
-        tb = self.informetxtbuffer
+        tb = self.ui.get_object('informe_txtbuffer')
         tb.create_tag("titulo",
                       weight=pango.WEIGHT_BOLD, scale=pango.SCALE_X_LARGE)
         tb.create_tag("titulo2",
@@ -173,8 +170,9 @@ class GtkCondensa(object):
         """Carga datos de materiales y cerramientos"""
         for material in self.model.materiales:
             self.materialesls.append((material,))
+        cerramientosls = self.ui.get_object('cerramientos_liststore')
         for c in self.model.cerramientos:
-            self.cerramientols.append((c.nombre, c.descripcion))
+            cerramientosls.append((c.nombre, c.descripcion))
         n = len(self.model.materiales)
         m = len(self.model.cerramientos)
         txt = "Cargados %i materiales, %i cerramientos" % (n, m)
@@ -262,7 +260,7 @@ class GtkCondensa(object):
     
     def actualizainforme(self):
         """Actualiza texto descripción de cerramiento en ventana principal"""
-        tb = self.informetxtbuffer
+        tb = self.ui.get_object('informe_txtbuffer')
         tb.props.text = ""
         # Denominación cerramiento
         tb.insert_with_tags_by_name(tb.get_start_iter(),
@@ -355,14 +353,14 @@ class GtkCondensa(object):
     def cerramientoselecciona(self, widget):
         """Abre diálogo de selección de cerramiento"""
         lblselected = self.ui.get_object('lblselected')
-        resultado = self.dlg.run()
+        resultado = self.ui.get_object('cerramiento_dlg').run()
         # gtk.RESPONSE_ACCEPT vs gtk.RESPONSE_CANCEL
         if resultado == gtk.RESPONSE_ACCEPT:
             nombrecerr = lblselected.props.label
             self.model.set_cerramiento(nombrecerr)
             txt = "Seleccionado nuevo cerramiento activo: %s" % nombrecerr
             self.actualiza(txt, updategraphs=True)
-        self.dlg.hide()
+        self.ui.get_object('cerramiento_dlg').hide()
 
     def cerramientoactiva(self, tv):
         """Cambia cerramiento seleccionado en lista de cerramientos"""
