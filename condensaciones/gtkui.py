@@ -140,18 +140,18 @@ class GtkCondensa(object):
         self.model = Model(cerramiento, climaext, climaint)
         self.graphsredrawpending = True
         UIFILE = util.get_resource('data', 'condensa.ui')
-        self.builder = gtk.Builder()
-        self.builder.add_from_file(UIFILE)
-        self.graficaprestemp = self.builder.get_object('prestemp_canvas')
-        self.graficapresiones = self.builder.get_object('presiones_canvas')
-        self.informetxtbuffer = self.builder.get_object('informe_txtbuffer')
+        self.ui = gtk.Builder()
+        self.ui.add_from_file(UIFILE)
+        self.graficaprestemp = self.ui.get_object('prestemp_canvas')
+        self.graficapresiones = self.ui.get_object('presiones_canvas')
+        self.informetxtbuffer = self.ui.get_object('informe_txtbuffer')
         self.createtexttags()
-        self.capasls = self.builder.get_object('capas_liststore')
-        self.capastv = self.builder.get_object('capas_treeview')
-        self.materialesls = self.builder.get_object('materiales_liststore')
-        self.cerramientols = self.builder.get_object('cerramientos_liststore')
-        self.dlg = self.builder.get_object('cerramiento_dlg')
-        self.builder.connect_signals(self)
+        self.capasls = self.ui.get_object('capas_liststore')
+        self.capastv = self.ui.get_object('capas_treeview')
+        self.materialesls = self.ui.get_object('materiales_liststore')
+        self.cerramientols = self.ui.get_object('cerramientos_liststore')
+        self.dlg = self.ui.get_object('cerramiento_dlg')
+        self.ui.connect_signals(self)
         gtk.link_button_set_uri_hook(lambda b, u: webbrowser.open(u))
         self.cargadata()
 
@@ -183,20 +183,20 @@ class GtkCondensa(object):
     def title(self):
         modifiedmark = "*" if self.model.cerramientomodificado else ""
         txt = "Condensaciones - %s%s" % (self.model.c.nombre, modifiedmark)
-        self.builder.get_object('window').set_title(txt)
+        self.ui.get_object('window').set_title(txt)
 
     def quit(self, w):
         gtk.main_quit()
 
     def main(self):
         """Arranca la aplicación"""
-        self.builder.get_object('window').show_all()
+        self.ui.get_object('window').show_all()
         gtk.main()
 
     def actualiza(self, txt=None, updategraphs=False):
         """Actualiza cabecera, gráficas, texto y pie de datos"""
         if txt:
-            self.builder.get_object('statusbar').push(0, txt)
+            self.ui.get_object('statusbar').push(0, txt)
         self.title()
         self.model.calcula()
         self.actualizacabecera()
@@ -209,10 +209,10 @@ class GtkCondensa(object):
     def actualizacabecera(self):
         """Actualiza texto de cabecera"""
         model = self.model
-        cnombre = self.builder.get_object('nombre_cerramiento')
-        cdescripcion = self.builder.get_object('descripcion_cerramiento')
-        csubtitulo1 = self.builder.get_object('csubtitulo1')
-        csubtitulo2 = self.builder.get_object('csubtitulo2')
+        cnombre = self.ui.get_object('nombre_cerramiento')
+        cdescripcion = self.ui.get_object('descripcion_cerramiento')
+        csubtitulo1 = self.ui.get_object('csubtitulo1')
+        csubtitulo2 = self.ui.get_object('csubtitulo2')
         cnombre.props.label = model.c.nombre
         cdescripcion.props.label = model.c.descripcion
         txt = ('U = %.2f W/m²K, f<sub>Rsi</sub> ='
@@ -225,23 +225,23 @@ class GtkCondensa(object):
         COLOR_OK = gtk.gdk.color_parse("#AACCAA")
         COLOR_BAD = gtk.gdk.color_parse("#CCAAAA")
         state_color = COLOR_BAD if model.ccheck else COLOR_OK
-        cfondo = self.builder.get_object('cfondo')
+        cfondo = self.ui.get_object('cfondo')
         cfondo.modify_bg(gtk.STATE_NORMAL, state_color)
 
     def actualizapie(self):
         """Actualiza pie de ventana principal"""
         _K = 2592000.0 # segundos por mes
         txt = "Total: %.2f [g/m²mes]" % (_K * self.model.totalg)
-        self.builder.get_object('pie1').props.label = txt
+        self.ui.get_object('pie1').props.label = txt
         txt = ("Cantidades condensadas: " +
                ", ".join(["%.2f" % (_K * x,) for x in self.model.g]))
-        self.builder.get_object('pie2').props.label = txt
+        self.ui.get_object('pie2').props.label = txt
 
     def actualizacapas(self):
         """Actualiza pestaña de capas con descripción, capas, Rse, Rsi"""
-        rse = self.builder.get_object('Rsevalue')
-        rsi = self.builder.get_object('Rsivalue')
-        etotal = self.builder.get_object('espesortotal')
+        rse = self.ui.get_object('Rsevalue')
+        rsi = self.ui.get_object('Rsivalue')
+        etotal = self.ui.get_object('espesortotal')
         rse.props.text = "%.2f" % float(self.model.c.Rse)
         rsi.props. text = "%.2f" % float(self.model.c.Rsi)
         etotal.props.label = "%.3f" % self.model.c.e
@@ -330,12 +330,12 @@ class GtkCondensa(object):
 
     def ambienteselecciona(self, widget):
         """Abre diálogo de selección de ambientes"""
-        adialog = self.builder.get_object('ambiente_dlg')
-        localidad = self.builder.get_object('localidadentry')
-        te = self.builder.get_object('tempextentry')
-        hre = self.builder.get_object('hrextentry')
-        ti = self.builder.get_object('tempintentry')
-        hri = self.builder.get_object('hrintentry')
+        adialog = self.ui.get_object('ambiente_dlg')
+        localidad = self.ui.get_object('localidadentry')
+        te = self.ui.get_object('tempextentry')
+        hre = self.ui.get_object('hrextentry')
+        ti = self.ui.get_object('tempintentry')
+        hri = self.ui.get_object('hrintentry')
         localidad.props.text = 'Localidad'
         te.props.text = "%.2f" % self.model.climae.temp
         hre.props.text ="%.2f" % self.model.climae.HR
@@ -354,7 +354,7 @@ class GtkCondensa(object):
     
     def cerramientoselecciona(self, widget):
         """Abre diálogo de selección de cerramiento"""
-        lblselected = self.builder.get_object('lblselected')
+        lblselected = self.ui.get_object('lblselected')
         resultado = self.dlg.run()
         # gtk.RESPONSE_ACCEPT vs gtk.RESPONSE_CANCEL
         if resultado == gtk.RESPONSE_ACCEPT:
@@ -366,7 +366,7 @@ class GtkCondensa(object):
 
     def cerramientoactiva(self, tv):
         """Cambia cerramiento seleccionado en lista de cerramientos"""
-        lblselected = self.builder.get_object('lblselected')
+        lblselected = self.ui.get_object('lblselected')
         cerrtm, cerrtm_iter = tv.get_selection().get_selected()
         lblselected.props.label = cerrtm[cerrtm_iter][0]
 
