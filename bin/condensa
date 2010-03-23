@@ -23,9 +23,14 @@
 """Script de arranque de la aplicación sin necesidad de instalarla"""
 
 import os, sys
+import warnings
+
 if not hasattr(sys, 'frozen'):
     currpath = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
     sys.path.append(currpath)
+else:
+    def ignorer(*args, **kwargs): pass
+    warnings.showwarning = ignorer
 
 from condensaciones.cerramiento import Cerramiento
 from condensaciones.gtkui import GtkCondensa
