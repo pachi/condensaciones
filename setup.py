@@ -45,7 +45,10 @@ opts = {'py2exe': {
                    'excludes': ['_wxagg', '_fltkagg', '_cocoaagg', '_gtkagg',
                                 'email', 'logging', 'PyQt4', 'nose', 'wx',
                                 'scipy', 'tcl', 'Tkinter', 'compiler'],
-                   'dll_excludes': 'iconv.dll,libxml2.dll,tcl85.dll,tk85.dll',
+                   'dll_excludes': 'iconv.dll,libxml2.dll,tcl85.dll,tk85.dll,'\
+                                   'pywintypes26.dll,POWRPROF.dll,DNSAPI.dll,'\
+                                   'libpangoft2-1.0-0.dll,MSIMG32.DLL,'\
+                                   'freetype6.dll',
                    #'skip_archive': True,
                    }
         }
