@@ -22,36 +22,14 @@
 #   02110-1301, USA.
 """Tests del módulo condensaciones.dbutils"""
 
+#TODO: Con configobj ahora habría que probar, por un lado, la conversión de
+#TODO: formato .bdc a .ini y, por otro, de formato .ini a materiales.
+#TODO: test DB2ini de dbutils 
+#TODO: de materiales testea loadmaterialesdb
+
 import os
 import unittest
 import condensaciones.dbutils as dbutils
-
-datablock = ['"B_Vapor Z3 (d_1mm)" = MATERIAL',
-             'TYPE           = PROPERTIES',
-             '    THICKNESS      = 0.001',
-             '    CONDUCTIVITY   = 500',
-             '    DENSITY        = 1',
-             '    SPECIFIC-HEAT  = 1',
-             '    VAPOUR-DIFFUSIVITY-FACTOR = 2030',
-             '    NAME           = "B_Vapor Z3 (d_1mm)"',
-             '    NAME_CALENER   = ""',
-             '    GROUP          = "B_VAPOR"',
-             '    IMAGE          = "asfalto.bmp"',
-             '    LIBRARY        = NO',
-             ]
-
-parsedblock = {'MATERIAL': 'B_Vapor Z3 (d_1mm)',
-               'TYPE': 'PROPERTIES',
-               'THICKNESS': '0.001',
-               'CONDUCTIVITY': '500',
-               'DENSITY': '1',
-               'SPECIFIC-HEAT': '1',
-               'VAPOUR-DIFFUSIVITY-FACTOR': '2030',
-               'NAME': 'B_Vapor Z3 (d_1mm)',
-               'NAME_CALENER': '',
-               'GROUP': 'B_VAPOR',
-               'IMAGE': 'asfalto.bmp',
-               'LIBRARY': 'NO',}
 
 this_dir = os.path.dirname(__file__)
 DB = os.path.join(this_dir, "./PCatalogo.bdc")
@@ -84,14 +62,8 @@ class  DBTestCase(unittest.TestCase):
     """Comprobaciones de interpretación de datos"""
     def setUp(self):
         """Module-level setup"""
-        self.block = datablock
-        self.parsedblock = dbutils.parseblock(self.block)
         self.parsedfile = dbutils.parsefile(DB)
-        self.materials, self.groups = dbutils.db2data(DB)
-
-    def test_parseblock(self):
-        """Interpretación de bloque de datos"""
-        self.assertEqual(self.parsedblock, parsedblock)
+        self.materials, self.names, self.groups = dbutils._db2data(DB)
 
     def test_parsefile(self):
         """Interpretación de archivo de datos"""

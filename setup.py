@@ -34,8 +34,7 @@ from matplotlib import get_py2exe_datafiles
 __version__ = "0.3"
 
 data_files = [('', ['README', 'NEWS', 'INSTALL', 'COPYING']),
-              ('data', ['data/condensa.ui', 'data/BDCatalogo.bdc',
-                        'data/Catalogo_URSA.bdc', 'data/PCatalogo.bdc',
+              ('data', ['data/condensa.ui', 'data/MaterialesDB.ini',
                         'data/splash.png']
               )] + get_py2exe_datafiles()
 
@@ -65,7 +64,7 @@ setup(
     #scripts=['bin/run.py'],
     windows=[{'script':'bin/condensa',
               'icon_resources':[(1, 'data/logo.ico')]}],
-    scripts=['bin/condensa',],
+    scripts=['bin/condensa', 'bin/importDB'],
     packages=['condensaciones', 'condensaciones.test'],
     options=opts,
     data_files=data_files,

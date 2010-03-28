@@ -23,37 +23,51 @@
 """Módulo de definición de materiales y propiedades"""
 
 from util import get_resource
-from dbutils import db2data
+from material import Material
+import configobj
 
-CATALOGOPACHI = get_resource('data/PCatalogo.bdc')
-CATALOGOCALENER = get_resource('data/BDCatalogo.bdc')
-CATALOGOURSA = get_resource('data/Catalogo_URSA.bdc')
-
-materiales, grupos = db2data([CATALOGOPACHI, CATALOGOCALENER, CATALOGOURSA])
-
-#===============================================================================
-# Funciones auxiliares
-#===============================================================================
-def tipo(nombre):
-    """Tipo de elemento en relación a su comportamiento térmico
+def loadmaterialesdb(filename='DB.ini'):
+    """Lee base de datos de materiales en formato ConfigObj
     
-    Puede ser de los tipos:
-    - PROPERTIES, definido por su conductividad térmica 'CONDUCTIVITY'
-    - RESISTANCE, definido por su resistencia térmica 'RESISTANCE'
+    Deveuelve:
+        - diccionario de nombres de material con instancias de Material
+        - lista de nombres de materiales
+        - diccionario grupos con conjuntos de nombres de material
     """
-    return materiales[nombre].type
+    def unescape(data):
+        """Unescape &amp;, &lt;, and &gt; in a string of data."""
+        data = data.replace("&lb;", "[").replace("&rb;", "]")
+        return data.replace("&amp;", "&")
+    #TODO:Falta por convertir datos al tipo adecuado
+    config = configobj.ConfigObj(filename, encoding='utf-8', raise_errors=True)
+    materiales, names, groups = {}, [], {}
+    for section in config:
+        material = config[section]
+        name = unescape(material['name'])
+        db = material['db']
+        group = material['group']
+        mtype = material['type']
+        mu = material.as_float('mu')
+        m = Material(name, group, mtype, mu, db)
+        # Valores por tipo
+        if mtype == 'RESISTANCE':
+            m.resistance = material.as_float('resistance')
+        elif mtype == 'PROPERTIES':
+            m.conductivity = material.as_float('conductivity')
+            m.thickness = material.as_float('thickness')
+            m.density = material.as_float('density')
+            m.specific_heat = material.as_float('specific_heat')
+        # Valores opcionales
+        if 'thickness_change' in material:
+            m.thickness_change = material.as_bool('thickness_change')
+        if 'thickness_min' in material:
+            m.thickness_min = material.as_float('thickness_min')
+        if 'thickness_max' in material:
+            m.thickness_max = material.as_float('thickness_max')
+        materiales[name] = m
+        names.append(name)
+        groups.setdefault(group, set()).add(name)
+    return materiales, names, groups
 
-def conductividad(nombre):
-    """Conductividad térmica del material [W/m.K]"""
-    return float(materiales[nombre].conductivity)
-
-def resistencia(nombre):
-    """Resistencia térmica del material [m²/K.W]"""
-    return float(materiales[nombre].resistance)
-
-def difusividad(nombre):
-    """Difusividad al vapor de agua del material"""
-    return float(materiales[nombre].mu)
-
-if __name__ == "__main__":
-    print materiales
+DB = get_resource('data', 'MaterialesDB.ini')
+materiales, nombres, grupos = loadmaterialesdb(DB)

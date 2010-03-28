@@ -20,74 +20,42 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 #   02110-1301, USA.
-"""Gestión de bases de data de materiales LIDER
+"""Gestión de bases de datos de materiales
 
 Permite leer, interpretar y crear un diccionario de acceso a los materiales y
 sus propiedades.
 """
 
+import os
 import codecs
+import configobj
+from material import Material
 
 #===============================================================================
-# Clases base para representar elementos de las BBDD de Lider
-#===============================================================================
-class Material(object):
-    """Material tipo"""
-    klass = 'MATERIAL'
-    def __init__(self, name, group, mtype, mu):
-        """Inicialización de datos generales
-        
-        name - nombre del material
-        group - grupo genérico al que pertenece el material
-        mtype - tipo de material [RESISTANCE|PROPERTIES|SHADING-COEF]
-        mu - difusividad al vapor de agua
-        """
-        self.name = name
-        self.group = group
-        self.type = None
-        # Difusividad al vapor de agua del material
-        self.mu = mu
-        #self.name_calener = ''
-        #self.image = 'asfalto.bmp'
-        #self.library = False
-
-class PropertiesMaterial(Material):
-    """Material de tipo Properties"""
-    def __init__(self, name, group, mu, conductivity, thickness=None):
-        """Inicialización de datos generales
-        
-        conductivity - conductividad térmica [W/m.K]
-        thickness - espesor del elemento [m]
-        """
-        Material.__init__(self, name, group, type, mu)
-        self.type = 'PROPERTIES'
-        self.thickness = thickness #[m]
-        self.conductivity = conductivity #[W/m.K]
-        #self.density = 1#properties
-        #self.specific_heat = 1#properties
-        #self.thickness_min =  .04#properties
-        #self.thickness_max =  .06#properties
-
-class ResistanceMaterial(Material):
-    """Material de tipo Resistance"""
-    def __init__(self, name, group, mu, resistance):
-        """Inicialización de datos generales
-        
-        resistance - resistencia térmica [m²/K.W]
-        """
-        Material.__init__(self, name, group, type, mu)
-        self.type = 'RESISTANCE'
-        self.resistance = resistance #[m²/K.W]
-        #self.thickness_change = False#resistance
-
-#===============================================================================
-# Funciones para transformar BBDD de Lider a objetos Python
+# Funciones de conversión desde BBDD de Lider / Calener a BBDD de Materiales
 #===============================================================================
 
-DEFAULT_SECTION = u'default'
-
-def parseblock(block):
-    """Divide bloques de la base de datos recibidos como listas de datos
+def parsefile(dbfile):
+    """Interpreta secciones de la base de datos
+    
+    Devuelve:
+        - diccionario de secciones con diccionario de materiales por sección.
+    
+    El diccionario de materiales contiene diccionario de propiedades.
+    
+    Las bases de datos se almacenan con codificación ISO-8859-1.
+    
+    Formato general del archivo
+    ---------------------------
+    
+    Comentarios - Líneas que empiezan por '$'
+    Palabras clave - Definen propiedades de la base de data (e.g. TEMPLARY)
+    Secciones y subsecciones - El nombre de la sección se coloca entre líneas
+                               con símbolos '+++'
+    Bloques de datos - Contienen la información de materiales
+    
+    Formato de bloques de datos
+    ---------------------------
     
     La primera línea indica el nombre del elemento (e.g. "Ladrillo hueco
     doble"), seguido de su tipo (e.g. MATERIAL, GLASS-TYPE, NAME-FRAME).
@@ -101,47 +69,36 @@ def parseblock(block):
     Cada bloque se termina con un par de puntos ('..').
     
     Ejemplo de bloque:
-    
-    "B_Vapor Z3 (d_1mm)" = MATERIAL
-    TYPE           = PROPERTIES
-    THICKNESS      = 0.001
-    CONDUCTIVITY   = 500
-    DENSITY        = 1
-    SPECIFIC-HEAT  = 1
-    VAPOUR-DIFFUSIVITY-FACTOR = 2030
-    NAME           = "B_Vapor Z3 (d_1mm)"
-    NAME_CALENER   = ""
-    GROUP          = "B_VAPOR"
-    IMAGE          = "asfalto.bmp"
-    LIBRARY        = NO
-    ..
-    """
-    _dict = {}
-    _nombre, _propiedad = block[0].split('=')
-    _dict[_propiedad.strip(" \"")] = _nombre.strip(" \"")
-    for line in block[1:]:
-        _prop, _dato = line.split('=')
-        _dict[_prop.strip(" \"")] = _dato.strip(" \"")
-    return _dict
-
-def parsefile(dbfile):
-    """Interpreta secciones de la base de datos
-    
-    Las bases de data se almacenan con codificación ISO-8859-1 e incluyen los
-    siguientes elementos:
-    
-    Comentarios - Líneas que empiezan por '$'
-    Palabras clave - Definen propiedades de la base de data (e.g. TEMPLARY)
-    Secciones y subsecciones - El nombre de la sección se coloca entre líneas
-                               con símbolos '+++'
-    
-    Devuelve un diccionario indexado por secciones que contiene un diccionario
-    con los materiales de cada sección.
+        
+        "B_Vapor Z3 (d_1mm)" = MATERIAL
+        TYPE           = PROPERTIES
+        THICKNESS      = 0.001
+        CONDUCTIVITY   = 500
+        DENSITY        = 1
+        SPECIFIC-HEAT  = 1
+        VAPOUR-DIFFUSIVITY-FACTOR = 2030
+        NAME           = "B_Vapor Z3 (d_1mm)"
+        NAME_CALENER   = ""
+        GROUP          = "B_VAPOR"
+        IMAGE          = "asfalto.bmp"
+        LIBRARY        = NO
+        ..
     """
     KEYWORDS = ('TEMPLARY',)
     SECTIONDELIMITER = '+++'
     COMMENT = '$'
+    DEFAULT_SECTION = u'default'
     
+    def parseblock(block):
+        """Convierte bloque de datos a diccionario indexado por propiedades"""
+        _dict = {}
+        _nombre, _propiedad = block[0].split('=')
+        _dict[_propiedad.strip(" \"")] = _nombre.strip(" \"")
+        for line in block[1:]:
+            _prop, _dato = line.split('=')
+            _dict[_prop.strip(" \"")] = _dato.strip(" \"")
+        return _dict
+
     lines = codecs.open(dbfile, 'rb', 'iso-8859-1')
     data = {}
     block = []
@@ -172,32 +129,87 @@ def parsefile(dbfile):
         data[currentsection] = materiales[:]
     return data
 
-def db2data(dbfiles):
-    """Convierte una lista de archivos de bases de datos a diccionario de datos
+def _db2data(dbfiles):
+    """Convierte lista de archivos de BBDD LIDER/CALENER en objetos Python
     
-    El diccionario está indexado por el nombre del material e incluye el resto
-    de datos extraídos.
-    """ 
-    materials = {}
-    groups = {}
+    Devuelve:
+        - diccionario de nombres de material con instancias de Material
+        - lista de nombres de materiales (por orden de aparición en BBDD)
+        - diccionario grupos con conjuntos de nombres de material
+    """
+    DEFAULT_SECTION = u'default'
+    
+    materiales, nombres, groups = {}, [], {}
     if not isinstance(dbfiles, (tuple, list)):
         dbfiles = [dbfiles]
+
     for _f in dbfiles:
-        #print "Procesando %s" % _f
         rawmaterials = parsefile(_f)
         for rm in rawmaterials[DEFAULT_SECTION]:
             mtype = rm['TYPE'].strip()
             name = rm['NAME'].strip()
             group = rm['GROUP'].strip()
             mu = float(rm['VAPOUR-DIFFUSIVITY-FACTOR'].strip())
+            db = os.path.basename(_f) or ''
+            m = Material(name, group, mtype, mu, db)
             if mtype == 'PROPERTIES':
-                conductivity = float(rm['CONDUCTIVITY'].strip())
-                thickness = float(rm['THICKNESS'].strip())
-                mat = PropertiesMaterial(name, group, mu,
-                                         conductivity, thickness)
+                m.conductivity = float(rm['CONDUCTIVITY'].strip())
+                m.thickness = float(rm['THICKNESS'].strip())
+                m.density = float(rm['DENSITY'].strip())
+                m.specific_heat = float(rm['SPECIFIC-HEAT'].strip())
             elif mtype == 'RESISTANCE':
-                resistance = float(rm['RESISTANCE'].strip())
-                mat = ResistanceMaterial(name, group, mu, resistance)
+                m.resistance = float(rm['RESISTANCE'].strip())
+            # Propiedades opcionales
+            if 'THICKNESS_CHANGE' in rm:
+                value = rm['THICKNESS_CHANGE'].strip().upper()
+                m.thickness_change = False if 'NO' in value else True
+            if 'THICKNESS_MIN' in rm:
+                m.thickness_min = float(rm['THICKNESS_MIN'].strip())
+            if 'THICKNESS_MAX' in rm:
+                m.thickness_max = float(rm['THICKNESS_MAX'].strip())
             groups.setdefault(group, set()).add(name)
-            materials[name] = mat
-    return materials, groups
+            nombres.append(name)
+            materiales[name] = m
+    return materiales, nombres, groups
+
+def DB2ini(dbfiles, filename='DB.ini'):
+    """Guarda bases de datos de formato LIDER/CALENER en formato ConfigObj
+    
+    Devuelve:
+        - número de materiales
+        - número de grupos
+    """
+    def escape(data):
+        """Escape &, [ and ] a string of data."""
+        data = data.replace("&", "&amp;")
+        return data.replace("[", "&lb;").replace("]", "&rb;")
+    
+    materiales, names, groups = _db2data(dbfiles)
+    config = configobj.ConfigObj(filename, encoding='utf-8')
+
+    for name in names:
+        mat = materiales[name]
+        # Problema con corchetes en nombre de sección mat.name
+        section = escape(mat.name)
+        config[section] = {}
+        config.comments[section].insert(0, '#') #linea en blanco
+        config[section]['name'] = mat.name
+        config[section]['db'] = mat.db
+        config[section]['group'] = mat.group
+        config[section]['type'] = mat.type
+        config[section]['mu'] = mat.mu
+        if hasattr(mat, 'thickness_change'):
+            config[section]['thickness_change'] = str(mat.thickness_change)
+        if mat.type == 'PROPERTIES':
+            config[section]['thickness'] = str(mat.thickness)
+            config[section]['conductivity'] = str(mat.conductivity)
+            config[section]['density'] = str(mat.density)
+            config[section]['specific_heat'] = str(mat.specific_heat)
+            if hasattr(mat, 'thickness_min'):
+                config[section]['thickness_min'] = str(mat.thickness_min)
+            if hasattr(mat, 'thickness_max'):
+                config[section]['thickness_max'] = str(mat.thickness_max)
+        elif mat.type == 'RESISTANCE':
+            config[section]['resistance'] = str(mat.resistance)
+    config.write()
+    return len(names), len(groups)
