@@ -27,6 +27,7 @@ import pango
 import util
 import appmodel
 from ptcanvas import CPTCanvas, CPCanvas, GraphData
+import condensaicons
 import webbrowser, datetime
 
 class GtkCondensa(object):
@@ -39,19 +40,25 @@ class GtkCondensa(object):
         climai - datos higrotérmicos del interior
         """
         self.model = appmodel.Model(cerramiento, climaext, climaint)
-        self.graphsredrawpending = True
         UIFILE = util.get_resource('data', 'condensa.ui')
         self.ui = gtk.Builder()
         self.ui.add_from_file(UIFILE)
         self.graficaprestemp = self.ui.get_object('prestemp_canvas')
         self.graficapresiones = self.ui.get_object('presiones_canvas')
-        self.createtexttags()
         self.capasls = self.ui.get_object('capas_liststore')
         self.capastv = self.ui.get_object('capas_treeview')
         self.materialesls = self.ui.get_object('materiales_liststore')
         self.ui.connect_signals(self)
         gtk.link_button_set_uri_hook(lambda b, u: webbrowser.open(u))
+        self.createtexttags()
+        self.createicons()
         self.cargadata()
+        
+    def createicons(self):
+        """Crea iconos de aplicación y de botones de herramientas"""
+        self.icons = condensaicons.IconFactory(self)
+        self.ui.get_object('cerramselectbtn').set_stock_id('condensa-cerramientos')
+        self.ui.get_object('climaselectbtn').set_stock_id('condensa-clima')
 
     def createtexttags(self):
         """Crea marcas de texto para estilos en textbuffer"""

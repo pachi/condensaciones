@@ -35,7 +35,10 @@ __version__ = "0.3"
 
 data_files = [('', ['README', 'NEWS', 'INSTALL', 'COPYING']),
               ('data', ['data/condensa.ui', 'data/MaterialesDB.ini',
-                        'data/splash.png']
+                        'data/splash.png']),
+              ('data/icons', ['data/icons/cerramientos.png',
+                              'data/icons/clima.png',
+                              'data/icons/drop.png']
               )] + get_py2exe_datafiles()
 
 opts = {'py2exe': {
