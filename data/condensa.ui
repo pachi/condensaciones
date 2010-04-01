@@ -48,21 +48,21 @@
   </object>
   <object class="GtkWindow" id="window">
     <property name="width_request">650</property>
+    <property name="icon">icons/drop.png</property>
     <child>
       <object class="GtkVBox" id="vbox2">
         <property name="visible">True</property>
         <property name="orientation">vertical</property>
         <child>
-          <object class="GtkToolbar" id="toolbar1">
+          <object class="GtkToolbar" id="toolbar">
             <property name="visible">True</property>
-            <property name="icon_size">1</property>
             <child>
               <object class="GtkToolButton" id="cerramselectbtn">
                 <property name="visible">True</property>
                 <property name="has_focus">True</property>
-                <property name="label" translatable="yes">Cerramientos</property>
+                <property name="label" translatable="yes">_Cerramientos</property>
                 <property name="use_underline">True</property>
-                <property name="stock_id">gtk-find</property>
+                <property name="stock_id">gtk-open</property>
                 <signal name="clicked" handler="cerramientoselecciona"/>
               </object>
               <packing>
@@ -73,22 +73,10 @@
             <child>
               <object class="GtkToolButton" id="climaselectbtn">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">Ambientes</property>
+                <property name="label" translatable="yes">C_lima</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-refresh</property>
                 <signal name="clicked" handler="ambienteselecciona"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="homogeneous">True</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkToolButton" id="editacapasbtn">
-                <property name="visible">True</property>
-                <property name="label" translatable="yes">Editar biblioteca</property>
-                <property name="use_underline">True</property>
-                <property name="stock_id">gtk-edit</property>
               </object>
               <packing>
                 <property name="expand">False</property>
