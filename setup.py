@@ -64,8 +64,8 @@ setup(
     url='http://www.rvburke.com',
     description='Aplicación para el cálculo de condensaciones según CTE',
     long_description=open('README').read(),
-    license="COPYING",
-    #scripts=['bin/run.py'],
+    license="GNU GPL2+",
+    scripts=['bin/condensa', 'bin/importDB'],
     windows=[{'script':'bin/condensa',
               'description':'Condensa - Cálculo de condensaciones',
               'icon_resources':[(0, 'data/icons/logo.ico')]
