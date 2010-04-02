@@ -23,3 +23,9 @@ Cambios en la versión
 - Difusividad y espesor de aire equivalente en capas
 - Indica modificación del cerramiento activo
 - Maneja capas con resistencia a la difusión del vapor de agua elevado
+
+0.4 (Abr. 2010)
+---------------
+- Nueva base de datos de materiales en formato .ini
+- Nuevo script 'importDB' para importar BBDD de LIDER/CALENER
+- Nuevos iconos de aplicación
