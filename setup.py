@@ -66,9 +66,13 @@ setup(
     license="COPYING",
     #scripts=['bin/run.py'],
     windows=[{'script':'bin/condensa',
-              'icon_resources':[(1, 'data/icons/logo.ico')]}],
-    console=['bin/importDB'],
-    scripts=['bin/condensa', 'bin/importDB'],
+              'description':'Condensa - Cálculo de condensaciones',
+              'icon_resources':[(0, 'data/icons/logo.ico')]
+              }],
+    console=[{'script':'bin/importDB',
+              'description':'Conversor de BBDD Lider/CALENER a BBDD Condensa',
+              'icon_resources':[(0, 'data/icons/logo.ico')]
+              }],
     packages=['condensaciones', 'condensaciones.test'],
     options=opts,
     data_files=data_files,
