@@ -51,7 +51,8 @@ opts = {'py2exe': {
                                    'pywintypes26.dll,POWRPROF.dll,DNSAPI.dll,'\
                                    'libpangoft2-1.0-0.dll,MSIMG32.DLL,'\
                                    'freetype6.dll,libglade-2.0-0.dll',
-                   #'skip_archive': True,
+                   #'skip_archive': True, # para no crear library.zip
+                   'optimize': 1,
                    }
         }
 
