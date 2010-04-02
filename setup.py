@@ -50,7 +50,7 @@ opts = {'py2exe': {
                    'dll_excludes': 'iconv.dll,libxml2.dll,tcl85.dll,tk85.dll,'\
                                    'pywintypes26.dll,POWRPROF.dll,DNSAPI.dll,'\
                                    'libpangoft2-1.0-0.dll,MSIMG32.DLL,'\
-                                   'freetype6.dll',
+                                   'freetype6.dll,libglade-2.0-0.dll',
                    #'skip_archive': True,
                    }
         }
@@ -66,7 +66,8 @@ setup(
     license="COPYING",
     #scripts=['bin/run.py'],
     windows=[{'script':'bin/condensa',
-              'icon_resources':[(1, 'data/logo.ico')]}],
+              'icon_resources':[(1, 'data/icons/logo.ico')]}],
+    console=['bin/importDB'],
     scripts=['bin/condensa', 'bin/importDB'],
     packages=['condensaciones', 'condensaciones.test'],
     options=opts,
