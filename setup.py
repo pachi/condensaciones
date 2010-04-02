@@ -33,7 +33,7 @@ from matplotlib import get_py2exe_datafiles
 
 __version__ = "0.4"
 
-data_files = [('', ['README', 'NEWS', 'INSTALL', 'COPYING']),
+data_files = [('', ['README.txt', 'NEWS.txt', 'INSTALL.txt', 'COPYING.txt']),
               ('data', ['data/condensa.ui', 'data/MaterialesDB.ini',
                         'data/splash.png']),
               ('data/icons', ['data/icons/cerramientos.png',
@@ -63,7 +63,7 @@ setup(
     author_email='pachi@rvburke.com',
     url='http://www.rvburke.com',
     description='Aplicación para el cálculo de condensaciones según CTE',
-    long_description=open('README').read(),
+    long_description=open('README.txt').read(),
     license="GNU GPL2+",
     scripts=['bin/condensa', 'bin/importDB'],
     windows=[{'script':'bin/condensa',

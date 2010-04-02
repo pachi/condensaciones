@@ -13,7 +13,7 @@ RequestExecutionLevel admin
 
 # General Symbol Definitions
 !define REGKEY "SOFTWARE\$(^Name)"
-!define VERSION 0.4
+!define VERSION 0.4-2
 !define COMPANY "Rafael Villar Burke <pachi@rvburke.com>"
 !define URL http://www.rvburke.com
 
@@ -25,7 +25,7 @@ RequestExecutionLevel admin
 !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME StartMenuGroup
 !define MUI_STARTMENUPAGE_DEFAULTFOLDER Condensaciones
 !define MUI_FINISHPAGE_RUN $INSTDIR\condensa.exe
-!define MUI_FINISHPAGE_SHOWREADME 'README'
+!define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\README.txt"
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall-full.ico"
 
 # Included files
@@ -40,7 +40,7 @@ Var StartMenuGroup
 
 # Installer pages
 !insertmacro MUI_PAGE_WELCOME
-!insertmacro MUI_PAGE_LICENSE 'COPYING'
+!insertmacro MUI_PAGE_LICENSE 'COPYING.txt'
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_STARTMENU Application $StartMenuGroup
 !insertmacro MUI_PAGE_INSTFILES
