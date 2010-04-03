@@ -37,9 +37,12 @@ def loadmaterialesdb(filename='DB.ini'):
         """Unescape &amp;, &lt;, and &gt; in a string of data."""
         data = data.replace("&lb;", "[").replace("&rb;", "]")
         return data.replace("&amp;", "&")
-    #TODO:Falta por convertir datos al tipo adecuado
     config = configobj.ConfigObj(filename, encoding='utf-8', raise_errors=True)
     materiales, names, groups = {}, [], {}
+    # Lee valores de configuración de la base de datos
+    dbconf = config['config']
+    del config['config']
+    # Lee datos 
     for section in config:
         material = config[section]
         name = unescape(material['name'])
