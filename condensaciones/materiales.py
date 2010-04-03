@@ -22,7 +22,6 @@
 #   02110-1301, USA.
 """Módulo de definición de materiales y propiedades"""
 
-from util import get_resource
 from material import Material
 import configobj
 
@@ -32,7 +31,7 @@ def loadmaterialesdb(filename='DB.ini'):
     Deveuelve:
         - diccionario de nombres de material con instancias de Material
         - lista de nombres de materiales
-        - diccionario grupos con conjuntos de nombres de material
+        - diccionario de grupos con conjuntos de nombres de material
     """
     def unescape(data):
         """Unescape &amp;, &lt;, and &gt; in a string of data."""
@@ -68,6 +67,3 @@ def loadmaterialesdb(filename='DB.ini'):
         names.append(name)
         groups.setdefault(group, set()).add(name)
     return materiales, names, groups
-
-DB = get_resource('data', 'MaterialesDB.ini')
-materiales, nombres, grupos = loadmaterialesdb(DB)

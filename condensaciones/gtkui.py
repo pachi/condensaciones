@@ -79,8 +79,9 @@ class GtkCondensa(object):
         for material in self.model.materiales:
             self.materialesls.append((material,))
         cerramientosls = self.ui.get_object('cerramientos_liststore')
-        for c in self.model.cerramientos:
-            cerramientosls.append((c.nombre, c.descripcion))
+        for nombre in self.model.cerramientos:
+            descripcion = self.model.cerramientosDB[nombre].descripcion
+            cerramientosls.append((nombre, descripcion))
         n = len(self.model.materiales)
         m = len(self.model.cerramientos)
         txt = "Cargados %i materiales, %i cerramientos" % (n, m)

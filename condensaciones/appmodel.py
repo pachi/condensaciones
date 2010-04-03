@@ -24,7 +24,14 @@
 
 import comprobaciones
 import clima
-from datos_ejemplo import cerramientos, materiales
+import materiales
+import cerramientos
+from util import get_resource
+
+MaterialesDB = get_resource('data', 'MaterialesDB.ini')
+CerramientosDB = get_resource('data', 'CerramientosDB.ini')
+mats, mnombres, mgrupos = materiales.loadmaterialesdb(MaterialesDB)
+cerr, cnombres, cgrupos = cerramientos.loadcerramientosdb(CerramientosDB)
 
 class Model(object):
     def __init__(self, cerramiento, climaext, climaint):
@@ -40,12 +47,12 @@ class Model(object):
 
     def cargadata(self):
         """Carga datos de materiales y cerramientos"""
-        self.cerramientos = cerramientos
         #TODO: generar jerarquía de materiales en dbutils en lugar de crear
         #TODO: lista ordenada aquí.
-        self.materiales = materiales.keys()
+        self.materiales = mnombres
         self.materiales.sort()
-        self.cerramientosDB = dict((c.nombre, c) for c in cerramientos)
+        self.cerramientos = cnombres
+        self.cerramientosDB = cerr
 
     def set_cerramiento(self, cname):
         """Selecciona cerramiento activo a partir de su nombre"""
@@ -62,7 +69,7 @@ class Model(object):
     def set_capa(self, index, name, e):
         """Establece tupla de capa según índice. d es una tupla de datos"""
         #TODO: Con material resistivo pon espesor None, o espesor por defecto.
-        #newmaterial = materiales[newname]
+        #newmaterial = mats[newname]
         #capae = None if newmaterial.type == 'RESISTANCE' else float(capae)
         self.c.capas[index] = (name, e)
         self.cerramientomodificado = True
