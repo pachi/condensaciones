@@ -289,27 +289,3 @@ def get_pixbuf_from_canvas(canvas, destwidth=None):
     if oldpixmap:
         canvas._renderer.set_pixmap(oldpixmap)
     return scaledpixbuf
-
-if __name__ == "__main__":
-    import gtk
-    from cerramiento import Cerramiento
-    from datos_ejemplo import climae, climai, cerramientocapas
-
-    Rs_ext = 0.04
-    Rs_int = 0.13
-    cerr = Cerramiento("Cerramiento tipo", "Descripción tipo",
-                       cerramientocapas, Rse=Rs_ext, Rsi=Rs_int)
-    data = GraphData(cerr, climae, climai)
-
-    w = gtk.Window()
-    v = gtk.VBox()
-    pt = CPTCanvas()
-    p = CPCanvas()
-    pt.dibuja(data)
-    p.dibuja(data)
-    v.pack_start(pt)
-    v.pack_start(p)
-    w.add(v)
-    w.show_all()
-    w.connect('destroy', gtk.main_quit)
-    gtk.main()
