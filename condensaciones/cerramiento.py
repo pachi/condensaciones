@@ -24,16 +24,27 @@
 
 import operator
 import psicrom
-from materiales import materiales
+import materiales
+from util import get_resource
+
+MaterialesDB = get_resource('data', 'MaterialesDB.ini')
+_mats, _mnombres, _mgrupos = materiales.loadmaterialesdb(MaterialesDB)
 
 class Cerramiento(object):
     """Clase Cerramiento
     
     Clase para modelizar un cerramiento tipo, multicapa, con cada capa definida
     por su material y sus propiedades físicas.
+    
+    materiales - diccionario de nombres de material con material
+    mnombres   - lista de nombres de materiales
+    mgrupos    - diccionario de grupos con lista de nombres de materiales
     """
+    materiales = _mats
+    mnombres = _mnombres
+    mgrupos = _mgrupos
     def __init__(self, nombre, descripcion, capas,
-                 tipo=None, Rse=None, Rsi=None):
+                 Rse=None, Rsi=None, tipo=None):
         """Inicialización de cerramiento.
         
         nombre - Nombre del cerramiento
@@ -53,7 +64,7 @@ class Cerramiento(object):
         self.descripcion = descripcion
         self.capas = capas
         for nombre, e in capas:
-            if nombre not in materiales.keys():
+            if nombre not in self.materiales.keys():
                 raise ValueError('Material desconocido: %s' % nombre)
         self.Rse = Rse
         self.Rsi = Rsi
@@ -85,15 +96,15 @@ class Cerramiento(object):
     @property
     def mu(self):
         """Lista de difusividades al vapor de las capas [-]"""
-        return [materiales[nombre].mu for nombre, e in self.capas]
+        return [self.materiales[nombre].mu for nombre, e in self.capas]
 
     @property
     def K(self):
         """Lista de conductividades térmicas de las capas [W/mK]"""
         def Ki(capa):
-            tipo = materiales[capa].type
+            tipo = self.materiales[capa].type
             if tipo == 'PROPERTIES':
-                return materiales[capa].conductivity
+                return self.materiales[capa].conductivity
             else:
                 return None
         return [Ki(nombre) for nombre, e in self.capas]
@@ -102,11 +113,11 @@ class Cerramiento(object):
     def R(self):
         """Lista de resistencias térmicas de las capas [m²K/W]"""
         def Ri(capa, e=None):
-            tipo = materiales[capa].type
+            tipo = self.materiales[capa].type
             if tipo == 'PROPERTIES':
-                return e / materiales[capa].conductivity
+                return e / self.materiales[capa].conductivity
             elif tipo == 'RESISTANCE':
-                return materiales[capa].resistance
+                return self.materiales[capa].resistance
             else:
                 raise ValueError('Tipo de elemento desconocido %s' % tipo)
         return [self.Rse] + [Ri(nombre, e)
@@ -115,7 +126,7 @@ class Cerramiento(object):
     @property
     def S(self):
         """Lista de espesore de aire equivalente de las capas [m]"""
-        return [e * materiales[nombre].mu
+        return [e * self.materiales[nombre].mu
                 for nombre, e in self.capas]
 
     @property
