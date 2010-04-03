@@ -45,8 +45,8 @@ class Cerramiento(object):
         tipo - Tipo de cerramiento en relación a su disposición (horizontal,
                 vertical, cubierta, etc) y que sirve para definir de forma
                 implícita sus valores de resistencia superficial.
-        Rse - Resistencia superficial exterior
-        Rsi - Resistencia superficial interior
+        Rse - Resistencia superficial exterior [m²K/W]
+        Rsi - Resistencia superficial interior [m²K/W]
         """
         #TODO: Tipo selecciona Rse y Rsi según sea horizontal, vertical, etc
         self.nombre = nombre
