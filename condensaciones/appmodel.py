@@ -78,6 +78,8 @@ class Model(object):
         return enumerate(zip(self.c.nombres, self.c.espesores,
                              self.c.K, self.c.R[1:-1], self.c.mu, self.c.S))
 
+    # Acciones sobre capas ---------------------------------------------------
+ 
     def capaadd(self, index):
         """Añade capa tras posición index"""
         ncapatuple = self.c.capas[index]
@@ -89,16 +91,10 @@ class Model(object):
         self.c.capas.pop(index)
         self.cerramientomodificado = True
     
-    def capaup(self, index):
-        """Sube capa en posición index"""
-        cp = self.c.capas
-        cp[index - 1], cp[index] = cp[index], cp[index - 1]
-        self.cerramientomodificado = True
-    
-    def capadown(self, index):
-        """Baja capa en posición index"""
-        cp = self.c.capas
-        cp[index + 1], cp[index] = cp[index], cp[index + 1]
+    def capaswap(self, index1, index2):
+        """Intercambia la posición de dos capas del cerramiento activo"""
+        cp = self.c.capas 
+        cp[index1], cp[index2] = cp[index2], cp[index1]
         self.cerramientomodificado = True
     
     # Acciones sobre cerramientos --------------------------------------------

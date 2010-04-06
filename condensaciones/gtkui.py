@@ -381,20 +381,22 @@ class GtkCondensa(object):
         cerrtm, cerrtm_iter = self.capastv.get_selection().get_selected()
         if cerrtm_iter:
             capai = int(cerrtm[cerrtm_iter][0])
-            if capai > 0:
-                self.model.capaup(capai)
-                self.actualiza("Desplazada capa %i" % capai)
-                self.capastv.set_cursor(capai - 1)
+            if capai == 0:
+                return
+            self.model.capaswap(capai - 1, capai)
+            self.actualiza("Desplazada capa %i" % capai)
+            self.capastv.set_cursor(capai - 1)
 
     def capadown(self, btn):
         """Baja capa seleccionada de cerramiento en vista de capas"""
         cerrtm, cerrtm_iter = self.capastv.get_selection().get_selected()
         if cerrtm_iter:
             capai = int(cerrtm[cerrtm_iter][0])
-            if capai + 1 < len(self.model.c.capas):
-                self.model.capadown(capai)
-                self.actualiza("Desplazada capa %i" % capai)
-                self.capastv.set_cursor(capai + 1)
+            if capai == len(self.model.c.capas) - 1:
+                return
+            self.model.capaswap(capai + 1, capai)
+            self.actualiza("Desplazada capa %i" % capai)
+            self.capastv.set_cursor(capai + 1)
 
     def capacambiarse(self, entry, event=None):
         """Toma valor de Rse al activar entry o cambiar el foco"""
