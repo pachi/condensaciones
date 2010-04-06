@@ -64,7 +64,7 @@ class Cerramiento(object):
         self.descripcion = descripcion
         self.capas = capas
         for nombre, e in capas:
-            if nombre not in self.matDB.keys():
+            if nombre not in self.matnombres:
                 raise ValueError('Material desconocido: %s' % nombre)
         self.Rse = Rse
         self.Rsi = Rsi
