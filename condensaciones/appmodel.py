@@ -64,6 +64,16 @@ class Model(object):
         """Setter de clima interior para detectar modificación"""
         self.climai = clima.Clima(ti, HRi)
     
+    def set_Rse(self, newRse):
+        """Cambia Rse"""
+        self.c.Rse = newRse
+        self.cerramientomodificado = True
+    
+    def set_Rsi(self, newRsi):
+        """Cambia Rsi"""
+        self.c.Rsi = newRsi
+        self.cerramientomodificado = True
+    
     def set_capa(self, index, name, e):
         """Establece tupla de capa según índice. d es una tupla de datos"""
         #TODO: Con material resistivo pon espesor None, o espesor por defecto.
@@ -77,6 +87,19 @@ class Model(object):
         # quitamos Rse, Rsi en c.R con c.R[1:-1]
         return enumerate(zip(self.c.nombres, self.c.espesores,
                              self.c.K, self.c.R[1:-1], self.c.mu, self.c.S))
+
+    def calcula(self):
+        """Calcula resultados para usarlos en presentación"""
+        ti, hri = self.climai.temp, self.climai.HR
+        te, hre = self.climae.temp, self.climae.HR
+        self.fRsi = comprobaciones.fRsi(self.c.U)
+        self.fRsimin = comprobaciones.fRsimin(te, ti, hri)
+        self.ccheck = comprobaciones.condensaciones(self.c, te, ti, hre, hri)
+        self.cs = comprobaciones.condensas(self.c, te, ti, hri)
+        self.ci = comprobaciones.condensai(self.c, te, ti, hre, hri)
+        self.g, self.pcond = self.c.condensacion(te, ti, hre, hri)
+        #self.g, self.pevap = self.c.evaporacion(te,ti,hre,hri,interfases=[2])
+        self.totalg = 0.0 if not self.g else sum(self.g)
 
     # Acciones sobre capas ---------------------------------------------------
  
@@ -120,26 +143,3 @@ class Model(object):
         """Intercambia la posición de dos cerramientos"""
         ce = self.cerramientos 
         ce[index1], ce[index2] = ce[index2], ce[index1]
-    
-    def set_Rse(self, newRse):
-        """Cambia Rse"""
-        self.c.Rse = newRse
-        self.cerramientomodificado = True
-    
-    def set_Rsi(self, newRsi):
-        """Cambia Rsi"""
-        self.c.Rsi = newRsi
-        self.cerramientomodificado = True
-
-    def calcula(self):
-        """Calcula resultados para usarlos en presentación"""
-        ti, hri = self.climai.temp, self.climai.HR
-        te, hre = self.climae.temp, self.climae.HR
-        self.fRsi = comprobaciones.fRsi(self.c.U)
-        self.fRsimin = comprobaciones.fRsimin(te, ti, hri)
-        self.ccheck = comprobaciones.condensaciones(self.c, te, ti, hre, hri)
-        self.cs = comprobaciones.condensas(self.c, te, ti, hri)
-        self.ci = comprobaciones.condensai(self.c, te, ti, hre, hri)
-        self.g, self.pcond = self.c.condensacion(te, ti, hre, hri)
-        #self.g, self.pevap = self.c.evaporacion(te,ti,hre,hri,interfases=[2])
-        self.totalg = 0.0 if not self.g else sum(self.g)
