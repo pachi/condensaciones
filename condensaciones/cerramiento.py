@@ -43,7 +43,7 @@ class Cerramiento(object):
     matDB = _mats
     matnombres = _mnombres
     matgrupos = _mgrupos
-    def __init__(self, nombre, descripcion, capas,
+    def __init__(self, nombre, descripcion, capas=None,
                  Rse=None, Rsi=None, tipo=None):
         """Inicialización de cerramiento.
         
@@ -53,6 +53,8 @@ class Cerramiento(object):
                 el cerramiento. Cada tupla define una capa, identificada por
                 su nombre y su espesor. La lista se ordena de exterior a
                 interior.
+                Si no se define, se usa una capa de espesor 0,3m y material
+                el primero de la base de datos.
         tipo - Tipo de cerramiento en relación a su disposición (horizontal,
                 vertical, cubierta, etc) y que sirve para definir de forma
                 implícita sus valores de resistencia superficial.
@@ -62,6 +64,8 @@ class Cerramiento(object):
         #TODO: Tipo selecciona Rse y Rsi según sea horizontal, vertical, etc
         self.nombre = nombre
         self.descripcion = descripcion
+        if not capas:
+            capas = [(self.matnombres[0], 0.3)]
         self.capas = capas
         for nombre, e in capas:
             if nombre not in self.matnombres:
