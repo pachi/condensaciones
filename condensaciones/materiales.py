@@ -39,9 +39,12 @@ def loadmaterialesdb(filename='DB.ini'):
         return data.replace("&amp;", "&")
     config = configobj.ConfigObj(filename, encoding='utf-8', raise_errors=True)
     materiales, names, groups = {}, [], {}
-    # Lee valores de configuración de la base de datos
-    dbconf = config['config']
-    del config['config']
+    # Lee valores de configuración de la base de datos si existe
+    if 'config' in config:
+        dbconf = config['config']
+        del config['config']
+    else:
+        dbconf = None
     # Lee datos 
     for section in config:
         material = config[section]
