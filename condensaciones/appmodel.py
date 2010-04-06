@@ -101,6 +101,30 @@ class Model(object):
         cp[index + 1], cp[index] = cp[index], cp[index + 1]
         self.cerramientomodificado = True
     
+    # Acciones sobre cerramientos --------------------------------------------
+    
+    def cerramientoadd(self, index):
+        """Añade y devuelve nuevo cerramiento tras posición index"""
+        i = 1
+        while True:
+            newname = u"Cerramiento %i" % i
+            if newname not in self.cerramientos:
+                break
+            i += 1
+        newc = cerramientos.Cerramiento(newname, 'Nuevo cerramiento')
+        self.cerramientosDB[newc.nombre] = newc
+        self.cerramientos.insert(index + 1, newc.nombre)
+        return newc
+    
+    def cerramientoremove(self, index):
+        """Elimina cerramiento en posición index"""
+        self.cerramientos.pop(index)
+    
+    def cerramientoswap(self, index1, index2):
+        """Intercambia la posición de dos cerramientos"""
+        ce = self.cerramientos 
+        ce[index1], ce[index2] = ce[index2], ce[index1]
+    
     def set_Rse(self, newRse):
         """Cambia Rse"""
         self.c.Rse = newRse

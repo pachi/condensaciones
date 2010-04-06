@@ -59,7 +59,9 @@ class Cerramiento(object):
                 vertical, cubierta, etc) y que sirve para definir de forma
                 implícita sus valores de resistencia superficial.
         Rse - Resistencia superficial exterior [m²K/W]
+              Si no se indica valor, se usa 0,04 m²K/W.
         Rsi - Resistencia superficial interior [m²K/W]
+              Si no se indica valor, se usa 0,13 m²K/W.
         """
         #TODO: Tipo selecciona Rse y Rsi según sea horizontal, vertical, etc
         self.nombre = nombre
@@ -70,7 +72,11 @@ class Cerramiento(object):
         for nombre, e in capas:
             if nombre not in self.matnombres:
                 raise ValueError('Material desconocido: %s' % nombre)
+        if not Rse:
+            Rse = 0.04
         self.Rse = Rse
+        if not Rsi:
+            Rsi = 0.13
         self.Rsi = Rsi
 
     @property

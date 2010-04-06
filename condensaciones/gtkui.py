@@ -276,6 +276,50 @@ class GtkCondensa(object):
         lblselected = self.ui.get_object('lblselected')
         cerrtm, cerrtm_iter = tv.get_selection().get_selected()
         lblselected.props.label = cerrtm[cerrtm_iter][0]
+    
+    def cerramientoadd(self, widget):
+        ctv = self.ui.get_object('cerramientotv')
+        cerrtm, cerrtm_iter = ctv.get_selection().get_selected()
+        if cerrtm_iter:
+            cerri = int(cerrtm.get_path(cerrtm_iter)[0])
+            newcerr = self.model.cerramientoadd(cerri)
+            cerrtm.insert(cerri + 1, row=(newcerr.nombre, newcerr.descripcion))
+            txt = "Añadido cerramiento nuevo: %s" % newcerr.nombre
+            self.ui.get_object('statusbar').push(0, txt)
+            ctv.set_cursor(cerri + 1)
+
+    def cerramientoremove(self, widget):
+        ctv = self.ui.get_object('cerramientotv')
+        cerrtm, cerrtm_iter = ctv.get_selection().get_selected()
+        if cerrtm_iter:
+            cerri = int(cerrtm.get_path(cerrtm_iter)[0])
+            self.model.cerramientoremove(cerri)
+            cerrtm.remove(cerrtm_iter)
+            self.ui.get_object('statusbar').push(0, "Eliminado cerramiento")
+            if cerri == 0: cerri = 1
+            ctv.set_cursor(cerri - 1)
+
+    def cerramientoup(self, widget):
+        ctv = self.ui.get_object('cerramientotv')
+        cerrtm, cerrtm_iter = ctv.get_selection().get_selected()
+        if cerrtm_iter:
+            cerri = int(cerrtm.get_path(cerrtm_iter)[0])
+            if cerri == 0:
+                return
+            self.model.cerramientoswap(cerri - 1, cerri)
+            previter = cerrtm.get_iter(cerri - 1)
+            cerrtm.swap(cerrtm_iter, previter)
+
+    def cerramientodown(self, widget):
+        ctv = self.ui.get_object('cerramientotv')
+        cerrtm, cerrtm_iter = ctv.get_selection().get_selected()
+        if cerrtm_iter:
+            cerri = int(cerrtm.get_path(cerrtm_iter)[0])
+            if cerri == len(self.model.cerramientos) - 1:
+                return
+            self.model.cerramientoswap(cerri + 1, cerri)
+            nextiter = cerrtm.get_iter(cerri + 1)
+            cerrtm.swap(cerrtm_iter, nextiter)
 
     # Retrollamadas de modificación de capas ----------------------------------
  
