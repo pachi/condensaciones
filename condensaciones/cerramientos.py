@@ -66,3 +66,67 @@ def loadcerramientosdb(filename='CerramientosDB.ini'):
         cnames.append(nombre)
         cgroups.setdefault(c.tipo, set()).add(nombre)
     return cerramientos, cnames, cgroups
+
+CDBHEADING = ['#   Biblioteca de Cerramientos para Condensa', '#', 
+'#   Condensa - Programa de cálculo de condensaciones según CTE', '#',
+'#   Copyright (C) 2009-2010, Rafael Villar Burke <pachi@rvburke.com>', '#',
+'#   Cada sección se denomina con el nombre del cerramiento e incluye:',
+'#   - descripcion: descripción del cerramiento',
+'#   - tipo: tipo genérico del cerramiento  [opcional]',
+'#   - Rse: resistencia superficial exterior [m²K/W] [opcional]',
+'#   - Rsi: resistencia superficial interior [m²K/W] [opcional]',
+'#   además de una subsección de [[capas]] que contiene por cada entrada:',
+'#   - capa: con nombre y espesor de capa [m] separados por una coma',
+'#   El nombre de capa no puede contener comas.', '#',
+'#   La sección config incluye configuración general como',
+'#   - nombre: nombre de la base de datos',
+'#   - materiales: nombre de la base de datos de materiales', '#',]
+
+def savecerramientosdb(cerrDB, cerrorder=None, configdata=None,
+                       filename='CerramientosDB.ini'):
+    """Guarda base de datos de cerramientos en formato ConfigObj
+    
+    Parámetros:
+        cerrDB     - diccionario de nombres de cerramiento con instancias de
+                     Cerramiento.
+        cernames   - lista opcional de nombres de cerramientos para definir el
+                     orden en el que se guardarán los datos.
+        config     - Diccionario con valores de configuración.
+    """
+    def escape(data):
+        """Escape &, [ and ] a string of data."""
+        data = data.replace("&", "&amp;")
+        return data.replace("[", "&lb;").replace("]", "&rb;")
+    config = configobj.ConfigObj(filename, encoding='utf-8', raise_errors=True)
+    config.initial_comment = CDBHEADING
+    # Guarda valores de configuración de la base de datos
+    config['config'] = {}
+    #XXX: Usar valores adecuados o leer de archivo anterior
+    config['config']['nombre'] = "CerramientosDB"
+    config['config']['materiales'] = "MaterialesDB"
+    if configdata:
+        for key in configdata:
+            config['config'][key] = configdata[key]
+    # Guarda datos de cerramientos
+    if not cerrorder:
+        cerrorder = cerrDB.keys()
+        cerrorder.sort()
+    for cerramiento in cerrorder:
+        if cerramiento not in cerrDB:
+            raise ValueError, "Cerramiento desconocido: %s" % cerramiento
+        # Se podría validar si cerramiento in cerrDB
+        c = cerrDB[cerramiento]
+        config[escape(cerramiento)] = {}
+        config.comments[escape(cerramiento)] = '#' #linea en blanco
+        sect = config[escape(cerramiento)]
+        sect['descripcion'] = c.descripcion
+        sect['capas'] = {}
+        for i, (name, e) in enumerate(c.capas):
+            sect['capas']['capa%i' % (i + 1)] = (name, e)
+        # Valores opcionales
+        sect['tipo'] = c.tipo if hasattr(c, 'tipo') else 'predeterminado'
+        if hasattr(c, 'Rse'):
+            sect['Rse'] = c.Rse
+        if hasattr(c, 'Rsi'):
+            sect['Rsi'] = c.Rsi
+    config.write()

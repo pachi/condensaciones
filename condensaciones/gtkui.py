@@ -325,6 +325,10 @@ class GtkCondensa(object):
             nextiter = cerrtm.get_iter(cerri + 1)
             cerrtm.swap(cerrtm_iter, nextiter)
 
+    def cerramientoguardar(self, widget):
+        """Guarda lista de cerramientos en disco"""
+        self.model.cerramientossave()
+
     # Retrollamadas de modificación de capas ----------------------------------
  
     def capacambiamaterial(self, cr, path, new_iter):

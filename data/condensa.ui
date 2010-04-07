@@ -850,6 +850,19 @@
                   </packing>
                 </child>
                 <child>
+                  <object class="GtkToolButton" id="guardarcerrbtn">
+                    <property name="visible">True</property>
+                    <property name="label" translatable="yes">Guardar</property>
+                    <property name="use_underline">True</property>
+                    <property name="stock_id">gtk-save</property>
+                    <signal name="clicked" handler="cerramientoguardar"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
                   <object class="GtkSeparatorToolItem" id="separatortoolitem3">
                     <property name="visible">True</property>
                     <property name="draw">False</property>
