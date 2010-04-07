@@ -278,6 +278,7 @@ class GtkCondensa(object):
         lblselected.props.label = cerrtm[cerrtm_iter][0]
     
     def cerramientoadd(self, widget):
+        """Añade cerramiento de la lista de cerramientos"""
         ctv = self.ui.get_object('cerramientotv')
         cerrtm, cerrtm_iter = ctv.get_selection().get_selected()
         if cerrtm_iter:
@@ -289,6 +290,7 @@ class GtkCondensa(object):
             ctv.set_cursor(cerri + 1)
 
     def cerramientoremove(self, widget):
+        """Elimina cerramiento de la lista de cerramientos"""
         ctv = self.ui.get_object('cerramientotv')
         cerrtm, cerrtm_iter = ctv.get_selection().get_selected()
         if cerrtm_iter:
@@ -300,6 +302,7 @@ class GtkCondensa(object):
             ctv.set_cursor(cerri - 1)
 
     def cerramientoup(self, widget):
+        """Sube cerramiento en lista de cerramientos"""
         ctv = self.ui.get_object('cerramientotv')
         cerrtm, cerrtm_iter = ctv.get_selection().get_selected()
         if cerrtm_iter:
@@ -311,6 +314,7 @@ class GtkCondensa(object):
             cerrtm.swap(cerrtm_iter, previter)
 
     def cerramientodown(self, widget):
+        """Baja cerramiento en lista de cerramientos"""
         ctv = self.ui.get_object('cerramientotv')
         cerrtm, cerrtm_iter = ctv.get_selection().get_selected()
         if cerrtm_iter:
