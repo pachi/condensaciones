@@ -262,6 +262,8 @@ class GtkCondensa(object):
     def cerramientoselecciona(self, widget):
         """Abre diálogo de selección de cerramiento"""
         lblselected = self.ui.get_object('lblselected')
+        if not lblselected.props.label in self.model.cerramientos:
+            self.ui.get_object('cerramientotv').set_cursor(0)
         resultado = self.ui.get_object('cerramiento_dlg').run()
         # gtk.RESPONSE_ACCEPT vs gtk.RESPONSE_CANCEL
         if resultado == gtk.RESPONSE_ACCEPT:
