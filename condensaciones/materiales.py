@@ -48,7 +48,7 @@ def loadmaterialesdb(filename='DB.ini'):
     # Lee datos 
     for section in config:
         material = config[section]
-        name = unescape(material['name'])
+        name = unescape(section)
         db = material['db']
         group = material['group']
         mtype = material['type']
