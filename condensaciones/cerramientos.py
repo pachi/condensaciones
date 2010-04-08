@@ -39,13 +39,11 @@ def loadcerramientosdb(filename='CerramientosDB.ini'):
         return data.replace("&amp;", "&")
     config = configobj.ConfigObj(filename, encoding='utf-8', raise_errors=True)
     cerramientos, cnames, cgroups = {}, [], {}
-    # Lee valores de configuración de la base de datos si existe
     if 'config' in config:
         dbconf = config['config']
         del config['config']
     else:
         dbconf = None
-    # Lee datos 
     for section in config:
         cerramiento = config[section]
         nombre = unescape(section)
@@ -53,7 +51,6 @@ def loadcerramientosdb(filename='CerramientosDB.ini'):
         capas = cerramiento['capas']
         lcapas = [(name, float(e)) for ncapa, (name, e) in capas.items()]
         c = Cerramiento(nombre, descripcion, lcapas)
-        # Valores opcionales
         if 'tipo' in cerramiento:
             c.tipo = cerramiento['tipo']
         else:
@@ -114,16 +111,14 @@ def savecerramientosdb(cerrDB, cerrorder=None, configdata=None,
     for cerramiento in cerrorder:
         if cerramiento not in cerrDB:
             raise ValueError, "Cerramiento desconocido: %s" % cerramiento
-        # Se podría validar si cerramiento in cerrDB
         c = cerrDB[cerramiento]
         config[escape(cerramiento)] = {}
-        config.comments[escape(cerramiento)] = '#' #linea en blanco
+        config.comments[escape(cerramiento)] = '#'
         sect = config[escape(cerramiento)]
         sect['descripcion'] = c.descripcion
         sect['capas'] = {}
         for i, (name, e) in enumerate(c.capas):
             sect['capas']['capa%i' % (i + 1)] = (name, e)
-        # Valores opcionales
         sect['tipo'] = c.tipo if hasattr(c, 'tipo') else 'predeterminado'
         if hasattr(c, 'Rse'):
             sect['Rse'] = c.Rse
