@@ -39,8 +39,8 @@ class Material(object):
     -----------------------------------------
         - thickness - espesor del elemento [m]
         - conductivity - conductividad térmica [W/m.K]
-        - density - densidad del material [?/m³]#FIXME
-        - specific_heat - calor específico []#FIXME
+        - density - densidad del material [kg/m³]
+        - specific_heat - calor específico [J/kg.K]
             - thickness_min - espesor mínimo [m]
             - thickness_max - espesor máximo [m]
     
