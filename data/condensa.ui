@@ -762,6 +762,8 @@
   </object>
   <object class="GtkDialog" id="cerramiento_dlg">
     <property name="border_width">5</property>
+    <property name="title" translatable="yes">Condensa - Administraci&#xF3;n de cerramientos</property>
+    <property name="icon">icons/drop.png</property>
     <property name="type_hint">normal</property>
     <child internal-child="vbox">
       <object class="GtkVBox" id="dialogo-seleccion">
