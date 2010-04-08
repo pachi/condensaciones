@@ -32,7 +32,7 @@ import webbrowser, datetime
 
 class GtkCondensa(object):
     """Aplicación"""
-    def __init__(self, cerramiento, climaext, climaint):
+    def __init__(self, cerramiento=None, climaext=None, climaint=None):
         """Inicialización de datos e interfaz
         
         cerramiento - Cerramiento

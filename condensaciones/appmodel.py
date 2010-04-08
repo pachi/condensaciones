@@ -32,11 +32,11 @@ CerramientosDB = get_resource('data', 'CerramientosDB.ini')
 cerr, cnombres, cgrupos = cerramientos.loadcerramientosdb(CerramientosDB)
 
 class Model(object):
-    def __init__(self, cerramiento, climaext, climaint):
+    def __init__(self, cerramiento=None, climaext=None, climaint=None):
         """Constructor de modelo"""
         self.c = cerramiento
-        self.climae = climaext
-        self.climai = climaint
+        self.climae = climaext if climaext else clima.Clima(5, 96)
+        self.climai = climaint if climaint else clima.Clima(20, 55)
         self.materiales = []
         self.cerramientos = []
         self.cerramientosDB = {}
@@ -45,12 +45,14 @@ class Model(object):
 
     def cargadata(self):
         """Carga datos de materiales y cerramientos"""
+        self.cerramientos = cnombres
+        self.cerramientosDB = cerr
+        if self.c is None:
+            self.c = self.cerramientosDB[self.cerramientos[0]]
         #TODO: generar jerarquía de materiales en dbutils en lugar de crear
         #TODO: lista ordenada aquí.
         self.materiales = self.c.matnombres
         self.materiales.sort()
-        self.cerramientos = cnombres
-        self.cerramientosDB = cerr
 
     def set_cerramiento(self, cname):
         """Selecciona cerramiento activo a partir de su nombre"""
