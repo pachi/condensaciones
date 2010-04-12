@@ -25,12 +25,12 @@
 import comprobaciones
 import clima
 import materiales
-import cerramientos
+import cerramiento
 from util import get_resource
 
 CerramientosDB = get_resource('data', 'CerramientosDB.ini')
 ClimasDB = get_resource('data', 'ClimaCTE.ini')
-cerr, cnombres, cgrupos = cerramientos.loadcerramientosdb(CerramientosDB)
+cerr, cnombres, cgrupos = cerramiento.loadcerramientosdb(CerramientosDB)
 climas, climasnombres, climasdbconfig = clima.loadclimadb(ClimasDB)
 climae = climas['Climaext'][0] if 'Climaext' in climas else None
 climai = climas['Climaint'][0] if 'Climaint' in climas else None
