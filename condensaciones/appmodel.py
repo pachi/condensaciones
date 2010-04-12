@@ -24,7 +24,6 @@
 
 import comprobaciones
 import clima
-import materiales
 import cerramiento
 from util import get_resource
 
