@@ -32,14 +32,9 @@ import webbrowser, datetime
 
 class GtkCondensa(object):
     """Aplicación"""
-    def __init__(self, cerramiento=None, climaext=None, climaint=None):
-        """Inicialización de datos e interfaz
-        
-        cerramiento - Cerramiento
-        climae - datos higrotérmicos del exterior
-        climai - datos higrotérmicos del interior
-        """
-        self.model = appmodel.Model(cerramiento, climaext, climaint)
+    def __init__(self):
+        """Inicialización de datos e interfaz"""
+        self.model = appmodel.Model()
         UIFILE = util.get_resource('data', 'condensa.ui')
         self.ui = gtk.Builder()
         self.ui.add_from_file(UIFILE)
