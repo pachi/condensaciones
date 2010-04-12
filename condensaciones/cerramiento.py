@@ -24,12 +24,12 @@
 
 import operator
 import psicrom
-import materiales
+import material
 import configobj
 from util import get_resource
 
 MaterialesDB = get_resource('data', 'MaterialesDB.ini')
-_mats, _mnombres, _mgrupos = materiales.loadmaterialesdb(MaterialesDB)
+_mats, _mnombres, _mgrupos = material.loadmaterialesdb(MaterialesDB)
 
 class Cerramiento(object):
     """Clase Cerramiento
@@ -296,6 +296,14 @@ class Cerramiento(object):
 # Funciones de E/S de BBDD de Cerramientos en formato ConfigObj
 #===============================================================================
 
+def unescape(data):
+    """Unescape &amp;, &lt;, and &gt; in a string of data."""
+    return data.replace("&lb;", "[").replace("&rb;", "]").replace("&amp;", "&")
+
+def escape(data):
+    """Escape &, [ and ] a string of data."""
+    return data.replace("&", "&amp;").replace("[", "&lb;").replace("]", "&rb;")
+
 def loadcerramientosdb(filename='CerramientosDB.ini'):
     """Lee base de datos de cerramientos en formato ConfigObj
     
@@ -304,10 +312,6 @@ def loadcerramientosdb(filename='CerramientosDB.ini'):
         - lista de nombres de cerramientos
         - diccionario de grupos con conjuntos de nombres de material
     """
-    def unescape(data):
-        """Unescape &amp;, &lt;, and &gt; in a string of data."""
-        data = data.replace("&lb;", "[").replace("&rb;", "]")
-        return data.replace("&amp;", "&")
     config = configobj.ConfigObj(filename, encoding='utf-8', raise_errors=True)
     cerramientos, cnames, cgroups = {}, [], {}
     if 'config' in config:
@@ -346,10 +350,6 @@ def savecerramientosdb(cerrDB, cerrorder=None, configdata=None,
                      orden en el que se guardarán los datos.
         config     - Diccionario con valores de configuración.
     """
-    def escape(data):
-        """Escape &, [ and ] a string of data."""
-        data = data.replace("&", "&amp;")
-        return data.replace("[", "&lb;").replace("]", "&rb;")
     config = configobj.ConfigObj(filename, encoding='utf-8', raise_errors=True)
     if not cerrorder:
         cerrorder = cerrDB.keys()
