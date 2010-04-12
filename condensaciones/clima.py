@@ -35,7 +35,9 @@ class Clima(object):
         self.temp = float(temp)
         self.HR = float(HR)
 
-#----------------------- Funciones de E/S de datos de clima ------------------- 
+#===============================================================================
+# Funciones de E/S de datos de clima
+#===============================================================================
 
 def unescape(data):
     """Unescape &amp;, &lt;, and &gt; in a string of data."""
