@@ -29,14 +29,18 @@ import cerramientos
 from util import get_resource
 
 CerramientosDB = get_resource('data', 'CerramientosDB.ini')
+ClimasDB = get_resource('data', 'ClimaCTE.ini')
 cerr, cnombres, cgrupos = cerramientos.loadcerramientosdb(CerramientosDB)
+climas, climasnombres, climasdbconfig = clima.loadclimadb(ClimasDB)
+climae = climas['Climaext'][0] if 'Climaext' in climas else None
+climai = climas['Climaint'][0] if 'Climaint' in climas else None
 
 class Model(object):
-    def __init__(self, cerramiento=None, climaext=None, climaint=None):
+    def __init__(self):
         """Constructor de modelo"""
-        self.c = cerramiento
-        self.climae = climaext if climaext else clima.Clima(5, 96)
-        self.climai = climaint if climaint else clima.Clima(20, 55)
+        self.c = None
+        self.climae = climae or climas.Clima(5, 96)
+        self.climai = climai or climas.Clima(20, 55)
         self.materiales = []
         self.cerramientos = []
         self.cerramientosDB = {}
