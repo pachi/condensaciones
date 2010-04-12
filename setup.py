@@ -35,7 +35,7 @@ __version__ = "0.4"
 
 data_files = [('', ['README.txt', 'NEWS.txt', 'INSTALL.txt', 'COPYING.txt']),
               ('data', ['data/condensa.ui', 'data/MaterialesDB.ini',
-                        'data/splash.png']),
+                        'data/ClimaCTE.ini', 'data/splash.png']),
               ('data/icons', ['data/icons/cerramientos.png',
                               'data/icons/clima.png',
                               'data/icons/drop.png']
