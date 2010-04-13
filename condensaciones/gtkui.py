@@ -35,11 +35,8 @@ class GtkCondensa(object):
     def __init__(self):
         """Inicialización de datos e interfaz"""
         self.model = appmodel.Model()
-        UIFILE = util.get_resource('data', 'condensa.ui')
         self.ui = gtk.Builder()
-        self.ui.add_from_file(UIFILE)
-        self.graficaprestemp = self.ui.get_object('prestemp_canvas')
-        self.graficapresiones = self.ui.get_object('presiones_canvas')
+        self.ui.add_from_file(util.get_resource('data', 'condensa.ui'))
         self.capasls = self.ui.get_object('capas_liststore')
         self.capastv = self.ui.get_object('capas_treeview')
         self.materialesls = self.ui.get_object('materiales_liststore')
@@ -157,13 +154,17 @@ class GtkCondensa(object):
     def actualizagraficas(self):
         """Redibuja gráficos con nuevos datos"""
         gdata = GraphData(self.model.c, self.model.climae, self.model.climai)
-        self.graficaprestemp.clear()
-        self.graficaprestemp.dibuja(gdata)
-        self.graficapresiones.clear()
-        self.graficapresiones.dibuja(gdata)
+        graficaprestemp = self.ui.get_object('prestemp_canvas')
+        graficapresiones = self.ui.get_object('presiones_canvas')
+        graficaprestemp.clear()
+        graficaprestemp.dibuja(gdata)
+        graficapresiones.clear()
+        graficapresiones.dibuja(gdata)
     
     def actualizainforme(self):
         """Actualiza texto descripción de cerramiento en ventana principal"""
+        graficaprestemp = self.ui.get_object('prestemp_canvas')
+        graficapresiones = self.ui.get_object('presiones_canvas')
         tb = self.ui.get_object('informe_txtbuffer')
         tb.props.text = ""
         # Denominación cerramiento
@@ -198,9 +199,9 @@ class GtkCondensa(object):
         # Gráficas
         txt = "Gráficas\n"
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'subtitulo')
-        tb.insert_pixbuf(tb.get_end_iter(), self.graficaprestemp.pixbuf(600))
+        tb.insert_pixbuf(tb.get_end_iter(), graficaprestemp.pixbuf(600))
         tb.insert(tb.get_end_iter(), "\n\n")
-        tb.insert_pixbuf(tb.get_end_iter(), self.graficapresiones.pixbuf(600))
+        tb.insert_pixbuf(tb.get_end_iter(), graficapresiones.pixbuf(600))
         tb.insert(tb.get_end_iter(), "\n\n")
         # Resultados
         txt = "Resultados\n"
