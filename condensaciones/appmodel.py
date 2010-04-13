@@ -135,7 +135,7 @@ class Model(object):
             if newname not in self.cerramientos:
                 break
             i += 1
-        newc = cerramientos.Cerramiento(newname, 'Nuevo cerramiento')
+        newc = cerramiento.Cerramiento(newname, 'Nuevo cerramiento')
         self.cerramientosDB[newc.nombre] = newc
         self.cerramientos.insert(index + 1, newc.nombre)
         return newc
@@ -153,6 +153,6 @@ class Model(object):
         ce[index1], ce[index2] = ce[index2], ce[index1]
     
     def cerramientossave(self):
-        cerramientos.savecerramientosdb(self.cerramientosDB,
-                                        self.cerramientos,
-                                        filename=CerramientosDB)
+        cerramiento.savecerramientosdb(self.cerramientosDB,
+                                       self.cerramientos,
+                                       filename=CerramientosDB)
