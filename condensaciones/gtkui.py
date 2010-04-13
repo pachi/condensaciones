@@ -136,10 +136,14 @@ class GtkCondensa(object):
         rsi.props. text = "%.2f" % float(self.model.c.Rsi)
         etotal.props.label = "%.3f" % self.model.c.e
         self.capasls.clear()
-        for i, (nombre, e, K, R, mu, S) in self.model.capasdata():
+        for i, (nombre, e, K, R, mu, S, color) in self.model.capasdata():
+            def _rgba2rgb(r, g, b, a=0.25):
+                """Composición de color r,g,b [0-1] sobre blanco con alpha"""
+                return a * r + (1 - a), a * g + (1 - a), a * b + (1 - a)
+            color = str(gtk.gdk.Color(*_rgba2rgb(*color)))
             d = ("%i" % i, nombre, "%.3f" % e,
                  "-" if not K else "%.4f" % K,
-                 "%.4f" % R, "%i" % mu, "%.3f" % S)
+                 "%.4f" % R, "%i" % mu, "%.3f" % S, color)
             self.capasls.append(d)
 
     def actualizagraficas(self):

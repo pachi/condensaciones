@@ -25,7 +25,7 @@
 import comprobaciones
 import clima
 import cerramiento
-from util import get_resource
+from util import get_resource, colores_capas
 
 CerramientosDB = get_resource('data', 'CerramientosDB.ini')
 ClimasDB = get_resource('data', 'ClimaCTE.ini')
@@ -88,10 +88,16 @@ class Model(object):
         self.cerramientomodificado = True
 
     def capasdata(self):
-        """Devuelve iterador por capa con: i, (nombre, espesor, K, R, mu, S)"""
+        """Devuelve iterador por capa con:
+            i, (nombre, espesor, K, R, mu, S, c)
+        """           
+        cdict = colores_capas(self.c.nombres)
+        colores = [cdict[nombre] for nombre in self.c.nombres]
+        
         # quitamos Rse, Rsi en c.R con c.R[1:-1]
         return enumerate(zip(self.c.nombres, self.c.espesores,
-                             self.c.K, self.c.R[1:-1], self.c.mu, self.c.S))
+                             self.c.K, self.c.R[1:-1],
+                             self.c.mu, self.c.S, colores))
 
     def calcula(self):
         """Calcula resultados para usarlos en presentación"""
