@@ -39,21 +39,10 @@ class GtkCondensa(object):
         self.ui.add_from_file(util.get_resource('data', 'condensa.ui'))
         self.capasls = self.ui.get_object('capas_liststore')
         self.capastv = self.ui.get_object('capas_treeview')
-        self.materialesls = self.ui.get_object('materiales_liststore')
         self.ui.connect_signals(self)
         gtk.link_button_set_uri_hook(lambda b, u: webbrowser.open(u))
-        self.createtexttags()
-        self.createicons()
-        self.cargadata()
-        
-    def createicons(self):
-        """Crea iconos de aplicación y de botones de herramientas"""
-        self.icons = condensaicons.IconFactory(self)
-        self.ui.get_object('cerramselectbtn').set_stock_id('condensa-cerramientos')
-        self.ui.get_object('climaselectbtn').set_stock_id('condensa-clima')
-
-    def createtexttags(self):
-        """Crea marcas de texto para estilos en textbuffer"""
+        #--------- Elementos de la UI que no se pueden generar en Glade -------
+        #------------- Marcas de texto para estilos en textbuffer -------------
         tb = self.ui.get_object('informe_txtbuffer')
         tb.create_tag("titulo",
                       weight=pango.WEIGHT_BOLD, scale=pango.SCALE_X_LARGE)
@@ -65,25 +54,25 @@ class GtkCondensa(object):
         tb.create_tag("datoscapa", style=pango.STYLE_ITALIC, indent=30)
         tb.create_tag("resultados", scale=pango.SCALE_MEDIUM, foreground='blue')
         tb.create_tag("nota", scale=pango.SCALE_SMALL)
-
-    def cargadata(self):
-        """Carga datos de materiales y cerramientos"""
-        for material in self.model.materiales:
-            self.materialesls.append((material,))
-        cerramientosls = self.ui.get_object('cerramientos_liststore')
-        for nombre in self.model.cerramientos:
-            descripcion = self.model.cerramientosDB[nombre].descripcion
-            cerramientosls.append((nombre, descripcion))
-        n = len(self.model.materiales)
-        m = len(self.model.cerramientos)
-        txt = "Cargados %i materiales, %i cerramientos" % (n, m)
-        self.actualiza(txt)
+        #--------- Iconos de aplicación y de botones de herramientas ----------
+        self.icons = condensaicons.IconFactory(self)
+        self.ui.get_object('cerramselectbtn').set_stock_id('condensa-cerramientos')
+        self.ui.get_object('climaselectbtn').set_stock_id('condensa-clima')
+        def cargadata():
+            """Carga datos de materiales y cerramientos"""
+            materialesls = self.ui.get_object('materiales_liststore')
+            for material in self.model.materiales:
+                materialesls.append((material,))
+            cerramientosls = self.ui.get_object('cerramientos_liststore')
+            for nombre in self.model.cerramientos:
+                descripcion = self.model.cerramientosDB[nombre].descripcion
+                cerramientosls.append((nombre, descripcion))
+            n = len(self.model.materiales)
+            m = len(self.model.cerramientos)
+            txt = "Cargados %i materiales, %i cerramientos" % (n, m)
+            self.actualiza(txt)
+        cargadata()
     
-    def title(self):
-        modifiedmark = "*" if self.model.cerramientomodificado else ""
-        txt = "Condensaciones - %s%s" % (self.model.c.nombre, modifiedmark)
-        self.ui.get_object('window').set_title(txt)
-
     def quit(self, w):
         gtk.main_quit()
 
@@ -96,7 +85,9 @@ class GtkCondensa(object):
         """Actualiza cabecera, gráficas, texto y pie de datos"""
         if txt:
             self.ui.get_object('statusbar').push(0, txt)
-        self.title()
+        modifiedmark = "*" if self.model.cerramientomodificado else ""
+        txt = "Condensaciones - %s%s" % (self.model.c.nombre, modifiedmark)
+        self.ui.get_object('window').set_title(txt)
         self.model.calcula()
         self.actualizacabecera()
         self.actualizapie()
@@ -336,9 +327,10 @@ class GtkCondensa(object):
         path - ruta del combo en el treeview
         new_iter - ruta del nuevo valor en el modelo del combo
         """
+        materialesls = self.ui.get_object('materiales_liststore')
         capaindex = int(self.capasls[path][0])
         currentname, currente = self.model.c.capas[capaindex]
-        newname = self.materialesls[new_iter][0].decode('utf-8')
+        newname = materialesls[new_iter][0].decode('utf-8')
         if newname != currentname:
             self.model.set_capa(capaindex, newname, float(currente))
             msg = "Modificado material de capa %i: %s" % (capaindex, newname)
