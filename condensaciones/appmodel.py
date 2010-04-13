@@ -142,7 +142,6 @@ class Model(object):
     
     def cerramientoremove(self, index):
         """Elimina cerramiento en posición index"""
-        #FIXME: No se elimina el cerramiento al guardar. Ver qué pasa
         oldname = self.cerramientos[index]
         self.cerramientos.pop(index)
         del self.cerramientosDB[oldname]
