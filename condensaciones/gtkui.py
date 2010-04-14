@@ -41,8 +41,8 @@ class GtkCondensa(object):
         self.capastv = self.ui.get_object('capas_treeview')
         self.ui.connect_signals(self)
         gtk.link_button_set_uri_hook(lambda b, u: webbrowser.open(u))
-        #--------- Elementos de la UI que no se pueden generar en Glade -------
-        #------------- Marcas de texto para estilos en textbuffer -------------
+        # Elementos de la UI que no se pueden generar en Glade ----------------
+        # Marcas de texto para estilos en textbuffer --------------------------
         tb = self.ui.get_object('informe_txtbuffer')
         tb.create_tag("titulo",
                       weight=pango.WEIGHT_BOLD, scale=pango.SCALE_X_LARGE)
@@ -54,12 +54,13 @@ class GtkCondensa(object):
         tb.create_tag("datoscapa", style=pango.STYLE_ITALIC, indent=30)
         tb.create_tag("resultados", scale=pango.SCALE_MEDIUM, foreground='blue')
         tb.create_tag("nota", scale=pango.SCALE_SMALL)
-        #--------- Iconos de aplicación y de botones de herramientas ----------
+        # Iconos de aplicación y de botones de herramientas -------------------
         self.icons = condensaicons.IconFactory(self)
         self.ui.get_object('cerramselectbtn').set_stock_id('condensa-cerramientos')
         self.ui.get_object('climaselectbtn').set_stock_id('condensa-clima')
+        #----------------------------------------------------------------------
         def cargadata():
-            """Carga datos de materiales y cerramientos"""
+            """Carga datos de materiales, cerramientos y clima"""
             materialesls = self.ui.get_object('materiales_liststore')
             for material in self.model.materiales:
                 materialesls.append((material,))
@@ -74,6 +75,7 @@ class GtkCondensa(object):
         cargadata()
     
     def quit(self, w):
+        """Salir de la aplicación"""
         gtk.main_quit()
 
     def main(self):
