@@ -49,6 +49,61 @@
       </row>
     </data>
   </object>
+  <object class="GtkListStore" id="mesesls">
+    <columns>
+      <!-- column-name mes -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">enero</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">febrero</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">marzo</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">abril</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">mayo</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">junio</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">julio</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">agosto</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">septiembre</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">octubre</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">noviembre</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">diciembre</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="localidadesls">
+    <columns>
+      <!-- column-name localidad -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">default</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkWindow" id="window">
     <property name="width_request">650</property>
     <property name="icon">icons/drop.png</property>
@@ -1033,110 +1088,96 @@
             <property name="visible">True</property>
             <property name="orientation">vertical</property>
             <child>
-              <object class="GtkLabel" id="climaextlbl">
+              <object class="GtkFrame" id="framelocalidad">
                 <property name="visible">True</property>
-                <property name="xalign">0</property>
-                <property name="xpad">4</property>
-                <property name="ypad">4</property>
-                <property name="label" translatable="yes">Ambiente exterior:</property>
-                <attributes>
-                  <attribute name="weight" value="bold"/>
-                </attributes>
+                <property name="label_xalign">0</property>
+                <property name="shadow_type">none</property>
+                <child>
+                  <object class="GtkAlignment" id="alignment4">
+                    <property name="visible">True</property>
+                    <property name="left_padding">12</property>
+                    <child>
+                      <object class="GtkHBox" id="hboxlocalidad">
+                        <property name="visible">True</property>
+                        <child>
+                          <object class="GtkHBox" id="hbox4">
+                            <property name="visible">True</property>
+                            <child>
+                              <object class="GtkLabel" id="localidadlabel">
+                                <property name="visible">True</property>
+                                <property name="xpad">4</property>
+                                <property name="label" translatable="yes">Localidad:</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkComboBoxEntry" id="localidadcb">
+                                <property name="visible">True</property>
+                                <property name="sensitive">False</property>
+                                <property name="model">localidadesls</property>
+                                <property name="active">0</property>
+                                <property name="text_column">0</property>
+                              </object>
+                              <packing>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkHBox" id="hbox5">
+                            <property name="visible">True</property>
+                            <child>
+                              <object class="GtkLabel" id="meslabel">
+                                <property name="visible">True</property>
+                                <property name="xpad">4</property>
+                                <property name="label" translatable="yes">Mes:</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkComboBoxEntry" id="mescb">
+                                <property name="visible">True</property>
+                                <property name="sensitive">False</property>
+                                <property name="model">mesesls</property>
+                                <property name="active">0</property>
+                                <property name="text_column">0</property>
+                                <signal name="changed" handler="meschanged"/>
+                              </object>
+                              <packing>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child type="label">
+                  <object class="GtkLabel" id="label7">
+                    <property name="visible">True</property>
+                    <property name="label" translatable="yes">&lt;b&gt;Localidad&lt;/b&gt;</property>
+                    <property name="use_markup">True</property>
+                  </object>
+                </child>
               </object>
               <packing>
-                <property name="expand">False</property>
                 <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkVBox" id="vbox9">
-                <property name="visible">True</property>
-                <property name="orientation">vertical</property>
-                <child>
-                  <object class="GtkHBox" id="hbox1">
-                    <property name="visible">True</property>
-                    <child>
-                      <object class="GtkLabel" id="label6">
-                        <property name="visible">True</property>
-                        <property name="xpad">4</property>
-                        <property name="label" translatable="yes">Localidad:</property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkEntry" id="localidadentry">
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="invisible_char">&#x25CF;</property>
-                      </object>
-                      <packing>
-                        <property name="position">1</property>
-                      </packing>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkHBox" id="hbox2">
-                    <property name="visible">True</property>
-                    <child>
-                      <object class="GtkLabel" id="label7">
-                        <property name="visible">True</property>
-                        <property name="xpad">4</property>
-                        <property name="label" translatable="yes">Temp [&#xBA;C]: </property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkEntry" id="tempextentry">
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="invisible_char">&#x25CF;</property>
-                      </object>
-                      <packing>
-                        <property name="position">1</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkLabel" id="label8">
-                        <property name="visible">True</property>
-                        <property name="xpad">4</property>
-                        <property name="label" translatable="yes">HR [%]: </property>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="position">2</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkEntry" id="hrextentry">
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="invisible_char">&#x25CF;</property>
-                      </object>
-                      <packing>
-                        <property name="position">3</property>
-                      </packing>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="position">1</property>
               </packing>
             </child>
             <child>
@@ -1145,19 +1186,189 @@
               </object>
               <packing>
                 <property name="expand">False</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkFrame" id="framedatosclimaticos">
+                <property name="visible">True</property>
+                <property name="label_xalign">0</property>
+                <property name="shadow_type">none</property>
+                <child>
+                  <object class="GtkAlignment" id="alignment3">
+                    <property name="visible">True</property>
+                    <property name="left_padding">12</property>
+                    <child>
+                      <object class="GtkVBox" id="vbox9">
+                        <property name="visible">True</property>
+                        <property name="orientation">vertical</property>
+                        <child>
+                          <object class="GtkVBox" id="vboxae">
+                            <property name="visible">True</property>
+                            <property name="orientation">vertical</property>
+                            <child>
+                              <object class="GtkLabel" id="climaextlbl">
+                                <property name="visible">True</property>
+                                <property name="xalign">0</property>
+                                <property name="xpad">4</property>
+                                <property name="ypad">4</property>
+                                <property name="label" translatable="yes">&lt;i&gt;Ambiente exterior&lt;/i&gt;</property>
+                                <property name="use_markup">True</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkHBox" id="hboxae">
+                                <property name="visible">True</property>
+                                <child>
+                                  <object class="GtkLabel" id="labelae1">
+                                    <property name="visible">True</property>
+                                    <property name="xpad">4</property>
+                                    <property name="label" translatable="yes">Temp [&#xBA;C]: </property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkEntry" id="tempextentry">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="invisible_char">&#x25CF;</property>
+                                  </object>
+                                  <packing>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="labelae2">
+                                    <property name="visible">True</property>
+                                    <property name="xpad">4</property>
+                                    <property name="label" translatable="yes">HR [%]: </property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="position">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkEntry" id="hrextentry">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="invisible_char">&#x25CF;</property>
+                                  </object>
+                                  <packing>
+                                    <property name="position">3</property>
+                                  </packing>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkVBox" id="vboxai">
+                            <property name="visible">True</property>
+                            <property name="orientation">vertical</property>
+                            <child>
+                              <object class="GtkLabel" id="climaintlbl">
+                                <property name="visible">True</property>
+                                <property name="xalign">0</property>
+                                <property name="xpad">4</property>
+                                <property name="ypad">4</property>
+                                <property name="label" translatable="yes">&lt;i&gt;Ambiente interior&lt;/i&gt;</property>
+                                <property name="use_markup">True</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkHBox" id="hboxai">
+                                <property name="visible">True</property>
+                                <child>
+                                  <object class="GtkLabel" id="labelai1">
+                                    <property name="visible">True</property>
+                                    <property name="xpad">4</property>
+                                    <property name="label" translatable="yes">Temp [&#xBA;C]: </property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkEntry" id="tempintentry">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="invisible_char">&#x25CF;</property>
+                                  </object>
+                                  <packing>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="labelai2">
+                                    <property name="visible">True</property>
+                                    <property name="xpad">4</property>
+                                    <property name="label" translatable="yes">HR [%]: </property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="position">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkEntry" id="hrintentry">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="invisible_char">&#x25CF;</property>
+                                  </object>
+                                  <packing>
+                                    <property name="position">3</property>
+                                  </packing>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child type="label">
+                  <object class="GtkLabel" id="label6">
+                    <property name="visible">True</property>
+                    <property name="label" translatable="yes">&lt;b&gt;Valores clim&#xE1;ticos&lt;/b&gt;</property>
+                    <property name="use_markup">True</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
                 <property name="position">2</property>
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="climaintlbl">
+              <object class="GtkHSeparator" id="hseparator2">
                 <property name="visible">True</property>
-                <property name="xalign">0</property>
-                <property name="xpad">4</property>
-                <property name="ypad">4</property>
-                <property name="label" translatable="yes">Ambiente interior:</property>
-                <attributes>
-                  <attribute name="weight" value="bold"/>
-                </attributes>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -1165,53 +1376,16 @@
               </packing>
             </child>
             <child>
-              <object class="GtkHBox" id="hbox3">
+              <object class="GtkCheckButton" id="climamanualcheckbox">
+                <property name="label" translatable="yes">Introducir datos clim&#xE1;ticos directamente</property>
                 <property name="visible">True</property>
-                <child>
-                  <object class="GtkLabel" id="label9">
-                    <property name="visible">True</property>
-                    <property name="xpad">4</property>
-                    <property name="label" translatable="yes">Temp [&#xBA;C]: </property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkEntry" id="tempintentry">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="invisible_char">&#x25CF;</property>
-                  </object>
-                  <packing>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="label10">
-                    <property name="visible">True</property>
-                    <property name="xpad">4</property>
-                    <property name="label" translatable="yes">HR [%]: </property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="position">2</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkEntry" id="hrintentry">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="invisible_char">&#x25CF;</property>
-                  </object>
-                  <packing>
-                    <property name="position">3</property>
-                  </packing>
-                </child>
+                <property name="can_focus">True</property>
+                <property name="receives_default">False</property>
+                <property name="active">True</property>
+                <property name="draw_indicator">True</property>
+                <signal name="toggled" handler="climamanualtoggle"/>
               </object>
               <packing>
-                <property name="expand">False</property>
                 <property name="position">4</property>
               </packing>
             </child>
