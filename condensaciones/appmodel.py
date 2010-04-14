@@ -52,8 +52,6 @@ class Model(object):
         self.cerramientosDB = cerr
         if self.c is None:
             self.c = self.cerramientosDB[self.cerramientos[0]]
-        #TODO: generar jerarquía de materiales en dbutils en lugar de crear
-        #TODO: lista ordenada aquí.
         self.materiales = self.c.matnombres
         self.materiales.sort()
 
