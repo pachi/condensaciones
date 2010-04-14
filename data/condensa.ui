@@ -1106,7 +1106,7 @@
                               <object class="GtkLabel" id="localidadlabel">
                                 <property name="visible">True</property>
                                 <property name="xpad">4</property>
-                                <property name="label" translatable="yes">Localidad:</property>
+                                <property name="label" translatable="yes">Localidad o clima:</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
