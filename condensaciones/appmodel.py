@@ -27,12 +27,12 @@ import clima
 import cerramiento
 from util import get_resource, colores_capas
 
-CerramientosDB = get_resource('data', 'CerramientosDB.ini')
-ClimasDB = get_resource('data', 'ClimaCTE.ini')
-cerr, cnombres, cgrupos = cerramiento.loadcerramientosdb(CerramientosDB)
-climas, climasnombres, climasdbconfig = clima.loadclimadb(ClimasDB)
-climae = climas['Climaext'][0] if 'Climaext' in climas else None
-climai = climas['Climaint'][0] if 'Climaint' in climas else None
+CERRAMIENTOSDB = get_resource('data', 'CerramientosDB.ini')
+CLIMASDB = get_resource('data', 'ClimaCTE.ini')
+cerramDB, cnombres, cgrupos = cerramiento.loadcerramientosdb(CERRAMIENTOSDB)
+climasDB, climasnombres, climasdbconfig = clima.loadclimadb(CLIMASDB)
+climae = climasDB['Climaext'][0] if 'Climaext' in climasDB else None
+climai = climasDB['Climaint'][0] if 'Climaint' in climasDB else None
 
 class Model(object):
     def __init__(self):
@@ -43,17 +43,21 @@ class Model(object):
         self.materiales = []
         self.cerramientos = []
         self.cerramientosDB = {}
+        self.climas = []
+        self.climasDB = {}
         self.cargadata()
         self.cerramientomodificado = False
 
     def cargadata(self):
         """Carga datos de materiales y cerramientos"""
         self.cerramientos = cnombres
-        self.cerramientosDB = cerr
+        self.cerramientosDB = cerramDB
         if self.c is None:
             self.c = self.cerramientosDB[self.cerramientos[0]]
         self.materiales = self.c.matnombres
         self.materiales.sort()
+        self.climas = climasnombres
+        self.climasDB = climasDB
 
     def set_cerramiento(self, cname):
         """Selecciona cerramiento activo a partir de su nombre"""
