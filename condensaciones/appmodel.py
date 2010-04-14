@@ -38,8 +38,8 @@ class Model(object):
     def __init__(self):
         """Constructor de modelo"""
         self.c = None
-        self.climae = climae or climas.Clima(5, 96)
-        self.climai = climai or climas.Clima(20, 55)
+        self.climae = climae or clima.Clima(5, 96)
+        self.climai = climai or clima.Clima(20, 55)
         self.materiales = []
         self.cerramientos = []
         self.cerramientosDB = {}
