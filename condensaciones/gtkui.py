@@ -229,12 +229,10 @@ class GtkCondensa(object):
     def ambienteselecciona(self, widget):
         """Abre diálogo de selección de ambientes"""
         adialog = self.ui.get_object('ambiente_dlg')
-        localidad = self.ui.get_object('localidadentry')
         te = self.ui.get_object('tempextentry')
         hre = self.ui.get_object('hrextentry')
         ti = self.ui.get_object('tempintentry')
         hri = self.ui.get_object('hrintentry')
-        localidad.props.text = 'Localidad'
         te.props.text = "%.2f" % self.model.climae.temp
         hre.props.text ="%.2f" % self.model.climae.HR
         ti.props.text = "%.2f" % self.model.climai.temp
