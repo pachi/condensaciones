@@ -185,7 +185,7 @@ class GtkCondensa(object):
         # Cerramiento
         txt = "Descripción del cerramiento\n"
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'subtitulo')
-        for i, (nombre, e, K, R, mu, S) in self.model.capasdata():
+        for i, (nombre, e, K, R, mu, S, color) in self.model.capasdata():
             txt = "%i - %s:\n" % (i, nombre)
             tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'capa')
             txt = ("%.3f [m]\nR=%.3f [m²K/W]\n"
