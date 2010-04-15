@@ -70,8 +70,9 @@ class GtkCondensa(object):
                 cerramientosls.append((nombre, descripcion))
             n = len(self.model.materiales)
             m = len(self.model.cerramientos)
-            txt = "Cargados %i materiales, %i cerramientos" % (n, m)
-            self.actualiza(txt)
+            r = len(self.model.climas)
+            txt = "Cargados %i materiales, %i cerramientos y %i climas"
+            self.actualiza(txt % (n, m, r))
         cargadata()
     
     def quit(self, w):
