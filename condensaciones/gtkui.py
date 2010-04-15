@@ -240,7 +240,6 @@ class GtkCondensa(object):
         ti.props.text = "%.2f" % self.model.climai.temp
         hri.props.text = "%.2f" % self.model.climai.HR
         resultado = adialog.run()
-        # gtk.RESPONSE_ACCEPT vs gtk.RESPONSE_CANCEL
         if resultado == gtk.RESPONSE_ACCEPT:
             self.model.set_climae(float(te.props.text), float(hre.props.text))
             self.model.set_climai(float(ti.props.text), float(hri.props.text))
