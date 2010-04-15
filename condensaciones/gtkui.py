@@ -68,6 +68,12 @@ class GtkCondensa(object):
             for nombre in self.model.cerramientos:
                 descripcion = self.model.cerramientosDB[nombre].descripcion
                 cerramientosls.append((nombre, descripcion))
+            localidadesls = self.ui.get_object('localidadesls')
+            localidadesls.clear()
+            for nombrelocalidad in self.model.climas:
+                localidadesls.append((nombrelocalidad,))
+            self.ui.get_object('localidadcb').props.active = 0
+            
             n = len(self.model.materiales)
             m = len(self.model.cerramientos)
             r = len(self.model.climas)
@@ -247,7 +253,48 @@ class GtkCondensa(object):
             txt = "Seleccionadas nuevas condiciones ambientales"
             self.actualiza(txt, updategraphs=True)
         adialog.hide()
-    
+
+    def _setclimaext(self):
+        mescombo = self.ui.get_object('mescb')
+        ilocalidad = self.ui.get_object('localidadcb').props.active
+        localidad = self.model.climas[ilocalidad]
+        climaslist = self.model.climasDB[localidad]
+        imes = mescombo.props.active
+        print localidad, imes
+        climaslen = len(climaslist)
+        if climaslen < imes:
+            imes = climaslen
+        tempext = "%.f" % climaslist[imes].temp
+        hrext = "%.f" % climaslist[imes].HR
+        self.ui.get_object('tempextentry').props.text = tempext
+        self.ui.get_object('hrextentry').props.text = hrext
+        
+    def meschanged(self, widget):
+        """Cambio en el combo de meses"""
+        self._setclimaext()
+
+    def localidadchanged(self, combo):
+        """Cambio en el combo de localidades"""
+        if combo.props.sensitive and combo.props.active != -1:
+            self._setclimaext()
+
+    def climamanualtoggle(self, widget):
+        """Cambio en casilla de selección de entrada manual de datos
+        climáticos
+        """
+        active = widget.props.active
+        te = self.ui.get_object('tempextentry')
+        hre = self.ui.get_object('hrextentry')
+        self.ui.get_object('localidadcb').props.sensitive = not active
+        self.ui.get_object('mescb').props.sensitive = not active
+        te.props.sensitive = active
+        hre.props.sensitive = active
+        if not active:
+            self._setclimaext()
+        else:
+            te.props.text = self.model.climae.temp
+            hre.props.text = self.model.climae.HR
+
     # Selección de cerramientos - diálogo ------------------------------------
     
     def cerramientoselecciona(self, widget):
