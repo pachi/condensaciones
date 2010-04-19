@@ -29,8 +29,10 @@ class Clima(object):
     def __init__(self, temp=20.0, HR=55.0):
         """Inicialización de datos
         
-        temp - temperatura [ºC]
-        HR - Humedad relativa [%]
+        :type temp: int or float
+        :param temp: temperatura [ºC]
+        :type HR: int or float
+        :param HR: Humedad relativa [%]
         """
         self.temp = float(temp)
         self.HR = float(HR)
@@ -72,7 +74,7 @@ def loadclimadb(filename='ClimaCTE.ini'):
                 raise ValueError, "Valores no coincidentes de temperatura y" \
                 " HR en %s (%i vs %i)" % (nombre, len(tempdata), len(hrdata))
             elif len(tempdata) == 12:
-                climas[nombre] = [Clima(t, hr) 
+                climas[nombre] = [Clima(t, hr)
                                   for t, hr in zip(tempdata, hrdata)]
             else:
                 raise ValueError, "Número erróneo de valores en %s" % nombre
