@@ -121,9 +121,11 @@ class GtkCondensa(object):
         txt = ('U = %.2f W/m²K, f<sub>Rsi</sub> ='
                ' %.2f, f<sub>Rsi,min</sub> = %.2f')
         csubtitulo1.props.label = txt % (model.c.U, model.fRsi, model.fRsimin)
-        txt = ('T<sub>ext</sub> = %.2f°C, HR<sub>ext</sub> = %.1f%%, '
-               'T<sub>int</sub> = %.2f°C, HR<sub>int</sub> = %.1f%%')
-        csubtitulo2.props.label = txt % (model.climae.temp, model.climae.HR,
+        txt = ('%s: T<sub>ext</sub> = %.2f°C, HR<sub>ext</sub> = %.1f%%, '
+               '%s: T<sub>int</sub> = %.2f°C, HR<sub>int</sub> = %.1f%%')
+        csubtitulo2.props.label = txt % (model.ambienteexterior,
+                                         model.climae.temp, model.climae.HR,
+                                         model.ambienteinterior,
                                          model.climai.temp, model.climai.HR)
         COLOR_OK = gtk.gdk.color_parse("#AACCAA")
         COLOR_BAD = gtk.gdk.color_parse("#CCAAAA")
@@ -183,16 +185,22 @@ class GtkCondensa(object):
         # Condiciones ambientales
         txt = "Condiciones de cálculo\n"
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'subtitulo')
+        txt = "Ambiente exterior: %s\n" % self.model.ambienteexterior
+        tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'capa')
         txt = ("Temperatura exterior: %.1f [ºC]\n"
-               "Humedad relativa exterior: %.1f [%%]\n"
-               "Temperatura interior: %.1f [ºC]\n"
-               "Humedad relativa interior: %.1f [%%]\n\n"
-               "Resistencia superficial exterior: %.2f [m²K/W]\n"
-               "Resistencia superficial exterior: %.2f [m²K/W]\n\n"
-               ) % (self.model.climae.temp, self.model.climae.HR,
-                    self.model.climai.temp, self.model.climai.HR,
-                    self.model.c.Rse, self.model.c.Rsi)
+               "Humedad relativa exterior: %.1f [%%]\n\n"
+               ) % (self.model.climae.temp, self.model.climae.HR)
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'datoscapa')
+        txt = "Ambiente interior: %s\n" % self.model.ambienteinterior
+        tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'capa')
+        txt = ("Temperatura interior: %.1f [ºC]\n"
+               "Humedad relativa interior: %.1f [%%]\n\n"
+               ) % (self.model.climai.temp, self.model.climai.HR)
+        tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'datoscapa')
+        txt = ("Resistencia superficial exterior: %.2f [m²K/W]\n"
+               "Resistencia superficial exterior: %.2f [m²K/W]\n\n"
+               ) % (self.model.c.Rse, self.model.c.Rsi)
+        tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'capa')
         # Cerramiento
         txt = "Descripción del cerramiento\n"
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'subtitulo')
@@ -263,11 +271,16 @@ class GtkCondensa(object):
         ilocalidad = self.ui.get_object('localidadcb').props.active
         localidad = self.model.climas[ilocalidad]
         climaslist = self.model.climasDB[localidad]
+        self.model.climaslist = climaslist
         imes = mescombo.props.active
-        print localidad, imes
         climaslen = len(climaslist)
         if climaslen < imes:
             imes = climaslen
+        if climaslen == 12:
+            mes = mescombo.get_active_text()
+        else:
+            mes = str(imes)
+        self.model.ambienteexterior = "%s [%s]" % (localidad, mes)
         tempext = "%.f" % climaslist[imes].temp
         hrext = "%.f" % climaslist[imes].HR
         self.ui.get_object('tempextentry').props.text = tempext
