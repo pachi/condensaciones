@@ -147,9 +147,9 @@ class GtkCondensa(object):
     def actualizapie(self):
         """Actualiza pie de ventana principal"""
         _K = 2592000.0 # segundos por mes
-        txt = "Total: %.2f [g/m²mes]" % (_K * self.model.totalg)
-        self.ui.get_object('pie1').props.label = txt
-        txt = ("Cantidades condensadas: " +
+        txt = "Total (condiciones actuales): %.2f [g/m²mes]"
+        self.ui.get_object('pie1').props.label = txt % (_K * self.model.totalg)
+        txt = ("Cantidades condensadas (condiciones actuales): " +
                ", ".join(["%.2f" % (_K * x,) for x in self.model.g]))
         self.ui.get_object('pie2').props.label = txt
 
