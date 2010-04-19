@@ -80,7 +80,9 @@ class GtkCondensa(object):
             txt = "Cargados %i materiales, %i cerramientos y %i climas"
             self.actualiza(txt % (n, m, r))
         cargadata()
-    
+
+    #{ Funciones generales de aplicación
+ 
     def quit(self, w):
         """Salir de la aplicación"""
         gtk.main_quit()
@@ -89,6 +91,8 @@ class GtkCondensa(object):
         """Arranca la aplicación"""
         self.ui.get_object('window').show_all()
         gtk.main()
+
+    #{ Funcionaes de actualización de datos en interfaz
 
     def actualiza(self, txt=None, updategraphs=False):
         """Actualiza cabecera, gráficas, texto y pie de datos"""
@@ -233,7 +237,7 @@ class GtkCondensa(object):
         while gtk.events_pending():
             gtk.main_iteration()
 
-    # Selección de ambientes - diálogo ---------------------------------------
+    #{ Retrollamadas del diálogo de selección de ambientes
 
     def ambienteselecciona(self, widget):
         """Abre diálogo de selección de ambientes"""
@@ -295,7 +299,7 @@ class GtkCondensa(object):
             te.props.text = self.model.climae.temp
             hre.props.text = self.model.climae.HR
 
-    # Selección de cerramientos - diálogo ------------------------------------
+    #{ Retrollamadas del diálogo de selección de cerramientos
     
     def cerramientoselecciona(self, widget):
         """Abre diálogo de selección de cerramiento"""
@@ -369,7 +373,7 @@ class GtkCondensa(object):
         """Guarda lista de cerramientos en disco"""
         self.model.cerramientossave()
 
-    # Retrollamadas de modificación de capas ----------------------------------
+    #{ Retrollamadas de modificación de capas en pestaña de capas
  
     def capacambiamaterial(self, cr, path, new_iter):
         """Cambio de material de la capa en el combo de la vista de capas
@@ -471,7 +475,7 @@ class GtkCondensa(object):
             self.model.set_Rsi(newrsi)
             self.actualiza("Nuevo Rsi: %.2f" % newrsi)
 
-    # Retrollamadas generales -------------------------------------------------
+    #{ Retrollamadas generales
 
     def cambiahoja(self, notebook, page, pagenum):
         """Cambia hoja activa en la interfaz y actualiza gráficas si procede"""
