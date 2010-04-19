@@ -320,7 +320,21 @@ class GtkCondensa(object):
         lblselected = self.ui.get_object('lblselected')
         cerrtm, cerrtm_iter = tv.get_selection().get_selected()
         lblselected.props.label = cerrtm[cerrtm_iter][0]
-    
+
+    def cerramientonombreeditado(self, cr, path, newtext):
+        """Edita nombre de cerramiento"""
+        cerrtm = self.ui.get_object('cerramientotv').get_model()
+        oldname = cerrtm[path][0]
+        cerrtm[path][0] = newtext
+        self.model.cerramientocambianombre(oldname, newtext)
+
+    def cerramientodescripcioneditada(self, cr, path, newtext):
+        """Edita descripción de cerramiento"""
+        cerrtm = self.ui.get_object('cerramientotv').get_model()
+        cerrname = cerrtm[path][0]
+        cerrtm[path][1] = newtext
+        self.model.cerramientocambiadescripcion(cerrname, newtext)
+
     def cerramientoadd(self, widget):
         """Añade cerramiento de la lista de cerramientos"""
         ctv = self.ui.get_object('cerramientotv')

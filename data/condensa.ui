@@ -978,7 +978,10 @@
                         <property name="title">Nombre</property>
                         <property name="expand">True</property>
                         <child>
-                          <object class="GtkCellRendererText" id="cellrenderertext1"/>
+                          <object class="GtkCellRendererText" id="cellrenderertext1">
+                            <property name="editable">True</property>
+                            <signal name="edited" handler="cerramientonombreeditado"/>
+                          </object>
                           <attributes>
                             <attribute name="text">0</attribute>
                           </attributes>
@@ -992,7 +995,10 @@
                         <property name="title">Descripci&#xF3;n</property>
                         <property name="expand">True</property>
                         <child>
-                          <object class="GtkCellRendererText" id="cellrenderertext2"/>
+                          <object class="GtkCellRendererText" id="cellrenderertext2">
+                            <property name="editable">True</property>
+                            <signal name="edited" handler="cerramientodescripcioneditada"/>
+                          </object>
                           <attributes>
                             <attribute name="text">1</attribute>
                           </attributes>

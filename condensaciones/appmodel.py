@@ -158,7 +158,18 @@ class Model(object):
         """Intercambia la posición de dos cerramientos"""
         ce = self.cerramientos 
         ce[index1], ce[index2] = ce[index2], ce[index1]
-    
+
+    def cerramientocambianombre(self, oldname, newname):
+        """Cambia nombre de cerramiento a nuevonombre"""
+        i = self.cerramientos.index(oldname)
+        self.cerramientos[i] = newname
+        self.cerramientosDB[newname] = self.cerramientosDB.pop(oldname)
+        self.cerramientosDB[newname].nombre = newname
+
+    def cerramientocambiadescripcion(self, cerr, newdesc):
+        """Cambia nombre de cerramiento a nuevonombre"""
+        self.cerramientosDB[cerr].descripcion = newdesc
+
     def cerramientossave(self):
         """Guarda base de datos de cerramientos"""
         cerramiento.savecerramientosdb(self.cerramientosDB,
