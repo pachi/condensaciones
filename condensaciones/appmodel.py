@@ -160,6 +160,7 @@ class Model(object):
         ce[index1], ce[index2] = ce[index2], ce[index1]
     
     def cerramientossave(self):
+        """Guarda base de datos de cerramientos"""
         cerramiento.savecerramientosdb(self.cerramientosDB,
                                        self.cerramientos,
-                                       filename=CerramientosDB)
+                                       filename=CERRAMIENTOSDB)
