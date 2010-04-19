@@ -38,7 +38,9 @@ class Model(object):
     def __init__(self):
         """Constructor de modelo"""
         self.c = None
+        self.ambienteexterior = 'Predefinido'
         self.climae = climae or clima.Clima(5, 96)
+        self.ambienteinterior = 'Predefinido'
         self.climai = climai or clima.Clima(20, 55)
         self.materiales = []
         self.cerramientos = []
