@@ -129,7 +129,18 @@ class GtkCondensa(object):
                                          model.climai.temp, model.climai.HR)
         COLOR_OK = gtk.gdk.color_parse("#AACCAA")
         COLOR_BAD = gtk.gdk.color_parse("#CCAAAA")
-        state_color = COLOR_BAD if model.ccheck else COLOR_OK
+        COLOR_SEE = gtk.gdk.color_parse("#FFDD77")
+        ci = model.condensaintersticialesCTE()
+        cs = model.condensasuperficialesCTE()
+        if model.ccheck:
+            # El cerramiento condensa en las condiciones ambientales actuales
+            state_color = COLOR_BAD
+        elif ci or cs:
+            # El cerramiento condensa en las condiciones CTE (enero para
+            # cond. superficiales y todos los meses para cond. intersticiales
+            state_color = COLOR_SEE
+        else:
+            state_color = COLOR_OK 
         cfondo = self.ui.get_object('cfondo')
         cfondo.modify_bg(gtk.STATE_NORMAL, state_color)
 
@@ -229,8 +240,8 @@ class GtkCondensa(object):
                     self.model.fRsi, self.model.fRsimin)
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'resultados')
         # Condensaciones
-        cs = "Sí" if self.model.cs else "No"
-        ci = "Sí" if self.model.ci else "No"
+        cs = "Sí" if self.model.condensasuperficialesCTE() else "No"
+        ci = "Sí" if True in self.model.condensaintersticialesCTE() else "No"
         txt = ("\n¿Existen condensaciones superficiales?: %s\n"
                "¿Existen condensaciones intersticiales?: %s\n") % (cs, ci)
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'resultados')

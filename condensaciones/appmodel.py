@@ -40,6 +40,8 @@ class Model(object):
         self.c = None
         self.ambienteexterior = 'Predefinido'
         self.climae = climae or clima.Clima(5, 96)
+        self.climaesuperf = self.climae
+        self.climaslist = [self.climae] # Lista de climas de localidad
         self.ambienteinterior = 'Predefinido'
         self.climai = climai or clima.Clima(20, 55)
         self.materiales = []
@@ -116,6 +118,28 @@ class Model(object):
         #self.g, self.pevap = self.c.evaporacion(te,ti,hre,hri,interfases=[2])
         self.totalg = 0.0 if not self.g else sum(self.g)
 
+    def condensasuperficialesCTE(self):
+        """Calcula si se producen condensaciones superficiales s/CTE
+        
+        Se comprueban las condensaciones para el mes de enero (primero de la
+        lista) y con ambiente interior con temperatura 20ºC y HR según ambiente.
+        """
+        return comprobaciones.condensas(self.c,
+                                        self.climaslist[0].temp, 20,
+                                        self.climai.HR)
+
+    def condensaintersticialesCTE(self):
+        """Calcula si se producen condensaciones intersticiales s/CTE
+        
+        Se comprueban las condensaciones para todos los meses de la
+        lista. El ambiente interior con temperatura 20ºC y HR según higrometría
+        """
+        condensa = []
+        for ce in self.climaslist:
+            condensa.append(comprobaciones.condensai(self.c,
+                                                     ce.temp, 20,
+                                                     ce.HR, self.climai.HR))
+        return condensa
     # Acciones sobre capas ---------------------------------------------------
  
     def capaadd(self, index):
