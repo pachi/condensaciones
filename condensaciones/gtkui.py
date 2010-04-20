@@ -135,7 +135,7 @@ class GtkCondensa(object):
         if model.ccheck:
             # El cerramiento condensa en las condiciones ambientales actuales
             state_color = COLOR_BAD
-        elif ci or cs:
+        elif True in ci or cs:
             # El cerramiento condensa en las condiciones CTE (enero para
             # cond. superficiales y todos los meses para cond. intersticiales
             state_color = COLOR_SEE
