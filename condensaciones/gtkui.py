@@ -196,22 +196,43 @@ class GtkCondensa(object):
         # Condiciones ambientales
         txt = "Condiciones de cálculo\n"
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'subtitulo')
-        txt = "Ambiente exterior: %s\n" % self.model.ambienteexterior
+        txt = "Ambiente exterior (gráficas): %s\n" % self.model.ambienteexterior
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'capa')
-        txt = ("Temperatura exterior: %.1f [ºC]\n"
-               "Humedad relativa exterior: %.1f [%%]\n\n"
+        txt = ("Temperatura exterior: %.1f ºC\n"
+               "Humedad relativa exterior: %.1f %%\n\n"
                ) % (self.model.climae.temp, self.model.climae.HR)
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'datoscapa')
-        txt = "Ambiente interior: %s\n" % self.model.ambienteinterior
+        txt = "Ambiente interior (gráficas): %s\n" % self.model.ambienteinterior
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'capa')
-        txt = ("Temperatura interior: %.1f [ºC]\n"
-               "Humedad relativa interior: %.1f [%%]\n\n"
+        txt = ("Temperatura interior: %.1f ºC\n"
+               "Humedad relativa interior: %.1f %%\n\n"
                ) % (self.model.climai.temp, self.model.climai.HR)
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'datoscapa')
-        txt = ("Resistencia superficial exterior: %.2f [m²K/W]\n"
-               "Resistencia superficial exterior: %.2f [m²K/W]\n\n"
+        txt = ("Resistencia superficial exterior: %.2f m²K/W\n"
+               "Resistencia superficial exterior: %.2f m²K/W\n\n"
                ) % (self.model.c.Rse, self.model.c.Rsi)
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'capa')
+        #
+        txt = ("Condiciones de cálculo para la comprobación de condensaciones"
+               " superficiales\n")
+        tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'capa')
+        txt = ("Exterior - T: %.1f ºC, HR: %.1f %%\n"
+               "Interior - T: %.1f ºC, HR: %.1f %%\n\n"
+               ) % (self.model.climaslist[0].temp, self.model.climaslist[0].HR,
+                    20.0, self.model.climai.HR)
+        tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'datoscapa')
+        #
+        txt = ("Condiciones de cálculo para la comprobación de condensaciones"
+               " intersticiales\n")
+        tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'capa')
+        tempextlist = ", ".join("%.1f" % clima.temp
+                               for clima in self.model.climaslist)
+        hrextlist = ", ".join("%.1f" % clima.HR
+                             for clima in self.model.climaslist)
+        txt = ("Exterior - \n\tT [ºC]: %s\n\tHR [%%]: %s\n"
+               "Interior - T [ºC]: %.1f, HR [%%]: %.1f\n\n"
+               ) % (tempextlist, hrextlist, 20.0, self.model.climai.HR)
+        tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'datoscapa')
         # Cerramiento
         txt = "Descripción del cerramiento\n"
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'subtitulo')
@@ -235,7 +256,7 @@ class GtkCondensa(object):
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'subtitulo')
         txt = ("R_total: %.3f [m²K/W]\nS_total = %.3f [m]\n"
                "Transmitancia térmica total: U = %.3f [W/m²K]\n"
-               "f_Rsi = %.2f\nf_Rsimin = %.2f\n"
+               "f_Rsi = %.2f\nf_Rsimin = %.2f\n\n"
                ) % (self.model.c.R_total, self.model.c.S_total, self.model.c.U,
                     self.model.fRsi, self.model.fRsimin)
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'resultados')
