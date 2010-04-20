@@ -261,11 +261,18 @@ class GtkCondensa(object):
                     self.model.fRsi, self.model.fRsimin)
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'resultados')
         # Condensaciones
+        cimeses = self.model.condensaintersticialesCTE()
         cs = "Sí" if self.model.condensasuperficialesCTE() else "No"
-        ci = "Sí" if True in self.model.condensaintersticialesCTE() else "No"
+        ci = "Sí" if True in cimeses else "No"
         txt = ("\n¿Existen condensaciones superficiales?: %s\n"
                "¿Existen condensaciones intersticiales?: %s\n") % (cs, ci)
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'resultados')
+        if True in cimeses:
+            meses = "[" + ", ".join("%i" % i 
+                                    for i, value in enumerate(cimeses) 
+                                    if value is True) + "]"
+            txt = ("\nMeses con condensaciones intersticiales: %s\n") % meses
+            tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'resultados')
         # Nota copyright
         today = datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")
         txt = ("\n\nInforme generado por 'Condensa' "
