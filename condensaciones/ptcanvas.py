@@ -23,6 +23,7 @@
 """Módulo de dibujo y controles gráficos de la interfaz de usuario"""
 
 import gtk
+import numpy
 import matplotlib
 matplotlib.use('GTKCairo')
 from matplotlib.figure import Figure
@@ -134,6 +135,16 @@ class CPTCanvas(FigureCanvasGTKCairo):
         ax1.plot(d.rotulos_s, d.presiones, 'b-', linewidth=0.5)
         # Presiones de saturación
         ax1.plot(d.rotulos_s, d.presiones_sat, 'k-', linewidth=0.5)
+        # Rellena zona de condensación (psat <= presiones)
+        nsteps = 500
+        xmin = d.rotulos_s[0]
+        xmax = d.rotulos_s[-1]
+        xstep = (xmax - xmin) / float(nsteps)
+        newx = [xmin + n * xstep for n in range(nsteps)]
+        newpres = numpy.interp(newx, d.rotulos_s, d.presiones)
+        newpressat = numpy.interp(newx, d.rotulos_s, d.presiones_sat)
+        ax1.fill_between(newx, newpres, newpressat, where=newpressat<newpres,
+                         facecolor='red')
         # Rótulos
         ax1.annotate(u'$P_{n}$',
                      xy=(d.rotulo_si + 0.002, d.P_si),
