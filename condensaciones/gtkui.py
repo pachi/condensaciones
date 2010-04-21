@@ -29,6 +29,7 @@ import appmodel
 from ptcanvas import CPTCanvas, CPCanvas, GraphData
 import condensaicons
 import webbrowser, datetime
+import htmlreport
 
 class GtkCondensa(object):
     """Aplicación"""
@@ -181,7 +182,9 @@ class GtkCondensa(object):
         graficaprestemp.dibuja(gdata)
         graficapresiones.clear()
         graficapresiones.dibuja(gdata)
-    
+
+    #{ Pestaña de informe
+
     def actualizainforme(self):
         """Actualiza texto descripción de cerramiento en ventana principal"""
         graficaprestemp = self.ui.get_object('prestemp_canvas')
@@ -283,6 +286,9 @@ class GtkCondensa(object):
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'nota')
         while gtk.events_pending():
             gtk.main_iteration()
+
+    def openhtmlreport(self, widget):
+        htmlreport.htmlreport(self.ui, self.model)
 
     #{ Retrollamadas del diálogo de selección de ambientes
 

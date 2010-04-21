@@ -39,6 +39,8 @@ data_files = [('', ['README.txt', 'NEWS.txt', 'INSTALL.txt', 'COPYING.txt']),
               ('data/icons', ['data/icons/cerramientos.png',
                               'data/icons/clima.png',
                               'data/icons/drop.png']
+              ),
+              ('report', ['report/style.css']
               )] + get_py2exe_datafiles()
 
 opts = {'py2exe': {
