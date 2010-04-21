@@ -270,7 +270,7 @@
               </object>
             </child>
             <child type="tab">
-              <object class="GtkLabel" id="label5">
+              <object class="GtkLabel" id="labelcreditos">
                 <property name="visible">True</property>
                 <property name="label" translatable="yes">Cr&#xE9;ditos</property>
               </object>
@@ -709,7 +709,7 @@
               </packing>
             </child>
             <child type="tab">
-              <object class="GtkLabel" id="label4">
+              <object class="GtkLabel" id="labelcapas">
                 <property name="visible">True</property>
                 <property name="label" translatable="yes">Capas</property>
               </object>
@@ -727,7 +727,7 @@
               </packing>
             </child>
             <child type="tab">
-              <object class="GtkLabel" id="label2">
+              <object class="GtkLabel" id="labelpresionesytemperaturas">
                 <property name="visible">True</property>
                 <property name="label" translatable="yes">Presiones y temperaturas</property>
               </object>
@@ -745,7 +745,7 @@
               </packing>
             </child>
             <child type="tab">
-              <object class="GtkLabel" id="label3">
+              <object class="GtkLabel" id="labelpresionesvapor">
                 <property name="visible">True</property>
                 <property name="label" translatable="yes">Presiones de vapor</property>
               </object>
@@ -755,18 +755,40 @@
               </packing>
             </child>
             <child>
-              <object class="GtkScrolledWindow" id="muroscrolledwindow">
+              <object class="GtkVBox" id="vbinforme">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="hscrollbar_policy">automatic</property>
-                <property name="vscrollbar_policy">automatic</property>
+                <property name="orientation">vertical</property>
                 <child>
-                  <object class="GtkTextView" id="informe_textview">
+                  <object class="GtkButton" id="htmlreportbutton">
+                    <property name="label" translatable="yes">Abrir en el navegador</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="wrap_mode">word-char</property>
-                    <property name="buffer">informe_txtbuffer</property>
+                    <property name="receives_default">True</property>
+                    <signal name="clicked" handler="openhtmlreport"/>
                   </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkScrolledWindow" id="scrolledwindow">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="hscrollbar_policy">automatic</property>
+                    <property name="vscrollbar_policy">automatic</property>
+                    <child>
+                      <object class="GtkTextView" id="informe_textview">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="wrap_mode">word-char</property>
+                        <property name="buffer">informe_txtbuffer</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="position">1</property>
+                  </packing>
                 </child>
               </object>
               <packing>
@@ -774,7 +796,7 @@
               </packing>
             </child>
             <child type="tab">
-              <object class="GtkLabel" id="label0">
+              <object class="GtkLabel" id="labelinforme">
                 <property name="visible">True</property>
                 <property name="label" translatable="yes">Informe</property>
               </object>
