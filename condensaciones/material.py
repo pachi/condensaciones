@@ -61,6 +61,23 @@ class Material(object):
         #self.image = 'asfalto.bmp'
         #self.library = False
 
+class MaterialesDB(object):
+    """Base de datos de Materiales
+    
+    Carga datos de un archivo y guarda nombre de la base de datos
+    Permite acceder a los materiales usando índices con nombre de material
+    Contiene lista de nombres de materiales, lista de grupos y diccionario con
+    materiales por grupo.
+    """
+    def __init__(self, filename=None, name=None):
+        materiales, names, groups = {}, [], {}
+        self.nombre = name if name else ''
+        if filename:
+            materiales, names, groups = loadmaterialesdb(filename)
+        self.materiales = materiales
+        self.nombres = names
+        self.grupos = groups
+
 #===============================================================================
 # Funciones de E/S de las BBDD de materiales en formato ConfigObj
 #===============================================================================
