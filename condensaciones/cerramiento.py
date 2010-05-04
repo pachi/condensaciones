@@ -28,8 +28,7 @@ import material
 import configobj
 from util import get_resource
 
-MaterialesDB = get_resource('data', 'MaterialesDB.ini')
-_mats, _mnombres, _mgrupos = material.loadmaterialesdb(MaterialesDB)
+mdb = material.MaterialesDB(get_resource('data', 'MaterialesDB.ini'))
 
 class Cerramiento(object):
     """Clase Cerramiento
@@ -40,10 +39,10 @@ class Cerramiento(object):
     materiales - diccionario de nombres de material con material
     mnombres   - lista de nombres de materiales
     mgrupos    - diccionario de grupos con lista de nombres de materiales
-    """
-    matDB = _mats
-    matnombres = _mnombres
-    matgrupos = _mgrupos
+    """ 
+    matDB = mdb.materiales
+    matnombres = mdb.nombres
+    matgrupos = mdb.grupos
     def __init__(self, nombre, descripcion, capas=None,
                  Rse=None, Rsi=None, tipo=None):
         """Inicialización de cerramiento.
@@ -64,7 +63,6 @@ class Cerramiento(object):
         Rsi - Resistencia superficial interior [m²K/W]
               Si no se indica valor, se usa 0,13 m²K/W.
         """
-        #TODO: Tipo selecciona Rse y Rsi según sea horizontal, vertical, etc
         self.nombre = nombre
         self.descripcion = descripcion
         if not capas:
