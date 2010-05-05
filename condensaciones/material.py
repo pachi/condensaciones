@@ -67,9 +67,11 @@ class MaterialesDB(object):
     filename - nombre del archivo desde el que cargar la base de datos
     
     nombre - nombre de la base de datos
-    materiales - diccionario de materiales de la BBDD
-    nombres - lista de nombres de materiales en la BBDD
-    grupos - diccionario de nombres de materiales por grupo en la BBDD.
+    
+    nombres - lista de nombres de materiales de la BBDD
+    nombresgrupos - lista de nombres de grupos de la BBDD
+    materiales - diccionario de materiales de la BBDD por nombre de material
+    grupos - diccionario de nombres de materiales por grupo en la BBDD
     """
     def __init__(self, filename):
         self.loadmaterialesdb(filename)
@@ -84,13 +86,7 @@ class MaterialesDB(object):
         del self.materiales[key]
     
     def loadmaterialesdb(self, filename='DB.ini'):
-        """Lee base de datos de materiales en formato ConfigObj
-        
-        Deveuelve:
-            - diccionario de nombres de material con instancias de Material
-            - lista de nombres de materiales
-            - diccionario de grupos con conjuntos de nombres de material
-        """
+        """Lee base de datos de materiales en formato ConfigObj de archivo"""
         def unescape(data):
             """Unescape &amp;, &lt;, and &gt; in a string of data."""
             k = data.replace("&lb;", "[").replace("&rb;", "]")
@@ -98,7 +94,8 @@ class MaterialesDB(object):
         
         config = configobj.ConfigObj(filename, encoding='utf-8',
                                      raise_errors=True)
-        self.materiales, self.nombres, self.grupos = {}, [], {}
+        self.nombres, self.nombresgrupos = [], []
+        self.materiales, self.grupos = {}, {}
         # Lee valores de configuración de la base de datos si existe
         if 'config' in config:
             dbconf = config['config']
@@ -130,6 +127,8 @@ class MaterialesDB(object):
                 m.thickness_min = material.as_float('thickness_min')
             if 'thickness_max' in material:
                 m.thickness_max = material.as_float('thickness_max')
-            self.materiales[name] = m
             self.nombres.append(name)
+            if group not in self.nombresgrupos:
+                self.nombresgrupos.append(group)
+            self.materiales[name] = m
             self.grupos.setdefault(group, set()).add(name)
