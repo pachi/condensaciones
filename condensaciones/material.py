@@ -102,10 +102,7 @@ class MaterialesDB(object):
         # Lee valores de configuración de la base de datos si existe
         if 'config' in config:
             dbconf = config['config']
-            if 'nombre' in dbconf:
-                self.nombre = dbconf['nombre']
-            else:
-                self.nombre = 'predeterminado'
+            self.nombre = dbconf['nombre'] if 'nombre' in dbconf else ''
             del config['config']
         else:
             dbconf = None
