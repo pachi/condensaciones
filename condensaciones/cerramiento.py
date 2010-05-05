@@ -36,13 +36,9 @@ class Cerramiento(object):
     Clase para modelizar un cerramiento tipo, multicapa, con cada capa definida
     por su material y sus propiedades físicas.
     
-    materiales - diccionario de nombres de material con material
-    mnombres   - lista de nombres de materiales
-    mgrupos    - diccionario de grupos con lista de nombres de materiales
+    matDB - BBDD de materiales (tipo: MaterialesDB)
     """ 
-    matDB = mdb.materiales
-    matnombres = mdb.nombres
-    matgrupos = mdb.grupos
+    matDB = mdb
     def __init__(self, nombre, descripcion, capas=None,
                  Rse=None, Rsi=None, tipo=None):
         """Inicialización de cerramiento.
@@ -66,10 +62,10 @@ class Cerramiento(object):
         self.nombre = nombre
         self.descripcion = descripcion
         if not capas:
-            capas = [(self.matnombres[0], 0.3)]
+            capas = [(self.matDB.nombres[0], 0.3)]
         self.capas = capas
         for nombre, e in capas:
-            if nombre not in self.matnombres:
+            if nombre not in self.matDB.nombres:
                 raise ValueError('Material desconocido: %s' % nombre)
         if not Rse:
             Rse = 0.04
