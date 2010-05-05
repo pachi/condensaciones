@@ -98,7 +98,7 @@ class MaterialesDB(object):
         
         config = configobj.ConfigObj(filename, encoding='utf-8',
                                      raise_errors=True)
-        materiales, names, groups = {}, [], {}
+        self.materiales, self.nombres, self.grupos = {}, [], {}
         # Lee valores de configuración de la base de datos si existe
         if 'config' in config:
             dbconf = config['config']
@@ -130,9 +130,6 @@ class MaterialesDB(object):
                 m.thickness_min = material.as_float('thickness_min')
             if 'thickness_max' in material:
                 m.thickness_max = material.as_float('thickness_max')
-            materiales[name] = m
-            names.append(name)
-            groups.setdefault(group, set()).add(name)
-        self.materiales = materiales
-        self.nombres = names
-        self.grupos = groups
+            self.materiales[name] = m
+            self.nombres.append(name)
+            self.grupos.setdefault(group, set()).add(name)
