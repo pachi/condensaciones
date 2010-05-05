@@ -73,6 +73,8 @@ class MaterialesDB(object):
     materiales - diccionario de materiales de la BBDD por nombre de material
     grupos - diccionario de nombres de materiales por grupo en la BBDD
     """
+    #TODO: eliminar diccionario de grupos ya que al eliminar un material se
+    # puede desincronizar el contenido
     def __init__(self, filename):
         self.loadmaterialesdb(filename)
     
@@ -81,9 +83,12 @@ class MaterialesDB(object):
     
     def __setitem__(self, key, value):
         self.materiales[key] = value
+        #FIXME: se puede ordenar de otra forma
+        self.nombres.append(key)
     
     def __delitem__(self, key):
         del self.materiales[key]
+        self.nombres.remove(key)
     
     def loadmaterialesdb(self, filename='DB.ini'):
         """Lee base de datos de materiales en formato ConfigObj de archivo"""
