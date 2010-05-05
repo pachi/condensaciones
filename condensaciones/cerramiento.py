@@ -304,7 +304,7 @@ def loadcerramientosdb(filename='CerramientosDB.ini'):
     Deveuelve:
         - diccionario de nombres de cerramiento con instancias de Cerramiento
         - lista de nombres de cerramientos
-        - diccionario de grupos con conjuntos de nombres de material
+        - diccionario de grupos con conjuntos de nombres de cerramientos
     """
     config = configobj.ConfigObj(filename, encoding='utf-8', raise_errors=True)
     cerramientos, cnames, cgroups = {}, [], {}
