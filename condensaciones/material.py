@@ -64,69 +64,78 @@ class Material(object):
 class MaterialesDB(object):
     """Base de datos de Materiales
     
-    Carga datos de un archivo y guarda nombre de la base de datos
-    Permite acceder a los materiales usando índices con nombre de material
-    Contiene lista de nombres de materiales, lista de grupos y diccionario con
-    materiales por grupo.
+    filename - nombre del archivo desde el que cargar la base de datos
+    
+    nombre - nombre de la base de datos
+    materiales - diccionario de materiales de la BBDD
+    nombres - lista de nombres de materiales en la BBDD
+    grupos - diccionario de nombres de materiales por grupo en la BBDD.
     """
-    def __init__(self, filename=None, name=None):
+    def __init__(self, filename):
+        self.loadmaterialesdb(filename)
+    
+    def __getitem__(self, key):
+        return self.materiales[key]
+    
+    def __setitem__(self, key, value):
+        self.materiales[key] = value
+    
+    def __delitem__(self, key):
+        del self.materiales[key]
+    
+    def loadmaterialesdb(self, filename='DB.ini'):
+        """Lee base de datos de materiales en formato ConfigObj
+        
+        Deveuelve:
+            - diccionario de nombres de material con instancias de Material
+            - lista de nombres de materiales
+            - diccionario de grupos con conjuntos de nombres de material
+        """
+        def unescape(data):
+            """Unescape &amp;, &lt;, and &gt; in a string of data."""
+            k = data.replace("&lb;", "[").replace("&rb;", "]")
+            return k.replace("&amp;", "&")
+        
+        config = configobj.ConfigObj(filename, encoding='utf-8',
+                                     raise_errors=True)
         materiales, names, groups = {}, [], {}
-        self.nombre = name if name else ''
-        if filename:
-            materiales, names, groups = loadmaterialesdb(filename)
+        # Lee valores de configuración de la base de datos si existe
+        if 'config' in config:
+            dbconf = config['config']
+            if 'nombre' in dbconf:
+                self.nombre = dbconf['nombre']
+            else:
+                self.nombre = 'predeterminado'
+            del config['config']
+        else:
+            dbconf = None
+        # Lee datos 
+        for section in config:
+            material = config[section]
+            name = unescape(section)
+            db = material['db']
+            group = material['group']
+            mtype = material['type']
+            mu = material.as_float('mu')
+            m = Material(name, group, mtype, mu, db)
+            # Valores por tipo
+            if mtype == 'RESISTANCE':
+                m.resistance = material.as_float('resistance')
+            elif mtype == 'PROPERTIES':
+                m.conductivity = material.as_float('conductivity')
+                m.thickness = material.as_float('thickness')
+                m.density = material.as_float('density')
+                m.specific_heat = material.as_float('specific_heat')
+            # Valores opcionales
+            if 'thickness_change' in material:
+                m.thickness_change = material.as_bool('thickness_change')
+            if 'thickness_min' in material:
+                m.thickness_min = material.as_float('thickness_min')
+            if 'thickness_max' in material:
+                m.thickness_max = material.as_float('thickness_max')
+            materiales[name] = m
+            names.append(name)
+            groups.setdefault(group, set()).add(name)
         self.materiales = materiales
         self.nombres = names
         self.grupos = groups
-
-#===============================================================================
-# Funciones de E/S de las BBDD de materiales en formato ConfigObj
-#===============================================================================
-
-def unescape(data):
-    """Unescape &amp;, &lt;, and &gt; in a string of data."""
-    return data.replace("&lb;", "[").replace("&rb;", "]").replace("&amp;", "&")
-
-def loadmaterialesdb(filename='DB.ini'):
-    """Lee base de datos de materiales en formato ConfigObj
-    
-    Deveuelve:
-        - diccionario de nombres de material con instancias de Material
-        - lista de nombres de materiales
-        - diccionario de grupos con conjuntos de nombres de material
-    """
-    config = configobj.ConfigObj(filename, encoding='utf-8', raise_errors=True)
-    materiales, names, groups = {}, [], {}
-    # Lee valores de configuración de la base de datos si existe
-    if 'config' in config:
-        dbconf = config['config']
-        del config['config']
-    else:
-        dbconf = None
-    # Lee datos 
-    for section in config:
-        material = config[section]
-        name = unescape(section)
-        db = material['db']
-        group = material['group']
-        mtype = material['type']
-        mu = material.as_float('mu')
-        m = Material(name, group, mtype, mu, db)
-        # Valores por tipo
-        if mtype == 'RESISTANCE':
-            m.resistance = material.as_float('resistance')
-        elif mtype == 'PROPERTIES':
-            m.conductivity = material.as_float('conductivity')
-            m.thickness = material.as_float('thickness')
-            m.density = material.as_float('density')
-            m.specific_heat = material.as_float('specific_heat')
-        # Valores opcionales
-        if 'thickness_change' in material:
-            m.thickness_change = material.as_bool('thickness_change')
-        if 'thickness_min' in material:
-            m.thickness_min = material.as_float('thickness_min')
-        if 'thickness_max' in material:
-            m.thickness_max = material.as_float('thickness_max')
-        materiales[name] = m
-        names.append(name)
-        groups.setdefault(group, set()).add(name)
-    return materiales, names, groups
