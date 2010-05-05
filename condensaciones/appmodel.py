@@ -44,7 +44,6 @@ class Model(object):
         self.climaslist = [self.climae] # Lista de climas de localidad
         self.ambienteinterior = 'Predefinido'
         self.climai = climai or clima.Clima(20, 55)
-        self.materiales = []
         self.cerramientos = []
         self.cerramientosDB = {}
         self.climas = []
@@ -58,8 +57,6 @@ class Model(object):
         self.cerramientosDB = cerramDB
         if self.c is None:
             self.c = self.cerramientosDB[self.cerramientos[0]]
-        self.materiales = self.c.matnombres
-        self.materiales.sort()
         self.climas = climasnombres
         self.climasDB = climasDB
 

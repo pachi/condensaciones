@@ -63,7 +63,7 @@ class GtkCondensa(object):
         def cargadata():
             """Carga datos de materiales, cerramientos y clima"""
             materialesls = self.ui.get_object('materiales_liststore')
-            for material in self.model.materiales:
+            for material in self.model.c.matDB.nombres:
                 materialesls.append((material,))
             cerramientosls = self.ui.get_object('cerramientos_liststore')
             for nombre in self.model.cerramientos:
@@ -75,7 +75,7 @@ class GtkCondensa(object):
                 localidadesls.append((nombrelocalidad,))
             self.ui.get_object('localidadcb').props.active = 0
             
-            n = len(self.model.materiales)
+            n = len(self.model.c.matDB.nombres)
             m = len(self.model.cerramientos)
             r = len(self.model.climas)
             txt = "Cargados %i materiales, %i cerramientos y %i climas"
