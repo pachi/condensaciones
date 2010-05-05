@@ -71,10 +71,7 @@ class MaterialesDB(object):
     nombres - lista de nombres de materiales de la BBDD
     nombresgrupos - lista de nombres de grupos de la BBDD
     materiales - diccionario de materiales de la BBDD por nombre de material
-    grupos - diccionario de nombres de materiales por grupo en la BBDD
     """
-    #TODO: eliminar diccionario de grupos ya que al eliminar un material se
-    # puede desincronizar el contenido
     def __init__(self, filename):
         self.loadmaterialesdb(filename)
     
@@ -100,7 +97,7 @@ class MaterialesDB(object):
         config = configobj.ConfigObj(filename, encoding='utf-8',
                                      raise_errors=True)
         self.nombres, self.nombresgrupos = [], []
-        self.materiales, self.grupos = {}, {}
+        self.materiales = {}
         # Lee valores de configuración de la base de datos si existe
         if 'config' in config:
             dbconf = config['config']
@@ -136,4 +133,3 @@ class MaterialesDB(object):
             if group not in self.nombresgrupos:
                 self.nombresgrupos.append(group)
             self.materiales[name] = m
-            self.grupos.setdefault(group, set()).add(name)
