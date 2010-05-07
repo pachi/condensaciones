@@ -354,7 +354,7 @@ class CerramientosDB(object):
     def loadcerramientosdb(self, filename=None):
         """Lee base de datos de cerramientos en formato ConfigObj
         
-        Deveuelve:
+        Devuelve:
             - diccionario de nombres de cerramiento con instancias de
               Cerramiento
             - lista de nombres de cerramientos
