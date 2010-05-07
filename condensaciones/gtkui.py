@@ -66,7 +66,7 @@ class GtkCondensa(object):
             for material in self.model.c.matDB.nombres:
                 materialesls.append((material,))
             cerramientosls = self.ui.get_object('cerramientos_liststore')
-            for nombre in self.model.cerramientos:
+            for nombre in self.model.cerramientosDB.nombres:
                 descripcion = self.model.cerramientosDB[nombre].descripcion
                 cerramientosls.append((nombre, descripcion))
             localidadesls = self.ui.get_object('localidadesls')
@@ -76,7 +76,7 @@ class GtkCondensa(object):
             self.ui.get_object('localidadcb').props.active = 0
             
             n = len(self.model.c.matDB.nombres)
-            m = len(self.model.cerramientos)
+            m = len(self.model.cerramientosDB.nombres)
             r = len(self.model.climas)
             txt = "Cargados %i materiales, %i cerramientos y %i climas"
             self.actualiza(txt % (n, m, r))
@@ -362,7 +362,7 @@ class GtkCondensa(object):
     def cerramientoselecciona(self, widget):
         """Abre diálogo de selección de cerramiento"""
         lblselected = self.ui.get_object('lblselected')
-        if not lblselected.props.label in self.model.cerramientos:
+        if not lblselected.props.label in self.model.cerramientosDB.nombres:
             self.ui.get_object('cerramientotv').set_cursor(0)
         resultado = self.ui.get_object('cerramiento_dlg').run()
         # gtk.RESPONSE_ACCEPT vs gtk.RESPONSE_CANCEL
@@ -435,7 +435,7 @@ class GtkCondensa(object):
         cerrtm, cerrtm_iter = ctv.get_selection().get_selected()
         if cerrtm_iter:
             cerri = int(cerrtm.get_path(cerrtm_iter)[0])
-            if cerri == len(self.model.cerramientos) - 1:
+            if cerri == len(self.model.cerramientosDB.nombres) - 1:
                 return
             self.model.cerramientoswap(cerri + 1, cerri)
             nextiter = cerrtm.get_iter(cerri + 1)

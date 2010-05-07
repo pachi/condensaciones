@@ -27,9 +27,8 @@ import clima
 import cerramiento
 from util import get_resource, colores_capas
 
-CERRAMIENTOSDB = get_resource('data', 'CerramientosDB.ini')
+cdb = cerramiento.CerramientosDB(get_resource('data', 'CerramientosDB.ini'))
 CLIMASDB = get_resource('data', 'ClimaCTE.ini')
-cerramDB, cnombres, cgrupos = cerramiento.loadcerramientosdb(CERRAMIENTOSDB)
 climasDB, climasnombres, climasdbconfig = clima.loadclimadb(CLIMASDB)
 climae = climasDB['Climaext'][0] if 'Climaext' in climasDB else None
 climai = climasDB['Climaint'][0] if 'Climaint' in climasDB else None
@@ -44,8 +43,7 @@ class Model(object):
         self.climaslist = [self.climae] # Lista de climas de localidad
         self.ambienteinterior = 'Predefinido'
         self.climai = climai or clima.Clima(20, 55)
-        self.cerramientos = []
-        self.cerramientosDB = {}
+        self.cerramientosDB = None
         self.climas = []
         self.climasDB = {}
         self.cargadata()
@@ -53,10 +51,9 @@ class Model(object):
 
     def cargadata(self):
         """Carga datos de materiales y cerramientos"""
-        self.cerramientos = cnombres
-        self.cerramientosDB = cerramDB
+        self.cerramientosDB = cdb
         if self.c is None:
-            self.c = self.cerramientosDB[self.cerramientos[0]]
+            self.c = self.cerramientosDB[self.cerramientosDB.nombres[0]]
         self.climas = climasnombres
         self.climasDB = climasDB
 
@@ -137,8 +134,9 @@ class Model(object):
                                                      ce.temp, 20,
                                                      ce.HR, self.climai.HR))
         return condensa
+    
     # Acciones sobre capas ---------------------------------------------------
- 
+    
     def capaadd(self, index):
         """Añade capa tras posición index"""
         ncapatuple = self.c.capas[index]
@@ -163,31 +161,27 @@ class Model(object):
         i = 1
         while True:
             newname = u"Cerramiento %i" % i
-            if newname not in self.cerramientos:
+            if newname not in self.cerramientosDB.nombres:
                 break
             i += 1
         newc = cerramiento.Cerramiento(newname, 'Nuevo cerramiento')
-        self.cerramientosDB[newc.nombre] = newc
-        self.cerramientos.insert(index + 1, newc.nombre)
+        self.cerramientosDB.insert(newc, index + 1)
         return newc
     
     def cerramientoremove(self, index):
         """Elimina cerramiento en posición index"""
-        oldname = self.cerramientos[index]
-        self.cerramientos.pop(index)
+        oldname = self.cerramientosDB.nombres[index]
         del self.cerramientosDB[oldname]
     
     def cerramientoswap(self, index1, index2):
         """Intercambia la posición de dos cerramientos"""
-        ce = self.cerramientos 
+        ce = self.cerramientosDB.nombres
         ce[index1], ce[index2] = ce[index2], ce[index1]
 
     def cerramientocambianombre(self, oldname, newname):
         """Cambia nombre de cerramiento a nuevonombre"""
-        i = self.cerramientos.index(oldname)
-        self.cerramientos[i] = newname
-        self.cerramientosDB[newname] = self.cerramientosDB.pop(oldname)
-        self.cerramientosDB[newname].nombre = newname
+        if oldname != newname:
+            i = self.cerramientosDB.rename(oldname, newname)
 
     def cerramientocambiadescripcion(self, cerr, newdesc):
         """Cambia nombre de cerramiento a nuevonombre"""
@@ -195,6 +189,4 @@ class Model(object):
 
     def cerramientossave(self):
         """Guarda base de datos de cerramientos"""
-        cerramiento.savecerramientosdb(self.cerramientosDB,
-                                       self.cerramientos,
-                                       filename=CERRAMIENTOSDB)
+        self.cerramientosDB.savecerramientosdb()

@@ -287,97 +287,151 @@ class Cerramiento(object):
         return _g, envolvente_inf
 
 #===============================================================================
-# Funciones de E/S de BBDD de Cerramientos en formato ConfigObj
+# BBDD de Cerramientos en formato ConfigObj
 #===============================================================================
 
+CERRAMIENTOSDBHEADER = """#   Biblioteca de Cerramientos para Condensa
+#
+#   Condensa - Programa de cálculo de condensaciones según CTE
+#
+#   Copyright (C) 2009-2010, Rafael Villar Burke <pachi@rvburke.com>
+#
+#   Cada sección se denomina con el nombre del cerramiento e incluye:
+#   - descripcion: descripción del cerramiento
+#   - tipo: tipo genérico del cerramiento  [opcional]
+#   - Rse: resistencia superficial exterior [m²K/W] [opcional]
+#   - Rsi: resistencia superficial interior [m²K/W] [opcional]
+#   además de una subsección de [[capas]] que contiene por cada entrada:
+#   - capa: con nombre y espesor de capa [m] separados por una coma
+#   El nombre de capa no puede contener comas.
+#
+#   La sección config incluye configuración general como
+#   - nombre: nombre de la base de datos
+#   - materiales: nombre de la base de datos de materiales
+#""".splitlines()
 
-
-def loadcerramientosdb(filename='CerramientosDB.ini'):
-    """Lee base de datos de cerramientos en formato ConfigObj
+class CerramientosDB(object):
+    """Base de datos de Cerramientos
+        
+    filename - nombre del archivo desde el que cargar la base de datos
     
-    Deveuelve:
-        - diccionario de nombres de cerramiento con instancias de Cerramiento
-        - lista de nombres de cerramientos
-        - diccionario de grupos con conjuntos de nombres de cerramientos
+    nombre - nombre de la base de datos
+    
+    cerramientos - diccionario de cerramientos de la BBDD por nombre
+    nombres - lista de nombres de cerramientos de la BBDD
+    nombrestipos - lista de nombres de tipos de cerramiento de la BBDD
     """
-    def unescape(data):
-        """Unescape &amp;, &lt;, and &gt; in a string of data."""
-        d = data.replace("&lb;", "[").replace("&rb;", "]")
-        return d.replace("&amp;", "&")
+    def __init__(self, filename='CerramientosDB.ini'):
+        self.filename = filename
+        self.loadcerramientosdb(filename)
+        
+    def __getitem__(self, key):
+        return self.cerramientos[key]
     
-    config = configobj.ConfigObj(filename, encoding='utf-8', raise_errors=True)
-    cerramientos = {}
-    nombres, nombrestipos = [], []
-    if 'config' in config:
-        dbconf = config['config']
-        del config['config']
-    else:
-        dbconf = None
-    for section in config:
-        cerramiento = config[section]
-        nombre = unescape(section)
-        descripcion = cerramiento['descripcion']
-        capas = cerramiento['capas']
-        lcapas = [(name, float(e)) for ncapa, (name, e) in capas.items()]
-        c = Cerramiento(nombre, descripcion, lcapas)
-        if 'tipo' in cerramiento:
-            c.tipo = cerramiento['tipo']
+    def __setitem__(self, key, value):
+        self.cerramientos[key] = value
+        #FIXME: La ordenación puede ser distinta
+        self.nombres.append(key)
+    
+    def __delitem__(self, key):
+        del self.cerramientos[key]
+        self.nombres.remove(key)
+    
+    def insert(self, cerramiento, index):
+        """Insertar cerramiento antes de la posición index"""
+        self.cerramientos[cerramiento.nombre] = cerramiento
+        self.nombres.insert(index, cerramiento.nombre)
+    
+    def rename(self, oldkey, newkey):
+        """Cambia nombre de cerramiento"""
+        cerr = self.cerramientos[oldkey]
+        cerr.nombre = newkey
+        self.cerramientos[newkey] = cerr
+        del self.cerramientos[oldkey]
+        i = self.nombres.index(oldkey)
+        self.nombres[i] = newkey
+    
+    def loadcerramientosdb(self, filename=None):
+        """Lee base de datos de cerramientos en formato ConfigObj
+        
+        Deveuelve:
+            - diccionario de nombres de cerramiento con instancias de
+              Cerramiento
+            - lista de nombres de cerramientos
+            - diccionario de grupos con conjuntos de nombres de cerramientos
+        """
+        def unescape(data):
+            """Unescape &amp;, &lt;, and &gt; in a string of data."""
+            d = data.replace("&lb;", "[").replace("&rb;", "]")
+            return d.replace("&amp;", "&")
+        
+        if not filename:
+            if self.filename:
+                filename = self.filename
+            else:
+                raise ValueError, "No se ha especificado un archivo"
+        config = configobj.ConfigObj(filename,
+                                     encoding='utf-8', raise_errors=True)
+        self.cerramientos = {}
+        self.nombres, self.nombrestipos = [], []
+        if 'config' in config:
+            self.config = config['config'].copy()
+            del config['config']
         else:
-            c.tipo = 'predeterminado'
-        if 'Rse' in cerramiento:
-            c.Rse = cerramiento.as_float('Rse')
-        if 'Rsi' in cerramiento:
-            c.Rsi = cerramiento.as_float('Rsi')
-        cerramientos[nombre] = c
-        nombres.append(nombre)
-        if c.tipo not in nombrestipos:
-            nombrestipos.append(c.tipo)
-    return cerramientos, nombres, nombrestipos
-
-def savecerramientosdb(cerramientos, nombres=None, configdata=None,
-                       filename='CerramientosDB.ini'):
-    """Guarda base de datos de cerramientos en formato ConfigObj
+            self.config = None
+        for section in config:
+            cerramiento = config[section]
+            nombre = unescape(section)
+            descripcion = cerramiento['descripcion']
+            capas = cerramiento['capas']
+            lcapas = [(name, float(e)) for ncapa, (name, e) in capas.items()]
+            c = Cerramiento(nombre, descripcion, lcapas)
+            if 'tipo' in cerramiento:
+                c.tipo = cerramiento['tipo']
+            else:
+                c.tipo = 'predeterminado'
+            if 'Rse' in cerramiento:
+                c.Rse = cerramiento.as_float('Rse')
+            if 'Rsi' in cerramiento:
+                c.Rsi = cerramiento.as_float('Rsi')
+            self.cerramientos[nombre] = c
+            self.nombres.append(nombre)
+            if c.tipo not in self.nombrestipos:
+                self.nombrestipos.append(c.tipo)
     
-    Parámetros:
-        cerramientos - diccionario de nombres de cerramiento con instancias de
-                     Cerramiento.
-        nombres      - lista opcional de nombres de cerramientos para definir el
-                     orden en el que se guardarán los datos.
-        config       - Diccionario con valores de configuración.
-    """
-    def escape(data):
-        """Escape &, [ and ] a string of data."""
-        d = data.replace("&", "&amp;")
-        return d.replace("[", "&lb;").replace("]", "&rb;")
-    
-    config = configobj.ConfigObj(filename, encoding='utf-8', raise_errors=True)
-    if not nombres:
-        nombres = cerramientos.keys()
-        nombres.sort()
-    removed = [k for k in config.keys() if not (k in nombres or
-                                                k == u'config')]
-    if removed:
-        for k in removed:
-            del config[k]
-    if u'config' not in config:
-        config['config'] = {}
-    if configdata:
-        for key in configdata:
-            config['config'][key] = configdata[key]
-    for cerramiento in nombres:
-        if cerramiento not in cerramientos:
-            raise ValueError, "Cerramiento desconocido: %s" % cerramiento
-        c = cerramientos[cerramiento]
-        config[escape(cerramiento)] = {}
-        config.comments[escape(cerramiento)] = '#'
-        sect = config[escape(cerramiento)]
-        sect['descripcion'] = c.descripcion
-        sect['capas'] = {}
-        for i, (name, e) in enumerate(c.capas):
-            sect['capas']['capa%i' % (i + 1)] = (name, e)
-        sect['tipo'] = c.tipo if hasattr(c, 'tipo') else 'predeterminado'
-        if hasattr(c, 'Rse'):
-            sect['Rse'] = c.Rse
-        if hasattr(c, 'Rsi'):
-            sect['Rsi'] = c.Rsi
-    config.write()
+    def savecerramientosdb(self, filename=None):
+        """Guarda base de datos de cerramientos en formato ConfigObj"""
+        def escape(data):
+            """Escape &, [ and ] a string of data."""
+            d = data.replace("&", "&amp;")
+            return d.replace("[", "&lb;").replace("]", "&rb;")
+        
+        if not filename:
+            if self.filename:
+                filename = self.filename
+            else:
+                raise ValueError, "No se ha especificado un archivo"
+        config = configobj.ConfigObj(encoding='utf-8', raise_errors=True)
+        if self.config:
+            config['config'] = {}
+            for key in self.config:
+                config['config'][key] = self.config[key]
+        for cerramiento in self.nombres:
+            if cerramiento not in self.cerramientos:
+                raise ValueError, "Cerramiento desconocido: %s" % cerramiento
+            c = self.cerramientos[cerramiento]
+            config[escape(cerramiento)] = {}
+            config.comments[escape(cerramiento)] = '#'
+            sect = config[escape(cerramiento)]
+            sect['descripcion'] = c.descripcion
+            sect['capas'] = {}
+            for i, (name, e) in enumerate(c.capas):
+                sect['capas']['capa%i' % (i + 1)] = (name, e)
+            sect['tipo'] = c.tipo if hasattr(c, 'tipo') else 'predeterminado'
+            if hasattr(c, 'Rse'):
+                sect['Rse'] = c.Rse
+            if hasattr(c, 'Rsi'):
+                sect['Rsi'] = c.Rsi
+        config.initial_comment = CERRAMIENTOSDBHEADER
+        config.filename = filename
+        config.write()
