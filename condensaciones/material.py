@@ -100,11 +100,11 @@ class MaterialesDB(object):
         self.materiales = {}
         # Lee valores de configuración de la base de datos si existe
         if 'config' in config:
-            dbconf = config['config']
-            self.nombre = dbconf['nombre'] if 'nombre' in dbconf else ''
+            self.config = config['config'].copy()
             del config['config']
+            self.nombre = self.config['nombre'] if 'nombre' in self.config else ''
         else:
-            dbconf = None
+            self.config = None
         # Lee datos 
         for section in config:
             material = config[section]
