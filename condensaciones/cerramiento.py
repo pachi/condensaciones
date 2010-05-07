@@ -290,15 +290,7 @@ class Cerramiento(object):
 # Funciones de E/S de BBDD de Cerramientos en formato ConfigObj
 #===============================================================================
 
-def unescape(data):
-    """Unescape &amp;, &lt;, and &gt; in a string of data."""
-    d = data.replace("&lb;", "[").replace("&rb;", "]")
-    return d.replace("&amp;", "&")
 
-def escape(data):
-    """Escape &, [ and ] a string of data."""
-    d = data.replace("&", "&amp;")
-    return d.replace("[", "&lb;").replace("]", "&rb;")
 
 def loadcerramientosdb(filename='CerramientosDB.ini'):
     """Lee base de datos de cerramientos en formato ConfigObj
@@ -308,6 +300,11 @@ def loadcerramientosdb(filename='CerramientosDB.ini'):
         - lista de nombres de cerramientos
         - diccionario de grupos con conjuntos de nombres de cerramientos
     """
+    def unescape(data):
+        """Unescape &amp;, &lt;, and &gt; in a string of data."""
+        d = data.replace("&lb;", "[").replace("&rb;", "]")
+        return d.replace("&amp;", "&")
+    
     config = configobj.ConfigObj(filename, encoding='utf-8', raise_errors=True)
     cerramientos = {}
     nombres, nombrestipos = [], []
@@ -348,6 +345,11 @@ def savecerramientosdb(cerramientos, nombres=None, configdata=None,
                      orden en el que se guardarán los datos.
         config       - Diccionario con valores de configuración.
     """
+    def escape(data):
+        """Escape &, [ and ] a string of data."""
+        d = data.replace("&", "&amp;")
+        return d.replace("[", "&lb;").replace("]", "&rb;")
+    
     config = configobj.ConfigObj(filename, encoding='utf-8', raise_errors=True)
     if not nombres:
         nombres = cerramientos.keys()
