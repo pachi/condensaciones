@@ -377,6 +377,7 @@ class CerramientosDB(object):
         if 'config' in config:
             self.config = config['config'].copy()
             del config['config']
+            self.nombre = self.config['nombre'] if 'nombre' in self.config else ''
         else:
             self.config = None
         for section in config:
