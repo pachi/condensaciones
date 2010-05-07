@@ -292,11 +292,13 @@ class Cerramiento(object):
 
 def unescape(data):
     """Unescape &amp;, &lt;, and &gt; in a string of data."""
-    return data.replace("&lb;", "[").replace("&rb;", "]").replace("&amp;", "&")
+    d = data.replace("&lb;", "[").replace("&rb;", "]")
+    return d.replace("&amp;", "&")
 
 def escape(data):
     """Escape &, [ and ] a string of data."""
-    return data.replace("&", "&amp;").replace("[", "&lb;").replace("]", "&rb;")
+    d = data.replace("&", "&amp;")
+    return d.replace("[", "&lb;").replace("]", "&rb;")
 
 def loadcerramientosdb(filename='CerramientosDB.ini'):
     """Lee base de datos de cerramientos en formato ConfigObj
@@ -307,7 +309,8 @@ def loadcerramientosdb(filename='CerramientosDB.ini'):
         - diccionario de grupos con conjuntos de nombres de cerramientos
     """
     config = configobj.ConfigObj(filename, encoding='utf-8', raise_errors=True)
-    cerramientos, cnames, cgroups = {}, [], {}
+    cerramientos = {}
+    nombres, nombrestipos = [], []
     if 'config' in config:
         dbconf = config['config']
         del config['config']
@@ -329,26 +332,27 @@ def loadcerramientosdb(filename='CerramientosDB.ini'):
         if 'Rsi' in cerramiento:
             c.Rsi = cerramiento.as_float('Rsi')
         cerramientos[nombre] = c
-        cnames.append(nombre)
-        cgroups.setdefault(c.tipo, set()).add(nombre)
-    return cerramientos, cnames, cgroups
+        nombres.append(nombre)
+        if c.tipo not in nombrestipos:
+            nombrestipos.append(c.tipo)
+    return cerramientos, nombres, nombrestipos
 
-def savecerramientosdb(cerrDB, cerrorder=None, configdata=None,
+def savecerramientosdb(cerramientos, nombres=None, configdata=None,
                        filename='CerramientosDB.ini'):
     """Guarda base de datos de cerramientos en formato ConfigObj
     
     Parámetros:
-        cerrDB     - diccionario de nombres de cerramiento con instancias de
+        cerramientos - diccionario de nombres de cerramiento con instancias de
                      Cerramiento.
-        cernames   - lista opcional de nombres de cerramientos para definir el
+        nombres      - lista opcional de nombres de cerramientos para definir el
                      orden en el que se guardarán los datos.
-        config     - Diccionario con valores de configuración.
+        config       - Diccionario con valores de configuración.
     """
     config = configobj.ConfigObj(filename, encoding='utf-8', raise_errors=True)
-    if not cerrorder:
-        cerrorder = cerrDB.keys()
-        cerrorder.sort()
-    removed = [k for k in config.keys() if not (k in cerrorder or
+    if not nombres:
+        nombres = cerramientos.keys()
+        nombres.sort()
+    removed = [k for k in config.keys() if not (k in nombres or
                                                 k == u'config')]
     if removed:
         for k in removed:
@@ -358,10 +362,10 @@ def savecerramientosdb(cerrDB, cerrorder=None, configdata=None,
     if configdata:
         for key in configdata:
             config['config'][key] = configdata[key]
-    for cerramiento in cerrorder:
-        if cerramiento not in cerrDB:
+    for cerramiento in nombres:
+        if cerramiento not in cerramientos:
             raise ValueError, "Cerramiento desconocido: %s" % cerramiento
-        c = cerrDB[cerramiento]
+        c = cerramientos[cerramiento]
         config[escape(cerramiento)] = {}
         config.comments[escape(cerramiento)] = '#'
         sect = config[escape(cerramiento)]
