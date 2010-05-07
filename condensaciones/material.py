@@ -66,13 +66,17 @@ class MaterialesDB(object):
     
     filename - nombre del archivo desde el que cargar la base de datos
     
-    nombre - nombre de la base de datos
-    
+    config - diccionario de configuración (nombre, ...)
     nombres - lista de nombres de materiales de la BBDD
     nombresgrupos - lista de nombres de grupos de la BBDD
     materiales - diccionario de materiales de la BBDD por nombre de material
     """
-    def __init__(self, filename):
+    def __init__(self, filename='DB.ini'):
+        """Inicialización de la BBDD de Cerramientos
+        
+        filename - nombre del archivo desde el que cargar la base de datos
+        """
+        self.filename = filename
         self.loadmaterialesdb(filename)
     
     def __getitem__(self, key):
@@ -87,13 +91,18 @@ class MaterialesDB(object):
         del self.materiales[key]
         self.nombres.remove(key)
     
-    def loadmaterialesdb(self, filename='DB.ini'):
+    def loadmaterialesdb(self, filename=None):
         """Lee base de datos de materiales en formato ConfigObj de archivo"""
         def unescape(data):
             """Unescape &amp;, &lt;, and &gt; in a string of data."""
             k = data.replace("&lb;", "[").replace("&rb;", "]")
             return k.replace("&amp;", "&")
         
+        if not filename:
+            if self.filename:
+                filename = self.filename
+            else:
+                raise ValueError, "No se ha especificado un archivo"
         config = configobj.ConfigObj(filename, encoding='utf-8',
                                      raise_errors=True)
         self.nombres, self.nombresgrupos = [], []
@@ -102,7 +111,6 @@ class MaterialesDB(object):
         if 'config' in config:
             self.config = config['config'].copy()
             del config['config']
-            self.nombre = self.config['nombre'] if 'nombre' in self.config else ''
         else:
             self.config = None
         # Lee datos 

@@ -315,13 +315,16 @@ class CerramientosDB(object):
         
     filename - nombre del archivo desde el que cargar la base de datos
     
-    nombre - nombre de la base de datos
-    
+    config - diccionario de configuración (nombre, ...)    
     cerramientos - diccionario de cerramientos de la BBDD por nombre
     nombres - lista de nombres de cerramientos de la BBDD
     nombrestipos - lista de nombres de tipos de cerramiento de la BBDD
     """
     def __init__(self, filename='CerramientosDB.ini'):
+        """Inicialización de la BBDD de Cerramientos
+        
+        filename - nombre del archivo desde el que cargar la base de datos
+        """
         self.filename = filename
         self.loadcerramientosdb(filename)
         
@@ -352,14 +355,7 @@ class CerramientosDB(object):
         self.nombres[i] = newkey
     
     def loadcerramientosdb(self, filename=None):
-        """Lee base de datos de cerramientos en formato ConfigObj
-        
-        Devuelve:
-            - diccionario de nombres de cerramiento con instancias de
-              Cerramiento
-            - lista de nombres de cerramientos
-            - diccionario de grupos con conjuntos de nombres de cerramientos
-        """
+        """Lee base de datos de cerramientos en formato ConfigObj"""
         def unescape(data):
             """Unescape &amp;, &lt;, and &gt; in a string of data."""
             d = data.replace("&lb;", "[").replace("&rb;", "]")
@@ -377,7 +373,6 @@ class CerramientosDB(object):
         if 'config' in config:
             self.config = config['config'].copy()
             del config['config']
-            self.nombre = self.config['nombre'] if 'nombre' in self.config else ''
         else:
             self.config = None
         for section in config:
