@@ -147,12 +147,12 @@ class CPTCanvas(FigureCanvasGTKCairo):
                          facecolor='red')
         # Rótulos
         ax1.annotate(u'$P_{n}$',
-                     xy=(d.rotulo_si + 0.002, d.P_si),
-                     horizontalalignment='left', verticalalignment='top',
+                     xy=(d.rotulo_si, d.P_si),
+                     xytext=(5,0), textcoords='offset points', ha='left',
                      color='b', size='small')
         ax1.annotate(u'$P_{sat}$',
-                     xy=(d.rotulo_si + 0.002, d.P_sat_si),
-                     horizontalalignment='left', verticalalignment='baseline',
+                     xy=(d.rotulo_si, d.P_sat_si),
+                     xytext=(5,-15), textcoords='offset points', ha='left',
                      color='k', size='small')
         # Eje vertical de temperaturas
         ax2 = ax1.twinx()
@@ -162,12 +162,11 @@ class CPTCanvas(FigureCanvasGTKCairo):
         #fill_between(rotulos_s[1:-1], temperaturas[1:-1], color=(1,0,0,0.1))
         # Valores de T_si y T_se
         ax2.annotate(u'$T_{se}=%.1f°C$' % d.T_se,
-                     xy=(d.rotulo_se - 0.002, d.T_se),
-                     horizontalalignment='right')
+                     xy=(d.rotulo_se, d.T_se),
+                     xytext=(-5,0), textcoords='offset points', ha='right')
         ax2.annotate(u'$T_{si}=%.1f°C$' % d.T_si,
-                     xy=(d.rotulo_si + 0.002, d.T_si),
-                     horizontalalignment='left',
-                     verticalalignment='top')
+                     xy=(d.rotulo_si, d.T_si),
+                     xytext=(5,-15), textcoords='offset points', ha='left')
         ax2.yaxis.tick_right()
         # Dejar margen fuera de zona de trazado
         ymin, ymax = ax1.get_ylim()
@@ -238,26 +237,26 @@ class CPCanvas(FigureCanvasGTKCairo):
         else:
             va1, va2 = 'baseline', 'top'
         ax1.annotate(u'$P_{n}$ = %iPa' % d.P_se,
-                     xy=(d.rotulo_se - 0.01, d.P_se),
-                     horizontalalignment='right', verticalalignment=va1,
-                     color='b', size='small')
+                     xy=(d.rotulo_se, d.P_se),
+                     xytext=(-5,0), textcoords='offset points', ha='right',
+                     verticalalignment=va1, color='b', size='small')
         ax1.annotate(u'$P_{sat}$ = %iPa' % d.P_sat_se,
-                     xy=(d.rotulo_se - 0.01, d.P_sat_se),
-                     horizontalalignment='right', verticalalignment=va2,
-                     color='k', size='small')
+                     xy=(d.rotulo_se, d.P_sat_se),
+                     xytext=(-5,0), textcoords='offset points', ha='right',
+                     verticalalignment=va2, color='k', size='small')
         # Rótulos de lineas de presiones interiores
         if d.P_sat_si > d.P_si:
             va1, va2 = 'top', 'baseline'
         else:
             va1, va2 = 'baseline', 'top'
         ax1.annotate(u'$P_{n}$ = %iPa' % d.P_si,
-                     xy=(d.rotulo_ssati + 0.01, d.P_si),
-                     horizontalalignment='left', verticalalignment=va1,
-                     color='b', size='small')
+                     xy=(d.rotulo_ssati, d.P_si),
+                     xytext=(+5,0), textcoords='offset points', ha='left',
+                     verticalalignment=va1, color='b', size='small')
         ax1.annotate(u'$P_{sat}$ = %iPa' % d.P_sat_si,
-                     xy=(d.rotulo_ssati + 0.01, d.P_sat_si),
-                     horizontalalignment='left', verticalalignment=va2,
-                     color='k', size='small')
+                     xy=(d.rotulo_ssati, d.P_sat_si),
+                     xytext=(+5,0), textcoords='offset points', ha='left',
+                     verticalalignment=va2, color='k', size='small')
         # Dejar margen fuera de zona de trazado
         xmin, xmax, ymin, ymax = ax1.axis()
         lengthx = d.rotulo_ssati #xmax = rotulo_ssati ;xmin = rotulo_ssate = 0
