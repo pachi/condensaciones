@@ -25,39 +25,48 @@
 # Indicar en $PYTHONDIR\Lib\site-packages\matplotlib\mpl-data\matplotlibrc
 # como default backend GTKCairo -> "backend: GTKCairo"
 
+import os
 import sys
+import glob
+import shutil
 from distutils.core import setup
-if sys.platform == 'win32':
-    import py2exe
-from matplotlib import get_py2exe_datafiles
 
-__version__ = "0.4"
+__version__ = "0.5"
 
-data_files = [('', ['README.txt', 'NEWS.txt', 'INSTALL.txt', 'COPYING.txt']),
+# Remove 'build' dir and recreate 'dist' dir
+shutil.rmtree("build", ignore_errors=True)
+shutil.rmtree("dist", ignore_errors=True)
+os.mkdir("dist")
+
+data_files = [('', 'README.txt NEWS.txt INSTALL.txt COPYING.txt'.split()),
               ('data', ['data/condensa.ui', 'data/MaterialesDB.ini',
-                        'data/CerramientoDB.ini',
-                        'data/ClimaCTE.ini', 'data/splash.png']),
+                        'data/CerramientosDB.ini',
+                        'data/ClimaCTE.ini', 'data/splash.png']
+              ),
               ('data/icons', ['data/icons/cerramientos.png',
                               'data/icons/clima.png',
                               'data/icons/drop.png']
               ),
               ('report', ['report/style.css']
-              )] + get_py2exe_datafiles()
+               )]
+opts = {}
 
-opts = {'py2exe': {
-                   'packages': ['encodings', 'matplotlib', 'pytz'],
-                   'includes': 'cairo, pango, pangocairo, atk, gobject, gio',
-                   'excludes': ['_wxagg', '_fltkagg', '_cocoaagg', '_gtkagg',
-                                'email', 'logging', 'PyQt4', 'nose', 'wx',
-                                'scipy', 'tcl', 'Tkinter', 'compiler'],
-                   'dll_excludes': 'iconv.dll,libxml2.dll,tcl85.dll,tk85.dll,'\
-                                   'pywintypes26.dll,POWRPROF.dll,DNSAPI.dll,'\
-                                   'libpangoft2-1.0-0.dll,MSIMG32.DLL,'\
-                                   'freetype6.dll,libglade-2.0-0.dll',
-                   #'skip_archive': True, # para no crear library.zip
-                   'optimize': 1,
-                   }
-        }
+if sys.platform == 'win32':
+    import py2exe
+    from matplotlib import get_py2exe_datafiles
+    shutil.copytree("MSVCCRT", "./dist/Microsoft.VC90.CRT")
+    data_files += get_py2exe_datafiles() 
+    opts['py2exe']= {'packages': ['encodings', 'matplotlib', 'pytz'],
+                     'includes': 'cairo, pango, pangocairo, atk, gobject, gio',
+                     'excludes': ['_wxagg', '_fltkagg', '_cocoaagg', '_gtkagg',
+                                  'email', 'logging', 'PyQt4', 'nose', 'wx',
+                                  'scipy', 'tcl', 'Tkinter', 'compiler'],
+                     'dll_excludes': 'iconv.dll,libxml2.dll,tcl85.dll,tk85.dll,'\
+                                     'pywintypes26.dll,POWRPROF.dll,DNSAPI.dll,'\
+                                     'libpangoft2-1.0-0.dll,MSIMG32.DLL,'\
+                                     'freetype6.dll,libglade-2.0-0.dll',
+                     'skip_archive': True, # para no crear library.zip
+                     'optimize': 1}
 
 setup(
     name='Acciones-CTE',

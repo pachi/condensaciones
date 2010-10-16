@@ -13,7 +13,7 @@ RequestExecutionLevel admin
 
 # General Symbol Definitions
 !define REGKEY "SOFTWARE\$(^Name)"
-!define VERSION 0.4-2
+!define VERSION 0.5.3
 !define COMPANY "Rafael Villar Burke <pachi@rvburke.com>"
 !define URL http://www.rvburke.com
 

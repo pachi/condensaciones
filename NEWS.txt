@@ -29,3 +29,24 @@ Cambios en la versión
 - Nueva base de datos de materiales en formato .ini
 - Nuevo script 'importDB' para importar BBDD de LIDER/CALENER
 - Nuevos iconos de aplicación
+
+0.5 (Abr. 2010)
+---------------
+- Nueva base de datos de cerramientos en formato .ini
+- Nueva base de datos de climas en formato .ini
+- Base de datos de Materiales más compacta
+- Nueva opción de entrada de climas exteriores según base de datos o manual
+- Nombre y descripción de cerramientos editables
+- Es posible añadir, eliminar y mover cerramientos en la base de datos
+- Es posible guardar cerramientos de la sesión activa
+- La aplicación se inicia con el primer cerramiento de la base de datos
+- La lista de capas incluye el color del material en las gráficas
+- Muestra localidad/mes seleccionado en encabezado e informe
+- Indica condensaciones superficiales para el mes de enero s/CTE en informe
+- Indica condensaciones intersticiales para todos los meses en inform
+- Muestra índice de meses con condensaciones intersticiales en informe
+- Indica en amarillo si no se cumplen condiciones CTE en otros meses aunque se
+  cumplan para las condiciones actuales
+- Representa con relleno rojo la zona de condensaciones, en la gráfica P-T
+- Salida de informe en navegador HTML
+
