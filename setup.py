@@ -68,6 +68,10 @@ if 'py2exe' in sys.argv:
     #print >>f, 'gtk-theme-name = "MS-Windows"'
     #f.close()
 
+    nsifile = open("setup.nsi.in", "rb").read()
+    nsifile = nsifile.replace("@VERSION@", __version__)
+    open("setup.nsi", "wb").write(nsifile)
+
     PY2EXE_PACKAGES = ['encodings', 'matplotlib', 'pytz']
     PY2EXE_INCLUDES = 'cairo,pango,pangocairo,atk,gobject,gio'
     PY2EXE_EXCLUDES = ('_wxagg _fltkagg _cocoaagg _gtkagg _tkagg email logging '
