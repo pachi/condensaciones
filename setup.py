@@ -55,6 +55,8 @@ opts = {}
 if sys.platform == 'win32':
     import py2exe
     from matplotlib import get_py2exe_datafiles
+
+    # Copy MSVC Runtime
     shutil.copytree("MSVCCRT", "./dist/Microsoft.VC90.CRT")
     data_files += get_py2exe_datafiles() 
     opts['py2exe']= {'packages': ['encodings', 'matplotlib', 'pytz'],
