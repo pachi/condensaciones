@@ -75,16 +75,6 @@ Section -Main SEC0000
     SetOutPath $INSTDIR
     SetOverwrite on
     File /r dist\*
-    # Copiamos los archivos de configuración de Gtk+, temas y locales
-    # que no localiza setup.py py2exe
-    SetOutPath $INSTDIR\etc
-    File /r C:\winp\Gtk+\etc\*
-    SetOutPath $INSTDIR\lib
-    File /r C:\winp\Gtk+\lib\*.dll
-    SetOutPath $INSTDIR\share\themes\MS-Windows
-    File /r C:\winp\Gtk+\share\themes\MS-Windows\*
-    SetOutPath $INSTDIR\share\locale\es
-    File /r C:\winp\Gtk+\share\locale\es\*
     WriteRegStr HKLM "${REGKEY}\Components" Main 1
 SectionEnd
 

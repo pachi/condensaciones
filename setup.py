@@ -39,18 +39,12 @@ shutil.rmtree("build", ignore_errors=True)
 shutil.rmtree("dist", ignore_errors=True)
 os.mkdir("dist")
 
-data_files = [('', 'README.txt NEWS.txt INSTALL.txt COPYING.txt'.split()),
-              ('data', ['data/condensa.ui', 'data/MaterialesDB.ini',
-                        'data/CerramientosDB.ini',
-                        'data/ClimaCTE.ini', 'data/splash.png']
-              ),
-              ('data/icons', ['data/icons/cerramientos.png',
-                              'data/icons/clima.png',
-                              'data/icons/drop.png']
-              ),
-              ('report', ['report/style.css']
-               )]
-opts = {}
+DATA_FILES = [('', 'README.txt NEWS.txt INSTALL.txt COPYING.txt'.split()),
+              ('data', glob('data/*.ui')),
+              ('data', glob('data/*.ini')),
+              ('data', ['data/splash.png']),
+              ('data/icons', glob('data/icons/*.png')),
+              ('report', ['report/style.css'])]
 
 if 'py2exe' in sys.argv:
     import py2exe
@@ -58,41 +52,59 @@ if 'py2exe' in sys.argv:
 
     # Copy MSVC Runtime
     shutil.copytree("MSVCCRT", "./dist/Microsoft.VC90.CRT")
-    data_files += get_py2exe_datafiles() 
-    opts['py2exe']= {'packages': ['encodings', 'matplotlib', 'pytz'],
-                     'includes': 'cairo, pango, pangocairo, atk, gobject, gio',
-                     'excludes': ['_wxagg', '_fltkagg', '_cocoaagg', '_gtkagg',
-                                  'email', 'logging', 'PyQt4', 'nose', 'wx',
-                                  'scipy', 'tcl', 'Tkinter', 'compiler'],
-                     'dll_excludes': 'iconv.dll,libxml2.dll,tcl85.dll,tk85.dll,'\
-                                     'pywintypes26.dll,POWRPROF.dll,DNSAPI.dll,'\
-                                     'libpangoft2-1.0-0.dll,MSIMG32.DLL,'\
-                                     'freetype6.dll,libglade-2.0-0.dll',
-                     'skip_archive': True, # para no crear library.zip
-                     'optimize': 1}
 
-setup(
-    name='Acciones-CTE',
-    version=__version__,
-    author='Rafael Villar Burke',
-    author_email='pachi@rvburke.com',
-    url='http://www.rvburke.com',
-    description='Aplicación para el cálculo de condensaciones según CTE',
-    long_description=open('README.txt').read(),
-    license="GNU GPL2+",
-    scripts=['bin/condensa', 'bin/importDB'],
-    windows=[{'script':'bin/condensa',
-              'description':'Condensa - Cálculo de condensaciones',
-              'icon_resources':[(0, 'data/icons/logo.ico')]
-              }],
-    console=[{'script':'bin/importDB',
-              'description':'Conversor de BBDD Lider/CALENER a BBDD Condensa',
-              'icon_resources':[(0, 'data/icons/logo.ico')]
-              }],
-    packages=['condensaciones', 'condensaciones.test'],
-    options=opts,
-    data_files=data_files,
-    classifiers = [
+    # Copy GTK+ runtime files
+    def ignore_files(adir, files):
+        return set([f for f in files if (not f.endswith('.dll') and
+                                         not os.path.isdir(os.path.join(adir,f)))])
+    GTKBASE = 'C:/winp/Gtk+/'
+    shutil.copytree(GTKBASE + 'etc', './dist/etc')
+    shutil.copytree(GTKBASE + 'lib', './dist/lib', ignore=ignore_files)
+    shutil.copytree(GTKBASE + 'share/themes/MS-Windows', './dist/share/themes/MS-Windows')
+    shutil.copytree(GTKBASE + 'share/locale/es', './dist/share/locale/es')
+
+    # Enable the MS-Windows theme.
+    #f = open(os.path.join(self.exe_dir, 'etc', 'gtk-2.0', 'gtkrc'), 'w')
+    #print >>f, 'gtk-theme-name = "MS-Windows"'
+    #f.close()
+
+    PY2EXE_PACKAGES = ['encodings', 'matplotlib', 'pytz']
+    PY2EXE_INCLUDES = 'cairo,pango,pangocairo,atk,gobject,gio'
+    PY2EXE_EXCLUDES = ('_wxagg _fltkagg _cocoaagg _gtkagg _tkagg email logging '
+                       'PyQt4 nose wx scipy tcl Tkinter compiler json jinja2 '
+                       'pygments sphinx').split()
+    PY2EXE_DLL_EXCLUDES = ('iconv.dll libxml2.dll tcl85.dll tk85.dll '
+                           'pywintypes26.dll POWRPROF.dll DNSAPI.dll '
+                           'MSIMG32.DLL libglade-2.0-0.dll').split()
+
+    kwargs = {'windows': [{'script':'bin/condensa',
+                           'description':'Condensa - Cálculo de condensaciones',
+                           'icon_resources':[(0, 'data/icons/logo.ico')]}],
+              'console':[{'script':'bin/importDB',
+                          'description':'Conversor de BBDD Lider/CALENER a BBDD Condensa',
+                          'icon_resources':[(0, 'data/icons/logo.ico')]}],
+              'options':{'py2exe':{'packages': PY2EXE_PACKAGES,
+                                   'includes': PY2EXE_INCLUDES,
+                                   'excludes': PY2EXE_EXCLUDES,
+                                   'dll_excludes': PY2EXE_DLL_EXCLUDES,
+                                   'skip_archive': True, # no crear library.zip
+                                   #'bundle_files': 3, # no comprimir
+                                   'compressed': False,
+                                   #'optimize': 2
+                                   }},
+              'data_files': DATA_FILES + get_py2exe_datafiles()}
+else:
+    kwargs = {'data_files': DATA_FILES}
+
+setup(name='Acciones-CTE',
+      version=__version__,
+      author='Rafael Villar Burke',
+      author_email='pachi@rvburke.com',
+      url='http://www.rvburke.com',
+      description='Aplicación para el cálculo de condensaciones según CTE',
+      long_description=open('README.txt').read(),
+      license="GNU GPL2+",
+      classifiers = [
         'Development Status :: 4 - Beta',
         'Intended Audience :: Education',
         'Intended Audience :: Science/Research',
@@ -102,5 +114,8 @@ setup(
         'Operating System :: POSIX',
         'Natural Language :: Spanish',
         'Topic :: Scientific/Engineering',
-        'Programming Language :: Python']
+        'Programming Language :: Python'],
+      packages=['condensaciones', 'condensaciones.test'],
+      scripts=['bin/condensa', 'bin/importDB'],
+      **kwargs
 )
