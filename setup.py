@@ -30,8 +30,7 @@ import sys
 import glob
 import shutil
 from distutils.core import setup
-
-__version__ = "0.5"
+from condensaciones import __version__
 
 # Remove 'build' dir and recreate 'dist' dir
 shutil.rmtree("build", ignore_errors=True)
