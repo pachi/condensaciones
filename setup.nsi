@@ -59,7 +59,7 @@ InstallDir $PROGRAMFILES\Condensaciones
 CRCCheck on
 XPStyle on
 ShowInstDetails show
-VIProductVersion 0.1.0.0
+VIProductVersion ${VERSION}
 VIAddVersionKey ProductName Condensaciones
 VIAddVersionKey ProductVersion "${VERSION}"
 VIAddVersionKey CompanyName "${COMPANY}"
