@@ -33,6 +33,8 @@ from distutils.core import setup
 from condensaciones import __version__
 
 # Remove 'build' dir and recreate 'dist' dir
+if os.path.isfile('MANIFEST'):
+    os.remove('MANIFEST')
 shutil.rmtree("build", ignore_errors=True)
 shutil.rmtree("dist", ignore_errors=True)
 os.mkdir("dist")
