@@ -27,8 +27,8 @@
 
 import os
 import sys
-import glob
 import shutil
+from glob import glob
 from distutils.core import setup
 from condensaciones import __version__
 
