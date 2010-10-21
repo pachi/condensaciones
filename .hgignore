@@ -2,6 +2,9 @@ syntax: glob
 dist/*
 build/*
 misc/*
+report/*.png
+report/*.html
+MSVCCRT/*
 *~
 *.bak
 *.pyc
@@ -19,6 +22,4 @@ misc/*
 *$py.class
 nbproject/*
 .metadata
-
-syntax: regexp
-^TODO\.txt$
+TODO.txt
