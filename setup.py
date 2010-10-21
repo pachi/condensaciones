@@ -52,7 +52,7 @@ data_files = [('', 'README.txt NEWS.txt INSTALL.txt COPYING.txt'.split()),
                )]
 opts = {}
 
-if sys.platform == 'win32':
+if 'py2exe' in sys.argv:
     import py2exe
     from matplotlib import get_py2exe_datafiles
 
