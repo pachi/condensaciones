@@ -37,7 +37,7 @@ class Cerramiento(object):
     por su material y sus propiedades físicas.
     
     matDB - BBDD de materiales (tipo: MaterialesDB)
-    """ 
+    """
     matDB = mdb
     def __init__(self, nombre, descripcion, capas=None,
                  Rse=None, Rsi=None, tipo=None):
