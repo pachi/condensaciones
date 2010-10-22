@@ -109,6 +109,7 @@ setup(name='Acciones-CTE',
       description='Aplicación para el cálculo de condensaciones según CTE',
       long_description=open('README.txt').read(),
       license="GNU GPL2+",
+      keywords='python gtk condensaciones CTE construcción humedades',
       classifiers = [
         'Development Status :: 4 - Beta',
         'Intended Audience :: Education',
