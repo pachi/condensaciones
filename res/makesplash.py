@@ -42,6 +42,7 @@ def splashimage(version='1.0', bgfile='background.png', outfile='fondo.png'):
     bgfile: background image in png format (400x470px)
     outfile: output file name. Will be written in png format
     """
+    PADDING = 15.0
     TXT = (u"<span size='8000'>%s</span><span size='4000'> v.%s\n"
            u"%s\n%s\n\n</span><span size='2100' weight='bold'>%s</span>\n"
            u"<span size='2000'>%s</span>"
@@ -55,8 +56,8 @@ def splashimage(version='1.0', bgfile='background.png', outfile='fondo.png'):
     layout.set_font_description(pango.FontDescription("Helvetica"))
     layout.set_markup(TXT)
     w, h = layout.get_pixel_size()
-    sc = min((width - 30.0) / w, (height - 30.0) / h)
-    cr.translate(15.5, 0.5 + (height - 15 - sc * h))
+    sc = min((width - 2 * PADDING) / w, (height - 2 * PADDING) / h)
+    cr.translate(PADDING, (height - PADDING - sc * h))
     cr.scale(sc, sc)
     pctx.show_layout(layout)
     cr.stroke()
