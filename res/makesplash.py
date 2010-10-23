@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # encoding: utf-8
 #
-#   condensaciones.py
-#   Programa de cÃ¡lculo de condensaciones segÃºn CTE
+#   makesplash.py
+#   Script to generate application splash image using a png background
 #
 #   Copyright (C) 2009-2010 por Rafael Villar Burke <pachi@rvburke.com>
 #
@@ -29,10 +29,11 @@ import optparse
 import cairo
 import pango, pangocairo
 
-APPNAME = 'condensaciones'
-APPDESC = u'Aplicación para el cálculo de condensaciones y parámetros higrotérmicos en cerramientos'
+APPNAME = u"condensaciones"
 COPYTXT = u'© 2009-2010 Rafael Villar Burke [GPL v2+]'
 WEBTXT = u'http://www.rvburke.com'
+APPDESC = u"Aplicación para el cálculo de condensaciones y parámetros higrotérmicos en cerramientos"
+IMGCRED = u"Fotografía: © weimiwein CC-BY-SA"
 
 def splashimage(version='1.0', bgfile='background.png', outfile='fondo.png'):
     """Create a splash image using a background image and a version string
@@ -41,6 +42,10 @@ def splashimage(version='1.0', bgfile='background.png', outfile='fondo.png'):
     bgfile: background image in png format (400x470px)
     outfile: output file name. Will be written in png format
     """
+    TXT = (u"<span size='8000'>%s</span><span size='4000'> v.%s\n"
+           u"%s\n%s\n\n</span><span size='2100' weight='bold'>%s</span>\n"
+           u"<span size='2000'>%s</span>"
+           % (APPNAME, version, COPYTXT, WEBTXT, APPDESC, IMGCRED))
     surface = cairo.ImageSurface.create_from_png(bgfile)
     cr = cairo.Context(surface)
     width, height = surface.get_width(), surface.get_height()
@@ -48,8 +53,7 @@ def splashimage(version='1.0', bgfile='background.png', outfile='fondo.png'):
     pctx = pangocairo.CairoContext(cr)
     layout = pctx.create_layout()
     layout.set_font_description(pango.FontDescription("Helvetica"))
-    layout.set_markup(u"<span size='8000'>%s</span><span size='4000'> v.%s\n%s\n%s\n\n</span>"
-                      u"<span size='2000' weight='bold'>%s</span>" %(APPNAME, version, COPYTXT, WEBTXT, APPDESC))
+    layout.set_markup(TXT)
     w, h = layout.get_pixel_size()
     sc = min((width - 30.0) / w, (height - 30.0) / h)
     cr.translate(15.5, 0.5 + (height - 15 - sc * h))
