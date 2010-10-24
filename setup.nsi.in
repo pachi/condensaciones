@@ -16,6 +16,7 @@ RequestExecutionLevel admin
 !define VERSION @VERSION@
 !define COMPANY "Rafael Villar Burke <pachi@rvburke.com>"
 !define URL http://www.rvburke.com
+!define SPLASHIMAGE res\splash.bmp
 
 # MUI Symbol Definitions
 !define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\modern-install-full.ico"
@@ -137,7 +138,7 @@ SectionEnd
 Function .onInit
     InitPluginsDir
     Push $R1
-    File /oname=$PLUGINSDIR\spltmp.bmp splash.bmp
+    File /oname=$PLUGINSDIR\spltmp.bmp ${SPLASHIMAGE}
     advsplash::show 1000 600 400 -1 $PLUGINSDIR\spltmp
     Pop $R1
     Pop $R1
