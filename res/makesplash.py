@@ -25,9 +25,11 @@
 This script overlays informational text (name, version, author...)
 over a background image to be used as splash.
 """
+import os
 import optparse
 import cairo
 import pango, pangocairo
+import Image #PIL
 
 APPNAME = u"condensaciones"
 COPYTXT = u'© 2009-2010 Rafael Villar Burke [GPL v2+]'
@@ -35,14 +37,18 @@ WEBTXT = u'http://www.rvburke.com'
 APPDESC = u"Aplicación para el cálculo de condensaciones y parámetros higrotérmicos en cerramientos"
 IMGCRED = u"Fotografía: © weimiwein CC-BY-SA"
 
-def splashimage(version='1.0', bgfile='background.png', outfile='fondo.png'):
+def splashimage(version='1.0', bgfile='background.png', outfile='splash.png'):
     """Create a splash image using a background image and a version string
 
     version: version string
     bgfile: background image in png format (400x470px)
-    outfile: output file name. Will be written in png format
+    outfile: output file name. It will be written in png and bmp formats
     """
     PADDING = 15.0
+    f, e = os.path.splitext(outfile)
+    PNGFILE = f + '.png'
+    BMPFILE = f + '.bmp'
+    
     TXT = (u"<span size='8000'>%s</span><span size='4000'> v.%s\n"
            u"%s\n%s\n\n</span><span size='2100' weight='bold'>%s</span>\n"
            u"<span size='2000'>%s</span>"
@@ -61,16 +67,20 @@ def splashimage(version='1.0', bgfile='background.png', outfile='fondo.png'):
     cr.scale(sc, sc)
     pctx.show_layout(layout)
     cr.stroke()
-    surface.write_to_png(outfile)
+    surface.write_to_png(PNGFILE)
     cr.show_page()
     surface.finish()
+    
+    img = Image.open(PNGFILE)
+    imgbmp = img.convert('P', palette=Image.ADAPTIVE)
+    imgbmp.save(BMPFILE, 'BMP')
 
 if __name__ == "__main__":
     parser = optparse.OptionParser(usage='%prog [options] <version>')
     parser.add_option('-b', action="store", dest="background",
         default="background.png", help="background image file")
     parser.add_option('-o', action="store", dest="outputfile",
-        default="fondo.png", help="output file")
+        default="splash.png", help="output file name (png and bmp format)")
     options, remainder = parser.parse_args()
     version = remainder[0] if remainder else '1.0'
     splashimage(version, options.background, options.outputfile)
