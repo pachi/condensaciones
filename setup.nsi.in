@@ -7,7 +7,7 @@ Name Condensaciones
 RequestExecutionLevel admin
 
 # Usar lzma para comprimir - Lo seleccionamos en las preferencias
-# SetCompressor /SOLID lzma
+SetCompressor /SOLID lzma
 # Usar UPX para reducir tamaño del instalador
 !packhdr "$%TEMP%\exehead.tmp" '"C:\winp\upx\upx.exe" "$%TEMP%\exehead.tmp"'
 
