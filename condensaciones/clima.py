@@ -41,24 +41,6 @@ class Clima(object):
 # Funciones de E/S de datos de clima
 #===============================================================================
 
-def unescape(data):
-    """Decodifica &amp;, &lt;, y &gt; en una cadena de datos.
-
-    :param str data: cadena de datos codificada
-    :returns: cadena de datos original
-    :rtype: str
-
-    Esta función decodifica una cadena que ha sido transformada para permitir
-    el uso seguro de algunos caracteres en archivos con formato .ini.
-
-    La función realiza la transformación inversa a :py:func:`escape`.
-
-    Ejemplo::
-
-        "&lt;5m" -> "<5m"
-    """
-    return data.replace("&lb;", "[").replace("&rb;", "]").replace("&amp;", "&")
-
 def escape(data):
     """Codifica &, [ y ] en una cadena de datos.
 
@@ -77,6 +59,24 @@ def escape(data):
         "<5m" -> "&lt;5m"
     """
     return data.replace("&", "&amp;").replace("[", "&lb;").replace("]", "&rb;")
+
+def unescape(data):
+    """Decodifica &amp;, &lt;, y &gt; en una cadena de datos.
+
+    :param str data: cadena de datos codificada
+    :returns: cadena de datos original
+    :rtype: str
+
+    Esta función decodifica una cadena que ha sido transformada para permitir
+    el uso seguro de algunos caracteres en archivos con formato .ini.
+
+    La función realiza la transformación inversa a :py:func:`escape`.
+
+    Ejemplo::
+
+        "&lt;5m" -> "<5m"
+    """
+    return data.replace("&lb;", "[").replace("&rb;", "]").replace("&amp;", "&")
 
 def loadclimadb(filename='ClimaCTE.ini'):
     """Lee una base de datos de climas
