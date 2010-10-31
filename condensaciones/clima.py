@@ -20,20 +20,20 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 #   02110-1301, USA.
-"""Clima - Clase para la modelización de un ambiente tipo."""
+"""Módulo para la definición, almacenamiento y recuperación de ambientes tipo."""
 
 import configobj
 
 class Clima(object):
-    """Clase para almacenamiento de datos de temperatura, humedad, etc"""
+    """Definición de un ambiente higrotérmico tipo (temperatura, humedad...)
+
+    :param float temp: temperatura [ºC]
+    :param float HR: Humedad relativa [%]
+
+    Los parámetros se convierten a float si se reciben como enteros.
+    """
     def __init__(self, temp=20.0, HR=55.0):
-        """Inicialización de datos
-        
-        :type temp: int or float
-        :param temp: temperatura [ºC]
-        :type HR: int or float
-        :param HR: Humedad relativa [%]
-        """
+        """Inicialización de datos"""
         self.temp = float(temp)
         self.HR = float(HR)
 
@@ -42,20 +42,53 @@ class Clima(object):
 #===============================================================================
 
 def unescape(data):
-    """Unescape &amp;, &lt;, and &gt; in a string of data."""
+    """Decodifica &amp;, &lt;, y &gt; en una cadena de datos.
+
+    :param str data: cadena de datos codificada
+    :returns: cadena de datos original
+    :rtype: str
+
+    Esta función decodifica una cadena que ha sido transformada para permitir
+    el uso seguro de algunos caracteres en archivos con formato .ini.
+
+    La función realiza la transformación inversa a :py:func:`escape`.
+
+    Ejemplo::
+
+        "&lt;5m" -> "<5m"
+    """
     return data.replace("&lb;", "[").replace("&rb;", "]").replace("&amp;", "&")
 
 def escape(data):
-    """Escape &, [ and ] a string of data."""
+    """Codifica &, [ y ] en una cadena de datos.
+
+    :param str data: cadena de datos original
+    :returns: cadena de datos codificada
+    :rtype: str
+
+    Esta función codifica algunos caracteres de la cadena de datos original
+    para permitir su uso seguro en archivos con formato .ini, en donde los
+    caracteres codificados no están permitidos para su uso en secciones.
+
+    La función realiza la transformación inversa a :py:func:`unescape`.
+
+    Ejemplo::
+
+        "<5m" -> "&lt;5m"
+    """
     return data.replace("&", "&amp;").replace("[", "&lb;").replace("]", "&rb;")
 
 def loadclimadb(filename='ClimaCTE.ini'):
-    """Lee base de datos de climas en formato ConfigObj
+    """Lee una base de datos de climas
 
-    Devuelve:
-        - diccionario de nombres de localidades con lista de instancias de
-          Clima ordenadas por número de mes (enero = 1, diciembre = 12)
-        - lista ordenada de nombres de localidades
+    La base de datos proviene de un archivo en formato ConfigObj
+
+    :param str filename: nombre del archivo de la base de datos
+    :returns: - diccionario de nombres de localidades con lista de instancias
+                de Clima ordenadas por número de mes (enero = 1, diciembre = 12)
+              - lista ordenada de nombres de localidades
+              - sección de configuración de la base de datos
+    :rtype: tuple
     """
     config = configobj.ConfigObj(filename, encoding='utf-8', raise_errors=True)
     climas, cnames = {}, []
@@ -85,14 +118,15 @@ def loadclimadb(filename='ClimaCTE.ini'):
 
 def saveclimasdb(climas, nameorder=None, configdata=None,
                  filename='ClimaCTE.ini'):
-    """Guarda base de datos de climas en formato ConfigObj
-    
-    Parámetros:
-        climas     - diccionario de localidades con lista de instancias de
-                     clima.
-        cnames     - lista opcional de nombres que define el orden en la base
-                     de datos.
-        config     - Diccionario opcional con valores de configuración.
+    """Guarda una base de datos de climas
+
+    La base de datos se almacena en formato ConfigObj
+
+    :param dict climas: contiene lista de instancias de clima para cada
+                        localidad
+    :param list cnames: lista ordenada de nombres tal como aparecen en la base
+                        de datos
+    :param dict config: valores de configuración de la base de datos
     """
     config = configobj.ConfigObj(filename, encoding='utf-8', raise_errors=True)
     if not nameorder:
