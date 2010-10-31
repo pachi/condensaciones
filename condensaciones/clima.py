@@ -61,12 +61,13 @@ def escape(data):
 
     Ejemplo::
 
-        "<5m" -> "&lt;5m"
+        >>> escape('[5m]')
+        '&lb;5m&rb;'
     """
     return data.replace("&", "&amp;").replace("[", "&lb;").replace("]", "&rb;")
 
 def unescape(data):
-    """Decodifica &amp;, &lt;, y &gt; en una cadena de datos.
+    """Decodifica &amp;, &lb;, y &rb; en una cadena de datos.
 
     :param str data: cadena de datos codificada
     :returns: cadena de datos original
@@ -79,7 +80,8 @@ def unescape(data):
 
     Ejemplo::
 
-        "&lt;5m" -> "<5m"
+        >>> escape('&lb;5m&rb;')
+        '[5m]'
     """
     return data.replace("&lb;", "[").replace("&rb;", "]").replace("&amp;", "&")
 
