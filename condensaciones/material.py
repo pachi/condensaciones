@@ -26,7 +26,7 @@ import configobj
 
 class Material(object):
     """Material tipo definidos por su nombre, tipo y propiedades
-    
+
     Propiedades generales
     ---------------------
         - name - nombre del material
@@ -36,7 +36,7 @@ class Material(object):
         - db - base de datos de procedencia del material
         - Propiedades opcionales
             - thickness_change - posiblidad de varios espesores [True|False]
-    
+
     Propiedades de materiales tipo PROPERTIES
     -----------------------------------------
         - thickness - espesor del elemento [m]
@@ -45,7 +45,7 @@ class Material(object):
         - specific_heat - calor específico [J/kg.K]
             - thickness_min - espesor mínimo [m]
             - thickness_max - espesor máximo [m]
-    
+
     Propiedades de materiales tipo RESISTANCE
     -----------------------------------------
         - resistance - resistencia térmica del elemento [m²/K.W]
@@ -63,9 +63,9 @@ class Material(object):
 
 class MaterialesDB(object):
     """Base de datos de Materiales
-    
+
     filename - nombre del archivo desde el que cargar la base de datos
-    
+
     config - diccionario de configuración (nombre, ...)
     nombres - lista de nombres de materiales de la BBDD
     nombresgrupos - lista de nombres de grupos de la BBDD
@@ -73,31 +73,31 @@ class MaterialesDB(object):
     """
     def __init__(self, filename='DB.ini'):
         """Inicialización de la BBDD de Cerramientos
-        
+
         filename - nombre del archivo desde el que cargar la base de datos
         """
         self.filename = filename
         self.loadmaterialesdb(filename)
-    
+
     def __getitem__(self, key):
         return self.materiales[key]
-    
+
     def __setitem__(self, key, value):
         self.materiales[key] = value
         #FIXME: se puede ordenar de otra forma
         self.nombres.append(key)
-    
+
     def __delitem__(self, key):
         del self.materiales[key]
         self.nombres.remove(key)
-    
+
     def loadmaterialesdb(self, filename=None):
         """Lee base de datos de materiales en formato ConfigObj de archivo"""
         def unescape(data):
             """Unescape &amp;, &lt;, and &gt; in a string of data."""
             k = data.replace("&lb;", "[").replace("&rb;", "]")
             return k.replace("&amp;", "&")
-        
+
         if not filename:
             if self.filename:
                 filename = self.filename
@@ -113,7 +113,7 @@ class MaterialesDB(object):
             del config['config']
         else:
             self.config = None
-        # Lee datos 
+        # Lee datos
         for section in config:
             material = config[section]
             name = unescape(section)
