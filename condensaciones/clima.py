@@ -113,9 +113,9 @@ def saveclimasdb(climas, nameorder=None, configdata=None,
             raise ValueError, "Nombre desconocido: %s" % name
         c = climas[name]
         ename = escape(name)
-        sect = config[ename] 
+        sect = config[ename]
         sect = {}
         config.comments[ename] = '#'
         sect['T'] = [_item.T for _item in c]
-        sect['HR'] = [_item.HR for _item in c] 
+        sect['HR'] = [_item.HR for _item in c]
     config.write()
