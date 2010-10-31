@@ -4,6 +4,8 @@ build/*
 misc/*
 report/*.png
 report/*.html
+docs/_build/*
+docs/_static/jsMath/*
 MSVCCRT/*
 *~
 *.bak
