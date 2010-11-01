@@ -91,7 +91,6 @@ class MaterialesDB(object):
         """
         #: nombre del archivo desde el que cargar la base de datos (str)
         self.filename = filename
-        self.loadmaterialesdb(filename)
         #: diccionario de configuración (nombre, ...) (dict)
         self.config = None
         #: lista de nombres de materiales de la BBDD (list)
@@ -100,6 +99,7 @@ class MaterialesDB(object):
         self.nombresgrupos = []
         #: diccionario de materiales de la BBDD por nombre de material (dict)
         self.materiales = {}
+        self.loadmaterialesdb(filename)
 
     def __getitem__(self, key):
         return self.materiales[key]
