@@ -27,35 +27,38 @@ import math
 
 def fRsi(U):
     """Factor de temperatura de la superficie interior
-    
+
     Es aplicable a un cerramiento, partición interior o puentes térmicos
     INTEGRADOS en los cerramientos.
-    
+
     Se aplica la formulación del CTE DB-HE G.2.1.1
-    
-    U - Transmitancia térmica del elemento [W/m²K]
-    
-    Nota:    
+
+    :param float U: Transmitancia térmica del elemento [W/m²K]
+    :returns: factor de temperatura de la superficie interior
+    :rtype: float
+
+    Nota:
     Para el cálculo del factor de temperatura de los encuentros de cerramientos
     se deben aplicar los métodos de las normas UNE EN ISO 10 211-1:1995 y
-    UNE EN ISO 10 211-2:2002, no implementados en esta función. 
+    UNE EN ISO 10 211-2:2002, no implementados en esta función.
     """
     return 1.0 - U * 0.25
 
 def fRsimin(tempext, tempint=20.0, hrint=55.0):
     """Factor de temperatura de la superficie interior mínimo
-    
+
     Es aplicable a un puente térmico, cerramiento o partición interior.
-    
+
     Se aplica la formulación del CTE DB-HE G.2.1.2 pero se añaden los límites
     más precisos de la ISO 13788 en cuanto al rango de validez de la presión
     de saturación.
-    
-            
-    tempext - Temperatura exterior de la localidad en el mes de enero [ºC]
-    tempint - Temperatura del ambiente interior (a falta de otros datos se
-              puede tomar 20ºC) [ºC]
-    hrint - Humedad relativa interior [%]
+
+    :param float tempext: Temperatura exterior de la localidad en el mes de enero [ºC]
+    :param float tempint: Temperatura del ambiente interior (a falta de otros
+    datos se puede tomar 20ºC) [ºC]
+    :param float hrint: Humedad relativa interior [%]
+    :returns: factor de temperatura de la superficie interior mínimo
+    :rtype: float
     """
     def tempsimin(hrint):
         """Temperatura superficial mínima"""
@@ -73,11 +76,17 @@ def fRsimin(tempext, tempint=20.0, hrint=55.0):
 
 def condensas(cerr, temp_ext, temp_int, HR_int):
     """Comprueba la condición de existencia de condensaciones superficiales
-    
+
     Válido para un cerramiento, puente térmico (integrado) o partición
     interior.
-    
-    Devuelve True si existen condensaciones superficiales.
+
+    :param Cerramiento cerr: Cerramiento para comprobar
+    :param float temp_ext: Temperatura exterior de la localidad en el mes de enero [ºC]
+    :param float temp_int: Temperatura del ambiente interior (a falta de otros
+    datos se puede tomar 20ºC) [ºC]
+    :param float HR_int: Humedad relativa interior [%]
+    :returns: `True` si existen condensaciones superficiales.
+    :rtype: float
     """
     # el CTE incluye tablas según zonas y clase de higrometría para fRsimin
     # que están calculadas para la capital más desfavorable de cada zona y
@@ -86,11 +95,18 @@ def condensas(cerr, temp_ext, temp_int, HR_int):
 
 def condensai(cerr, temp_ext, temp_int, HR_ext, HR_int):
     """Comprueba la condición de existencia de condensaciones intersticiales
-    
+
     Válido para un cerramiento, puente térmico (integrado) o partición
     interior.
-    
-    Devuelve True si existen condensaciones intersticiales.
+
+    :param Cerramiento cerr: Cerramiento para comprobar
+    :param float temp_ext: Temperatura exterior de la localidad en el mes de enero [ºC]
+    :param float temp_int: Temperatura del ambiente interior (a falta de otros
+    datos se puede tomar 20ºC) [ºC]
+    :param float HR_ext: Humedad relativa exterior [%]
+    :param float HR_int: Humedad relativa interior [%]
+    :returns: `True` si existen condensaciones intersticiales.
+    :rtype: float
     """
     #TODO: Revisar condensaciones viendo si la cantidad condensada es
     # susceptible de evaporación o no
@@ -102,8 +118,15 @@ def condensai(cerr, temp_ext, temp_int, HR_ext, HR_int):
 
 def condensaciones(cerr, temp_ext, temp_int, HR_ext, HR_int):
     """Existencia de condensaciones en un cerramiento
-    
-    Devuelve True si existen condensaciones superficiales o intersticiales
+
+    :param Cerramiento cerr: Cerramiento para comprobar
+    :param float temp_ext: Temperatura exterior de la localidad en el mes de enero [ºC]
+    :param float temp_int: Temperatura del ambiente interior (a falta de otros
+    datos se puede tomar 20ºC) [ºC]
+    :param float HR_ext: Humedad relativa exterior [%]
+    :param float HR_int: Humedad relativa interior [%]
+    :returns: `True` si existen condensaciones superficiales o intersticiales.
+    :rtype: float
     """
     ci = condensai(cerr, temp_ext, temp_int, HR_ext, HR_int)
     cs = condensas(cerr, temp_ext, temp_int, HR_int)

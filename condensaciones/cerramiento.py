@@ -142,7 +142,7 @@ class Cerramiento(object):
 
     @property
     def S(self):
-        """Lista de espesore de aire equivalente de las capas [m]"""
+        """Lista de espesores de aire equivalente de las capas [m]"""
         return [e * self.matDB[nombre].mu
                 for nombre, e in self.capas]
 
@@ -180,6 +180,8 @@ class Cerramiento(object):
 
         :param float temp_ext: temperatura exterior media en el mes de enero
         :param float temp_int: temperatura interior de cálculo (20ºC)
+        :returns: lista de temperaturas en el cerramiento
+        :rtype: list
         """
         _tlist = [temp_ext]
         for capa_Ri in self.R:
@@ -198,6 +200,8 @@ class Cerramiento(object):
         :param float temp_int: Temperatura interior del aire [ºC]
         :param float HR_ext: Humedad relativa exterior del aire [%]
         :param float HR_int: Humedad relativa interior del aire [%]
+        :returns: lista de presiones de vapor en el cerramiento
+        :rtype: list
         """
         _p_ext = psicrom.pvapor(temp_ext, HR_ext)
         _p_int = psicrom.pvapor(temp_int, HR_int)
@@ -215,6 +219,8 @@ class Cerramiento(object):
 
         :param float temp_ext: Temperatura exterior del aire [ºC]
         :param float temp_int: Temperatura interior del aire [ºC]
+        :returns: lista de presiones de vapor de saturación en el cerramiento
+        :rtype: list
         """
         _temperaturas = self.temperaturas(temp_ext, temp_int)
         return [psicrom.psat(t) for t in _temperaturas]
@@ -222,15 +228,15 @@ class Cerramiento(object):
     def condensacion(self, temp_ext, temp_int, HR_ext, HR_int):
         """Cantidad de condensación y coordenadas de condensación/presión
 
-        Devuelve la cantidad de condensación en [g/m²s] y una lista de
-        tuplas con las coordenadas de los puntos de condensacion en [m] de
-        espesor de aire equivalente y la presión de vapor en ese punto
-        (S(i), p_vapor(i)).
-
         :param float temp_ext: Temperatura exterior del aire [ºC]
         :param float temp_int: Temperatura interior del aire [ºC]
         :param float HR_ext: Humedad relativa exterior del aire [%]
         :param float HR_int: Humedad relativa interior del aire [%]
+        :returns: cantidad de condensación (en [g/m²s]) y una lista de
+        tuplas con las coordenadas de los puntos de condensacion en [m] de
+        espesor de aire equivalente y la presión de vapor en ese punto
+        (S(i), p_vapor(i)).
+        :rtype: tuple (float, list)
         """
         p = self.presiones(temp_ext, temp_int, HR_ext, HR_int)
         p_sat = self.presionessat(temp_ext, temp_int)
@@ -268,15 +274,15 @@ class Cerramiento(object):
     def evaporacion(self, temp_ext, temp_int, HR_ext, HR_int, interfases):
         """Cantidad de evaporación y coordenadas de evaporación/presión
 
-        Devuelve la cantidad de evaporación en [g/m²s] y una lista de
-        tuplas con las coordenadas de los puntos de evaporación en [m] de
-        espesor de aire equivalente y la presión de vapor en ese punto
-        (S(i), p_vapor(i)).
-
         :param float temp_ext: Temperatura exterior del aire [ºC]
         :param float temp_int: Temperatura interior del aire [ºC]
         :param float HR_ext: Humedad relativa exterior del aire [%]
         :param float HR_int: Humedad relativa interior del aire [%]
+        :returns: cantidad de evaporación (en [g/m²s]) y una lista de
+        tuplas con las coordenadas de los puntos de evaporación en [m] de
+        espesor de aire equivalente y la presión de vapor en ese punto
+        (S(i), p_vapor(i)).
+        :rtype: tuple (float, list)
         """
         p = self.presiones(temp_ext, temp_int, HR_ext, HR_int)
         p_sat = self.presionessat(temp_ext, temp_int)
@@ -359,7 +365,8 @@ class CerramientosDB(object):
         """Insertar cerramiento antes de la posición index
 
         :param Cerramiento cerramiento: Cerramiento
-        :param int index: posición"""
+        :param int index: posición
+        """
         self.cerramientos[cerramiento.nombre] = cerramiento
         self.nombres.insert(index, cerramiento.nombre)
 

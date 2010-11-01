@@ -20,14 +20,16 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 #   02110-1301, USA.
-"""Relaciones y cálculos psicrométricos según CTE DB-HE G.3
+"""Relaciones y cálculos psicrométricos según CTE DB-HE G.3 e ISO EN 13788:2002
 
 Relaciones psicrométricas básicas:
+
 - Presión de saturación
 - Presión de vapor
 - Humedad relativa interior
 
 Cálculos psicrométricos:
+
 - Temperatura de localidad en función de la temperatura de la capital de
   provincia.
 - Presión de saturación de una localidad en función de la diferencia de
@@ -51,8 +53,7 @@ import math
 def psat(temp):
     """Presión de saturación del aire húmedo [Pa]
 
-    :type temp: int or float
-    :param temp: temperatura del aire [ºC]
+    :param float temp: temperatura del aire [ºC]
     :rtype: float
     """
     if temp > 0.0:
@@ -63,10 +64,8 @@ def psat(temp):
 def pvapor(temp, humedad):
     """Presión de vapor del aire húmedo [Pa]
 
-    :type temp: int or float
-    :param temp: Temperatura del aire [ºC]
-    :type humedad: int or float
-    :param humedad: humedad relativa del aire [%]
+    :param float temp: Temperatura del aire [ºC]
+    :param float humedad: humedad relativa del aire [%]
     :rtype: float
     """
     return (humedad / 100.0) * psat(temp)
@@ -77,10 +76,8 @@ def temploc(temp, deltah):
     Es función de la temperatura y diferencia de altitud con la capital de
     provincia.
 
-    :type temp: int or float
-    :param temp: temperatura media exterior de la capital para el mes dado [ºC]
-    :type deltah: int or float
-    :param deltah: altura de la localidad sobre la de la capital [m]
+    :param float temp: temperatura media exterior de la capital para el mes dado [ºC]
+    :param float deltah: altura de la localidad sobre la de la capital [m]
     :rtype: float
     """
     return temp - 1.0 * deltah / 100.0
@@ -91,10 +88,8 @@ def psatloc(temp, deltah):
     Es función de la temperatura y diferencia de altitud con la capital de
     provincia.
 
-    :type temp: int or float
-    :param temp: temperatura media exterior de la capital para el mes dado [ºC]
-    :type deltah: int or float
-    :param deltah: altura de la localidad sobre la de la capital [m]
+    :param float temp: temperatura media exterior de la capital para el mes dado [ºC]
+    :param float deltah: altura de la localidad sobre la de la capital [m]
     :rtype: float
     """
     return psat(temploc(temp, deltah))
@@ -107,12 +102,9 @@ def hrloc(temp, humedad, deltah):
 
     Si la altura fuese negativa se debería tomar como altura la de la capital.
 
-    :type temp: int or float
-    :param temp: temperatura media exterior de la capital para el mes dado [ºC]
-    :type humedad: int or float
-    :param humedad: humedad relativa media de la capital para el mes dado [%]
-    :type deltah: int or float
-    :param deltah: altura de la localidad sobre la de la capital [m]
+    :param float temp: temperatura media exterior de la capital para el mes dado [ºC]
+    :param float humedad: humedad relativa media de la capital para el mes dado [%]
+    :param float deltah: altura de la localidad sobre la de la capital [m]
     :rtype: float
     """
     if deltah < 0.0:
@@ -124,14 +116,10 @@ def g(pe, pi, Se, Si):
 
     Resulta útil para calcular condensada o evaporada entre interfases.
 
-    :type pe: int or float
-    :param pe: presión de vapor exterior [Pa]
-    :type pi: int or float
-    :param pi: presión de vapor interior [Pa]
-    :type Se: int or float
-    :param Se: espesor de aire equivalente en pe [m]
-    :type Si: int or float
-    :param Si: espesor de aire equivalente en pi [m]
+    :param float pe: presión de vapor exterior [Pa]
+    :param float pi: presión de vapor interior [Pa]
+    :param float Se: espesor de aire equivalente en pe [m]
+    :param float Si: espesor de aire equivalente en pi [m]
     :rtype: float
     """
     #delta0 - permeabilidad al vapor de agua del aire en relación a la presión
@@ -148,14 +136,10 @@ def hrintISO(text, tsint, hrext, higrometria):
     Es función del ritmo de producción de humedad interior (higrometría),
     definida según ISO EN 13788:2002
 
-    :type temp: int or float
-    :para text: Temperatura exterior [ºC]
-    :type tsint: int or float
-    :param tsint: Temperatura superficial interior [ºC]
-    :type hgext: int or float
-    :param hrext: Humedad relativa exterior [%]
-    :type higrometria: int
-    :param higrometria: nivel del ritmo de producción de la humedad interior
+    :para float text: Temperatura exterior [ºC]
+    :param float tsint: Temperatura superficial interior [ºC]
+    :param float hrext: Humedad relativa exterior [%]
+    :param int higrometria: nivel del ritmo de producción de la humedad interior
         Higrometría 1 (zonas de almacenamiento): delta_p = 270 Pa
         Higrometría 2 (oficinas, tiendas): delta_p = 540 Pa
         Higrometría 3 (viviendas residencial): delta_p = 810 Pa
@@ -207,22 +191,14 @@ def hrintCTE(text=None, tint=None, tsint=None,
 
     Útil para el cálculo de condensaciones superficiales.
 
-    :type text: int or float
-    :param text: temperatura exterior [ºC]
-    :type tint: int or float
-    :param tint: temperatura interior [ºC]
-    :type tsint: int or float
-    :param tsint: temperatura superficial interior [ºC]
-    :type hrext: int or float
-    :param hrext: Humedad relativa del aire exterior [%]
-    :type G: int or float
-    :param G: ritmo de producción de la humedad interior [kg/h]
-    :type V: int or float
-    :param V: Volumen de aire del local [m³]
-    :type n: int or float
-    :param n: tasa renovación de aire [h^-1]
-    :type higrometria: int
-    :param higrometria: nivel del ritmo de producción de la humedad interior
+    :param float text: temperatura exterior [ºC]
+    :param float tint: temperatura interior [ºC]
+    :param float tsint: temperatura superficial interior [ºC]
+    :param float hrext: Humedad relativa del aire exterior [%]
+    :param float G: ritmo de producción de la humedad interior [kg/h]
+    :param float V: Volumen de aire del local [m³]
+    :param float n: tasa renovación de aire [h^-1]
+    :param int higrometria: nivel del ritmo de producción de la humedad interior
         Higrometría 1 (zonas de almacenamiento)
         Higrometría 2 (oficinas, tiendas)
         Higrometría 3 (viviendas residencial): HR = 55%
