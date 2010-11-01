@@ -6,6 +6,14 @@
                             Manual del usuario
 =============================================================================
 
+Aplicación de conversión de bases de datos
+==========================================
+
+Condensa incluye una aplicación auxiliar que permite convertir bases de datos
+en formato LIDER_ / CALENER_ al formato propio de la aplicación.
+
+.. Pendiente de acabar. Indicar cómo se usa.
+
 .. _ui_organizacion_general:
 
 Organización general de la interfaz
