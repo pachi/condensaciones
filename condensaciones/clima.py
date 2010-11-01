@@ -32,13 +32,23 @@ import configobj
 class Clima(object):
     """Definición de un ambiente higrotérmico tipo (temperatura, humedad...)
 
-    :param float temp: temperatura [ºC]
-    :param float HR: Humedad relativa [%]
+    .. attribute:: temp
 
-    Los parámetros se convierten a float si se reciben como enteros.
+        Temperatura [ºC]
+
+    .. attribute:: HR
+
+        Humedad relativa [%]
     """
+
     def __init__(self, temp=20.0, HR=55.0):
-        """Inicialización de datos"""
+        """Inicialización de datos
+
+        :param float temp: temperatura [ºC]
+        :param float HR: Humedad relativa [%]
+
+        Los parámetros se convierten a float si se reciben como enteros.
+        """
         self.temp = float(temp)
         self.HR = float(HR)
 
