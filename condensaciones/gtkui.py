@@ -83,8 +83,8 @@ class GtkCondensa(object):
         cargadata()
 
     #{ Funciones generales de aplicación
- 
-    def quit(self, w):
+
+    def quit(self, w, *args):
         """Salir de la aplicación"""
         gtk.main_quit()
 
