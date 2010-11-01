@@ -25,21 +25,10 @@
 higrotérmicos.
 """
 
-__all__ = ['Clima', 'escape', 'unescape', 'loadclimadb', 'saveclimasdb']
-
 import configobj
 
 class Clima(object):
-    """Definición de un ambiente higrotérmico tipo (temperatura, humedad...)
-
-    .. attribute:: temp
-
-        Temperatura [ºC]
-
-    .. attribute:: HR
-
-        Humedad relativa [%]
-    """
+    """Definición de un ambiente higrotérmico tipo (temperatura, humedad...)"""
 
     def __init__(self, temp=20.0, HR=55.0):
         """Inicialización de datos
@@ -49,7 +38,9 @@ class Clima(object):
 
         Los parámetros se convierten a float si se reciben como enteros.
         """
+        #: Temperatura [ºC]
         self.temp = float(temp)
+        #: Humedad relativa [%]
         self.HR = float(HR)
 
 #===============================================================================
