@@ -183,7 +183,7 @@
                     <property name="label" translatable="yes">Cerramiento</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
-                      <attribute name="size" value="200"/>
+                      <attribute name="scale" value="1.5"/>
                     </attributes>
                   </object>
                   <packing>
