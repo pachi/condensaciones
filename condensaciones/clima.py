@@ -81,7 +81,7 @@ def unescape(data):
 
     Ejemplo::
 
-        >>> escape('&lb;5m&rb;')
+        >>> unescape('&lb;5m&rb;')
         '[5m]'
     """
     return data.replace("&lb;", "[").replace("&rb;", "]").replace("&amp;", "&")

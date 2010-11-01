@@ -233,9 +233,9 @@ class Cerramiento(object):
         :param float HR_ext: Humedad relativa exterior del aire [%]
         :param float HR_int: Humedad relativa interior del aire [%]
         :returns: cantidad de condensación (en [g/m²s]) y una lista de
-        tuplas con las coordenadas de los puntos de condensacion en [m] de
-        espesor de aire equivalente y la presión de vapor en ese punto
-        (S(i), p_vapor(i)).
+            tuplas con las coordenadas de los puntos de condensacion en [m] de
+            espesor de aire equivalente y la presión de vapor en ese punto
+            (S(i), p_vapor(i)).
         :rtype: tuple (float, list)
         """
         p = self.presiones(temp_ext, temp_int, HR_ext, HR_int)
@@ -279,9 +279,9 @@ class Cerramiento(object):
         :param float HR_ext: Humedad relativa exterior del aire [%]
         :param float HR_int: Humedad relativa interior del aire [%]
         :returns: cantidad de evaporación (en [g/m²s]) y una lista de
-        tuplas con las coordenadas de los puntos de evaporación en [m] de
-        espesor de aire equivalente y la presión de vapor en ese punto
-        (S(i), p_vapor(i)).
+            tuplas con las coordenadas de los puntos de evaporación en [m] de
+            espesor de aire equivalente y la presión de vapor en ese punto
+            (S(i), p_vapor(i)).
         :rtype: tuple (float, list)
         """
         p = self.presiones(temp_ext, temp_int, HR_ext, HR_int)
