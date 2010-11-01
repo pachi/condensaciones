@@ -6,7 +6,7 @@ La form más habitual de instalar Condensaciones es mediante un paquete de
 instalación preparado para su sistema operativo.
 
 Si desea hacer funcionar la aplicación sin necesidad de su instalación puede
-hacerlo, instalando un intérprete de Python y las bibliotecas necesarias.
+hacerlo, instalando un intérprete de Python_ y las bibliotecas necesarias.
 
 Condensa utiliza los siguientes componentes:
 
