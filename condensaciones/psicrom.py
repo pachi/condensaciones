@@ -50,7 +50,7 @@ import math
 
 def psat(temp):
     """Presión de saturación del aire húmedo [Pa]
-    
+
     :type temp: int or float
     :param temp: temperatura del aire [ºC]
     :rtype: float
@@ -62,7 +62,7 @@ def psat(temp):
 
 def pvapor(temp, humedad):
     """Presión de vapor del aire húmedo [Pa]
-    
+
     :type temp: int or float
     :param temp: Temperatura del aire [ºC]
     :type humedad: int or float
@@ -73,10 +73,10 @@ def pvapor(temp, humedad):
 
 def temploc(temp, deltah):
     """Temperatura de una localidad no capital de provincia [ºC]
-    
+
     Es función de la temperatura y diferencia de altitud con la capital de
     provincia.
-    
+
     :type temp: int or float
     :param temp: temperatura media exterior de la capital para el mes dado [ºC]
     :type deltah: int or float
@@ -87,10 +87,10 @@ def temploc(temp, deltah):
 
 def psatloc(temp, deltah):
     """Presión de saturación en una localidad no capital de provincia [Pa]
-    
+
     Es función de la temperatura y diferencia de altitud con la capital de
     provincia.
-    
+
     :type temp: int or float
     :param temp: temperatura media exterior de la capital para el mes dado [ºC]
     :type deltah: int or float
@@ -101,12 +101,12 @@ def psatloc(temp, deltah):
 
 def hrloc(temp, humedad, deltah):
     """Humedad relativa para la localidad no capital de provincia [%]
-    
+
     Es función de la temperatura, humedad y diferencia de nivel con la capital
     de provincia [%].
-    
+
     Si la altura fuese negativa se debería tomar como altura la de la capital.
-    
+
     :type temp: int or float
     :param temp: temperatura media exterior de la capital para el mes dado [ºC]
     :type humedad: int or float
@@ -121,9 +121,9 @@ def hrloc(temp, humedad, deltah):
 
 def g(pe, pi, Se, Si):
     """Tasa de transferencia de vapor a través del cerramiento [g/m2.s]
-    
+
     Resulta útil para calcular condensada o evaporada entre interfases.
-    
+
     :type pe: int or float
     :param pe: presión de vapor exterior [Pa]
     :type pi: int or float
@@ -144,10 +144,10 @@ def g(pe, pi, Se, Si):
 
 def hrintISO(text, tsint, hrext, higrometria):
     """Humedad relativa interior [%] del mes de enero
-    
+
     Es función del ritmo de producción de humedad interior (higrometría),
     definida según ISO EN 13788:2002
-    
+
     :type temp: int or float
     :para text: Temperatura exterior [ºC]
     :type tsint: int or float
@@ -200,11 +200,11 @@ def hrintCTE(text=None, tint=None, tsint=None,
                     hrext=None, G=None, V=None, n=None,
                     higrometria=None):
     """Humedad relativa interior [%] del mes de enero
-    
+
     Es función del ritmo de producción de humedad interior y la tasa de
     renovación de aire o, alternativamente, la higrometría, según se define
     en el CTE.
-    
+
     Útil para el cálculo de condensaciones superficiales.
 
     :type text: int or float
