@@ -20,64 +20,86 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 #   02110-1301, USA.
-"""Definición de clase para representar materiales"""
+"""Módulo para la definición, almacenamiento y recuperación de materiales."""
 
 import configobj
 
 class Material(object):
-    """Material tipo definidos por su nombre, tipo y propiedades
+    """Material tipo definido por su nombre, tipo y propiedades
 
-    Propiedades generales
-    ---------------------
-        - name - nombre del material
-        - group - nombre del grupo genérico al que pertenece el material
-        - type - tipo según definición [RESISTANCE|PROPERTIES|SHADING-COEF]
-        - mu - resistencia a la difusión del vapor de agua [adimensional]
-        - db - base de datos de procedencia del material
-        - Propiedades opcionales
-            - thickness_change - posiblidad de varios espesores [True|False]
+    Los materiales pueden ser del tipo `RESISTANCE`, `PROPERTIES` o
+    `SHADING-COEF`, aunque Condensaciones únicamente soporta por ahora los
+    dos primeros tipos.
 
-    Propiedades de materiales tipo PROPERTIES
-    -----------------------------------------
-        - thickness - espesor del elemento [m]
-        - conductivity - conductividad térmica [W/m.K]
-        - density - densidad del material [kg/m³]
-        - specific_heat - calor específico [J/kg.K]
-            - thickness_min - espesor mínimo [m]
-            - thickness_max - espesor máximo [m]
+    Todos los materiales disponen de las siguientes propiedades: name, group,
+    type, mu, db, thickness_change (opcional).
 
-    Propiedades de materiales tipo RESISTANCE
-    -----------------------------------------
-        - resistance - resistencia térmica del elemento [m²/K.W]
+    Propiedades exclusivas de los materiales del tipo `PROPERTIES`: thickness,
+    conductivity, density, specific_heat, thickness_min (opcional),
+    thickness_max (opcional).
+
+    Propiedades exclusivas de los materiales del tipo `RESISTANCE`: resistance.
     """
     def __init__(self, name, group, mtype, mu, db=''):
-        """Inicialización de datos generales"""
+        """Inicialización de datos generales
+
+        :param str name: nombre del material
+        :param str group: nombre del grupo genérico al que pertenece el material
+        :param str mtype: tipo según definición [RESISTANCE|PROPERTIES|SHADING-COEF]
+        :param float mu: resistencia a la difusión del vapor de agua [adimensional]
+        :param str db: base de datos de procedencia del material
+        """
+        #: nombre del material (str)
         self.name = name
+        #: nombre del grupo genérico al que pertenece el material (str)
         self.group = group
+        #: tipo según definición [`RESISTANCE`|`PROPERTIES`|`SHADING-COEF`] (str)
         self.type = mtype
-        self.mu = mu
+        #: resistencia a la difusión del vapor de agua [adimensional] (float)
+        self.mu = float(mu)
+        #: nombre de la base de datos de procedencia del material (str)
         self.db = db
+        #: admite espesor pesonalizado [`True`|`False`] (bool) (opcional)
+        self.thickness_change = True
         #self.name_calener = ''
         #self.image = 'asfalto.bmp'
         #self.library = False
+        if mtype == 'PROPERTIES':
+            #: espesor del elemento [m] (float)
+            self.thickness = None
+            #: conductividad térmica [W/m.K] (float)
+            self.conductivity = None
+            #: densidad del material [kg/m³] (float)
+            self.density = None
+            #: calor específico [J/kg.K] (float)
+            self.specific_heat = None
+            #: espesor mínimo admisible [m] (float) (opcional)
+            self.thickness_min = None
+            #: espesor máximo admisible [m] (float) (opcional)
+            self.thickness_max = None
+        elif mtype == 'RESISTANCE':
+            #: resistencia térmica del elemento [m²/K.W]
+            self.resistance = None
 
 class MaterialesDB(object):
-    """Base de datos de Materiales
+    """Base de datos de Materiales"""
 
-    filename - nombre del archivo desde el que cargar la base de datos
-
-    config - diccionario de configuración (nombre, ...)
-    nombres - lista de nombres de materiales de la BBDD
-    nombresgrupos - lista de nombres de grupos de la BBDD
-    materiales - diccionario de materiales de la BBDD por nombre de material
-    """
     def __init__(self, filename='DB.ini'):
         """Inicialización de la BBDD de Cerramientos
 
-        filename - nombre del archivo desde el que cargar la base de datos
+        :param str filename: nombre del archivo desde el que cargar la base de datos
         """
+        #: nombre del archivo desde el que cargar la base de datos (str)
         self.filename = filename
         self.loadmaterialesdb(filename)
+        #: diccionario de configuración (nombre, ...) (dict)
+        self.config = None
+        #: lista de nombres de materiales de la BBDD (list)
+        self.nombres = []
+        #: lista de nombres de grupos de la BBDD (list)
+        self.nombresgrupos = []
+        #: diccionario de materiales de la BBDD por nombre de material (dict)
+        self.materiales = {}
 
     def __getitem__(self, key):
         return self.materiales[key]
@@ -92,7 +114,10 @@ class MaterialesDB(object):
         self.nombres.remove(key)
 
     def loadmaterialesdb(self, filename=None):
-        """Lee base de datos de materiales en formato ConfigObj de archivo"""
+        """Lee base de datos de materiales en formato ConfigObj de archivo
+
+        :param str filename: nombre del archivo desde el que cargar la base de datos
+        """
         def unescape(data):
             """Unescape &amp;, &lt;, and &gt; in a string of data."""
             k = data.replace("&lb;", "[").replace("&rb;", "]")
@@ -105,14 +130,10 @@ class MaterialesDB(object):
                 raise ValueError, "No se ha especificado un archivo"
         config = configobj.ConfigObj(filename, encoding='utf-8',
                                      raise_errors=True)
-        self.nombres, self.nombresgrupos = [], []
-        self.materiales = {}
         # Lee valores de configuración de la base de datos si existe
         if 'config' in config:
             self.config = config['config'].copy()
             del config['config']
-        else:
-            self.config = None
         # Lee datos
         for section in config:
             material = config[section]
