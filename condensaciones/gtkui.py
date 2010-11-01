@@ -74,7 +74,7 @@ class GtkCondensa(object):
             for nombrelocalidad in self.model.climas:
                 localidadesls.append((nombrelocalidad,))
             self.ui.get_object('localidadcb').props.active = 0
-            
+
             n = len(self.model.c.matDB.nombres)
             m = len(self.model.cerramientosDB.nombres)
             r = len(self.model.climas)
@@ -141,7 +141,7 @@ class GtkCondensa(object):
             # cond. superficiales y todos los meses para cond. intersticiales
             state_color = COLOR_SEE
         else:
-            state_color = COLOR_OK 
+            state_color = COLOR_OK
         cfondo = self.ui.get_object('cfondo')
         cfondo.modify_bg(gtk.STATE_NORMAL, state_color)
 
@@ -271,8 +271,8 @@ class GtkCondensa(object):
                "¿Existen condensaciones intersticiales?: %s\n") % (cs, ci)
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'resultados')
         if True in cimeses:
-            meses = "[" + ", ".join("%i" % i 
-                                    for i, value in enumerate(cimeses) 
+            meses = "[" + ", ".join("%i" % i
+                                    for i, value in enumerate(cimeses)
                                     if value is True) + "]"
             txt = ("\nMeses con condensaciones intersticiales: %s\n") % meses
             tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'resultados')
@@ -330,7 +330,7 @@ class GtkCondensa(object):
         hrext = "%.f" % climaslist[imes].HR
         self.ui.get_object('tempextentry').props.text = tempext
         self.ui.get_object('hrextentry').props.text = hrext
-        
+
     def meschanged(self, widget):
         """Cambio en el combo de meses"""
         self._setclimaext()
@@ -358,7 +358,7 @@ class GtkCondensa(object):
             hre.props.text = self.model.climae.HR
 
     #{ Retrollamadas del diálogo de selección de cerramientos
-    
+
     def cerramientoselecciona(self, widget):
         """Abre diálogo de selección de cerramiento"""
         lblselected = self.ui.get_object('lblselected')
@@ -446,10 +446,10 @@ class GtkCondensa(object):
         self.model.cerramientossave()
 
     #{ Retrollamadas de modificación de capas en pestaña de capas
- 
+
     def capacambiamaterial(self, cr, path, new_iter):
         """Cambio de material de la capa en el combo de la vista de capas
-        
+
         cr - Comboboxcellrenderer con contenido modificado
         path - ruta del combo en el treeview
         new_iter - ruta del nuevo valor en el modelo del combo
@@ -465,7 +465,7 @@ class GtkCondensa(object):
 
     def capacambiaespesor(self, cr, path, new_text):
         """Cambio de espesor en la vista de capas
-        
+
         cr - cellrenderertext que cambia
         path - ruta del cellrenderer en el treeview
         new_text - nuevo texto en la celda de texto
