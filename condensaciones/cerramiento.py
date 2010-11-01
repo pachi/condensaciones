@@ -31,48 +31,60 @@ from util import get_resource
 mdb = material.MaterialesDB(get_resource('data', 'MaterialesDB.ini'))
 
 class Cerramiento(object):
-    """Clase Cerramiento
-    
-    Clase para modelizar un cerramiento tipo, multicapa, con cada capa definida
+    """Clase para modelizar un cerramiento tipo, multicapa, con cada capa definida
     por su material y sus propiedades físicas.
-    
-    matDB - BBDD de materiales (tipo: MaterialesDB)
     """
+    #: BBDD de materiales (tipo: MaterialesDB)
     matDB = mdb
     def __init__(self, nombre, descripcion, capas=None,
                  Rse=None, Rsi=None, tipo=None):
         """Inicialización de cerramiento.
-        
-        nombre - Nombre del cerramiento
-        descripción - Descripción somera de la composición del cerramiento
-        capas - lista de tuplas con la descripción de las capas que forman
-                el cerramiento. Cada tupla define una capa, identificada por
-                su nombre y su espesor. La lista se ordena de exterior a
-                interior.
-                Si no se define, se usa una capa de espesor 0,3m y material
-                el primero de la base de datos.
-        tipo - Tipo de cerramiento en relación a su disposición (horizontal,
-                vertical, cubierta, etc) y que sirve para definir de forma
-                implícita sus valores de resistencia superficial.
-        Rse - Resistencia superficial exterior [m²K/W]
-              Si no se indica valor, se usa 0,04 m²K/W.
-        Rsi - Resistencia superficial interior [m²K/W]
-              Si no se indica valor, se usa 0,13 m²K/W.
+
+        :param str nombre: Nombre del cerramiento
+        :param str descripcion: Descripción somera de la composición del cerramiento
+        :param list capas: lista de tuplas con la descripción de las capas que
+        forman el cerramiento. Cada tupla define una capa, identificada por su
+        nombre y su espesor. La lista se ordena de exterior a interior.
+        Si no se define, se usa una capa de espesor 0,3m y material el
+        primero de la base de datos.
+        :param float Rse: Resistencia superficial exterior [m²K/W]
+        Si no se indica valor, se usa 0,04 m²K/W.
+        :param float Rsi: Resistencia superficial interior [m²K/W]
+        Si no se indica valor, se usa 0,13 m²K/W.
+        :param str tipo: Tipo de cerramiento en relación a su disposición (horizontal,
+        vertical, cubierta, etc) y que sirve para definir de forma
+        implícita sus valores de resistencia superficial.
         """
+        #: Nombre del cerramiento (str)
         self.nombre = nombre
+        #: Descripción somera de la composición del cerramiento
         self.descripcion = descripcion
         if not capas:
             capas = [(self.matDB.nombres[0], 0.3)]
+        #: lista de tuplas con la descripción de las capas que forman
+        #: el cerramiento. Cada tupla define una capa, identificada por
+        #: su nombre y su espesor. La lista se ordena de exterior a
+        #: interior.
+        #: Si no se define, se usa una capa de espesor 0,3m y material
+        #: el primero de la base de datos.
         self.capas = capas
         for nombre, e in capas:
             if nombre not in self.matDB.nombres:
                 raise ValueError('Material desconocido: %s' % nombre)
         if not Rse:
             Rse = 0.04
+        #: Resistencia superficial exterior [m²K/W]
+        #: Si no se indica valor, se usa 0,04 m²K/W.
         self.Rse = Rse
         if not Rsi:
             Rsi = 0.13
+        #: Resistencia superficial interior [m²K/W]
+        #: Si no se indica valor, se usa 0,13 m²K/W.
         self.Rsi = Rsi
+        #: Tipo de cerramiento en relación a su disposición (horizontal,
+        #: vertical, cubierta, etc) y que sirve para definir de forma
+        #: implícita sus valores de resistencia superficial.
+        self.tipo = tipo
 
     @property
     def nombres(self):
@@ -83,7 +95,7 @@ class Cerramiento(object):
     def espesores(self):
         """Lista de espesores de las capas [m]"""
         return [e for nombre, e in self.capas]
-    
+
     @property
     def e(self):
         """Espesor total [m]"""
@@ -92,7 +104,7 @@ class Cerramiento(object):
     @property
     def espesores_acumulados(self):
         """Lista de espesores físicos acumulados [m]
-        
+
         Lista de coordenadas X geométricas de las interfases de cada capa.
         """
         return [0.0] + [reduce(operator.add, self.espesores[:i])
@@ -137,7 +149,7 @@ class Cerramiento(object):
     @property
     def S_acumulados(self):
         """Lista de espesores de aire equivalente acumulados en cada capa [m]
-        
+
         Lista de coordenadas X en espesor de aire equivalente de las
         interfases de capa.
         """
@@ -161,13 +173,13 @@ class Cerramiento(object):
 
     def temperaturas(self, temp_ext, temp_int):
         """Lista de temperaturas en el cerramiento [ºC]
-        
+
         Devuelve la temperatura exterior, temperatura superficial exterior,
         temperaturas intersticiales, temperatura superficial interior
         y temperatura interior.
-        
-        temp_ext - temperatura exterior media en el mes de enero
-        temp_int - temperatura interior de cálculo (20ºC)
+
+        :param float temp_ext: temperatura exterior media en el mes de enero
+        :param float temp_int: temperatura interior de cálculo (20ºC)
         """
         _tlist = [temp_ext]
         for capa_Ri in self.R:
@@ -178,14 +190,14 @@ class Cerramiento(object):
 
     def presiones(self, temp_ext, temp_int, HR_ext, HR_int):
         """Lista de presiones de vapor en el cerramiento [Pa]
-        
+
         Devuelve la presión de vapor al exterior, presiones de vapor
         intermedias y presión de vapor interior.
-        
-        temp_ext - Temperatura exterior del aire [ºC]
-        temp_int - Temperatura interior del aire [ºC]
-        HR_ext - Humedad relativa exterior del aire [%]
-        HR_int - Humedad relativa interior del aire [%]
+
+        :param float temp_ext: Temperatura exterior del aire [ºC]
+        :param float temp_int: Temperatura interior del aire [ºC]
+        :param float HR_ext: Humedad relativa exterior del aire [%]
+        :param float HR_int: Humedad relativa interior del aire [%]
         """
         _p_ext = psicrom.pvapor(temp_ext, HR_ext)
         _p_int = psicrom.pvapor(temp_int, HR_int)
@@ -200,25 +212,25 @@ class Cerramiento(object):
 
     def presionessat(self, temp_ext, temp_int):
         """Lista de presiones de saturación en el cerramiento [Pa]
-        
-        temp_ext - Temperatura exterior del aire [ºC]
-        temp_int - Temperatura interior del aire [ºC]
+
+        :param float temp_ext: Temperatura exterior del aire [ºC]
+        :param float temp_int: Temperatura interior del aire [ºC]
         """
         _temperaturas = self.temperaturas(temp_ext, temp_int)
         return [psicrom.psat(t) for t in _temperaturas]
 
     def condensacion(self, temp_ext, temp_int, HR_ext, HR_int):
         """Cantidad de condensación y coordenadas de condensación/presión
-            
+
         Devuelve la cantidad de condensación en [g/m²s] y una lista de
         tuplas con las coordenadas de los puntos de condensacion en [m] de
         espesor de aire equivalente y la presión de vapor en ese punto
         (S(i), p_vapor(i)).
-        
-        temp_ext - Temperatura exterior del aire [ºC]
-        temp_int - Temperatura interior del aire [ºC]
-        HR_ext - Humedad relativa exterior del aire [%]
-        HR_int - Humedad relativa interior del aire [%]
+
+        :param float temp_ext: Temperatura exterior del aire [ºC]
+        :param float temp_int: Temperatura interior del aire [ºC]
+        :param float HR_ext: Humedad relativa exterior del aire [%]
+        :param float HR_int: Humedad relativa interior del aire [%]
         """
         p = self.presiones(temp_ext, temp_int, HR_ext, HR_int)
         p_sat = self.presionessat(temp_ext, temp_int)
@@ -255,23 +267,23 @@ class Cerramiento(object):
 
     def evaporacion(self, temp_ext, temp_int, HR_ext, HR_int, interfases):
         """Cantidad de evaporación y coordenadas de evaporación/presión
-        
+
         Devuelve la cantidad de evaporación en [g/m²s] y una lista de
         tuplas con las coordenadas de los puntos de evaporación en [m] de
         espesor de aire equivalente y la presión de vapor en ese punto
         (S(i), p_vapor(i)).
-        
-        temp_ext - Temperatura exterior del aire [ºC]
-        temp_int - Temperatura interior del aire [ºC]
-        HR_ext - Humedad relativa exterior del aire [%]
-        HR_int - Humedad relativa interior del aire [%]
+
+        :param float temp_ext: Temperatura exterior del aire [ºC]
+        :param float temp_int: Temperatura interior del aire [ºC]
+        :param float HR_ext: Humedad relativa exterior del aire [%]
+        :param float HR_int: Humedad relativa interior del aire [%]
         """
         p = self.presiones(temp_ext, temp_int, HR_ext, HR_int)
         p_sat = self.presionessat(temp_ext, temp_int)
         # calculamos las posiciones x, y correspondientes a espesor de aire
         # equivalente y presiones de saturación
         Scapas = self.S
-        x_jo = [0.0] + [reduce(operator.add, Scapas[:i]) 
+        x_jo = [0.0] + [reduce(operator.add, Scapas[:i])
                         for i in range(1,len(Scapas)+1)]
         y_jo = ([p[1]] + [_p for _p in p_sat[2:-2]] + [p[-1]])
 
@@ -311,56 +323,69 @@ CERRAMIENTOSDBHEADER = """#   Biblioteca de Cerramientos para Condensa
 #""".splitlines()
 
 class CerramientosDB(object):
-    """Base de datos de Cerramientos
-        
-    filename - nombre del archivo desde el que cargar la base de datos
-    
-    config - diccionario de configuración (nombre, ...)    
-    cerramientos - diccionario de cerramientos de la BBDD por nombre
-    nombres - lista de nombres de cerramientos de la BBDD
-    nombrestipos - lista de nombres de tipos de cerramiento de la BBDD
-    """
+    """Base de datos de Cerramientos"""
+
     def __init__(self, filename='CerramientosDB.ini'):
         """Inicialización de la BBDD de Cerramientos
-        
-        filename - nombre del archivo desde el que cargar la base de datos
+
+        :param str filename: nombre del archivo desde el que cargar la base de
+        datos
         """
+        #: nombre del archivo desde el que cargar la base de datos
         self.filename = filename
+        #: diccionario de configuración (nombre, ...)
+        self.config = None
+        #: diccionario de cerramientos de la BBDD por nombre
+        self.cerramientos = {}
+        #: lista de nombres de cerramientos de la BBDD
+        self.nombres= []
+        #: lista de nombres de tipos de cerramiento de la BBDD
+        self.nombrestipos = []
         self.loadcerramientosdb(filename)
-        
+
     def __getitem__(self, key):
         return self.cerramientos[key]
-    
+
     def __setitem__(self, key, value):
         self.cerramientos[key] = value
         #FIXME: La ordenación puede ser distinta
         self.nombres.append(key)
-    
+
     def __delitem__(self, key):
         del self.cerramientos[key]
         self.nombres.remove(key)
-    
+
     def insert(self, cerramiento, index):
-        """Insertar cerramiento antes de la posición index"""
+        """Insertar cerramiento antes de la posición index
+
+        :param Cerramiento cerramiento: Cerramiento
+        :param int index: posición"""
         self.cerramientos[cerramiento.nombre] = cerramiento
         self.nombres.insert(index, cerramiento.nombre)
-    
+
     def rename(self, oldkey, newkey):
-        """Cambia nombre de cerramiento"""
+        """Cambia nombre de cerramiento
+
+        :param str oldkey: nombre antiguo
+        :param str newkey: nombre nuevo
+        """
         cerr = self.cerramientos[oldkey]
         cerr.nombre = newkey
         self.cerramientos[newkey] = cerr
         del self.cerramientos[oldkey]
         i = self.nombres.index(oldkey)
         self.nombres[i] = newkey
-    
+
     def loadcerramientosdb(self, filename=None):
-        """Lee base de datos de cerramientos en formato ConfigObj"""
+        """Lee base de datos de cerramientos en formato ConfigObj
+
+        :param str filename: nombre del archivo que contiene la BBDD.
+        """
         def unescape(data):
             """Unescape &amp;, &lt;, and &gt; in a string of data."""
             d = data.replace("&lb;", "[").replace("&rb;", "]")
             return d.replace("&amp;", "&")
-        
+
         if not filename:
             if self.filename:
                 filename = self.filename
@@ -368,13 +393,9 @@ class CerramientosDB(object):
                 raise ValueError, "No se ha especificado un archivo"
         config = configobj.ConfigObj(filename,
                                      encoding='utf-8', raise_errors=True)
-        self.cerramientos = {}
-        self.nombres, self.nombrestipos = [], []
         if 'config' in config:
             self.config = config['config'].copy()
             del config['config']
-        else:
-            self.config = None
         for section in config:
             cerramiento = config[section]
             nombre = unescape(section)
@@ -394,14 +415,17 @@ class CerramientosDB(object):
             self.nombres.append(nombre)
             if c.tipo not in self.nombrestipos:
                 self.nombrestipos.append(c.tipo)
-    
+
     def savecerramientosdb(self, filename=None):
-        """Guarda base de datos de cerramientos en formato ConfigObj"""
+        """Guarda base de datos de cerramientos en formato ConfigObj
+
+        :param str filename: nombre del archivo en el que guardar la BBDD.
+        """
         def escape(data):
             """Escape &, [ and ] a string of data."""
             d = data.replace("&", "&amp;")
             return d.replace("[", "&lb;").replace("]", "&rb;")
-        
+
         if not filename:
             if self.filename:
                 filename = self.filename
