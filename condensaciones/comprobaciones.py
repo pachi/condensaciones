@@ -37,10 +37,11 @@ def fRsi(U):
     :returns: factor de temperatura de la superficie interior
     :rtype: float
 
-    Nota:
-    Para el cálculo del factor de temperatura de los encuentros de cerramientos
-    se deben aplicar los métodos de las normas UNE EN ISO 10 211-1:1995 y
-    UNE EN ISO 10 211-2:2002, no implementados en esta función.
+    .. note::
+
+        Para el cálculo del factor de temperatura de los encuentros de cerramientos
+        se deben aplicar los métodos de las normas UNE EN ISO 10 211-1:1995 y
+        UNE EN ISO 10 211-2:2002, no implementados en esta función.
     """
     return 1.0 - U * 0.25
 
@@ -55,7 +56,7 @@ def fRsimin(tempext, tempint=20.0, hrint=55.0):
 
     :param float tempext: Temperatura exterior de la localidad en el mes de enero [ºC]
     :param float tempint: Temperatura del ambiente interior (a falta de otros
-    datos se puede tomar 20ºC) [ºC]
+                          datos se puede tomar 20ºC) [ºC]
     :param float hrint: Humedad relativa interior [%]
     :returns: factor de temperatura de la superficie interior mínimo
     :rtype: float
@@ -83,7 +84,7 @@ def condensas(cerr, temp_ext, temp_int, HR_int):
     :param Cerramiento cerr: Cerramiento para comprobar
     :param float temp_ext: Temperatura exterior de la localidad en el mes de enero [ºC]
     :param float temp_int: Temperatura del ambiente interior (a falta de otros
-    datos se puede tomar 20ºC) [ºC]
+                           datos se puede tomar 20ºC) [ºC]
     :param float HR_int: Humedad relativa interior [%]
     :returns: `True` si existen condensaciones superficiales.
     :rtype: float
@@ -102,7 +103,7 @@ def condensai(cerr, temp_ext, temp_int, HR_ext, HR_int):
     :param Cerramiento cerr: Cerramiento para comprobar
     :param float temp_ext: Temperatura exterior de la localidad en el mes de enero [ºC]
     :param float temp_int: Temperatura del ambiente interior (a falta de otros
-    datos se puede tomar 20ºC) [ºC]
+                           datos se puede tomar 20ºC) [ºC]
     :param float HR_ext: Humedad relativa exterior [%]
     :param float HR_int: Humedad relativa interior [%]
     :returns: `True` si existen condensaciones intersticiales.
@@ -122,7 +123,7 @@ def condensaciones(cerr, temp_ext, temp_int, HR_ext, HR_int):
     :param Cerramiento cerr: Cerramiento para comprobar
     :param float temp_ext: Temperatura exterior de la localidad en el mes de enero [ºC]
     :param float temp_int: Temperatura del ambiente interior (a falta de otros
-    datos se puede tomar 20ºC) [ºC]
+                           datos se puede tomar 20ºC) [ºC]
     :param float HR_ext: Humedad relativa exterior [%]
     :param float HR_int: Humedad relativa interior [%]
     :returns: `True` si existen condensaciones superficiales o intersticiales.

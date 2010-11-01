@@ -335,7 +335,7 @@ class CerramientosDB(object):
         """Inicialización de la BBDD de Cerramientos
 
         :param str filename: nombre del archivo desde el que cargar la base de
-        datos
+                             datos
         """
         #: nombre del archivo desde el que cargar la base de datos
         self.filename = filename
