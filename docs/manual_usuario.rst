@@ -1,23 +1,65 @@
 .. Hacer pantallazos de nuevo y comprobar por qué en Linux no se ve el nombre del cerramiento en la barra de información general.
 
 .. _manual_usuario:
-
 =============================================================================
                             Manual del usuario
 =============================================================================
 
-Aplicación de conversión de bases de datos
+.. _instalacion:
+Instalación de la aplicación
+============================
+
+La forma más habitual de instalar Condensaciones es utilizando uno de los
+instaladores preparados para su sistema operativo.
+
+Si no hay un instalador disponible o quiere hacer una instalación a partir de
+las fuentes, entonces necesita instalar un intérprete de Python_ y las
+siguientes bibliotecas:
+
+- Python_ 2.6
+- PyGTK_ 2.22.0
+- PyGObject_ 2.26.0
+- PyCairo_ 1.18.10
+- Numpy_ 1.4.0
+- Matplotlib_ 1.0.0
+- ConfigObj_ 4.7.2
+
+Para generar la documentación es necesario instalar el paquete Sphinx_ (v1.0.4) y
+para los test el paquete unittest2_ (v0.5.1). Los instaladores se generan
+utilizando distribute_ (0.6.14), PIL_ 1.1.7 para los gráficos y py2exe_ y NSIS_
+para los instaladores de Windows.
+
+.. _Python: http://www.python.org
+.. _PyGTK: http://www.pygtk.org
+.. _PyGObject: http://www.pygtk.org
+.. _PyCairo: http://www.pygtk.org
+.. _Numpy: http://numpy.scipy.org/
+.. _Matplotlib: http://matplotlib.sourceforge.net
+.. _ConfigObj: http://www.voidspace.org.uk/python/configobj.html
+.. _Sphinx: http://sphinx.pocoo.org/
+.. _unittest2: http://pypi.python.org/pypi/unittest2
+.. _distribute: http://pypi.python.org/pypi/distribute
+.. _PIL: http://www.pythonware.com/products/pil/
+.. _py2exe: http://www.py2exe.org/
+.. _NSIS: http://nsis.sourceforge.net/
+
+.. _conversion_materiales:
+Conversión de bases de datos de materiales
 ==========================================
 
 Condensa incluye una aplicación auxiliar que permite convertir bases de datos
-en formato LIDER_ / CALENER_ al formato propio de la aplicación.
+que utilicen el formato de LIDER_/CALENER_ al formato propio de la aplicación.
+
 
 .. Pendiente de acabar. Indicar cómo se usa.
 
-.. _ui_organizacion_general:
+.. _interfaz_usuario:
+Interfaz de usuario
+===================
 
+.. _ui_organizacion_general:
 Organización general de la interfaz
-===================================
+-----------------------------------
 
 La interfaz de la aplicación organiza el contenido en zonas o bandas para
 facilitan su uso y localizar más rápidamente la información relevante.
@@ -36,7 +78,7 @@ Estas zonas son:
 .. _ui_herramientas:
 
 Barra de herramientas
-=====================
+---------------------
 
 La barra de herramientas contiene los botones de acceso al diálogo de la
 biblioteca de cerramientos y al diálogo de definición de climas (interior y
@@ -45,7 +87,7 @@ exterior).
 .. _ui_infogeneral:
 
 Barra de información general
-============================
+----------------------------
 
 La barra de información general permite conocer el cerramiento activo y los
 parámetros de cálculo activos.
@@ -66,7 +108,7 @@ condensaciones, o rojo si se producen condensaciones en su interior.
 .. _ui_pestañas:
 
 Pestañas de datos
-=================
+-----------------
 
 Esta zona incluye información más detallada en varias pestañas:
 
@@ -205,7 +247,7 @@ del informe en el navegador web que tenga configurado el sistema.
 .. _ui_resultados:
 
 Barra de resultados generales
-=============================
+-----------------------------
 
 Esta zona recoge la cantidad total de vapor condensado (en g/m²mes) y su
 distribución en capas.
@@ -213,7 +255,7 @@ distribución en capas.
 .. _ui_estado:
 
 Barra de estado
-===============
+---------------
 
 La barra de estado indica la última operación realizada e información
 relacionada con ella.
