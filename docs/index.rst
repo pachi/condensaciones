@@ -15,7 +15,7 @@ Documentación
 
    sobre_condensaciones
    manual_usuario
-   api_reference
+   referencia_programacion
 
     * :ref:`genindex`
     * :ref:`search`
