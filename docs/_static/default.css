@@ -513,3 +513,6 @@ li.toctree-l1 {
 li.toctree-l1 > a.reference {
   font-weight: bold;
 }
+
+img.imginicial {float:left; margin:10px;}
+#documentacion {clear:both;}
