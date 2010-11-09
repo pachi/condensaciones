@@ -38,7 +38,7 @@ La aplicación permite:
 Licencia (GPL2+)
 ================
 
-Condensaciones es `software libre`_ multiplataforma (GNU/Linx, Windows, MacOSX...) y se publica bajo licencia GPL_ en su versión 2 o posterior.
+**Condensaciones** es `software libre`_ multiplataforma (GNU/Linx, Windows, MacOSX...) y se publica bajo licencia GPL_ en su versión 2 o posterior.
 
 La aplicación ha sido escrita por `Rafael Villar Burke`_ usando el lenguaje Python_ y las bibliotecas PyGTK_ y Matplotlib_ para la interfaz gráfica y la generación de diagramas.
 
