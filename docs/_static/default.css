@@ -265,7 +265,7 @@ h2 {
     margin: 1.3em 0 0.2em 0;
     font-size: 1.35em;
     padding: 0.3em;
-    border-bottom: solid 2px #E3EFF1;
+    border: solid 2px #E3EFF1;
     color: #082B3F;
 }
 
@@ -273,6 +273,7 @@ h3 {
     margin: 1em 0 -0.3em 0;
     font-size: 1.2em;
     color: #082B3F;
+    text-decoration: underline;
 }
 
 h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
@@ -503,4 +504,12 @@ ul.search li div.context {
 
 ul.keywordmatches li.goodmatch a {
     font-weight: bold;
+}
+
+li.toctree-l1 {
+  margin:10px;
+}
+
+li.toctree-l1 > a.reference {
+  font-weight: bold;
 }
