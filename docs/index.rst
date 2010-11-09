@@ -1,6 +1,11 @@
 Condensaciones
 ==============
 
+.. image:: _static/pantallazos/main_win_v05.png
+   :scale: 25%
+   :class: imginicial
+   :alt: Pantalla de edición de cerramiento de Condensaciones
+
 **Condensaciones** es una aplicación que permite realizar el **cálculo de los parámetros higrotérmicos** de cerramientos y la **comprobación de la existencia de condensaciones** *superficiales* o *intersticiales*.
 
 La aplicación ha sido desarrollada por `Rafael Villar Burke`_.
@@ -16,9 +21,6 @@ Documentación
    sobre_condensaciones
    manual_usuario
    referencia_programacion
-
-    * :ref:`genindex`
-    * :ref:`search`
 
 .. note::
 
