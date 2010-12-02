@@ -22,6 +22,7 @@
 #   02110-1301, USA.
 """Cerramiento - Clase para la modelización de un cerramiento tipo."""
 
+import numpy
 import psicrom
 import material
 import configobj
@@ -216,8 +217,7 @@ class Cerramiento(object):
         p_sat = self.presionessat(temp_ext, temp_int)
         # calculamos las posiciones x, y correspondientes a espesor de aire
         # equivalente y presiones de saturación
-        Scapas = self.S
-        _xjo = [0.0] + [sum(Scapas[:i]) for i in range(1,len(Scapas)+1)]
+        _xjo = numpy.cumsum([0.0] + self.S)
         _yjo = ([p[1]] + [_p for _p in p_sat[2:-2]] + [p[-1]])
 
         # Calculamos la envolvente convexa inferior de la linea de presiones de
@@ -242,7 +242,6 @@ class Cerramiento(object):
         _g = [(psicrom.g(_yj[n+1], _yj[n+2], _xj[n+1], _xj[n+2]) -
                psicrom.g(_yj[n], _yj[n+1], _xj[n], _xj[n+1]))
                for n in range(len(_yj) - 2)]
-        return _g, envolv_inf
 
     def evaporacion(self, temp_ext, temp_int, HR_ext, HR_int, interfases):
         """Cantidad de evaporación y coordenadas de evaporación/presión
@@ -261,8 +260,7 @@ class Cerramiento(object):
         p_sat = self.presionessat(temp_ext, temp_int)
         # calculamos las posiciones x, y correspondientes a espesor de aire
         # equivalente y presiones de saturación
-        Scapas = self.S
-        x_jo = [0.0] + [sum(Scapas[:i]) for i in range(1,len(Scapas)+1)]
+        x_jo = numpy.cumsum([0.0] + self.S)
         y_jo = ([p[1]] + [_p for _p in p_sat[2:-2]] + [p[-1]])
 
         puntos_evapora = [(x_jo[i], y_jo[i]) for i in interfases]
