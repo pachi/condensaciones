@@ -47,8 +47,8 @@ class GraphData(object):
                                         climae.HR, climai.HR)
         self.presiones_sat = cerr.presionessat(climae.temp, climai.temp)
         self.nombres = cerr.nombres
-        self.rotulos_s = add_margin(cerr.espesores_acumulados)
-        self.rotulos_ssat = cerr.S_acumulados
+        self.rotulos_s = add_margin(list(numpy.cumsum([0.0] + cerr.espesores)))
+        self.rotulos_ssat = numpy.cumsum([0.0] + cerr.S)
         self.qc, self.p_condensa = cerr.condensacion(climae.temp, climai.temp,
                                                      climae.HR, climai.HR)
 #        self.qe, self.p_evapora = cerr.evaporacion(temp_ext, temp_int,

@@ -64,12 +64,6 @@ class  CerramientoTestCase(unittest.TestCase):
         result = [0.11, 0.01, 0.03, 0.03, 0.01]
         self.assertEqual(e, result)
     
-    def test_espesoresacumulados(self):
-        """Espesor geométrico acumulado en cada interfase [m]"""
-        e = self.c1.espesores_acumulados
-        result = [0.0, 0.11, 0.12, 0.15, 0.18, 0.19]
-        self.assertEqual(e, result)
-    
     def test_R(self):
         """Resistencia térmica de las capas del cerramiento [m²K/W]"""
         R = self.c1.R
@@ -88,13 +82,6 @@ class  CerramientoTestCase(unittest.TestCase):
         S = self.c1.S
         result = [1.10, 0.10, 0.6, 0.3, 0.06]
         self.assertEqual(S, result)
-
-    def test_S_acumulados(self):
-        """Espesor de aire equivalente acumulado en cada interfase [m]"""
-        Sa = self.c1.S_acumulados
-        result = [0.0, 1.10, 1.20, 1.80, 2.10, 2.16]
-        for a, b in zip(Sa, result):
-            self.assertAlmostEqual(a, b, places=8)
 
     def test_S_total(self):
         """Espesor de aire equivalente total [m]"""

@@ -95,16 +95,6 @@ class Cerramiento(object):
         return sum(self.espesores)
 
     @property
-    def espesores_acumulados(self):
-        """Lista de espesores físicos acumulados [m]
-
-        Lista de coordenadas X geométricas de las interfases de cada capa.
-        """
-        #return numpy.cumsum([0.0] + self.espesores)
-        return [0.0] + [sum(self.espesores[:i]) 
-                        for i in range(1, len(self.espesores)+1)]
-
-    @property
     def mu(self):
         """Lista de difusividades al vapor de las capas [-]"""
         return [self.matDB[nombre].mu for nombre, e in self.capas]
@@ -138,16 +128,6 @@ class Cerramiento(object):
     def S(self):
         """Lista de espesores de aire equivalente de las capas [m]"""
         return [e * self.matDB[nombre].mu for nombre, e in self.capas]
-
-    @property
-    def S_acumulados(self):
-        """Lista de espesores de aire equivalente acumulados en cada capa [m]
-
-        Lista de coordenadas X en espesor de aire equivalente de las
-        interfases de capa.
-        """
-        #return numpy.cumsum([0.0] + self.S)
-        return [0.0] + [sum(self.S[:i]) for i in range(1,len(self.S)+1)]
 
     @property
     def S_total(self):
