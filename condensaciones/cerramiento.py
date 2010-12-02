@@ -22,7 +22,6 @@
 #   02110-1301, USA.
 """Cerramiento - Clase para la modelización de un cerramiento tipo."""
 
-import operator
 import psicrom
 import material
 import configobj
@@ -59,28 +58,22 @@ class Cerramiento(object):
         self.nombre = nombre
         #: Descripción somera de la composición del cerramiento
         self.descripcion = descripcion
-        if not capas:
-            capas = [(self.matDB.nombres[0], 0.3)]
         #: lista de tuplas con la descripción de las capas que forman
         #: el cerramiento. Cada tupla define una capa, identificada por
         #: su nombre y su espesor. La lista se ordena de exterior a
         #: interior.
         #: Si no se define, se usa una capa de espesor 0,3m y material
         #: el primero de la base de datos.
-        self.capas = capas
-        for nombre, e in capas:
+        self.capas = capas if capas else [(self.matDB.nombres[0], 0.3)]
+        for nombre, e in self.capas:
             if nombre not in self.matDB.nombres:
                 raise ValueError('Material desconocido: %s' % nombre)
-        if not Rse:
-            Rse = 0.04
         #: Resistencia superficial exterior [m²K/W]
         #: Si no se indica valor, se usa 0,04 m²K/W.
-        self.Rse = Rse
-        if not Rsi:
-            Rsi = 0.13
+        self.Rse = Rse if Rse else 0.04
         #: Resistencia superficial interior [m²K/W]
         #: Si no se indica valor, se usa 0,13 m²K/W.
-        self.Rsi = Rsi
+        self.Rsi = Rsi if Rsi else 0.13
         #: Tipo de cerramiento en relación a su disposición (horizontal,
         #: vertical, cubierta, etc) y que sirve para definir de forma
         #: implícita sus valores de resistencia superficial.
@@ -99,7 +92,7 @@ class Cerramiento(object):
     @property
     def e(self):
         """Espesor total [m]"""
-        return reduce(operator.add, self.espesores)
+        return sum(self.espesores)
 
     @property
     def espesores_acumulados(self):
@@ -107,7 +100,8 @@ class Cerramiento(object):
 
         Lista de coordenadas X geométricas de las interfases de cada capa.
         """
-        return [0.0] + [reduce(operator.add, self.espesores[:i])
+        #return numpy.cumsum([0.0] + self.espesores)
+        return [0.0] + [sum(self.espesores[:i]) 
                         for i in range(1, len(self.espesores)+1)]
 
     @property
@@ -143,8 +137,7 @@ class Cerramiento(object):
     @property
     def S(self):
         """Lista de espesores de aire equivalente de las capas [m]"""
-        return [e * self.matDB[nombre].mu
-                for nombre, e in self.capas]
+        return [e * self.matDB[nombre].mu for nombre, e in self.capas]
 
     @property
     def S_acumulados(self):
@@ -153,8 +146,8 @@ class Cerramiento(object):
         Lista de coordenadas X en espesor de aire equivalente de las
         interfases de capa.
         """
-        return [0.0] + [reduce(operator.add, self.S[:i])
-                        for i in range(1,len(self.S)+1)]
+        #return numpy.cumsum([0.0] + self.S)
+        return [0.0] + [sum(self.S[:i]) for i in range(1,len(self.S)+1)]
 
     @property
     def S_total(self):
@@ -184,9 +177,9 @@ class Cerramiento(object):
         :rtype: list
         """
         _tlist = [temp_ext]
+        _k = (temp_int - temp_ext) / self.R_total
         for capa_Ri in self.R:
-            tempj = _tlist[-1] + (capa_Ri * (temp_int -
-                                             temp_ext) / self.R_total)
+            tempj = _tlist[-1] + (capa_Ri * _k)
             _tlist.append(tempj)
         return _tlist
 
@@ -207,8 +200,9 @@ class Cerramiento(object):
         _p_int = psicrom.pvapor(temp_int, HR_int)
         # La presión exterior es constante, en el aire y sup ext de cerr
         p_vapor = [_p_ext, _p_ext]
+        _k = (_p_int - _p_ext) / self.S_total
         for capa_Si in self.S:
-            pres_j = p_vapor[-1] + (capa_Si * (_p_int - _p_ext) / self.S_total)
+            pres_j = p_vapor[-1] + (capa_Si * _k)
             p_vapor.append(pres_j)
         # La presión interior es constante, en sup int de cerr y el aire
         p_vapor.append(_p_int)
@@ -243,8 +237,7 @@ class Cerramiento(object):
         # calculamos las posiciones x, y correspondientes a espesor de aire
         # equivalente y presiones de saturación
         Scapas = self.S
-        _xjo = [0.0] + [reduce(operator.add, Scapas[:i])
-                        for i in range(1,len(Scapas)+1)]
+        _xjo = [0.0] + [sum(Scapas[:i]) for i in range(1,len(Scapas)+1)]
         _yjo = ([p[1]] + [_p for _p in p_sat[2:-2]] + [p[-1]])
 
         # Calculamos la envolvente convexa inferior de la linea de presiones de
@@ -289,8 +282,7 @@ class Cerramiento(object):
         # calculamos las posiciones x, y correspondientes a espesor de aire
         # equivalente y presiones de saturación
         Scapas = self.S
-        x_jo = [0.0] + [reduce(operator.add, Scapas[:i])
-                        for i in range(1,len(Scapas)+1)]
+        x_jo = [0.0] + [sum(Scapas[:i]) for i in range(1,len(Scapas)+1)]
         y_jo = ([p[1]] + [_p for _p in p_sat[2:-2]] + [p[-1]])
 
         puntos_evapora = [(x_jo[i], y_jo[i]) for i in interfases]
