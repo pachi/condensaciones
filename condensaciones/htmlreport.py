@@ -41,7 +41,7 @@ __HTMLTEMPLATE = """
         <h3>%(nombrecerramiento)s</h3>
         <h4>%(descripcioncerramiento)s</h4>
         %(capaslist)s
-        <h3>Transmitancia térmica total: U = %(U)s [W/m²K]</h3>
+        <h3>Transmitancia térmica total: U = %(U).3f [W/m²K]</h3>
 
         <h2>Gráficas de presión, temperatura y presión de saturación</h2>
         <h3>Condiciones de cálculo seleccionadas</h3>
