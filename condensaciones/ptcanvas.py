@@ -30,9 +30,6 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_gtkcairo import FigureCanvasGTKCairo
 from util import colores_capas, add_margin
 
-#para mostrar bien las expresiones matemáticas / latex
-matplotlib.rc('mathtext', fontset='custom')
-
 class GraphData(object):
     """Almacén de datos para dibujado de gráficas"""
     def __init__(self, cerr, climae, climai):
