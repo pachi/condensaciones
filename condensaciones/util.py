@@ -31,7 +31,12 @@ def get_main_dir():
         md = os.path.dirname(sys.executable)
     else:
         # normal run
-        md = os.path.abspath(os.path.join(os.path.dirname(sys.argv[0]), '..'))
+        md = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+        # test run
+        if not os.path.isdir(os.path.join(md, 'data')):
+            md = os.path.abspath(os.path.join(md, '..'))
+            if not os.path.isdir(os.path.join(md, 'data')):
+                raise ValueError, 'No se encuentra directorio base'
     return md
 
 APPROOT = get_main_dir() #os.path.dirname(__file__)
