@@ -140,23 +140,11 @@ class  CerramientoTestCase(unittest.TestCase):
 
     def test_condensa(self):
         """Condensación intersticial en cerramiento [g/m2.mes]"""
-        g, puntos_condensacion = self.c1.condensacion(climae.temp, climai.temp,
-                                                      climae.HR, climai.HR)
-        cantidad_condensada = sum(g) * 2592000.0 #[g/m2.mes]
+        g = self.c1.condensacion(climae.temp, climai.temp, climae.HR, climai.HR)
+        cantidades = zip(*g)[1]
+        cantidad_condensada = sum(cantidades) * 2592000.0 #[g/m².mes]
         result_cc = 31.397530032177634
         self.assertEqual(cantidad_condensada, result_cc)
-
-    def test_evapora(self):
-        """Evaporación intersticial en cerramiento"""
-        # indicamos evaporación en la interfase 2, pero habría que ver en
-        # cuáles había antes condensaciones y realizar el cálculo en ellas.
-        g, puntos_evaporacion = self.c1.evaporacion(climae.temp, climai.temp,
-                                                 climae.HR, climai.HR,
-                                                 interfases=[2])
-        cantidad_evaporada = sum(g) * 2592000.0 #[g/m2.mes]
-        result_ce = 30.075454627910425
-        #result_ce = 0.0 #FIXME: Solucionar. Implementar bien cálculo
-        self.assertEqual(cantidad_evaporada, result_ce)
 
 if __name__ == '__main__':
     suite = unittest.TestLoader().loadTestsFromTestCase(CerramientoTestCase)

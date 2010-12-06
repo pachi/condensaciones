@@ -109,12 +109,10 @@ def condensai(cerr, temp_ext, temp_int, HR_ext, HR_int):
     :returns: `True` si existen condensaciones intersticiales.
     :rtype: float
     """
-    #TODO: Revisar condensaciones viendo si la cantidad condensada es
-    # susceptible de evaporación o no
-    g, pcondensa = cerr.condensacion(temp_ext, temp_int, HR_ext, HR_int)
-    #g, pevapora = cerr.evaporacion(temp_ext, temp_int, HR_ext, HR_int,
-    #                                      interfases=[2])
-    condensa = (sum(g) > 0.0)
+    #TODO: Revisar condensaciones añadiendo condensaciones existentes
+    g = cerr.condensacion(temp_ext, temp_int, HR_ext, HR_int)
+    gq = zip(*g)[1] if g else []
+    condensa = (sum(gq) > 0.0)
     return condensa
 
 def condensaciones(cerr, temp_ext, temp_int, HR_ext, HR_int):

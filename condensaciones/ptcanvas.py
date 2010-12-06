@@ -46,11 +46,8 @@ class GraphData(object):
         self.nombres = cerr.nombres
         self.rotulos_s = add_margin(list(numpy.cumsum([0.0] + cerr.espesores)))
         self.rotulos_ssat = numpy.cumsum([0.0] + cerr.S)
-        self.qc, self.p_condensa = cerr.condensacion(climae.temp, climai.temp,
-                                                     climae.HR, climai.HR)
-#        self.qe, self.p_evapora = cerr.evaporacion(temp_ext, temp_int,
-#                                                   HR_ext, HR_int,
-#                                                   interfases=[2])
+        self.p_condensa = cerr.envolventec(climae.temp, climai.temp, climae.HR, climai.HR)
+        self.qc = cerr.cantidadc(self.p_condensa, cond_previa=[])
         self.color = colores_capas(self.nombres)
 
         #nemotécnicas intermedias

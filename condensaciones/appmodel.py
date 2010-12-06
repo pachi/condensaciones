@@ -108,8 +108,8 @@ class Model(object):
         self.ccheck = comprobaciones.condensaciones(self.c, te, ti, hre, hri)
         self.cs = comprobaciones.condensas(self.c, te, ti, hri)
         self.ci = comprobaciones.condensai(self.c, te, ti, hre, hri)
-        self.g, self.pcond = self.c.condensacion(te, ti, hre, hri)
-        #self.g, self.pevap = self.c.evaporacion(te,ti,hre,hri,interfases=[2])
+        g = self.c.condensacion(te, ti, hre, hri)
+        self.g = zip(*g)[1] if g else []
         self.totalg = 0.0 if not self.g else sum(self.g)
 
     def condensasuperficialesCTE(self):

@@ -191,7 +191,7 @@ class Cerramiento(object):
 
     def presionessat(self, temp_ext, temp_int):
         """Lista de presiones de saturación en el cerramiento [Pa]
-
+        
         :param float temp_ext: Temperatura exterior del aire [ºC]
         :param float temp_int: Temperatura interior del aire [ºC]
         :returns: lista de presiones de vapor de saturación en el cerramiento
@@ -200,79 +200,108 @@ class Cerramiento(object):
         _temperaturas = self.temperaturas(temp_ext, temp_int)
         return [psicrom.psat(t) for t in _temperaturas]
 
-    def condensacion(self, temp_ext, temp_int, HR_ext, HR_int):
-        """Cantidad de condensación y coordenadas de condensación/presión
-
+    def envolventec(self, temp_ext, temp_int, HR_ext, HR_int, cond_previa=[]):
+        """Puntos de las interfases que definen la envolvente de condensaciones
+        
+        Puntos (S, psat, g) situados en las interfases que definen la envolvente
+        de condensaciones. Sus puntos de tangencia con la curva de presiones de
+        saturación definen los planos de condensación.
+        
         :param float temp_ext: Temperatura exterior del aire [ºC]
         :param float temp_int: Temperatura interior del aire [ºC]
         :param float HR_ext: Humedad relativa exterior del aire [%]
         :param float HR_int: Humedad relativa interior del aire [%]
-        :returns: cantidad de condensación (en [g/m²s]) y una lista de
-            tuplas con las coordenadas de los puntos de condensacion en [m] de
-            espesor de aire equivalente y la presión de vapor en ese punto
-            (S(i), p_vapor(i)).
-        :rtype: tuple (float, list)
+        :param list cond_previa: Lista de tuplas con posición del plano con
+            condensación previa (0 = superficie exterior) y cantidad de
+            condensado en ese plano [g/m²] [(n0, g0), (n1, g1), ..., (ni, gi)].
+        
+        :returns: Lista de tuplas [(S0, p0, g0), (S1, p1 g1), ..., (Si, pi, gi)]
+            de distancia a la superficie exterior [m de aire equivalente],
+            presión de saturación [Pa] y cantidad de condensación [g/m²s] para
+            cada interfase.
+        :rtype: list(tuple)
         """
-        p = self.presiones(temp_ext, temp_int, HR_ext, HR_int)
-        p_sat = self.presionessat(temp_ext, temp_int)
-        # calculamos las posiciones x, y correspondientes a espesor de aire
-        # equivalente y presiones de saturación
-        _xjo = numpy.cumsum([0.0] + self.S)
-        _yjo = ([p[1]] + [_p for _p in p_sat[2:-2]] + [p[-1]])
-
-        # Calculamos la envolvente convexa inferior de la linea de presiones de
-        # saturación partiendo de presion_exterior y presion_interior como
-        # extremos.
-        # Los puntos de tangencia son los planos de condensación
+        
+        #TODO: devolver solamente coordenadas y no cantidades de condensación
+        # ya que no se usan en el cálculo.
         def _giraizq((p, q, r)):
             "¿Forman los vectores pq:qr un giro a la izquierda?"
             _det = ((q[0]*r[1] + p[0]*q[1] + r[0]*p[1]) -
                     (q[0]*p[1] + r[0]*q[1] + p[0]*r[1]))
             return (_det > 0) or False
-
-        puntos = [(x, y) for x, y in zip(_xjo, _yjo)]
+        
+        # Calcula las posiciones x, y, g correspondientes a espesor de aire
+        # equivalente, presiones de vapor y cantidades condensadas previas.
+        # El punto inicial y final corresponden a las presiones de vapor en las
+        # superficies exterior e interior, y los puntos intermedios se
+        # inicializan a los valores de las presiónes de saturación, para
+        # luego calcular la envolvente convexa inferior que nos dará los planos
+        # de condensación en los puntos de tangencia.
+        interfases = range(len(self.capas) + 1)
+        p = self.presiones(temp_ext, temp_int, HR_ext, HR_int)
+        p_sat = self.presionessat(temp_ext, temp_int)
+        g = dict(cond_previa)
+        
+        x0 = numpy.cumsum([0.0] + self.S)
+        y0 = ([p[1]] + [_p for _p in p_sat[2:-2]] + [p[-1]])       
+        g0 = [g.get(i, 0.0) for i in interfases]
+        
+        puntos = [(xj, yj, gj) for xj, yj, gj in zip(x0, y0, g0)]
+        
+        # Un punto intermedio B no pertenece a la envolvente convexa si, siendo
+        # el punto anterior A y el posterior C, BC produce un giro a la derecha
+        # respecto a AB (AC queda por debajo) y si no tiene ya condensación 
+        # previa.
         envolv_inf = [puntos[0], puntos[1]]
-        for p in puntos[2:]:
-            envolv_inf.append(p)
-            while len(envolv_inf) > 2 and not _giraizq(envolv_inf[-3:]):
+        for punto in puntos[2:]:
+            envolv_inf.append(punto)
+            if (not _giraizq(envolv_inf[-3:]) and
+                envolv_inf[-2][2] <= 0.0): # gj > 0 implica condensación previa
                 del envolv_inf[-2]
-        _xj = [x for x, y in envolv_inf]
-        _yj = [y for x, y in envolv_inf]
-        # condensaciones g/m2.s
-        _g = [(psicrom.g(_yj[n+1], _yj[n+2], _xj[n+1], _xj[n+2]) -
-               psicrom.g(_yj[n], _yj[n+1], _xj[n], _xj[n+1]))
-               for n in range(len(_yj) - 2)]
+        xj, yj, gj = zip(*envolv_inf)
+        return zip(xj,yj)
 
-    def evaporacion(self, temp_ext, temp_int, HR_ext, HR_int, interfases):
-        """Cantidad de evaporación y coordenadas de evaporación/presión
+    def cantidadc(self, envolv_inf, cond_previa=[]):
+        """Cantidades condensadas en las interfases [g/m².s]
+        
+        Calcula las cantidades de condensación a partir de la envolvente de
+        condensaciones y las condensaciones previas en cada interfase.
+        """
+        def _g_punto(plist):
+            "Calcula la condensación en el punto intermedio (B), para ABC"
+            xpa, ypa = plist[0][0], plist[0][1] # p0: (x, y, g)
+            xpb, ypb = plist[1][0], plist[1][1] # p1: (x, y, g)
+            xpc, ypc = plist[2][0], plist[2][1] # p2: (x, y, g)
+            return psicrom.g(ypb, ypc, xpb, xpc) - psicrom.g(ypa, ypb, xpa, xpb)
+        
+        x_index = list(numpy.cumsum([0.0] + self.S))
+        
+        gold = dict(cond_previa)
+        gnew = dict((x_index.index(x[0]), _g_punto(envolv_inf[i:])) 
+                    for i, x in enumerate(envolv_inf[1:-1]))
+        gtotal = [max(0.0,gold.get(i, 0.0) + gnew.get(i, 0.0)) 
+                  for i in range(len(x_index))]
+        new_cond = [(i, gj) for i, gj in enumerate(gtotal) if gj > 0.0]
+        return new_cond
+
+    def condensacion(self, temp_ext, temp_int, HR_ext, HR_int, cond_previa=[]):
+        """Cantidad de condensación por interfases
 
         :param float temp_ext: Temperatura exterior del aire [ºC]
         :param float temp_int: Temperatura interior del aire [ºC]
         :param float HR_ext: Humedad relativa exterior del aire [%]
         :param float HR_int: Humedad relativa interior del aire [%]
-        :returns: cantidad de evaporación (en [g/m²s]) y una lista de
-            tuplas con las coordenadas de los puntos de evaporación en [m] de
-            espesor de aire equivalente y la presión de vapor en ese punto
-            (S(i), p_vapor(i)).
-        :rtype: tuple (float, list)
+        :param list cond_previa: Lista de tuplas con posición del plano con
+            condensación previa (0 = superficie exterior) y cantidad de
+            condensado en ese plano [g/m²] [(n0, g0), (n1, g1), ..., (ni, gi)].
+        :returns: Lista de tuplas con posición del plano de
+            condensación (0 = superficie exterior) y cantidad de condensado en
+            ese plano (en [g/m²s]) [(n0, g0), (n1, g1), ..., (ni, gi)]
+        :rtype: list(tuple, ...)
         """
-        p = self.presiones(temp_ext, temp_int, HR_ext, HR_int)
-        p_sat = self.presionessat(temp_ext, temp_int)
-        # calculamos las posiciones x, y correspondientes a espesor de aire
-        # equivalente y presiones de saturación
-        x_jo = numpy.cumsum([0.0] + self.S)
-        y_jo = ([p[1]] + [_p for _p in p_sat[2:-2]] + [p[-1]])
-
-        puntos_evapora = [(x_jo[i], y_jo[i]) for i in interfases]
-        envolvente_inf = ([(x_jo[0], y_jo[0])] + puntos_evapora +
-                          [(x_jo[-1], y_jo[-1])])
-        x_j = [x for x, y in envolvente_inf]
-        y_j = [y for x, y in envolvente_inf]
-        # evaporaciones g/m2.s
-        _g = [(psicrom.g(y_j[n+1], y_j[n+2], x_j[n+1], x_j[n+2]) -
-               psicrom.g(y_j[n], y_j[n+1], x_j[n], x_j[n+1]))
-               for n in range(len(y_j) - 2)]
-        return _g, envolvente_inf
+        envolv_inf = self.envolventec(temp_ext, temp_int, HR_ext, HR_int, cond_previa)
+        new_cond = self.cantidadc(envolv_inf, cond_previa)
+        return new_cond
 
 #===============================================================================
 # BBDD de Cerramientos en formato ConfigObj
