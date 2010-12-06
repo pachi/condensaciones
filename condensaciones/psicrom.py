@@ -112,7 +112,7 @@ def hrloc(temp, humedad, deltah):
     return 100.0 * (pvapor(temp, humedad) / psatloc(temp, deltah))
 
 def g(pe, pi, Se, Si):
-    """Tasa de transferencia de vapor a través del cerramiento [g/m2.s]
+    """Tasa de transferencia de vapor a través del cerramiento o capa [g/m².s]
 
     Resulta útil para calcular condensada o evaporada entre interfases.
 
