@@ -130,7 +130,7 @@ class CPTCanvas(FigureCanvasGTKCairo):
         # Presiones de saturación
         ax1.plot(d.rotulos_s, d.presiones_sat, 'k-', linewidth=0.5)
         # Rellena zona de condensación (psat <= presiones)
-        nsteps = 500
+        nsteps = 200
         xmin = d.rotulos_s[0]
         xmax = d.rotulos_s[-1]
         xstep = (xmax - xmin) / float(nsteps)
