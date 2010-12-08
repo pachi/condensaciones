@@ -22,6 +22,7 @@
 #   02110-1301, USA.
 """Interfaz de usuario de Condensaciones en GTK+"""
 
+import gobject
 import gtk
 import pango
 import util
@@ -95,7 +96,7 @@ class GtkCondensa(object):
 
     #{ Funcionaes de actualización de datos en interfaz
 
-    def actualiza(self, txt=None, updategraphs=False):
+    def actualiza(self, txt=None):
         """Actualiza cabecera, gráficas, texto y pie de datos"""
         if txt:
             self.ui.get_object('statusbar').push(0, txt)
@@ -106,9 +107,8 @@ class GtkCondensa(object):
         self.actualizacabecera()
         self.actualizapie()
         self.actualizacapas()
-        if updategraphs:
-            self.actualizagraficas()
-            self.actualizainforme()
+        gobject.idle_add(self.actualizagraficas)
+        gobject.idle_add(self.actualizainforme)
 
     def actualizacabecera(self):
         """Actualiza texto de cabecera"""
