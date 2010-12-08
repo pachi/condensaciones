@@ -178,9 +178,7 @@ class GtkCondensa(object):
         gdata = GraphData(self.model.c, self.model.climae, self.model.climai)
         graficaprestemp = self.ui.get_object('prestemp_canvas')
         graficapresiones = self.ui.get_object('presiones_canvas')
-        graficaprestemp.clear()
         graficaprestemp.dibuja(gdata)
-        graficapresiones.clear()
         graficapresiones.dibuja(gdata)
 
     #{ Pestaña de informe

@@ -103,12 +103,6 @@ class CPTCanvas(FigureCanvasGTKCairo):
         self.ax1 = self.fig.add_subplot(111) # 1 fila, 1 columna, dibujo 1
         self.ax2 = self.ax1.twinx()
 
-    def clear(self):
-        """Limpia imagen de datos anteriores"""
-        self.ax1.clear()
-        self.ax2.clear()
-        self.draw()
-
     def dibuja(self, d, width=600, height=400):
         """Representa Presiones de saturación vs. Presiones de vapor o
         temperaturas.
@@ -124,6 +118,8 @@ class CPTCanvas(FigureCanvasGTKCairo):
         # ================== presiones y temperaturas =====================
         # -- dibujo ---
         ax1 = self.ax1
+        ax1.clear()  # Limpia imagen de datos anteriores
+        
         ax1.set_title(u"Presiones de vapor y temperaturas", size='large')
         ax1.set_xlabel(u"Distancia [m]")
         ax1.set_ylabel(u"Presión de vapor [Pa]", fontdict=dict(color='b'))
@@ -154,6 +150,7 @@ class CPTCanvas(FigureCanvasGTKCairo):
                      color='k', size='small')
         # Eje vertical de temperaturas
         ax2 = self.ax2
+        ax2.clear()  # Limpia imagen de datos anteriores
         ax2.set_ylabel(u"Temperatura [°C]", fontdict=dict(color='r'))
         # Curva de temperaturas
         ax2.plot(d.rotulos_s, d.temperaturas, 'r', lw=1.5)
@@ -176,6 +173,7 @@ class CPTCanvas(FigureCanvasGTKCairo):
         ax2.set_ylim(ymin - 0.1 * length, ymax + 0.2 * length)
         # Tamaño
         self.set_size_request(width, height)
+        self.draw()
 
     def pixbuf(self, destwidth=600):
         """Obtén un pixbuf a partir del canvas actual"""
@@ -195,11 +193,6 @@ class CPCanvas(FigureCanvasGTKCairo):
         self.fig.set_facecolor('w') # Fondo blanco en vez de gris
         self.ax1 = self.fig.add_subplot(111) # 1 fila, 1 columna, dibujo 1
 
-    def clear(self):
-        """Limpia imagen de datos anteriores"""
-        self.ax1.clear()
-        self.draw()
-
     def dibuja(self, d, width=600, height=400):
         """Representa Presiones de saturación vs. Presiones de vapor
         
@@ -212,6 +205,7 @@ class CPCanvas(FigureCanvasGTKCairo):
         """
         # -- dibujo ---
         ax1 = self.ax1
+        ax1.clear() # Limpia imagen de datos anteriores
         ax1.set_title(u"Presiones de vapor (efectiva y de saturación)",
                       size='large')
         ax1.set_xlabel(u"Espesor de aire equivalente [m]")
@@ -264,6 +258,7 @@ class CPCanvas(FigureCanvasGTKCairo):
                   ymin - 0.1 * lengthy, ymax + 0.2 * lengthy])
         # Tamaño
         self.set_size_request(width, height)
+        self.draw()
 
     def pixbuf(self, destwidth=600):
         """Obtén un pixbuf a partir del canvas actual"""
