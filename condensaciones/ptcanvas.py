@@ -73,9 +73,11 @@ def _dibujacerramiento(ax, nombrecapas, xcapas, colordict):
     """
     # Etiquetas de exterior e interior
     ax.text(0.1, 0.92, 'exterior', transform=ax.transAxes,
-            fontsize=10, fontstyle='italic', horizontalalignment='right')
+            size=10, style='italic', ha='right')
     ax.text(0.9, 0.92, 'interior', transform=ax.transAxes,
-            fontsize=10, fontstyle='italic', horizontalalignment='left')
+            size=10, style='italic', ha='left')
+    ax.text(.5,.92,'www.rvburke.com', transform=ax.transAxes,
+            color='0.5', size=8, ha='center')
     # Lineas de tramos de cerramiento
     ax.axvline(xcapas[0], linewidth=2, color='k', ymin=.05, ymax=.9)
     for rotulo in xcapas[1:-1]:
