@@ -84,12 +84,11 @@ def _dibujacerramiento(ax, nombrecapas, xcapas, colordict):
         ax.axvline(rotulo, color='0.5', ymin=.05, ymax=.9)
     ax.axvline(xcapas[-1], linewidth=2, color='k', ymin=.05, ymax=.9)
     # Rellenos de materiales
-    ymin, ymax = ax.get_ylim()
     rotuloanterior = xcapas[0]
     for _i, (capa, rotulo) in enumerate(zip(nombrecapas, xcapas[1:])):
         ax.axvspan(rotuloanterior, rotulo,
                    facecolor=colordict[capa], alpha=0.25, ymin=.05, ymax=.9)
-        ax.text((rotulo + rotuloanterior) / 2.0, ymax, "%i" % _i,
+        ax.text((rotulo + rotuloanterior) / 2.0, 0.0, "%i" % _i,
                 fontsize=8, fontstyle='italic', horizontalalignment='center')
         rotuloanterior = rotulo
 
@@ -100,10 +99,14 @@ class CPTCanvas(FigureCanvasGTKCairo):
     def __init__(self):
         self.fig = Figure()
         FigureCanvasGTKCairo.__init__(self, self.fig)
+        self.fig.set_facecolor('w') # Fondo blanco en vez de gris
+        self.ax1 = self.fig.add_subplot(111) # 1 fila, 1 columna, dibujo 1
+        self.ax2 = self.ax1.twinx()
 
     def clear(self):
         """Limpia imagen de datos anteriores"""
-        self.fig.clear()
+        self.ax1.clear()
+        self.ax2.clear()
         self.draw()
 
     def dibuja(self, d, width=600, height=400):
@@ -120,8 +123,7 @@ class CPTCanvas(FigureCanvasGTKCairo):
         """
         # ================== presiones y temperaturas =====================
         # -- dibujo ---
-        self.fig.set_facecolor('w') # Fondo blanco en vez de gris
-        ax1 = self.fig.add_subplot(111) # 1 fila, 1 columna, dibujo 1
+        ax1 = self.ax1
         ax1.set_title(u"Presiones de vapor y temperaturas", fontsize='large')
         ax1.set_xlabel(u"Distancia [m]")
         ax1.set_ylabel(u"Presión de vapor [Pa]", fontdict=dict(color='b'))
@@ -151,7 +153,7 @@ class CPTCanvas(FigureCanvasGTKCairo):
                      xytext=(5,-15), textcoords='offset points', ha='left',
                      color='k', size='small')
         # Eje vertical de temperaturas
-        ax2 = ax1.twinx()
+        ax2 = self.ax2
         ax2.set_ylabel(u"Temperatura [°C]", fontdict=dict(color='r'))
         # Curva de temperaturas
         ax2.plot(d.rotulos_s, d.temperaturas, 'r', linewidth=1.5)
@@ -190,10 +192,12 @@ class CPCanvas(FigureCanvasGTKCairo):
     def __init__(self):
         self.fig = Figure()
         FigureCanvasGTKCairo.__init__(self, self.fig)
+        self.fig.set_facecolor('w') # Fondo blanco en vez de gris
+        self.ax1 = self.fig.add_subplot(111) # 1 fila, 1 columna, dibujo 1
 
     def clear(self):
         """Limpia imagen de datos anteriores"""
-        self.fig.clear()
+        self.ax1.clear()
         self.draw()
 
     def dibuja(self, d, width=600, height=400):
@@ -206,17 +210,16 @@ class CPCanvas(FigureCanvasGTKCairo):
         
         d - GraphData, contiene los datos para dibujar las gráficas
         """
-        x_c = [x for x, y in d.p_condensa]
-        y_c = [y for x, y in d.p_condensa]
         # -- dibujo ---
-        self.fig.set_facecolor('w') # Fondo blanco en vez de gris
-        ax1 = self.fig.add_subplot(111) # 1 fila, 1 columna, dibujo 1
+        ax1 = self.ax1
         ax1.set_title(u"Presiones de vapor (efectiva y de saturación)",
                       fontsize='large')
         ax1.set_xlabel(u"Espesor de aire equivalente [m]")
         ax1.set_ylabel(u"Presión de vapor [Pa]", fontdict=dict(color='b'))
         _dibujacerramiento(ax1, d.nombres, d.rotulos_ssat, d.color)
         # presiones efectivas
+        x_c = [x for x, y in d.p_condensa]
+        y_c = [y for x, y in d.p_condensa]
         ax1.plot(x_c, y_c, 'b-', label='p_vap')
         #presiones de saturación
         ax1.plot(d.rotulos_ssat, d.presiones_sat[1:-1],
