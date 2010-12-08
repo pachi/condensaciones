@@ -79,8 +79,8 @@ class GtkCondensa(object):
             n = len(self.model.c.matDB.nombres)
             m = len(self.model.cerramientosDB.nombres)
             r = len(self.model.climas)
-            txt = "Cargados %i materiales, %i cerramientos y %i climas"
-            self.actualiza(txt % (n, m, r))
+            msg = "Cargados %i materiales, %i cerramientos y %i climas"
+            self.actualiza(msg % (n, m, r))
         cargadata()
 
     #{ Funciones generales de aplicación
@@ -305,8 +305,8 @@ class GtkCondensa(object):
         if resultado == gtk.RESPONSE_ACCEPT:
             self.model.set_climae(float(te.props.text), float(hre.props.text))
             self.model.set_climai(float(ti.props.text), float(hri.props.text))
-            txt = "Seleccionadas nuevas condiciones ambientales"
-            self.actualiza(txt, updategraphs=True)
+            msg = "Seleccionadas nuevas condiciones ambientales"
+            self.actualiza(msg)
         adialog.hide()
 
     def _setclimaext(self):
@@ -367,8 +367,8 @@ class GtkCondensa(object):
         if resultado == gtk.RESPONSE_ACCEPT:
             nombrecerr = lblselected.props.label
             self.model.set_cerramiento(nombrecerr)
-            txt = "Seleccionado nuevo cerramiento activo: %s" % nombrecerr
-            self.actualiza(txt, updategraphs=True)
+            msg = "Seleccionado nuevo cerramiento activo: %s" % nombrecerr
+            self.actualiza(msg)
         self.ui.get_object('cerramiento_dlg').hide()
 
     def cerramientoactiva(self, tv):
@@ -399,8 +399,8 @@ class GtkCondensa(object):
             cerri = int(cerrtm.get_path(cerrtm_iter)[0])
             newcerr = self.model.cerramientoadd(cerri)
             cerrtm.insert(cerri + 1, row=(newcerr.nombre, newcerr.descripcion))
-            txt = "Añadido cerramiento nuevo: %s" % newcerr.nombre
-            self.ui.get_object('statusbar').push(0, txt)
+            msg = "Añadido cerramiento nuevo: %s" % newcerr.nombre
+            self.ui.get_object('statusbar').push(0, msg)
             ctv.set_cursor(cerri + 1)
 
     def cerramientoremove(self, widget):
