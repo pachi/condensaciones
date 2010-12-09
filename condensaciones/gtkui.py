@@ -175,11 +175,8 @@ class GtkCondensa(object):
 
     def actualizagraficas(self):
         """Redibuja gráficos con nuevos datos"""
-        gdata = GraphData(self.model.c, self.model.climae, self.model.climai)
-        graficaprestemp = self.ui.get_object('prestemp_canvas')
-        graficapresiones = self.ui.get_object('presiones_canvas')
-        graficaprestemp.dibuja(gdata)
-        graficapresiones.dibuja(gdata)
+        self.ui.get_object('prestemp_canvas').dibuja(self.model)
+        self.ui.get_object('presiones_canvas').dibuja(self.model)
 
     #{ Pestaña de informe
 

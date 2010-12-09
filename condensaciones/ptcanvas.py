@@ -32,13 +32,16 @@ from util import colores_capas, add_margin
 
 class GraphData(object):
     """Almacén de datos para dibujado de gráficas"""
-    def __init__(self, cerr, climae, climai):
+    def __init__(self, model):
         """Inicializa el almacén de datos
         
         cerr - objeto Cerramiento
         climae - objeto Clima para datos del exterior
         cliai - objeto Clima para datos del interior
         """
+        cerr = model.c
+        climae = model.climae
+        climai = model.climai
         self.temperaturas = cerr.temperaturas(climae.temp, climai.temp)
         self.presiones = cerr.presiones(climae.temp, climai.temp,
                                         climae.HR, climai.HR)
@@ -103,7 +106,7 @@ class CPTCanvas(FigureCanvasGTKCairo):
         self.ax1 = self.fig.add_subplot(111) # 1 fila, 1 columna, dibujo 1
         self.ax2 = self.ax1.twinx()
 
-    def dibuja(self, d, width=600, height=400):
+    def dibuja(self, model, width=600, height=400):
         """Representa Presiones de saturación vs. Presiones de vapor o
         temperaturas.
         
@@ -115,6 +118,7 @@ class CPTCanvas(FigureCanvasGTKCairo):
         
         d - GraphData, contiene los datos para dibujar las gráficas
         """
+        d = GraphData(model)
         # ================== presiones y temperaturas =====================
         # -- dibujo ---
         ax1 = self.ax1
@@ -193,7 +197,7 @@ class CPCanvas(FigureCanvasGTKCairo):
         self.fig.set_facecolor('w') # Fondo blanco en vez de gris
         self.ax1 = self.fig.add_subplot(111) # 1 fila, 1 columna, dibujo 1
 
-    def dibuja(self, d, width=600, height=400):
+    def dibuja(self, model, width=600, height=400):
         """Representa Presiones de saturación vs. Presiones de vapor
         
         El eje horizontal representa es espesor de aire equivalente desde
@@ -203,6 +207,7 @@ class CPCanvas(FigureCanvasGTKCairo):
         
         d - GraphData, contiene los datos para dibujar las gráficas
         """
+        d = GraphData(model)
         # -- dibujo ---
         ax1 = self.ax1
         ax1.clear() # Limpia imagen de datos anteriores
