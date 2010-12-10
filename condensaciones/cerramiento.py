@@ -224,7 +224,7 @@ class Cerramiento(object):
         
         #TODO: devolver solamente coordenadas y no cantidades de condensación
         # ya que no se usan en el cálculo.
-        def _giraizq((p, q, r)):
+        def _giraizq(p, q, r):
             "¿Forman los vectores pq:qr un giro a la izquierda?"
             _det = ((q[0]*r[1] + p[0]*q[1] + r[0]*p[1]) -
                     (q[0]*p[1] + r[0]*q[1] + p[0]*r[1]))
@@ -252,12 +252,19 @@ class Cerramiento(object):
         # el punto anterior A y el posterior C, BC produce un giro a la derecha
         # respecto a AB (AC queda por debajo) y si no tiene ya condensación 
         # previa.
-        envolv_inf = [puntos[0], puntos[1]]
-        for punto in puntos[2:]:
-            envolv_inf.append(punto)
-            if (not _giraizq(envolv_inf[-3:]) and
-                envolv_inf[-2][2] <= 0.0): # gj > 0 implica condensación previa
-                del envolv_inf[-2]
+        while 1: 
+            cont = False
+            envolv_inf = [puntos[0], puntos[1]]
+            for punto in puntos[2:]:
+                envolv_inf.append(punto)
+                if (not _giraizq(*envolv_inf[-3:]) and
+                    envolv_inf[-2][2] <= 0.0): # gj > 0 implica condensación previa
+                    del envolv_inf[-2]
+                    cont = True
+            if not cont:
+                break
+            else:
+                puntos = envolv_inf[:]
         xj, yj, gj = zip(*envolv_inf)
         return zip(xj,yj)
 
