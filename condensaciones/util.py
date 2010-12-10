@@ -57,7 +57,7 @@ def colorlist(steps):
 
 def colores_capas(lista_capas):
     "Crea un diccionario asignando a cada capa un color"
-    capas_distintas = set(lista_capas)
+    capas_distintas = sorted(set(lista_capas))
     colordict = {}
     for nombre, color in zip(capas_distintas, colorlist(len(capas_distintas))):
         colordict[nombre] = color
