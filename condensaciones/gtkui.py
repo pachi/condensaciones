@@ -149,9 +149,10 @@ class GtkCondensa(object):
         """Actualiza pie de ventana principal"""
         _K = 2592000.0 # segundos por mes
         txt = "Total (condiciones actuales): %.2f [g/m²mes]"
-        self.ui.get_object('pie1').props.label = txt % (_K * self.model.totalg)
+        self.ui.get_object('pie1').props.label = txt % (_K * self.model.totalg(0))
+        #XXX: en vez de usar el primer mes para las condensaciones usar el actual
         txt = ("Cantidades condensadas (condiciones actuales): " +
-               ", ".join(["%.2f" % (_K * x,) for x in self.model.g]))
+               ", ".join(["%.2f (%i)" % (_K * x, i) for i, x in self.model.glist[0]]))
         self.ui.get_object('pie2').props.label = txt
 
     def actualizacapas(self):
@@ -309,20 +310,20 @@ class GtkCondensa(object):
     def _setclimaext(self):
         mescombo = self.ui.get_object('mescb')
         ilocalidad = self.ui.get_object('localidadcb').props.active
-        localidad = self.model.climas[ilocalidad]
-        climaslist = self.model.climasDB[localidad]
-        self.model.climaslist = climaslist
+        self.model.localidad = self.model.climas[ilocalidad]
         imes = mescombo.props.active
-        climaslen = len(climaslist)
+        climaslen = len(self.model.climaslist)
+        #XXX: ¿Esto se puede dar?
         if climaslen < imes:
             imes = climaslen
+        self.imes = imes
         if climaslen == 12:
             mes = mescombo.get_active_text()
         else:
             mes = str(imes)
-        self.model.ambienteexterior = "%s [%s]" % (localidad, mes)
-        tempext = "%.f" % climaslist[imes].temp
-        hrext = "%.f" % climaslist[imes].HR
+        self.model.ambienteexterior = "%s [%s]" % (self.model.localidad, mes)
+        tempext = "%.f" % self.model.climaslist[imes].temp
+        hrext = "%.f" % self.model.climaslist[imes].HR
         self.ui.get_object('tempextentry').props.text = tempext
         self.ui.get_object('hrextentry').props.text = hrext
 

@@ -36,27 +36,72 @@ climai = climasDB['Climaint'][0] if 'Climaint' in climasDB else None
 class Model(object):
     def __init__(self):
         """Constructor de modelo"""
-        self.c = None
-        self._localidad = 'Genérica'
+        self.c = None # cerramiento actual
+        self._localidad = 'Genérica' # localidad seleccionada
         self.ambienteexterior = 'Predefinido'
-        self.climae = climae or clima.Clima(5, 96)
-        self.climaesuperf = self.climae
-        self.climaslist = [self.climae] # Lista de climas de localidad
+        self.climaslist = [climae or clima.Clima(5, 96)] # climas exteriores
+        self.imes = 0 # índice del mes activo en climaslist
         self.ambienteinterior = 'Predefinido'
         self.climai = climai or clima.Clima(20, 55)
         self.cerramientosDB = None
         self.climas = []
-        self.climasDB = {}
-        self.cargadata()
-        self.cerramientomodificado = False
-
-    def cargadata(self):
-        """Carga datos de materiales y cerramientos"""
+        self.climasDB = {} 
+        self.glist = [] # condensaciones para todos los periodos
+        # Carga datos de materiales y cerramientos
         self.cerramientosDB = cdb
-        if self.c is None:
-            self.c = self.cerramientosDB[self.cerramientosDB.nombres[0]]
+        self.c = self.cerramientosDB[self.cerramientosDB.nombres[0]]
         self.climas = climasnombres
         self.climasDB = climasDB
+        self.cerramientomodificado = False
+
+    @property
+    def localidad(self):
+        """Localidad actual"""
+        return self._localidad
+    
+    @localidad.setter
+    def localidad(self, lname):
+        """Actualiza localidad y lista de climas exteriores para la misma"""
+        if lname in self.climasDB.keys():
+            self.climaslist = self.climasDB[lname]
+            self._localidad = lname
+
+    @property
+    def climae(self):
+        """Getter de clima exterior"""
+        return self.climaslist[self.imes]
+
+    @property
+    def fRsi(self):
+        """Factor de temperatura de la superficie interior"""
+        return comprobaciones.fRsi(self.c.U)
+
+    @property
+    def fRsimin(self):
+        """Factor de temperatura de la superficie interior mínimo
+        
+        El CTE indica que se calcule para el mes de enero (DB-HE1 3.2.3.1)
+        y, a falta de datos, un ambiente interior con temperatura 20ºC
+        y HR según higrometría. En este caso tenemos datos suficientes.
+        
+        TODO: comprobar que las resistencias superficiales son las correctas
+        """
+        te = self.climaslist[0].temp
+        return comprobaciones.fRsimin(te, self.climai.temp, self.climai.HR)
+        
+    @property
+    def cs(self):
+        """Comprueba la existencia de condensaciones intersticiales s/CTE"""
+        return self.fRsi < self.fRsimin
+
+    def totalg(self, i=0):
+        """Cantidad de condensación total de un periodo"""
+        if i < len(self.climaslist):
+            g = self.glist[i]
+            totalg = 0.0 if not g else sum(zip(*g)[1])
+        else:
+            totalg = 0.0
+        return totalg
 
     def set_cerramiento(self, cname):
         """Selecciona cerramiento activo a partir de su nombre"""
@@ -64,7 +109,8 @@ class Model(object):
 
     def set_climae(self, te, HRe):
         """Setter de clima exterior para detectar modificación"""
-        self.climae = clima.Clima(te, HRe)
+        self.climaslist = [clima.Clima(te, HRe)]
+        self.imes = 0
 
     def set_climai(self, ti, HRi):
         """Setter de clima interior para detectar modificación"""
@@ -103,15 +149,9 @@ class Model(object):
     def calcula(self):
         """Calcula resultados para usarlos en presentación"""
         ti, hri = self.climai.temp, self.climai.HR
-        te, hre = self.climae.temp, self.climae.HR
-        self.fRsi = comprobaciones.fRsi(self.c.U)
-        self.fRsimin = comprobaciones.fRsimin(te, ti, hri)
-        self.ccheck = comprobaciones.condensaciones(self.c, te, ti, hre, hri)
-        self.cs = comprobaciones.condensas(self.c, te, ti, hri)
-        self.ci = comprobaciones.condensai(self.c, te, ti, hre, hri)
-        g = self.c.condensacion(te, ti, hre, hri)
-        self.g = zip(*g)[1] if g else []
-        self.totalg = 0.0 if not self.g else sum(self.g)
+        self.glist = self.calculaintersticiales(ti, hri)
+        self.ci = sum(self.totalg(i) for i, x in enumerate(self.climaslist))
+        self.ccheck = self.ci or self.cs
 
     def calculaintersticiales(self, ti, hri):
         """Devuelve lista de condensaciones intersticiales para cada interfase
