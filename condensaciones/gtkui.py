@@ -131,12 +131,10 @@ class GtkCondensa(object):
         COLOR_OK = gtk.gdk.color_parse("#AACCAA")
         COLOR_BAD = gtk.gdk.color_parse("#CCAAAA")
         COLOR_SEE = gtk.gdk.color_parse("#FFDD77")
-        ci = model.condensaintersticialesCTE()
-        cs = model.condensasuperficialesCTE()
         if model.ccheck:
             # El cerramiento condensa en las condiciones ambientales actuales
             state_color = COLOR_BAD
-        elif True in ci or cs:
+        elif model.ci or model.cs is True:
             # El cerramiento condensa en las condiciones CTE (enero para
             # cond. superficiales y todos los meses para cond. intersticiales
             state_color = COLOR_SEE
@@ -260,16 +258,15 @@ class GtkCondensa(object):
                     self.model.fRsi, self.model.fRsimin)
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'resultados')
         # Condensaciones
-        cimeses = self.model.condensaintersticialesCTE()
-        cs = "Sí" if self.model.condensasuperficialesCTE() else "No"
-        ci = "Sí" if True in cimeses else "No"
+        cs = "Sí" if self.model.cs else "No"
+        ci = "Sí" if self.model.ci else "No"
         txt = ("\n¿Existen condensaciones superficiales?: %s\n"
                "¿Existen condensaciones intersticiales?: %s\n") % (cs, ci)
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'resultados')
-        if True in cimeses:
+        if self.model.ci:
             meses = "[" + ", ".join("%i" % i
-                                    for i, value in enumerate(cimeses)
-                                    if value is True) + "]"
+                                    for i, value in enumerate(self.model.glist)
+                                    if value) + "]"
             txt = ("\nMeses con condensaciones intersticiales: %s\n") % meses
             tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'resultados')
         # Nota copyright
