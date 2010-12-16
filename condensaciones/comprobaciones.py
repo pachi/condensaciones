@@ -91,7 +91,8 @@ def condensas(cerr, temp_ext, temp_int, HR_int):
     """
     # el CTE incluye tablas según zonas y clase de higrometría para fRsimin
     # que están calculadas para la capital más desfavorable de cada zona y
-    # con HR=55%, 62%, 70%.
+    # con HR=55%, 62%, 70%. Además, impone condiciones exteriores
+    # correspondientes al mes de enero y temperatura interior igual a 20ºC.
     return fRsi(cerr.U) < fRsimin(temp_ext, temp_int, HR_int)
 
 def condensai(cerr, temp_ext, temp_int, HR_ext, HR_int):
