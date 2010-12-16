@@ -112,6 +112,38 @@ class Model(object):
         self.g = zip(*g)[1] if g else []
         self.totalg = 0.0 if not self.g else sum(self.g)
 
+    def calculaintersticiales(self, ti, hri):
+        """Devuelve lista de condensaciones intersticiales para cada interfase
+        
+        Se calcula usando como clima exterior cada uno de los elementos en
+        self.climaslist y condiciones interiores ti, hri.
+        
+        Para cada clima exterior devuelve, una lista de tuplas formado por el
+        índice de la interfase y la cantidad condensada para cada interfase
+        con condensación intersticial.
+        """
+        # Localizar primer mes sin condensaciones previas
+        prevcondensa = True
+        for startindex, climaj in enumerate(self.climaslist):
+            cond = self.c.condensacion(climaj.temp, ti, climaj.HR, hri)
+            if not cond:
+                prevcondensa = False
+            elif not prevcondensa:
+                break
+        # Si agotamos la lista sin condensaciones volvemos al principio
+        if startindex == (len(self.climaslist) - 1) and not cond:
+            startindex = 0
+        order = range(startindex, len(self.climaslist)) + range(0, startindex)
+        #TODO: Calcular condensaciones totales
+        glist = []
+        cond = []
+        for i in order:
+            climaj = self.climaslist[i]
+            cond = self.c.condensacion(climaj.temp, ti, climaj.HR, hri, cond)
+            glist.append(cond)
+        # Reordenar lista y guardar
+        return glist[-startindex:] + glist[:-startindex]
+
     def condensasuperficialesCTE(self):
         """Calcula si se producen condensaciones superficiales s/CTE
         
