@@ -298,7 +298,8 @@ class GtkCondensa(object):
         hri.props.text = "%.2f" % self.model.climai.HR
         resultado = adialog.run()
         if resultado == gtk.RESPONSE_ACCEPT:
-            self.model.set_climae(float(te.props.text), float(hre.props.text))
+            if not self.ui.get_object('localidadcb').props.sensitive:
+                self.model.set_climae(float(te.props.text), float(hre.props.text))
             self.model.set_climai(float(ti.props.text), float(hri.props.text))
             msg = "Seleccionadas nuevas condiciones ambientales"
             self.actualiza(msg)
