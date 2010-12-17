@@ -311,9 +311,9 @@ class GtkCondensa(object):
         self.model.localidad = self.model.climas[ilocalidad]
         imes = mescombo.props.active
         climaslen = len(self.model.climaslist)
-        #XXX: ¿Esto se puede dar?
-        if climaslen < imes:
-            imes = climaslen
+        if imes > climaslen - 1:
+            imes = climaslen - 1
+            #TODO: se debería activar ese mes y no dejar el que hay
         self.imes = imes
         if climaslen == 12:
             mes = mescombo.get_active_text()
