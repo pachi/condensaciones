@@ -32,13 +32,14 @@ CLIMASDB = get_resource('data', 'ClimaCTE.ini')
 climasDB, climasnombres, climasdbconfig = clima.loadclimadb(CLIMASDB)
 climae = climasDB['Climaext'][0] if 'Climaext' in climasDB else None
 climai = climasDB['Climaint'][0] if 'Climaint' in climasDB else None
+MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio',
+         'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
 
 class Model(object):
     def __init__(self):
         """Constructor de modelo"""
         self.c = None # cerramiento actual
-        self._localidad = 'Genérica' # localidad seleccionada
-        self.ambienteexterior = 'Predefinido'
+        self._localidad = 'Genérica' # Sin localidad seleccionada
         self.climaslist = [climae or clima.Clima(5, 96)] # climas exteriores
         self._imes = 0 # índice del mes activo en climaslist
         self.ambienteinterior = 'Predefinido'
@@ -65,6 +66,13 @@ class Model(object):
         if lname in self.climasDB.keys():
             self.climaslist = self.climasDB[lname]
             self._localidad = lname
+        elif lname is None:
+            self._localidad = 'Genérica'
+
+    @property
+    def ambienteexterior(self):
+        mes = MESES[self.imes] if len(self.climaslist) == 12 else str(self.imes)
+        return "%s [%s]" % (self.localidad, mes)
 
     @property
     def imes(self):

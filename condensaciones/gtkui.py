@@ -313,11 +313,6 @@ class GtkCondensa(object):
         self.model.imes = imes
         if imes != self.model.imes:
             mescombo.props.active = self.model.imes
-        if len(self.model.climaslist) == 12:
-            mes = mescombo.get_active_text()
-        else:
-            mes = str(self.model.imes)
-        self.model.ambienteexterior = "%s [%s]" % (self.model.localidad, mes)
         tempext = "%.f" % self.model.climaslist[self.model.imes].temp
         hrext = "%.f" % self.model.climaslist[self.model.imes].HR
         self.ui.get_object('tempextentry').props.text = tempext
@@ -346,6 +341,7 @@ class GtkCondensa(object):
         if not active:
             self._setclimaext()
         else:
+            self.model.localidad = None
             te.props.text = self.model.climae.temp
             hre.props.text = self.model.climae.HR
 
