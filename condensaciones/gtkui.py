@@ -306,17 +306,16 @@ class GtkCondensa(object):
         adialog.hide()
 
     def _setclimaext(self):
+        m = self.model
         mescombo = self.ui.get_object('mescb')
         ilocalidad = self.ui.get_object('localidadcb').props.active
-        self.model.localidad = self.model.climas[ilocalidad]
+        m.localidad = m.climas[ilocalidad]
         imes = mescombo.props.active
-        self.model.imes = imes
-        if imes != self.model.imes:
-            mescombo.props.active = self.model.imes
-        tempext = "%.f" % self.model.climaslist[self.model.imes].temp
-        hrext = "%.f" % self.model.climaslist[self.model.imes].HR
-        self.ui.get_object('tempextentry').props.text = tempext
-        self.ui.get_object('hrextentry').props.text = hrext
+        m.imes = imes
+        if imes != m.imes:
+            mescombo.props.active = m.imes
+        self.ui.get_object('tempextentry').props.text = "%.f" % m.climae.temp
+        self.ui.get_object('hrextentry').props.text = "%.f" % m.climae.HR
 
     def meschanged(self, widget):
         """Cambio en el combo de meses"""
