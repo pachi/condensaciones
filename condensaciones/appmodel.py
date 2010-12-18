@@ -40,7 +40,7 @@ class Model(object):
         self._localidad = 'Genérica' # localidad seleccionada
         self.ambienteexterior = 'Predefinido'
         self.climaslist = [climae or clima.Clima(5, 96)] # climas exteriores
-        self.imes = 0 # índice del mes activo en climaslist
+        self._imes = 0 # índice del mes activo en climaslist
         self.ambienteinterior = 'Predefinido'
         self.climai = climai or clima.Clima(20, 55)
         self.cerramientosDB = None
@@ -65,6 +65,19 @@ class Model(object):
         if lname in self.climasDB.keys():
             self.climaslist = self.climasDB[lname]
             self._localidad = lname
+
+    @property
+    def imes(self):
+        """Mes actualmente activo de climaslist"""
+        return self._imes
+    
+    @imes.setter
+    def imes(self, index):
+        """Establece el mes activo en climaslist"""
+        climaslen = len(self.climaslist)
+        if index > climaslen - 1:
+            index = climaslen - 1
+        self._imes = index
 
     @property
     def climae(self):

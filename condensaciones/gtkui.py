@@ -310,18 +310,16 @@ class GtkCondensa(object):
         ilocalidad = self.ui.get_object('localidadcb').props.active
         self.model.localidad = self.model.climas[ilocalidad]
         imes = mescombo.props.active
-        climaslen = len(self.model.climaslist)
-        if imes > climaslen - 1:
-            imes = climaslen - 1
-            #TODO: se debería activar ese mes y no dejar el que hay
-        self.imes = imes
-        if climaslen == 12:
+        self.model.imes = imes
+        if imes != self.model.imes:
+            mescombo.props.active = self.model.imes
+        if len(self.model.climaslist) == 12:
             mes = mescombo.get_active_text()
         else:
-            mes = str(imes)
+            mes = str(self.model.imes)
         self.model.ambienteexterior = "%s [%s]" % (self.model.localidad, mes)
-        tempext = "%.f" % self.model.climaslist[imes].temp
-        hrext = "%.f" % self.model.climaslist[imes].HR
+        tempext = "%.f" % self.model.climaslist[self.model.imes].temp
+        hrext = "%.f" % self.model.climaslist[self.model.imes].HR
         self.ui.get_object('tempextentry').props.text = tempext
         self.ui.get_object('hrextentry').props.text = hrext
 
