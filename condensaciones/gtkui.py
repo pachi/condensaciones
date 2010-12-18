@@ -181,33 +181,34 @@ class GtkCondensa(object):
 
     def actualizainforme(self):
         """Actualiza texto descripción de cerramiento en ventana principal"""
-        graficaprestemp = self.ui.get_object('prestemp_canvas')
-        graficapresiones = self.ui.get_object('presiones_canvas')
-        tb = self.ui.get_object('informe_txtbuffer')
+        m, ui = self.model, self.ui
+        graficaprestemp = ui.get_object('prestemp_canvas')
+        graficapresiones = ui.get_object('presiones_canvas')
+        tb = ui.get_object('informe_txtbuffer')
         tb.props.text = ""
         # Denominación cerramiento
         tb.insert_with_tags_by_name(tb.get_start_iter(),
-                                "%s\n" % self.model.c.nombre, 'titulo')
+                                    "%s\n" % m.c.nombre, 'titulo')
         tb.insert_with_tags_by_name(tb.get_end_iter(),
-                                "%s\n\n" % self.model.c.descripcion, 'titulo2')
+                                    "%s\n\n" % m.c.descripcion, 'titulo2')
         # Condiciones ambientales
         txt = "Condiciones de cálculo\n"
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'subtitulo')
-        txt = "Ambiente exterior (gráficas): %s\n" % self.model.ambienteexterior
+        txt = "Ambiente exterior (gráficas): %s\n" % m.ambienteexterior
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'capa')
         txt = ("Temperatura exterior: %.1f ºC\n"
                "Humedad relativa exterior: %.1f %%\n\n"
-               ) % (self.model.climae.temp, self.model.climae.HR)
+               ) % (m.climae.temp, m.climae.HR)
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'datoscapa')
-        txt = "Ambiente interior (gráficas): %s\n" % self.model.ambienteinterior
+        txt = "Ambiente interior (gráficas): %s\n" % m.ambienteinterior
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'capa')
         txt = ("Temperatura interior: %.1f ºC\n"
                "Humedad relativa interior: %.1f %%\n\n"
-               ) % (self.model.climai.temp, self.model.climai.HR)
+               ) % (m.climai.temp, m.climai.HR)
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'datoscapa')
         txt = ("Resistencia superficial exterior: %.2f m²K/W\n"
                "Resistencia superficial exterior: %.2f m²K/W\n\n"
-               ) % (self.model.c.Rse, self.model.c.Rsi)
+               ) % (m.c.Rse, m.c.Rsi)
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'capa')
         #
         txt = ("Condiciones de cálculo para la comprobación de condensaciones"
@@ -215,31 +216,29 @@ class GtkCondensa(object):
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'capa')
         txt = ("Exterior - T: %.1f ºC, HR: %.1f %%\n"
                "Interior - T: %.1f ºC, HR: %.1f %%\n\n"
-               ) % (self.model.climaslist[0].temp, self.model.climaslist[0].HR,
-                    20.0, self.model.climai.HR)
+               ) % (m.climaslist[0].temp, m.climaslist[0].HR,
+                    20.0, m.climai.HR)
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'datoscapa')
         #
         txt = ("Condiciones de cálculo para la comprobación de condensaciones"
                " intersticiales\n")
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'capa')
-        tempextlist = ", ".join("%.1f" % clima.temp
-                               for clima in self.model.climaslist)
-        hrextlist = ", ".join("%.1f" % clima.HR
-                             for clima in self.model.climaslist)
+        tempextlist = ", ".join("%.1f" % clima.temp for clima in m.climaslist)
+        hrextlist = ", ".join("%.1f" % clima.HR for clima in m.climaslist)
         txt = ("Exterior - \n\tT [ºC]: %s\n\tHR [%%]: %s\n"
                "Interior - T [ºC]: %.1f, HR [%%]: %.1f\n\n"
-               ) % (tempextlist, hrextlist, 20.0, self.model.climai.HR)
+               ) % (tempextlist, hrextlist, 20.0, m.climai.HR)
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'datoscapa')
         # Cerramiento
         txt = "Descripción del cerramiento\n"
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'subtitulo')
-        for i, (nombre, e, K, R, mu, S, color) in self.model.capasdata():
+        for i, (nombre, e, K, R, mu, S, color) in m.capasdata():
             txt = "%i - %s:\n" % (i, nombre)
             tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'capa')
             txt = ("%.3f [m]\nR=%.3f [m²K/W]\n"
                    "μ=%i\nS=%.3f [m]\n" % (e, R, mu, S))
             tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'datoscapa')
-        txt = "Espesor total del cerramiento: %.3f m\n\n" % self.model.c.e
+        txt = "Espesor total del cerramiento: %.3f m\n\n" % m.c.e
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'capa')
         # Gráficas
         txt = "Gráficas\n"
@@ -254,18 +253,16 @@ class GtkCondensa(object):
         txt = ("R_total: %.3f [m²K/W]\nS_total = %.3f [m]\n"
                "Transmitancia térmica total: U = %.3f [W/m²K]\n"
                "f_Rsi = %.2f\nf_Rsimin = %.2f\n\n"
-               ) % (self.model.c.R_total, self.model.c.S_total, self.model.c.U,
-                    self.model.fRsi, self.model.fRsimin)
+               ) % (m.c.R_total, m.c.S_total, m.c.U, m.fRsi, m.fRsimin)
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'resultados')
         # Condensaciones
-        cs = "Sí" if self.model.cs else "No"
-        ci = "Sí" if self.model.ci else "No"
+        cs = "Sí" if m.cs else "No"
+        ci = "Sí" if m.ci else "No"
         txt = ("\n¿Existen condensaciones superficiales?: %s\n"
                "¿Existen condensaciones intersticiales?: %s\n") % (cs, ci)
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'resultados')
-        if self.model.ci:
-            meses = "[" + ", ".join("%i" % i
-                                    for i, value in enumerate(self.model.glist)
+        if m.ci:
+            meses = "[" + ", ".join("%i" % i for i, value in enumerate(m.glist)
                                     if value) + "]"
             txt = ("\nMeses con condensaciones intersticiales: %s\n") % meses
             tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'resultados')
@@ -287,35 +284,36 @@ class GtkCondensa(object):
 
     def ambienteselecciona(self, widget):
         """Abre diálogo de selección de ambientes"""
-        adialog = self.ui.get_object('ambiente_dlg')
-        te = self.ui.get_object('tempextentry')
-        hre = self.ui.get_object('hrextentry')
-        ti = self.ui.get_object('tempintentry')
-        hri = self.ui.get_object('hrintentry')
-        te.props.text = "%.2f" % self.model.climae.temp
-        hre.props.text ="%.2f" % self.model.climae.HR
-        ti.props.text = "%.2f" % self.model.climai.temp
-        hri.props.text = "%.2f" % self.model.climai.HR
+        m, ui = self.model, self.ui
+        adialog = ui.get_object('ambiente_dlg')
+        te = ui.get_object('tempextentry')
+        hre = ui.get_object('hrextentry')
+        ti = ui.get_object('tempintentry')
+        hri = ui.get_object('hrintentry')
+        te.props.text = "%.2f" % m.climae.temp
+        hre.props.text ="%.2f" % m.climae.HR
+        ti.props.text = "%.2f" % m.climai.temp
+        hri.props.text = "%.2f" % m.climai.HR
         resultado = adialog.run()
         if resultado == gtk.RESPONSE_ACCEPT:
-            if not self.ui.get_object('localidadcb').props.sensitive:
-                self.model.set_climae(float(te.props.text), float(hre.props.text))
-            self.model.set_climai(float(ti.props.text), float(hri.props.text))
+            if not ui.get_object('localidadcb').props.sensitive:
+                m.set_climae(float(te.props.text), float(hre.props.text))
+            m.set_climai(float(ti.props.text), float(hri.props.text))
             msg = "Seleccionadas nuevas condiciones ambientales"
             self.actualiza(msg)
         adialog.hide()
 
     def _setclimaext(self):
-        m = self.model
-        mescombo = self.ui.get_object('mescb')
-        ilocalidad = self.ui.get_object('localidadcb').props.active
+        m, ui = self.model, self.ui
+        mescombo = ui.get_object('mescb')
+        ilocalidad = ui.get_object('localidadcb').props.active
         m.localidad = m.climas[ilocalidad]
         imes = mescombo.props.active
         m.imes = imes
         if imes != m.imes:
             mescombo.props.active = m.imes
-        self.ui.get_object('tempextentry').props.text = "%.f" % m.climae.temp
-        self.ui.get_object('hrextentry').props.text = "%.f" % m.climae.HR
+        ui.get_object('tempextentry').props.text = "%.f" % m.climae.temp
+        ui.get_object('hrextentry').props.text = "%.f" % m.climae.HR
 
     def meschanged(self, widget):
         """Cambio en el combo de meses"""
