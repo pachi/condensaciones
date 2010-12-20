@@ -145,13 +145,13 @@ class GtkCondensa(object):
 
     def actualizapie(self):
         """Actualiza pie de ventana principal"""
-        _K = 2592000.0 # segundos por mes
-        txt = "Total (condiciones actuales): %.2f [g/m²mes]"
-        self.ui.get_object('pie1').props.label = txt % (_K * self.model.totalg(0))
-        #XXX: en vez de usar el primer mes para las condensaciones usar el actual
-        txt = ("Cantidades condensadas (condiciones actuales): " +
-               ", ".join(["%.2f (%i)" % (_K * x, i) for i, x in self.model.glist[0]]))
-        self.ui.get_object('pie2').props.label = txt
+        m, ui = self.model, self.ui
+        txt = "Total (%s): %.2f [g/m²mes]" % (m.ambienteexterior,
+                                              m.totalg(m.imes))
+        ui.get_object('pie1').props.label = txt
+        txt = ("Condensación en interfases (%s): " % m.ambienteexterior +
+               ", ".join(["%.2f (%i)" % (x, i) for i, x in m.glist[m.imes]]))
+        ui.get_object('pie2').props.label = txt
 
     def actualizacapas(self):
         """Actualiza pestaña de capas con descripción, capas, Rse, Rsi"""

@@ -269,17 +269,19 @@ class Cerramiento(object):
         return zip(xj,yj)
 
     def cantidadc(self, envolv_inf, cond_previa=[]):
-        """Cantidades condensadas en las interfases [g/m².s]
+        """Cantidades condensadas en las interfases [g/m².mes]
         
         Calcula las cantidades de condensación a partir de la envolvente de
         condensaciones y las condensaciones previas en cada interfase.
         """
+        _K = 2592000.0 # segundos por mes
         def _g_punto(plist):
             "Calcula la condensación en el punto intermedio (B), para ABC"
             xpa, ypa = plist[0][0], plist[0][1] # p0: (x, y, g)
             xpb, ypb = plist[1][0], plist[1][1] # p1: (x, y, g)
             xpc, ypc = plist[2][0], plist[2][1] # p2: (x, y, g)
-            return psicrom.g(ypb, ypc, xpb, xpc) - psicrom.g(ypa, ypb, xpa, xpb)
+            return (psicrom.g(ypb, ypc, xpb, xpc, _K) -
+                    psicrom.g(ypa, ypb, xpa, xpb, _K))
         
         x_index = list(numpy.cumsum([0.0] + self.S))
         
