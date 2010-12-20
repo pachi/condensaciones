@@ -111,7 +111,7 @@ def hrloc(temp, humedad, deltah):
         deltah = 0.0
     return 100.0 * (pvapor(temp, humedad) / psatloc(temp, deltah))
 
-def g(pe, pi, Se, Si):
+def g(pe, pi, Se, Si, kunits=1.0):
     """Tasa de transferencia de vapor a través del cerramiento o capa [g/m².s]
 
     Resulta útil para calcular condensada o evaporada entre interfases.
@@ -120,6 +120,8 @@ def g(pe, pi, Se, Si):
     :param float pi: presión de vapor interior [Pa]
     :param float Se: espesor de aire equivalente en pe [m]
     :param float Si: espesor de aire equivalente en pi [m]
+    :param float kunits: factor de conversión de unidades. Por defecto vale
+        1.0 y obtenemos g/m²s. Con valor 2592000.0 obtendríamos g/m²mes. 
     :rtype: float
     """
     #delta0 - permeabilidad al vapor de agua del aire en relación a la presión
@@ -128,7 +130,7 @@ def g(pe, pi, Se, Si):
     if Si == Se:
         #Materiales impermeables al vapor
         return 0
-    return delta0 * (pi - pe) / (Si - Se) #[g/(m².s)]
+    return kunits * delta0 * (pi - pe) / (Si - Se) #[g/(m².s)]
 
 def hrintISO(text, tsint, hrext, higrometria):
     """Humedad relativa interior [%] del mes de enero
