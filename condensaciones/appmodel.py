@@ -30,35 +30,31 @@ from util import get_resource, colores_capas
 cdb = cerramiento.CerramientosDB(get_resource('data', 'CerramientosDB.ini'))
 CLIMASDB = get_resource('data', 'ClimaCTE.ini')
 climasDB, climasnombres, climasdbconfig = clima.loadclimadb(CLIMASDB)
-climae = climasDB['Climaext'][0] if 'Climaext' in climasDB else None
-climai = climasDB['Climaint'][0] if 'Climaint' in climasDB else None
+climae = climasDB['Climaext'][0] if 'Climaext' in climasDB else clima.Clima(5, 96)
+climai = climasDB['Climaint'][0] if 'Climaint' in climasDB else clima.Clima(20, 55)
 MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio',
          'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
 
 class Model(object):
     def __init__(self):
         """Constructor de modelo"""
-        self.c = None # cerramiento actual
-        self._localidad = 'Genérica' # Sin localidad seleccionada
-        self.climaslist = [climae or clima.Clima(5, 96)] # climas exteriores
+        self.climaslist = [climae] # climas exteriores
+        self._localidad = None # Sin localidad seleccionada
         self._imes = 0 # índice del mes activo en climaslist
-        self.ambienteinterior = 'Predefinido'
-        self.climai = climai or clima.Clima(20, 55)
-        self.cerramientosDB = None
-        self.climas = []
-        self.climasDB = {} 
+        self._climai = climai # clima interior
         self.glist = [] # condensaciones para todos los periodos
         # Carga datos de materiales y cerramientos
         self.cerramientosDB = cdb
+        # cerramiento actual
         self.c = self.cerramientosDB[self.cerramientosDB.nombres[0]]
-        self.climas = climasnombres
         self.climasDB = climasDB
+        self.climas = climasnombres
         self.cerramientomodificado = False
 
     @property
     def localidad(self):
         """Localidad actual"""
-        return self._localidad
+        return self._localidad or 'Localidad genérica'
     
     @localidad.setter
     def localidad(self, lname):
@@ -67,7 +63,11 @@ class Model(object):
             self.climaslist = self.climasDB[lname]
             self._localidad = lname
         elif lname is None:
-            self._localidad = 'Genérica'
+            self._localidad = None
+
+    @property
+    def ambienteinterior(self):
+        return 'Predefinido'
 
     @property
     def ambienteexterior(self):
@@ -91,6 +91,27 @@ class Model(object):
     def climae(self):
         """Getter de clima exterior"""
         return self.climaslist[self.imes]
+
+    @climae.setter
+    def climae(self, value):
+        """Setter de clima exterior"""
+        clm = value if isinstance(value, clima.Clima) else clima.Clima(*value)
+        self.climaslist = [clm]
+        self.imes = 0
+
+    @property
+    def climai(self):
+        """Getter de clima exterior"""
+        return self._climai
+
+    @climai.setter
+    def climai(self, value):
+        """Setter de clima interior
+        
+        value puede ser del tipo clima.Clima o una tupla (temp, HR)
+        """
+        clm = value if isinstance(value, clima.Clima) else clima.Clima(*value)
+        self._climai = clm
 
     @property
     def fRsi(self):
@@ -127,15 +148,6 @@ class Model(object):
     def set_cerramiento(self, cname):
         """Selecciona cerramiento activo a partir de su nombre"""
         self.c = self.cerramientosDB[cname]
-
-    def set_climae(self, te, HRe):
-        """Setter de clima exterior para detectar modificación"""
-        self.climaslist = [clima.Clima(te, HRe)]
-        self.imes = 0
-
-    def set_climai(self, ti, HRi):
-        """Setter de clima interior para detectar modificación"""
-        self.climai = clima.Clima(ti, HRi)
     
     def set_Rse(self, newRse):
         """Cambia Rse"""

@@ -281,8 +281,8 @@ class GtkCondensa(object):
         resultado = adialog.run()
         if resultado == gtk.RESPONSE_ACCEPT:
             if not ui.get_object('localidadcb').props.sensitive:
-                m.set_climae(float(te.props.text), float(hre.props.text))
-            m.set_climai(float(ti.props.text), float(hri.props.text))
+                m.climae = float(te.props.text), float(hre.props.text)
+            m.climai = float(ti.props.text), float(hri.props.text)
             msg = "Seleccionadas nuevas condiciones ambientales"
             self.actualiza(msg)
         adialog.hide()
