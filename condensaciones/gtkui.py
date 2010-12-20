@@ -499,27 +499,23 @@ class GtkCondensa(object):
 
     def capacambiarse(self, entry, event=None):
         """Toma valor de Rse al activar entry o cambiar el foco"""
-        oldrse = self.model.c.Rse
         try:
             newrse = float(entry.props.text)
+            if newrse != self.model.c.Rse:
+                self.model.set_Rse(newrse)
+                self.actualiza("Nuevo Rse: %.2f" % newrse)
         except ValueError:
-            entry.props.text = oldrse
-            return
-        if newrse != oldrse:
-            self.model.set_Rse(newrse)
-            self.actualiza("Nuevo Rse: %.2f" % newrse)
+            entry.props.text = self.model.c.Rse
 
     def capacambiarsi(self, entry, event=None):
         """Toma valor de Rsi al activar entry o cambiar el foco"""
-        oldrsi = self.model.c.Rsi
         try:
             newrsi = float(entry.props.text)
+            if newrsi != self.model.c.Rsi:
+                self.model.set_Rsi(newrsi)
+                self.actualiza("Nuevo Rsi: %.2f" % newrsi)
         except ValueError:
-            entry.props.text = oldrsi
-            return
-        if newrsi != oldrsi:
-            self.model.set_Rsi(newrsi)
-            self.actualiza("Nuevo Rsi: %.2f" % newrsi)
+            entry.props.text = self.model.c.Rsi
 
     #{ Retrollamadas generales
 
