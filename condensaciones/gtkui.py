@@ -24,7 +24,7 @@
 
 import gobject
 import gtk
-import pango
+from pango import WEIGHT_BOLD, SCALE_SMALL, SCALE_MEDIUM, SCALE_LARGE, SCALE_X_LARGE, STYLE_ITALIC
 import util
 import appmodel
 from ptcanvas import CPTCanvas, CPCanvas, GraphData
@@ -46,42 +46,36 @@ class GtkCondensa(object):
         # Elementos de la UI que no se pueden generar en Glade ----------------
         # Marcas de texto para estilos en textbuffer --------------------------
         tb = self.ui.get_object('informe_txtbuffer')
-        tb.create_tag("titulo",
-                      weight=pango.WEIGHT_BOLD, scale=pango.SCALE_X_LARGE)
-        tb.create_tag("titulo2",
-                      style=pango.STYLE_ITALIC, scale=pango.SCALE_LARGE)
-        tb.create_tag("subtitulo",
-                      weight=pango.WEIGHT_BOLD, scale=pango.SCALE_LARGE,)
-        tb.create_tag("capa", weight=pango.WEIGHT_BOLD, foreground="#777777")
-        tb.create_tag("datoscapa", style=pango.STYLE_ITALIC, indent=30)
-        tb.create_tag("resultados", scale=pango.SCALE_MEDIUM, foreground='blue')
-        tb.create_tag("nota", scale=pango.SCALE_SMALL)
+        tb.create_tag("titulo", weight=WEIGHT_BOLD, scale=SCALE_X_LARGE)
+        tb.create_tag("titulo2", style=STYLE_ITALIC, scale=SCALE_LARGE)
+        tb.create_tag("subtitulo", weight=WEIGHT_BOLD, scale=SCALE_LARGE,)
+        tb.create_tag("capa", weight=WEIGHT_BOLD, foreground="#777777")
+        tb.create_tag("datoscapa", style=STYLE_ITALIC, indent=30)
+        tb.create_tag("resultados", scale=SCALE_MEDIUM, foreground='blue')
+        tb.create_tag("nota", scale=SCALE_SMALL)
         # Iconos de aplicación y de botones de herramientas -------------------
         self.icons = condensaicons.IconFactory(self)
         self.ui.get_object('cerramselectbtn').set_stock_id('condensa-cerramientos')
         self.ui.get_object('climaselectbtn').set_stock_id('condensa-clima')
-        #----------------------------------------------------------------------
-        def cargadata():
-            """Carga datos de materiales, cerramientos y clima"""
-            materialesls = self.ui.get_object('materiales_liststore')
-            for material in self.model.c.matDB.nombres:
-                materialesls.append((material,))
-            cerramientosls = self.ui.get_object('cerramientos_liststore')
-            for nombre in self.model.cerramientosDB.nombres:
-                descripcion = self.model.cerramientosDB[nombre].descripcion
-                cerramientosls.append((nombre, descripcion))
-            localidadesls = self.ui.get_object('localidadesls')
-            localidadesls.clear()
-            for nombrelocalidad in self.model.climas:
-                localidadesls.append((nombrelocalidad,))
-            self.ui.get_object('localidadcb').props.active = 0
-
-            n = len(self.model.c.matDB.nombres)
-            m = len(self.model.cerramientosDB.nombres)
-            r = len(self.model.climas)
-            msg = "Cargados %i materiales, %i cerramientos y %i climas"
-            self.actualiza(msg % (n, m, r))
-        cargadata()
+        # Carga datos de materiales, cerramientos y clima
+        self.materialesls = self.ui.get_object('materiales_liststore')
+        for material in self.model.c.matDB.nombres:
+            self.materialesls.append((material,))
+        self.cerramientotv = self.ui.get_object('cerramientotv')
+        self.cerramientosls = self.ui.get_object('cerramientos_liststore')
+        for nombre in self.model.cerramientosDB.nombres:
+            descripcion = self.model.cerramientosDB[nombre].descripcion
+            self.cerramientosls.append((nombre, descripcion))
+        self.localidadesls = self.ui.get_object('localidadesls')
+        self.localidadesls.clear()
+        for nombrelocalidad in self.model.climas:
+            self.localidadesls.append((nombrelocalidad,))
+        self.ui.get_object('localidadcb').props.active = 0
+        n = len(self.model.c.matDB.nombres)
+        m = len(self.model.cerramientosDB.nombres)
+        r = len(self.model.climas)
+        msg = "Cargados %i materiales, %i cerramientos, %i climas"  % (n, m, r)
+        self.actualiza(msg)
 
     #{ Funciones generales de aplicación
 
@@ -295,13 +289,9 @@ class GtkCondensa(object):
 
     def _setclimaext(self):
         m, ui = self.model, self.ui
-        mescombo = ui.get_object('mescb')
-        ilocalidad = ui.get_object('localidadcb').props.active
-        m.localidad = m.climas[ilocalidad]
-        imes = mescombo.props.active
-        m.imes = imes
-        if imes != m.imes:
-            mescombo.props.active = m.imes
+        m.localidad = m.climas[ui.get_object('localidadcb').props.active]
+        m.imes = ui.get_object('mescb').props.active
+        ui.get_object('mescb').props.active = m.imes # puede haber menos climas
         ui.get_object('tempextentry').props.text = "%.f" % m.climae.temp
         ui.get_object('hrextentry').props.text = "%.f" % m.climae.HR
 
@@ -318,35 +308,34 @@ class GtkCondensa(object):
         """Cambio en casilla de selección de entrada manual de datos
         climáticos
         """
+        m, ui = self.model, self.ui
         active = widget.props.active
-        te = self.ui.get_object('tempextentry')
-        hre = self.ui.get_object('hrextentry')
-        self.ui.get_object('localidadcb').props.sensitive = not active
-        self.ui.get_object('mescb').props.sensitive = not active
-        te.props.sensitive = active
-        hre.props.sensitive = active
+        ui.get_object('localidadcb').props.sensitive = not active
+        ui.get_object('mescb').props.sensitive = not active
+        ui.get_object('tempextentry').props.sensitive = active
+        ui.get_object('hrextentry').props.sensitive = active
         if not active:
             self._setclimaext()
         else:
-            self.model.localidad = None
-            te.props.text = self.model.climae.temp
-            hre.props.text = self.model.climae.HR
+            m.localidad = None
+            ui.get_object('tempextentry').props.text = m.climae.temp
+            ui.get_object('hrextentry').props.text = m.climae.HR
 
     #{ Retrollamadas del diálogo de selección de cerramientos
 
     def cerramientoselecciona(self, widget):
         """Abre diálogo de selección de cerramiento"""
-        lblselected = self.ui.get_object('lblselected')
-        if not lblselected.props.label in self.model.cerramientosDB.nombres:
-            self.ui.get_object('cerramientotv').set_cursor(0)
-        resultado = self.ui.get_object('cerramiento_dlg').run()
+        m, ui = self.model, self.ui
+        if not ui.get_object('lblselected').props.label in m.cerramientosDB.nombres:
+            self.cerramientotv.set_cursor(0)
+        resultado = ui.get_object('cerramiento_dlg').run()
         # gtk.RESPONSE_ACCEPT vs gtk.RESPONSE_CANCEL
         if resultado == gtk.RESPONSE_ACCEPT:
-            nombrecerr = lblselected.props.label
-            self.model.set_cerramiento(nombrecerr)
+            nombrecerr = ui.get_object('lblselected').props.label
+            m.set_cerramiento(nombrecerr)
             msg = "Seleccionado nuevo cerramiento activo: %s" % nombrecerr
             self.actualiza(msg)
-        self.ui.get_object('cerramiento_dlg').hide()
+        ui.get_object('cerramiento_dlg').hide()
 
     def cerramientoactiva(self, tv):
         """Cambia cerramiento seleccionado en lista de cerramientos"""
@@ -355,46 +344,41 @@ class GtkCondensa(object):
 
     def cerramientonombreeditado(self, cr, path, newtext):
         """Edita nombre de cerramiento"""
-        cerrtm = self.ui.get_object('cerramientotv').get_model()
-        oldname = cerrtm[path][0]
-        cerrtm[path][0] = newtext
+        oldname = self.cerramientosls[path][0]
+        self.cerramientosls[path][0] = newtext
         self.model.cerramientocambianombre(oldname, newtext)
 
     def cerramientodescripcioneditada(self, cr, path, newtext):
         """Edita descripción de cerramiento"""
-        cerrtm = self.ui.get_object('cerramientotv').get_model()
-        cerrname = cerrtm[path][0]
-        cerrtm[path][1] = newtext
+        cerrname = self.cerramientosls[path][0]
+        self.cerramientosls[path][1] = newtext
         self.model.cerramientocambiadescripcion(cerrname, newtext)
 
     def cerramientoadd(self, widget):
         """Añade cerramiento de la lista de cerramientos"""
-        ctv = self.ui.get_object('cerramientotv')
-        cerrtm, cerrtm_iter = ctv.get_selection().get_selected()
+        cerrtm, cerrtm_iter = self.cerramientotv.get_selection().get_selected()
         if cerrtm_iter:
             cerri = int(cerrtm.get_path(cerrtm_iter)[0])
             newcerr = self.model.cerramientoadd(cerri)
             cerrtm.insert(cerri + 1, row=(newcerr.nombre, newcerr.descripcion))
             msg = "Añadido cerramiento nuevo: %s" % newcerr.nombre
             self.ui.get_object('statusbar').push(0, msg)
-            ctv.set_cursor(cerri + 1)
+            self.cerramientotv.set_cursor(cerri + 1)
 
     def cerramientoremove(self, widget):
         """Elimina cerramiento de la lista de cerramientos"""
-        ctv = self.ui.get_object('cerramientotv')
-        cerrtm, cerrtm_iter = ctv.get_selection().get_selected()
+        cerrtm, cerrtm_iter = self.cerramientotv.get_selection().get_selected()
         if cerrtm_iter:
             cerri = int(cerrtm.get_path(cerrtm_iter)[0])
             self.model.cerramientoremove(cerri)
             cerrtm.remove(cerrtm_iter)
             self.ui.get_object('statusbar').push(0, "Eliminado cerramiento")
             if cerri == 0: cerri = 1
-            ctv.set_cursor(cerri - 1)
+            self.cerramientotv.set_cursor(cerri - 1)
 
     def cerramientoup(self, widget):
         """Sube cerramiento en lista de cerramientos"""
-        ctv = self.ui.get_object('cerramientotv')
-        cerrtm, cerrtm_iter = ctv.get_selection().get_selected()
+        cerrtm, cerrtm_iter = self.cerramientotv.get_selection().get_selected()
         if cerrtm_iter:
             cerri = int(cerrtm.get_path(cerrtm_iter)[0])
             if cerri == 0:
@@ -405,8 +389,7 @@ class GtkCondensa(object):
 
     def cerramientodown(self, widget):
         """Baja cerramiento en lista de cerramientos"""
-        ctv = self.ui.get_object('cerramientotv')
-        cerrtm, cerrtm_iter = ctv.get_selection().get_selected()
+        cerrtm, cerrtm_iter = self.cerramientotv.get_selection().get_selected()
         if cerrtm_iter:
             cerri = int(cerrtm.get_path(cerrtm_iter)[0])
             if cerri == len(self.model.cerramientosDB.nombres) - 1:
@@ -428,10 +411,9 @@ class GtkCondensa(object):
         path - ruta del combo en el treeview
         new_iter - ruta del nuevo valor en el modelo del combo
         """
-        materialesls = self.ui.get_object('materiales_liststore')
         capaindex = int(self.capasls[path][0])
         currentname, currente = self.model.c.capas[capaindex]
-        newname = materialesls[new_iter][0].decode('utf-8')
+        newname = self.materialesls[new_iter][0].decode('utf-8')
         if newname != currentname:
             self.model.set_capa(capaindex, newname, float(currente))
             msg = "Modificado material de capa %i: %s" % (capaindex, newname)
