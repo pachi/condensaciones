@@ -112,36 +112,28 @@ class GtkCondensa(object):
 
     def actualizacabecera(self):
         """Actualiza texto de cabecera"""
-        model = self.model
-        cnombre = self.ui.get_object('nombre_cerramiento')
-        cdescripcion = self.ui.get_object('descripcion_cerramiento')
-        csubtitulo1 = self.ui.get_object('csubtitulo1')
-        csubtitulo2 = self.ui.get_object('csubtitulo2')
-        cnombre.props.label = model.c.nombre
-        cdescripcion.props.label = model.c.descripcion
-        txt = ('U = %.2f W/m²K, f<sub>Rsi</sub> ='
-               ' %.2f, f<sub>Rsi,min</sub> = %.2f')
-        csubtitulo1.props.label = txt % (model.c.U, model.fRsi, model.fRsimin)
-        txt = ('%s: T<sub>ext</sub> = %.2f°C, HR<sub>ext</sub> = %.1f%%, '
-               '%s: T<sub>int</sub> = %.2f°C, HR<sub>int</sub> = %.1f%%')
-        csubtitulo2.props.label = txt % (model.ambienteexterior,
-                                         model.climae.temp, model.climae.HR,
-                                         model.ambienteinterior,
-                                         model.climai.temp, model.climai.HR)
-        COLOR_OK = gtk.gdk.color_parse("#AACCAA")
-        COLOR_BAD = gtk.gdk.color_parse("#CCAAAA")
-        COLOR_SEE = gtk.gdk.color_parse("#FFDD77")
-        if model.ccheck:
+        m, ui = self.model, self.ui
+        ui.get_object('nombre_cerramiento').props.label = m.c.nombre
+        ui.get_object('descripcion_cerramiento').props.label = m.c.descripcion
+        txt_t1 = ('U = %.2f W/m²K, f<sub>Rsi</sub> ='
+                  ' %.2f, f<sub>Rsi,min</sub> = %.2f'
+                  ) % (m.c.U, m.fRsi, m.fRsimin)
+        ui.get_object('csubtitulo1').props.label = txt_t1
+        txt_t2 = ('%s: T<sub>ext</sub> = %.2f°C, HR<sub>ext</sub> = %.1f%%, '
+                  '%s: T<sub>int</sub> = %.2f°C, HR<sub>int</sub> = %.1f%%'
+                  ) % (m.ambienteexterior, m.climae.temp, m.climae.HR,
+                       m.ambienteinterior, m.climai.temp, m.climai.HR)
+        ui.get_object('csubtitulo2').props.label = txt_t2
+        if m.ccheck:
             # El cerramiento condensa en las condiciones ambientales actuales
-            state_color = COLOR_BAD
-        elif model.ci or model.cs is True:
+            state_color = gtk.gdk.color_parse("#CCAAAA") # rojo COLOR_BAD
+        elif m.ci or m.cs is True:
             # El cerramiento condensa en las condiciones CTE (enero para
             # cond. superficiales y todos los meses para cond. intersticiales
-            state_color = COLOR_SEE
+            state_color = gtk.gdk.color_parse("#FFDD77") # naranja COLOR_SEE
         else:
-            state_color = COLOR_OK
-        cfondo = self.ui.get_object('cfondo')
-        cfondo.modify_bg(gtk.STATE_NORMAL, state_color)
+            state_color = gtk.gdk.color_parse("#AACCAA") # verde COLOR_OK
+        ui.get_object('cfondo').modify_bg(gtk.STATE_NORMAL, state_color)
 
     def actualizapie(self):
         """Actualiza pie de ventana principal"""
@@ -155,14 +147,12 @@ class GtkCondensa(object):
 
     def actualizacapas(self):
         """Actualiza pestaña de capas con descripción, capas, Rse, Rsi"""
-        rse = self.ui.get_object('Rsevalue')
-        rsi = self.ui.get_object('Rsivalue')
-        etotal = self.ui.get_object('espesortotal')
-        rse.props.text = "%.2f" % float(self.model.c.Rse)
-        rsi.props. text = "%.2f" % float(self.model.c.Rsi)
-        etotal.props.label = "%.3f" % self.model.c.e
+        m, ui = self.model, self.ui
+        ui.get_object('Rsevalue').props.text = "%.2f" % float(m.c.Rse)
+        ui.get_object('Rsivalue').props. text = "%.2f" % float(m.c.Rsi)
+        ui.get_object('espesortotal').props.label = "%.3f" % m.c.e
         self.capasls.clear()
-        for i, (nombre, e, K, R, mu, S, color) in self.model.capasdata():
+        for i, (nombre, e, K, R, mu, S, color) in m.capasdata():
             def _rgba2rgb(r, g, b, a=0.25):
                 """Composición de color r,g,b [0-1] sobre blanco con alpha"""
                 return a * r + (1 - a), a * g + (1 - a), a * b + (1 - a)
@@ -360,9 +350,8 @@ class GtkCondensa(object):
 
     def cerramientoactiva(self, tv):
         """Cambia cerramiento seleccionado en lista de cerramientos"""
-        lblselected = self.ui.get_object('lblselected')
         cerrtm, cerrtm_iter = tv.get_selection().get_selected()
-        lblselected.props.label = cerrtm[cerrtm_iter][0]
+        self.ui.get_object('lblselected').props.label = cerrtm[cerrtm_iter][0]
 
     def cerramientonombreeditado(self, cr, path, newtext):
         """Edita nombre de cerramiento"""
