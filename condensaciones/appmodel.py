@@ -115,7 +115,7 @@ class Model(object):
         """Comprueba la existencia de condensaciones intersticiales s/CTE"""
         return self.fRsi < self.fRsimin
 
-    def totalg(self, i=0):
+    def gperiodo(self, i=0):
         """Cantidad de condensación total de un periodo"""
         if i < len(self.climaslist):
             g = self.glist[i]
@@ -171,7 +171,7 @@ class Model(object):
         """Calcula resultados para usarlos en presentación"""
         ti, hri = self.climai.temp, self.climai.HR
         self.glist = self.calculaintersticiales(ti, hri)
-        self.ci = sum(self.totalg(i) for i, x in enumerate(self.climaslist))
+        self.ci = sum(self.gperiodo(i) for i, x in enumerate(self.climaslist))
         self.ccheck = self.ci or self.cs
 
     def calculaintersticiales(self, ti, hri):
