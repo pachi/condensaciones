@@ -49,7 +49,7 @@ class Model(object):
         self.c = self.cerramientosDB[self.cerramientosDB.nombres[0]]
         self.climasDB = climasDB
         self.climas = climasnombres
-        self.cerramientomodificado = False
+        self.modificado = False # ¿Existen cambios sin guardar?
 
     @property
     def localidad(self):
@@ -152,12 +152,12 @@ class Model(object):
     def set_Rse(self, newRse):
         """Cambia Rse"""
         self.c.Rse = newRse
-        self.cerramientomodificado = True
+        self.modificado = True
     
     def set_Rsi(self, newRsi):
         """Cambia Rsi"""
         self.c.Rsi = newRsi
-        self.cerramientomodificado = True
+        self.modificado = True
     
     def set_capa(self, index, name, e):
         """Establece tupla de capa según índice. d es una tupla de datos"""
@@ -165,7 +165,7 @@ class Model(object):
         #newmaterial = self.materiales[newname]
         #capae = None if newmaterial.type == 'RESISTANCE' else float(capae)
         self.c.capas[index] = (name, e)
-        self.cerramientomodificado = True
+        self.modificado = True
 
     def capasdata(self):
         """Devuelve iterador por capa con:
@@ -224,18 +224,18 @@ class Model(object):
         """Añade capa tras posición index"""
         ncapatuple = self.c.capas[index]
         self.c.capas.insert(index + 1, ncapatuple)
-        self.cerramientomodificado = True
+        self.modificado = True
     
     def caparemove(self, index):
         """Elimina capa en posición index"""
         self.c.capas.pop(index)
-        self.cerramientomodificado = True
+        self.modificado = True
     
     def capaswap(self, index1, index2):
         """Intercambia la posición de dos capas del cerramiento activo"""
         cp = self.c.capas 
         cp[index1], cp[index2] = cp[index2], cp[index1]
-        self.cerramientomodificado = True
+        self.modificado = True
     
     # Acciones sobre cerramientos --------------------------------------------
     

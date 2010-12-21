@@ -94,7 +94,7 @@ class GtkCondensa(object):
         """Actualiza cabecera, gráficas, texto y pie de datos"""
         if txt:
             self.ui.get_object('statusbar').push(0, txt)
-        modifiedmark = "*" if self.model.cerramientomodificado else ""
+        modifiedmark = "*" if self.model.modificado else ""
         txt = "Condensaciones - %s%s" % (self.model.c.nombre, modifiedmark)
         self.ui.get_object('window').set_title(txt)
         self.model.calcula()
