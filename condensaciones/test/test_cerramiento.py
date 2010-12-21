@@ -142,8 +142,8 @@ class  CerramientoTestCase(unittest.TestCase):
         """Condensación intersticial en cerramiento [g/m2.mes]"""
         g = self.c1.condensacion(climae.temp, climai.temp, climae.HR, climai.HR)
         cantidades = zip(*g)[1]
-        cantidad_condensada = sum(cantidades) * 2592000.0 #[g/m².mes]
-        result_cc = 31.397530032177634
+        cantidad_condensada = sum(cantidades) # [g/m².mes]
+        result_cc = 31.397530032177627
         self.assertEqual(cantidad_condensada, result_cc)
 
 if __name__ == '__main__':
