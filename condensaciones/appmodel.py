@@ -195,6 +195,8 @@ class Model(object):
         Para cada clima exterior devuelve, una lista de tuplas formado por el
         índice de la interfase y la cantidad condensada para cada interfase
         con condensación intersticial.
+        
+        [[(1, 2.5), (3, 3.0), ..., (i, gi)], ..., mesj]
         """
         # Localizar primer mes sin condensaciones previas
         prevcondensa = True
@@ -207,11 +209,10 @@ class Model(object):
         # Si agotamos la lista sin condensaciones volvemos al principio
         if startindex == (len(self.climaslist) - 1) and not cond:
             startindex = 0
-        order = range(startindex, len(self.climaslist)) + range(0, startindex)
-        #TODO: Calcular condensaciones totales
+        # Calculamos condensaciones en orden
         glist = []
         cond = []
-        for i in order:
+        for i in range(startindex, len(self.climaslist)) + range(0, startindex):
             climaj = self.climaslist[i]
             cond = self.c.condensacion(climaj.temp, ti, climaj.HR, hri, cond)
             glist.append(cond)
