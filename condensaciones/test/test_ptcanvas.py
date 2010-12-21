@@ -37,21 +37,28 @@ capas1 = [(u"1/2 pie LP métrico o catalán 40 mm< G < 60 mm", 0.11),
           (u"Tabique de LH sencillo [40 mm < Espesor < 60 mm]", 0.03),
           (u"Enlucido de yeso 1000 < d < 1300", 0.01),]
 
+class MockModel(object):
+    def __init__(self, c, ce, ci):
+        self.c = c
+        self.climae = ce
+        self.climai = ci
+
 class  PTCanvasTestCase(unittest.TestCase):
     """Comprobaciones de condensación"""
     def setUp(self):
         """Module-level setup"""
         self.c1 = Cerramiento("Cerramiento tipo", "Descripción tipo",
                               capas1, Rse=0.04, Rsi=0.13)
+        self.model = MockModel(self.c1, climae, climai)
+        
     def test_gdata(self):
         """Muestra gráfica"""
-        data = GraphData(self.c1, climae, climai)
         w = gtk.Window()
         v = gtk.VBox()
         pt = CPTCanvas()
         p = CPCanvas()
-        pt.dibuja(data)
-        p.dibuja(data)
+        pt.dibuja(self.model)
+        p.dibuja(self.model)
         v.pack_start(pt)
         v.pack_start(p)
         w.add(v)
