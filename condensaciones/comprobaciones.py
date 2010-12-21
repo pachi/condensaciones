@@ -111,6 +111,9 @@ def condensai(cerr, temp_ext, temp_int, HR_ext, HR_int):
     :rtype: float
     """
     #TODO: Revisar condensaciones añadiendo condensaciones existentes
+    #TODO: Mover aquí appmodel.calculaintersticiales como función a la que se
+    #TODO: le entrega una lista de climas exteriores y un cerramiento y
+    #TODO: calcula la existencia de condensaciones intersticiales
     g = cerr.condensacion(temp_ext, temp_int, HR_ext, HR_int)
     gq = zip(*g)[1] if g else []
     condensa = (sum(gq) > 0.0)

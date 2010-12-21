@@ -198,6 +198,7 @@ class Model(object):
         
         [[(1, 2.5), (3, 3.0), ..., (i, gi)], ..., mesj]
         """
+        #TODO: Mover a comprobaciones
         # Localizar primer mes sin condensaciones previas
         prevcondensa = True
         for startindex, climaj in enumerate(self.climaslist):

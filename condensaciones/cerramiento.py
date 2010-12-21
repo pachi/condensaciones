@@ -221,9 +221,6 @@ class Cerramiento(object):
             cada interfase.
         :rtype: list(tuple)
         """
-        
-        #TODO: devolver solamente coordenadas y no cantidades de condensación
-        # ya que no se usan en el cálculo.
         def _giraizq(p, q, r):
             "¿Forman los vectores pq:qr un giro a la izquierda?"
             _det = ((q[0]*r[1] + p[0]*q[1] + r[0]*p[1]) -
