@@ -24,6 +24,7 @@
 
 import comprobaciones
 import clima
+from clima import MESES
 import cerramiento
 from util import get_resource, colores_capas
 
@@ -32,8 +33,6 @@ CLIMASDB = get_resource('data', 'ClimaCTE.ini')
 climasDB, climasnombres, climasdbconfig = clima.loadclimadb(CLIMASDB)
 climae = climasDB['Climaext'][0] if 'Climaext' in climasDB else clima.Clima(5, 96)
 climai = climasDB['Climaint'][0] if 'Climaint' in climasDB else clima.Clima(20, 55)
-MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio',
-         'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
 
 class Model(object):
     def __init__(self):
