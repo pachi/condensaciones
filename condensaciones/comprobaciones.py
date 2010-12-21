@@ -75,7 +75,7 @@ def fRsimin(tempext, tempint=20.0, hrint=55.0):
         raise ValueError('La temperatura exterior e interior son iguales')
     return (tempsimin(hrint) - tempext) / (tempint - tempext)
 
-def condensas(cerr, temp_ext, temp_int, HR_int):
+def testcondensas(cerr, temp_ext, temp_int, HR_int):
     """Comprueba la condición de existencia de condensaciones superficiales
 
     Válido para un cerramiento, puente térmico (integrado) o partición
@@ -95,7 +95,65 @@ def condensas(cerr, temp_ext, temp_int, HR_int):
     # correspondientes al mes de enero y temperatura interior igual a 20ºC.
     return fRsi(cerr.U) < fRsimin(temp_ext, temp_int, HR_int)
 
-def condensai(cerr, temp_ext, temp_int, HR_ext, HR_int):
+def calculaintersticiales(cerr, ti, hri, climasext):
+    """Devuelve lista de condensaciones intersticiales para cada interfase
+    
+    Se calcula usando como clima exterior cada uno de los elementos en
+    self.climaslist y condiciones interiores ti, hri.
+    
+    Para cada clima exterior devuelve, una lista de tuplas formado por el
+    índice de la interfase y la cantidad condensada para cada interfase
+    con condensación intersticial.
+    
+    [[(1, 2.5), (3, 3.0), ..., (i, gi)], ..., mesj]
+    """
+    # Localizar primer mes sin condensaciones previas
+    prevcondensa = True
+    for startindex, climaj in enumerate(climasext):
+        cond = cerr.condensacion(climaj.temp, ti, climaj.HR, hri)
+        if not cond:
+            prevcondensa = False
+        elif not prevcondensa:
+            break
+    # Si agotamos la lista sin condensaciones volvemos al principio
+    if startindex == (len(climasext) - 1) and not cond:
+        startindex = 0
+    # Calculamos condensaciones en orden
+    glist = []
+    cond = []
+    for i in range(startindex, len(climasext)) + range(0, startindex):
+        climaj = climasext[i]
+        cond = cerr.condensacion(climaj.temp, ti, climaj.HR, hri, cond)
+        glist.append(cond)
+    # Reordenar lista y guardar
+    return glist[-startindex:] + glist[:-startindex]
+
+def gperiodo(glist, i=0):
+    """Cantidad de condensación total de un periodo i en [g/m²mes]
+    
+    :param list glist: Lista de condensaciones por interfase en tuplas de
+        índice y cantidad, tal como devuelve la función calculaintersticiales
+    :param int i: Índice del periodo deseado
+    :returns: Cantidad acumulada condensada durante el periodo
+    :rtype: float
+    """
+    if i < len(glist):
+        g = glist[i]
+        totalg = 0.0 if not g else sum(zip(*g)[1])
+    else:
+        totalg = 0.0
+    return totalg
+
+def gmeses(glist):
+    """Lista de condensaciones acumuladas en todas las interfases por periodos
+    
+    :param list glist: Lista de condensaciones por interfases y periodos
+    :returns: Lista de condensaciones acumuladas
+    :rtype: list
+    """
+    return [gperiodo(glist, i) for i in range(len(glist))]
+
+def testcondensai(cerr, temp_ext, temp_int, HR_ext, HR_int):
     """Comprueba la condición de existencia de condensaciones intersticiales
 
     Válido para un cerramiento, puente térmico (integrado) o partición
@@ -119,7 +177,7 @@ def condensai(cerr, temp_ext, temp_int, HR_ext, HR_int):
     condensa = (sum(gq) > 0.0)
     return condensa
 
-def condensaciones(cerr, temp_ext, temp_int, HR_ext, HR_int):
+def testcondensaciones(cerr, temp_ext, temp_int, HR_ext, HR_int):
     """Existencia de condensaciones en un cerramiento
 
     :param Cerramiento cerr: Cerramiento para comprobar
@@ -131,7 +189,7 @@ def condensaciones(cerr, temp_ext, temp_int, HR_ext, HR_int):
     :returns: `True` si existen condensaciones superficiales o intersticiales.
     :rtype: float
     """
-    ci = condensai(cerr, temp_ext, temp_int, HR_ext, HR_int)
-    cs = condensas(cerr, temp_ext, temp_int, HR_int)
+    ci = testcondensai(cerr, temp_ext, temp_int, HR_ext, HR_int)
+    cs = testcondensas(cerr, temp_ext, temp_int, HR_int)
 
     return ci or cs

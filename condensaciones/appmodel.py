@@ -42,7 +42,6 @@ class Model(object):
         self._localidad = None # Sin localidad seleccionada
         self._imes = 0 # índice del mes activo en climaslist
         self._climai = climai # clima interior
-        self.glist = [] # condensaciones para todos los periodos
         # Carga datos de materiales y cerramientos
         self.cerramientosDB = cdb
         # cerramiento actual
@@ -130,20 +129,29 @@ class Model(object):
         """
         te = self.climaslist[0].temp
         return comprobaciones.fRsimin(te, self.climai.temp, self.climai.HR)
+
+    @property
+    def glist(self):
+        """Calcula lista de condensaciones intersticiales"""
+        return comprobaciones.calculaintersticiales(self.c,
+                                                    self.climai.temp,
+                                                    self.climai.HR,
+                                                    self.climaslist)
+
+    @property
+    def gmeses(self):
+        """Lista de condensaciones acumuladas en cada mes"""
+        return comprobaciones.gmeses(self.glist)
         
     @property
     def cs(self):
-        """Comprueba la existencia de condensaciones intersticiales s/CTE"""
+        """Comprueba la existencia de condensaciones superficiales s/CTE"""
         return self.fRsi < self.fRsimin
 
-    def gperiodo(self, i=0):
-        """Cantidad de condensación total de un periodo"""
-        if i < len(self.climaslist):
-            g = self.glist[i]
-            totalg = 0.0 if not g else sum(zip(*g)[1])
-        else:
-            totalg = 0.0
-        return totalg
+    @property
+    def ci(self):
+        """Comprueba la existencia de condensaciones intersticiales"""
+        return sum(self.gmeses)
 
     def set_cerramiento(self, cname):
         """Selecciona cerramiento activo a partir de su nombre"""
@@ -178,47 +186,6 @@ class Model(object):
         return enumerate(zip(self.c.nombres, self.c.espesores,
                              self.c.K, self.c.R[1:-1],
                              self.c.mu, self.c.S, colores))
-
-    def calcula(self):
-        """Calcula resultados para usarlos en presentación"""
-        ti, hri = self.climai.temp, self.climai.HR
-        self.glist = self.calculaintersticiales(ti, hri)
-        self.ci = sum(self.gperiodo(i) for i, x in enumerate(self.climaslist))
-        self.ccheck = self.ci or self.cs
-
-    def calculaintersticiales(self, ti, hri):
-        """Devuelve lista de condensaciones intersticiales para cada interfase
-        
-        Se calcula usando como clima exterior cada uno de los elementos en
-        self.climaslist y condiciones interiores ti, hri.
-        
-        Para cada clima exterior devuelve, una lista de tuplas formado por el
-        índice de la interfase y la cantidad condensada para cada interfase
-        con condensación intersticial.
-        
-        [[(1, 2.5), (3, 3.0), ..., (i, gi)], ..., mesj]
-        """
-        #TODO: Mover a comprobaciones
-        # Localizar primer mes sin condensaciones previas
-        prevcondensa = True
-        for startindex, climaj in enumerate(self.climaslist):
-            cond = self.c.condensacion(climaj.temp, ti, climaj.HR, hri)
-            if not cond:
-                prevcondensa = False
-            elif not prevcondensa:
-                break
-        # Si agotamos la lista sin condensaciones volvemos al principio
-        if startindex == (len(self.climaslist) - 1) and not cond:
-            startindex = 0
-        # Calculamos condensaciones en orden
-        glist = []
-        cond = []
-        for i in range(startindex, len(self.climaslist)) + range(0, startindex):
-            climaj = self.climaslist[i]
-            cond = self.c.condensacion(climaj.temp, ti, climaj.HR, hri, cond)
-            glist.append(cond)
-        # Reordenar lista y guardar
-        return glist[-startindex:] + glist[:-startindex]
     
     # Acciones sobre capas ---------------------------------------------------
     

@@ -98,7 +98,6 @@ class GtkCondensa(object):
         modifiedmark = "*" if self.model.modificado else ""
         txt = "Condensaciones - %s%s" % (self.model.c.nombre, modifiedmark)
         self.ui.get_object('window').set_title(txt)
-        self.model.calcula()
         self.actualizacabecera()
         self.actualizapie()
         self.actualizacapas()
@@ -119,10 +118,11 @@ class GtkCondensa(object):
                   ) % (m.ambienteexterior, m.climae.temp, m.climae.HR,
                        m.ambienteinterior, m.climai.temp, m.climai.HR)
         ui.get_object('csubtitulo2').props.label = txt_t2
-        if m.ccheck:
+        ci, cs = m.ci, m.cs
+        if ci and cs:
             # El cerramiento condensa en las condiciones ambientales actuales
             state_color = gtk.gdk.color_parse("#CCAAAA") # rojo COLOR_BAD
-        elif m.ci or m.cs is True:
+        elif ci or cs:
             # El cerramiento condensa en las condiciones CTE (enero para
             # cond. superficiales y todos los meses para cond. intersticiales
             state_color = gtk.gdk.color_parse("#FFDD77") # naranja COLOR_SEE
@@ -134,7 +134,7 @@ class GtkCondensa(object):
         """Actualiza pie de ventana principal"""
         m, ui = self.model, self.ui
         txt = "Total (%s): %.2f [g/m²mes]" % (m.ambienteexterior,
-                                              m.gperiodo(m.imes))
+                                              m.gmeses[m.imes])
         ui.get_object('pie1').props.label = txt
         txt = ("Condensación en interfases (%s): " % m.ambienteexterior +
                ", ".join(["%.2f (%i)" % (x, i) for i, x in m.glist[m.imes]]))
