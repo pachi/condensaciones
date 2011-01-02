@@ -281,22 +281,19 @@ def get_pixbuf_from_canvas(canvas, destwidth=None):
     destwidth - ancho del pixbuf de destino
     """
     w, h = canvas.get_width_height()
+    destwidth = destwidth if destwidth else w
+    destheight = h * destwidth / w
     #Antes de mostrarse la gráfica en una de las pestañas no existe el _pixmap
     #pero al generar el informe queremos que se dibuje en uno fuera de pantalla
-    oldpixmap = None
-    if hasattr(canvas, '_pixmap'):
-        oldpixmap = canvas._pixmap
-    if not destwidth:
-        destwidth = w
-    pixmap = gtk.gdk.Pixmap (None, w, h, depth=24)
-    cm = pixmap.get_colormap()
+    oldpixmap = canvas._pixmap if hasattr(canvas, '_pixmap') else None        
+    pixmap = gtk.gdk.Pixmap(None, w, h, depth=24)
     canvas._renderer.set_pixmap(pixmap) # mpl backend_gtkcairo
     canvas._render_figure(pixmap, w, h) # mpl backend_gtk
-    pixbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, False, 8, w, h)
-    pixbuf.get_from_drawable(pixmap, cm, 0, 0, 0, 0, w, h)
-    destheight = h * destwidth / w
-    scaledpixbuf = pixbuf.scale_simple(destwidth, destheight,
-                                       gtk.gdk.INTERP_HYPER)
     if oldpixmap:
         canvas._renderer.set_pixmap(oldpixmap)
+    cm = pixmap.get_colormap()
+    pixbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, False, 8, w, h)
+    pixbuf.get_from_drawable(pixmap, cm, 0, 0, 0, 0, -1, -1)
+    scaledpixbuf = pixbuf.scale_simple(destwidth, destheight,
+                                       gtk.gdk.INTERP_HYPER)
     return scaledpixbuf
