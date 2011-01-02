@@ -45,6 +45,9 @@ class GtkCondensa(object):
         self.ui.connect_signals(self)
         gtk.link_button_set_uri_hook(lambda b, u: webbrowser.open(u))
         # Elementos de la UI que no se pueden generar en Glade ----------------
+        # Conecta modelos a gráficas
+        self.ui.get_object('prestemp_canvas').model = self.model
+        self.ui.get_object('presiones_canvas').model = self.model
         # Marcas de texto para estilos en textbuffer --------------------------
         tb = self.ui.get_object('informe_txtbuffer')
         tb.create_tag("titulo", weight=WEIGHT_BOLD, scale=SCALE_X_LARGE)
@@ -159,8 +162,8 @@ class GtkCondensa(object):
 
     def actualizagraficas(self):
         """Redibuja gráficos con nuevos datos"""
-        self.ui.get_object('prestemp_canvas').dibuja(self.model)
-        self.ui.get_object('presiones_canvas').dibuja(self.model)
+        self.ui.get_object('prestemp_canvas').dibuja()
+        self.ui.get_object('presiones_canvas').dibuja()
 
     #{ Pestaña de informe
 

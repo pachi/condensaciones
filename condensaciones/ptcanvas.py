@@ -100,13 +100,14 @@ class CPTCanvas(FigureCanvasGTKCairo):
     __gtype_name__ = 'CPTCanvas'
 
     def __init__(self):
+        self.model = None
         self.fig = Figure()
         FigureCanvasGTKCairo.__init__(self, self.fig)
         self.fig.set_facecolor('w') # Fondo blanco en vez de gris
         self.ax1 = self.fig.add_subplot(111) # 1 fila, 1 columna, dibujo 1
         self.ax2 = self.ax1.twinx()
 
-    def dibuja(self, model, width=600, height=400):
+    def dibuja(self, width=600, height=400):
         """Representa Presiones de saturación vs. Presiones de vapor o
         temperaturas.
         
@@ -118,7 +119,7 @@ class CPTCanvas(FigureCanvasGTKCairo):
         
         d - GraphData, contiene los datos para dibujar las gráficas
         """
-        d = GraphData(model)
+        d = GraphData(self.model)
         # ================== presiones y temperaturas =====================
         # -- dibujo ---
         ax1 = self.ax1
@@ -192,12 +193,13 @@ class CPCanvas(FigureCanvasGTKCairo):
     __gtype_name__ = 'CPCanvas'
 
     def __init__(self):
+        self.model = None
         self.fig = Figure()
         FigureCanvasGTKCairo.__init__(self, self.fig)
         self.fig.set_facecolor('w') # Fondo blanco en vez de gris
         self.ax1 = self.fig.add_subplot(111) # 1 fila, 1 columna, dibujo 1
 
-    def dibuja(self, model, width=600, height=400):
+    def dibuja(self, width=600, height=400):
         """Representa Presiones de saturación vs. Presiones de vapor
         
         El eje horizontal representa es espesor de aire equivalente desde
@@ -207,7 +209,7 @@ class CPCanvas(FigureCanvasGTKCairo):
         
         d - GraphData, contiene los datos para dibujar las gráficas
         """
-        d = GraphData(model)
+        d = GraphData(self.model)
         # -- dibujo ---
         ax1 = self.ax1
         ax1.clear() # Limpia imagen de datos anteriores
