@@ -27,11 +27,20 @@
         </glade-widget-class>
         <glade-widget-class name="CTextView" generic-name="ctextview" title="TextView de Muros" parent="GtkScrolledWindow">
         </glade-widget-class>
+        <glade-widget-class name="CCCanvas" generic-name="cccanvas"
+        	title="Canvas - Histograma" parent="GtkDrawingArea">
+        </glade-widget-class>
+        <glade-widget-class name="CRuler" generic-name="cruler" title="Barra de condensaciones"
+        	parent="GtkDrawingArea">
+        </glade-widget-class>
     </glade-widget-classes>
     <glade-widget-group name="condensaciones" title="widgets para condensaciones">
         <glade-widget-class-ref name="CCabecera"/>
         <glade-widget-class-ref name="CPTCanvas"/>
         <glade-widget-class-ref name="CPCanvas"/>
-        <glade-widget-class-ref name="CTextView"/>
+        <glade-widget-class-ref name="CTextView"/><glade-widget-class-ref
+        	name="CCCanvas">
+</glade-widget-class-ref>
+    	<glade-widget-class-ref name="CRuler"></glade-widget-class-ref>
     </glade-widget-group>
 </glade-catalog>

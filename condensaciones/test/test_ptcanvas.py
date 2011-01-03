@@ -27,6 +27,7 @@ import gtk
 from condensaciones.cerramiento import Cerramiento
 from condensaciones.clima import Clima
 from condensaciones.ptcanvas import *
+from condensaciones.comprobaciones import calculaintersticiales, gmeses
 
 climae = Clima(5, 96) #T, HR
 climai = Clima(20.0, 55) #T, HR
@@ -42,6 +43,12 @@ class MockModel(object):
         self.c = c
         self.climae = ce
         self.climai = ci
+        self.climaslist = [climae, Clima(10, 55), Clima(3, 80), Clima(10, 55),
+                           Clima(6, 85), Clima(10, 55), Clima(8, 85),
+                           Clima(10, 55), Clima(3, 85), Clima(10, 55),
+                           Clima(3, 85), Clima(3, 55)]
+        self.glist = calculaintersticiales(self.c, ci.temp, ci.HR, self.climaslist)
+        self.gmeses = gmeses(self.glist)
 
 class  PTCanvasTestCase(unittest.TestCase):
     """Comprobaciones de condensación"""
@@ -53,17 +60,26 @@ class  PTCanvasTestCase(unittest.TestCase):
         
     def test_gdata(self):
         """Muestra gráfica"""
-        w = gtk.Window()
-        v = gtk.VBox()
-        pt = CPTCanvas()
-        p = CPCanvas()
-        pt.dibuja(self.model)
-        p.dibuja(self.model)
-        v.pack_start(pt)
-        v.pack_start(p)
-        w.add(v)
-        w.show_all()
-        w.connect('destroy', gtk.main_quit)
+        win = gtk.Window()
+        vbox = gtk.VBox()
+        ptc = CPTCanvas()
+        pc = CPCanvas()
+        cc = CCCanvas()
+        r = CRuler()
+        r.condensalist = self.model.gmeses
+        ptc.model = self.model
+        pc.model = self.model
+        cc.model = self.model
+        ptc.dibuja()
+        pc.dibuja()
+        cc.dibuja()
+        vbox.pack_start(ptc)
+        vbox.pack_start(pc)
+        vbox.pack_start(cc)
+        vbox.pack_start(r)
+        win.add(vbox)
+        win.show_all()
+        win.connect('destroy', gtk.main_quit)
         glib.timeout_add_seconds(5, gtk.main_quit)
         gtk.main()
 

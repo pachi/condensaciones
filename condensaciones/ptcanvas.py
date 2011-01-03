@@ -29,6 +29,7 @@ matplotlib.use('GTKCairo')
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_gtkcairo import FigureCanvasGTKCairo
 from util import colores_capas, add_margin
+from clima import MESES
 
 class GraphData(object):
     """Almacén de datos para dibujado de gráficas"""
@@ -275,6 +276,58 @@ class CPCanvas(FigureCanvasGTKCairo):
         """Guardar y mostrar gráfica"""
         self.fig.savefig(filename)
 
+class CCCanvas(FigureCanvasGTKCairo):
+    """Diagrama de condensaciones
+    
+    Dibuja un histograma con las condensaciones de cada periodo.
+    Cuando existan 12 periodos en el modelo, considera que se trata de meses.
+    
+    Es necesario conectar el modelo al control, asignando el modelo del que se
+    leen los datos en la propiedad model.
+    """
+    __gtype_name__ = 'CCCanvas'
+
+    def __init__(self):
+        self.model = None
+        self.fig = Figure()
+        FigureCanvasGTKCairo.__init__(self, self.fig)
+        self.fig.set_facecolor('w') # Fondo blanco en vez de gris
+        self.ax1 = self.fig.add_subplot(111) # 1 fila, 1 columna, dibujo 1
+        self.fig.subplots_adjust(bottom=0.22) # Incrementar margen inferior
+
+    def dibuja(self, width=600, height=200):
+        """Representa histograma de condensaciones totales en cada mes
+        
+        El eje horizontal representa los periodos [meses] y el eje vertical la  
+        condensación existente [g/m²mes]
+        """
+        # -- dibujo ---
+        ax1 = self.ax1
+        ax1.clear() # Limpia imagen de datos anteriores
+        ax1.set_title(u"Condensaciones", size='large')
+        ax1.set_xlabel(u"Periodo")
+        ax1.set_ylabel(u"Cantidad condensada [g/m²mes]", fontdict=dict(color='b'))
+        # presiones efectivas
+        N = len(self.model.climaslist)
+        x_c = numpy.arange(N)
+        y_c = self.model.gmeses
+        x_names = [mes[:3] for mes in MESES] if N == 12 else [str(i) for i in range(N)]
+        ax1.bar(x_c, y_c, width=1.0, align='center', fc='b', ec='k')
+        ax1.set_xticks(x_c)
+        ax1.set_xticklabels(x_names, size='small', rotation=20)
+        # Tamaño
+        self.set_size_request(width, height)
+        self.draw()
+
+    def pixbuf(self, destwidth=600):
+        """Obtén un pixbuf a partir del canvas actual"""
+        return get_pixbuf_from_canvas(self, destwidth)
+
+    def save(self, filename='condensacionesplot.png'):
+        """Guardar y mostrar gráfica"""
+        self.fig.savefig(filename)
+
+
 def get_pixbuf_from_canvas(canvas, destwidth=None):
     """Devuelve un pixbuf a partir de un canvas de Matplotlib
     
@@ -297,3 +350,67 @@ def get_pixbuf_from_canvas(canvas, destwidth=None):
     scaledpixbuf = pixbuf.scale_simple(destwidth, destheight,
                                        gtk.gdk.INTERP_HYPER)
     return scaledpixbuf
+
+class CRuler(gtk.DrawingArea):
+    """Barra de condensaciones en interfases
+    
+    El control dibuja una casilla por cada elemento en condensalist y la
+    colorea en verde si el elemento es cero o en rojo si es mayor que cero.
+    
+    Además, añade el valor con un decimal.  
+    """
+    __gtype_name__ = 'CRuler'
+    WHEIGHT = 30 # Altura en píxeles del control
+
+    def __init__(self):
+        self.condensalist = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        super(CRuler, self).__init__()
+        self.set_size_request(-1, self.WHEIGHT)
+        self.connect("expose-event", self.expose)
+
+    def expose(self, widget, event):
+        cr = widget.window.cairo_create()
+        cr.select_font_face("sans-serif")
+        cr.set_font_size(8)
+        cr.set_line_width(1)
+        
+        wh = self.allocation.height
+        ww = self.allocation.width
+        ln = len(self.condensalist)
+        ew = round(1.0 * ww / ln)
+        ismeses = ln == 12
+        k = 1.0 * wh / max(self.condensalist)
+        
+        for i, condensa in enumerate(self.condensalist):
+            # Rectángulos de fondo
+            cr.rectangle(i * ew, 0, (i + 1) * ew, wh)
+            if condensa > 0:
+                cr.set_source_rgb(0.8, 0.7, 0.7)
+            else:
+                cr.set_source_rgb(0.7, 0.8, 0.7)
+            cr.fill()
+            # Rectángulos de cantidad condensada (histograma)
+            cr.rectangle(i * ew , wh - k * condensa, (i + 1) * ew, wh)
+            cr.set_source_rgb(0.4, 0.8, 0.9)
+            cr.fill()
+            # Linea lateral
+            cr.move_to(i * ew + 0.5, 0)
+            cr.line_to(i * ew + 0.5, wh)
+            cr.set_source_rgb(0, 0, 0)
+            cr.stroke()
+            # Nombres meses            
+            if ismeses:
+                txt = "ENE"
+                x, y, width, height, dx, dy = cr.text_extents(txt)
+                cr.move_to((i + 0.5) * ew - width / 2.0, (wh + height) / 3.0)
+                cr.set_source_rgb(0.5, 0.5, 0.5)
+                cr.show_text(MESES[i][:3].upper())
+            # Cantidad condensada
+            txt = "%.1f" % condensa
+            x, y, width, height, dx, dy = cr.text_extents(txt)
+            cr.move_to((i + 0.5) * ew - width / 2.0, 1.2 * (wh + height) / 2.0)
+            cr.set_source_rgb(0.0, 0.0, 0.0)
+            cr.show_text(txt)
+        cr.move_to(ww - 0.5, 0)
+        cr.line_to(ww - 0.5, wh)
+        cr.stroke()
