@@ -239,7 +239,7 @@
             <property name="can_focus">True</property>
             <signal name="switch_page" handler="cambiahoja"/>
             <child>
-              <object class="GtkVBox" id="vbox7">
+              <object class="GtkVBox" id="vbcreditos">
                 <property name="visible">True</property>
                 <property name="orientation">vertical</property>
                 <child>
@@ -756,6 +756,24 @@
               </packing>
             </child>
             <child>
+              <object class="CCCanvas" id="condensaciones_canvas">
+                <property name="visible">True</property>
+              </object>
+              <packing>
+                <property name="position">4</property>
+              </packing>
+            </child>
+            <child type="tab">
+              <object class="GtkLabel" id="labelcondensaciones">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Condensaciones</property>
+              </object>
+              <packing>
+                <property name="position">4</property>
+                <property name="tab_fill">False</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkVBox" id="vbinforme">
                 <property name="visible">True</property>
                 <property name="orientation">vertical</property>
@@ -793,7 +811,7 @@
                 </child>
               </object>
               <packing>
-                <property name="position">4</property>
+                <property name="position">5</property>
               </packing>
             </child>
             <child type="tab">
@@ -802,7 +820,7 @@
                 <property name="label" translatable="yes">Informe</property>
               </object>
               <packing>
-                <property name="position">4</property>
+                <property name="position">5</property>
                 <property name="tab_fill">False</property>
               </packing>
             </child>

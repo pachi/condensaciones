@@ -48,6 +48,7 @@ class GtkCondensa(object):
         # Conecta modelos a gráficas
         self.ui.get_object('prestemp_canvas').model = self.model
         self.ui.get_object('presiones_canvas').model = self.model
+        self.ui.get_object('condensaciones_canvas').model = self.model
         # Marcas de texto para estilos en textbuffer --------------------------
         tb = self.ui.get_object('informe_txtbuffer')
         tb.create_tag("titulo", weight=WEIGHT_BOLD, scale=SCALE_X_LARGE)
@@ -164,6 +165,7 @@ class GtkCondensa(object):
         """Redibuja gráficos con nuevos datos"""
         self.ui.get_object('prestemp_canvas').dibuja()
         self.ui.get_object('presiones_canvas').dibuja()
+        self.ui.get_object('condensaciones_canvas').dibuja()
 
     #{ Pestaña de informe
 
@@ -507,7 +509,7 @@ class GtkCondensa(object):
 
     def cambiahoja(self, notebook, page, pagenum):
         """Cambia hoja activa en la interfaz y actualiza gráficas si procede"""
-        CREDITOS, CAPAS, GRAFICAPT, GRAFICAPV, INFORME = 0, 1, 2, 3, 4
+        CRED, CAPAS, GRAFICAPT, GRAFICAPV, HISTOG, INFORME = 0, 1, 2, 3, 4, 5
         if pagenum == GRAFICAPT or pagenum == GRAFICAPV:
             self.actualizagraficas()
         elif pagenum == INFORME:
