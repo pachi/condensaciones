@@ -27,8 +27,8 @@ higrotérmicos.
 
 import configobj
 
-MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio',
-         'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
+MESES = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio',
+         'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
 
 class Clima(object):
     """Definición de un ambiente higrotérmico tipo (temperatura, humedad...)"""
