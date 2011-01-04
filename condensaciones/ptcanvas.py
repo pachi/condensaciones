@@ -381,7 +381,8 @@ class CRuler(gtk.DrawingArea):
         ln = len(self.model.gmeses)
         ew = round(1.0 * ww / ln)
         ismeses = ln == 12
-        k = 1.0 * wh / max(self.model.gmeses)
+        gmax = max(self.model.gmeses)
+        k = (1.0 * wh / gmax) if gmax else 0.0
         
         for i, condensa in enumerate(self.model.gmeses):
             # Rectángulos de fondo
