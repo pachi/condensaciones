@@ -392,7 +392,7 @@ class CRuler(gtk.DrawingArea):
                 cr.set_source_rgb(0.7, 0.8, 0.7)
             cr.fill()
             # Rectángulos de cantidad condensada (histograma)
-            cr.rectangle(i * ew , wh - k * condensa, ew, wh)
+            cr.rectangle(i * ew , wh, ew, -k * condensa)
             cr.set_source_rgb(0.4, 0.8, 0.9)
             cr.fill()
             # Linea lateral
