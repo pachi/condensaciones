@@ -354,19 +354,45 @@ def get_pixbuf_from_canvas(canvas, destwidth=None):
 class CRuler(gtk.DrawingArea):
     """Barra de condensaciones en interfases
     
-    El control dibuja una casilla por cada elemento en condensalist y la
-    colorea en verde si el elemento es cero o en rojo si es mayor que cero.
+    El control dibuja una casilla por cada elemento en condensalist
+    (model.gmeses) y la colorea en verde si el elemento es cero o en rojo si es
+    mayor que cero. Además, se resalta el periodo actualmente seleccionado, que
+    se toma de imes (model.imes)
     
-    Además, añade el valor con un decimal.  
+    Los valores de condensación se representan con un decimal.  
     """
     __gtype_name__ = 'CRuler'
     WHEIGHT = 30 # Altura en píxeles del control
 
     def __init__(self):
-        self.condensalist = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        self.model = None
+        self._condensalist = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        self._imes = None
         super(CRuler, self).__init__()
         self.set_size_request(-1, self.WHEIGHT)
         self.connect("expose-event", self.expose)
+    
+    @property
+    def condensalist(self):
+        if self.model:
+            return self.model.gmeses
+        else:
+            return self._condensalist
+    
+    @condensalist.setter
+    def condensalist(self, value):
+        self._condensalist = value
+    
+    @property
+    def imes(self):
+        if self.model:
+            return self.model.imes
+        else:
+            return self._imes
+    
+    @imes.setter
+    def imes(self, value):
+        self._imes = value
 
     def expose(self, widget, event):
         cr = widget.window.cairo_create()
@@ -411,6 +437,12 @@ class CRuler(gtk.DrawingArea):
             cr.move_to((i + 0.5) * ew - width / 2.0, 1.2 * (wh + height) / 2.0)
             cr.set_source_rgb(0.0, 0.0, 0.0)
             cr.show_text(txt)
+        # Linea final
         cr.move_to(ww - 0.5, 0)
         cr.line_to(ww - 0.5, wh)
         cr.stroke()
+        # Resalta mes actual
+        if self.imes is not None:
+            cr.rectangle(self.imes * ew + 1.5, 0.5, ew - 2.0, wh - 0.5)
+            cr.set_source_rgb(1.0, 0.2, 0.2)
+            cr.stroke()

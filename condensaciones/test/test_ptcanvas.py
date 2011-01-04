@@ -49,6 +49,7 @@ class MockModel(object):
                            Clima(3, 85), Clima(3, 55)]
         self.glist = calculaintersticiales(self.c, ci.temp, ci.HR, self.climaslist)
         self.gmeses = gmeses(self.glist)
+        self.imes = 1 # mes activo
 
 class  PTCanvasTestCase(unittest.TestCase):
     """Comprobaciones de condensación"""
@@ -66,10 +67,10 @@ class  PTCanvasTestCase(unittest.TestCase):
         pc = CPCanvas()
         cc = CCCanvas()
         r = CRuler()
-        r.condensalist = self.model.gmeses
         ptc.model = self.model
         pc.model = self.model
         cc.model = self.model
+        r.model = self.model
         ptc.dibuja()
         pc.dibuja()
         cc.dibuja()
