@@ -49,6 +49,7 @@ class GtkCondensa(object):
         self.ui.get_object('prestemp_canvas').model = self.model
         self.ui.get_object('presiones_canvas').model = self.model
         self.ui.get_object('condensaciones_canvas').model = self.model
+        self.ui.get_object('cruler').model = self.model
         # Marcas de texto para estilos en textbuffer --------------------------
         tb = self.ui.get_object('informe_txtbuffer')
         tb.create_tag("titulo", weight=WEIGHT_BOLD, scale=SCALE_X_LARGE)
@@ -166,6 +167,7 @@ class GtkCondensa(object):
         self.ui.get_object('prestemp_canvas').dibuja()
         self.ui.get_object('presiones_canvas').dibuja()
         self.ui.get_object('condensaciones_canvas').dibuja()
+        self.ui.get_object('cruler').queue_draw()
 
     #{ Pestaña de informe
 
