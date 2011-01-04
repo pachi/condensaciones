@@ -366,33 +366,9 @@ class CRuler(gtk.DrawingArea):
 
     def __init__(self):
         self.model = None
-        self._condensalist = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        self._imes = None
         super(CRuler, self).__init__()
         self.set_size_request(-1, self.WHEIGHT)
         self.connect("expose-event", self.expose)
-    
-    @property
-    def condensalist(self):
-        if self.model:
-            return self.model.gmeses
-        else:
-            return self._condensalist
-    
-    @condensalist.setter
-    def condensalist(self, value):
-        self._condensalist = value
-    
-    @property
-    def imes(self):
-        if self.model:
-            return self.model.imes
-        else:
-            return self._imes
-    
-    @imes.setter
-    def imes(self, value):
-        self._imes = value
 
     def expose(self, widget, event):
         cr = widget.window.cairo_create()
@@ -402,12 +378,12 @@ class CRuler(gtk.DrawingArea):
         
         wh = self.allocation.height
         ww = self.allocation.width
-        ln = len(self.condensalist)
+        ln = len(self.model.gmeses)
         ew = round(1.0 * ww / ln)
         ismeses = ln == 12
-        k = 1.0 * wh / max(self.condensalist)
+        k = 1.0 * wh / max(self.model.gmeses)
         
-        for i, condensa in enumerate(self.condensalist):
+        for i, condensa in enumerate(self.model.gmeses):
             # Rectángulos de fondo
             cr.rectangle(i * ew, 0, ew, wh)
             if condensa > 0:
@@ -442,7 +418,8 @@ class CRuler(gtk.DrawingArea):
         cr.line_to(ww - 0.5, wh)
         cr.stroke()
         # Resalta mes actual
-        if self.imes is not None:
-            cr.rectangle(self.imes * ew + 1.5, 0.5, ew - 2.0, wh - 0.5)
+        cr.set_line_width(2)
+        if self.model.imes is not None:
+            cr.rectangle(self.model.imes * ew + 1.5, 0.5, ew - 2.0, wh - 0.5)
             cr.set_source_rgb(1.0, 0.2, 0.2)
             cr.stroke()
