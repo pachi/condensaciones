@@ -383,14 +383,14 @@ class CRuler(gtk.DrawingArea):
         
         for i, condensa in enumerate(self.condensalist):
             # Rectángulos de fondo
-            cr.rectangle(i * ew, 0, (i + 1) * ew, wh)
+            cr.rectangle(i * ew, 0, ew, wh)
             if condensa > 0:
                 cr.set_source_rgb(0.8, 0.7, 0.7)
             else:
                 cr.set_source_rgb(0.7, 0.8, 0.7)
             cr.fill()
             # Rectángulos de cantidad condensada (histograma)
-            cr.rectangle(i * ew , wh - k * condensa, (i + 1) * ew, wh)
+            cr.rectangle(i * ew , wh - k * condensa, ew, wh)
             cr.set_source_rgb(0.4, 0.8, 0.9)
             cr.fill()
             # Linea lateral
