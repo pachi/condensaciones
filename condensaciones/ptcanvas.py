@@ -375,11 +375,12 @@ class CRuler(gtk.DrawingArea):
         cr.select_font_face("sans-serif")
         cr.set_font_size(8)
         cr.set_line_width(1)
+        x, y, twidth, theight, dx, dy = cr.text_extents("ENE")
         
         wh = self.allocation.height
         ww = self.allocation.width
         ln = len(self.model.gmeses)
-        ew = round(1.0 * ww / ln)
+        ew = 1.0 * ww / ln
         ismeses = ln == 12
         gmax = max(self.model.gmeses)
         k = (1.0 * wh / gmax) if gmax else 0.0
@@ -396,31 +397,30 @@ class CRuler(gtk.DrawingArea):
             cr.rectangle(i * ew , wh, ew, -k * condensa)
             cr.set_source_rgb(0.4, 0.8, 0.9)
             cr.fill()
-            # Linea lateral
-            cr.move_to(i * ew + 0.5, 0)
-            cr.line_to(i * ew + 0.5, wh)
-            cr.set_source_rgb(0, 0, 0)
-            cr.stroke()
-            # Nombres meses            
+            # Nombres meses
+            cr.move_to((i + 0.5) * ew - twidth / 2.0, (wh + theight) / 3.0)
+            cr.set_source_rgb(0.5, 0.5, 0.5)
             if ismeses:
-                txt = "ENE"
-                x, y, width, height, dx, dy = cr.text_extents(txt)
-                cr.move_to((i + 0.5) * ew - width / 2.0, (wh + height) / 3.0)
-                cr.set_source_rgb(0.5, 0.5, 0.5)
                 cr.show_text(MESES[i][:3].upper())
+            else:
+                cr.show_text("%s" % i)
             # Cantidad condensada
             txt = "%.1f" % condensa
             x, y, width, height, dx, dy = cr.text_extents(txt)
             cr.move_to((i + 0.5) * ew - width / 2.0, 1.2 * (wh + height) / 2.0)
             cr.set_source_rgb(0.0, 0.0, 0.0)
             cr.show_text(txt)
-        # Linea final
-        cr.move_to(ww - 0.5, 0)
-        cr.line_to(ww - 0.5, wh)
-        cr.stroke()
+
+        for i in range(1, ln):
+            # Linea lateral
+            cr.move_to(round(i * ew) + 0.5, 0)
+            cr.line_to(round(i * ew) + 0.5, wh)
+            cr.set_source_rgb(0, 0, 0)
+            cr.stroke()
+
         # Resalta mes actual
         cr.set_line_width(2)
         if self.model.imes is not None and ln > 1:
-            cr.rectangle(self.model.imes * ew + 1.5, 0.5, ew - 2.0, wh - 0.5)
+            cr.rectangle(round(self.model.imes*ew)+1.5, 0.5, ew-2.0, wh-0.5)
             cr.set_source_rgb(1.0, 0.2, 0.2)
             cr.stroke()
