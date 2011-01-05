@@ -389,9 +389,9 @@ class CRuler(gtk.DrawingArea):
             # Rectángulos de fondo
             cr.rectangle(i * ew, 0, ew, wh)
             if condensa > 0:
-                cr.set_source_rgb(0.8, 0.7, 0.7)
+                cr.set_source_rgb(0.8, 0.666667, 0.666667) #CCAAAA COLOR_BAD
             else:
-                cr.set_source_rgb(0.7, 0.8, 0.7)
+                cr.set_source_rgb(0.666667, 0.8, 0.666667) #AACCAA COLOR_OK
             cr.fill()
             # Rectángulos de cantidad condensada (histograma)
             cr.rectangle(i * ew , wh, ew, -k * condensa)
