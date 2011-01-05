@@ -255,8 +255,7 @@ class GtkCondensa(object):
                "¿Existen condensaciones intersticiales?: %s\n") % (cs, ci)
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'resultados')
         if m.ci:
-            meses = "[" + ", ".join("%i" % i for i, value in enumerate(m.glist)
-                                    if value) + "]"
+            meses = ", ".join("%i" % i for i, value in enumerate(m.glist) if value)
             txt = ("\nPeriodos con condensaciones intersticiales: %s\n") % meses
             tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'resultados')
         # Nota copyright
