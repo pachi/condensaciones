@@ -420,7 +420,7 @@ class CRuler(gtk.DrawingArea):
         cr.stroke()
         # Resalta mes actual
         cr.set_line_width(2)
-        if self.model.imes is not None:
+        if self.model.imes is not None and ln > 1:
             cr.rectangle(self.model.imes * ew + 1.5, 0.5, ew - 2.0, wh - 0.5)
             cr.set_source_rgb(1.0, 0.2, 0.2)
             cr.stroke()
