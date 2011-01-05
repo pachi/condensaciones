@@ -121,8 +121,7 @@ class CPTCanvas(FigureCanvasGTKCairo):
         d - GraphData, contiene los datos para dibujar las gráficas
         """
         d = GraphData(self.model)
-        # ================== presiones y temperaturas =====================
-        # -- dibujo ---
+        # Eje vertical de presiones
         ax1 = self.ax1
         ax1.clear()  # Limpia imagen de datos anteriores
         
@@ -131,11 +130,36 @@ class CPTCanvas(FigureCanvasGTKCairo):
         ax1.set_ylabel(u"Presión de vapor [Pa]", fontdict=dict(color='b'))
         # Eliminamos márgenes de espesor de rotulos_s de capas límite 
         _dibujacerramiento(ax1, d.nombres, d.rotulos_s[1:-1], d.color)
-        # Presiones
+        # Presiones, presiones de saturación y rótulos
         ax1.plot(d.rotulos_s, d.presiones, 'b-', lw=0.5)
-        # Presiones de saturación
         ax1.plot(d.rotulos_s, d.presiones_sat, 'k-', lw=0.5)
-        # Rellena zona de condensación (psat <= presiones)
+        # Rótulos de lineas de presiones interiores
+        if d.P_sat_si > d.P_si:
+            va1, va2 = 'top', 'baseline'
+        else:
+            va1, va2 = 'baseline', 'top'
+        ax1.annotate(u'$P_{n}$ = %iPa' % d.P_si,
+                     xy=(d.rotulo_si, d.P_si),
+                     xytext=(+5,0), textcoords='offset points', ha='left',
+                     va=va1, color='b', size='small')
+        ax1.annotate(u'$P_{sat}$ = %iPa' % d.P_sat_si,
+                     xy=(d.rotulo_si, d.P_sat_si),
+                     xytext=(+5,0), textcoords='offset points', ha='left',
+                     va=va2, color='k', size='small')
+        # Rótulos de lineas de presiones exteriores
+        if d.P_sat_se > d.P_se:
+            va1, va2 = 'top', 'baseline'
+        else:
+            va1, va2 = 'baseline', 'top'
+        ax1.annotate(u'$P_{n}$ = %iPa' % d.P_se,
+                     xy=(d.rotulo_se, d.P_se),
+                     xytext=(-5,0), textcoords='offset points', ha='right',
+                     va=va1, color='b', size='small')
+        ax1.annotate(u'$P_{sat}$ = %iPa' % d.P_sat_se,
+                     xy=(d.rotulo_se, d.P_sat_se),
+                     xytext=(-5,0), textcoords='offset points', ha='right',
+                     va=va2, color='k', size='small')
+        # Relleno de zona de condensación (psat <= presiones)
         nsteps = 200
         xmin = d.rotulos_s[0]
         xmax = d.rotulos_s[-1]
@@ -145,29 +169,24 @@ class CPTCanvas(FigureCanvasGTKCairo):
         newpressat = numpy.interp(newx, d.rotulos_s, d.presiones_sat)
         ax1.fill_between(newx, newpres, newpressat, where=newpressat<newpres,
                          facecolor='red')
-        # Rótulos
-        ax1.annotate(u'$P_{n}$',
-                     xy=(d.rotulo_si, d.P_si),
-                     xytext=(5,0), textcoords='offset points', ha='left',
-                     color='b', size='small')
-        ax1.annotate(u'$P_{sat}$',
-                     xy=(d.rotulo_si, d.P_sat_si),
-                     xytext=(5,-15), textcoords='offset points', ha='left',
-                     color='k', size='small')
+        # Lineas rojas de interfases con condensaciones en el mes actual
+        # añadimos 1 al índice porque rotulos_s tiene margen
+        for i, gi in self.model.glist[self.model.imes]:
+            ax1.axvline(d.rotulos_s[i+1], lw=1.5, color='r', ymin=.05, ymax=.9)
         # Eje vertical de temperaturas
         ax2 = self.ax2
         ax2.clear()  # Limpia imagen de datos anteriores
         ax2.set_ylabel(u"Temperatura [°C]", fontdict=dict(color='r'))
-        # Curva de temperaturas
+        # Curva de temperaturas y rótulos
         ax2.plot(d.rotulos_s, d.temperaturas, 'r', lw=1.5)
-        #fill_between(rotulos_s[1:-1], temperaturas[1:-1], color=(1,0,0,0.1))
-        # Valores de T_si y T_se
-        ax2.annotate(u'$T_{se}=%.1f°C$' % d.T_se,
+        ax2.annotate(u'$T_{se}$=%.1f°C' % d.T_se,
                      xy=(d.rotulo_se, d.T_se),
-                     xytext=(-5,0), textcoords='offset points', ha='right')
-        ax2.annotate(u'$T_{si}=%.1f°C$' % d.T_si,
+                     xytext=(-5,0), textcoords='offset points', ha='right',
+                     size='small')
+        ax2.annotate(u'$T_{si}$=%.1f°C' % d.T_si,
                      xy=(d.rotulo_si, d.T_si),
-                     xytext=(5,-15), textcoords='offset points', ha='left')
+                     xytext=(5,5), textcoords='offset points', ha='left',
+                     size='small')
         ax2.yaxis.tick_right()
         # Dejar margen fuera de zona de trazado
         ymin, ymax = ax1.get_ylim()
