@@ -839,32 +839,12 @@
           </packing>
         </child>
         <child>
-          <object class="GtkVBox" id="pie">
+          <object class="GtkLabel" id="pie">
             <property name="visible">True</property>
-            <property name="orientation">vertical</property>
-            <child>
-              <object class="GtkLabel" id="pie1">
-                <property name="visible">True</property>
-                <property name="label" translatable="yes">Total: 0.00 [g/m&#xB2;mes]</property>
-                <property name="use_markup">True</property>
-              </object>
-              <packing>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel" id="pie2">
-                <property name="visible">True</property>
-                <property name="label" translatable="yes">Cantidades condensadas: [0.00, 0.00, 0.00]</property>
-                <property name="use_markup">True</property>
-              </object>
-              <packing>
-                <property name="position">1</property>
-              </packing>
-            </child>
+            <property name="label" translatable="yes">Cantidades condensadas: [0.00, 0.00, 0.00]</property>
+            <property name="use_markup">True</property>
           </object>
           <packing>
-            <property name="expand">False</property>
             <property name="position">4</property>
           </packing>
         </child>

@@ -138,12 +138,9 @@ class GtkCondensa(object):
     def actualizapie(self):
         """Actualiza pie de ventana principal"""
         m, ui = self.model, self.ui
-        txt = "Total (%s): %.2f [g/m²mes]" % (m.ambienteexterior,
-                                              m.gmeses[m.imes])
-        ui.get_object('pie1').props.label = txt
         txt = ("Condensación en interfases (%s): " % m.ambienteexterior +
                ", ".join(["%.2f (%i)" % (x, i) for i, x in m.glist[m.imes]]))
-        ui.get_object('pie2').props.label = txt
+        ui.get_object('pie').props.label = txt
 
     def actualizacapas(self):
         """Actualiza pestaña de capas con descripción, capas, Rse, Rsi"""

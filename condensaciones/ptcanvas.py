@@ -369,21 +369,37 @@ class CRuler(gtk.DrawingArea):
         self.connect("expose-event", self.expose)
 
     def expose(self, widget, event):
-        cr = widget.window.cairo_create()
-        cr.select_font_face("sans-serif")
-        cr.set_line_width(1)
         wh = self.allocation.height
         ww = self.allocation.width
-        ln = len(self.model.gmeses)
-        ew = 1.0 * ww / ln
-        ismeses = ln == 12
-        gmax = max(self.model.gmeses)
-        k = (1.0 * wh / gmax) if gmax else 0.0
-        
+        cr = widget.window.cairo_create()
+        cr.set_line_width(1)
+        cr.select_font_face("sans-serif")
         # wh = margin + font_size + 1.2 x margin + font_size + margin
         cr.set_font_size(wh / 2.5)
         margin = wh / 6.4
         x, y, twidth, theight, dx, dy = cr.text_extents("ENE")
+        
+        # Rótulos laterales de leyenda
+        x, y, t1width, t1height, dx, dy = cr.text_extents("Periodo")
+        x, y, t2width, t2height, dx, dy = cr.text_extents("g/m².mes")
+        titmaxw = max(t1width, t2width) + 2.0 * margin
+        
+        cr.move_to(margin, theight + margin)
+        cr.set_source_rgb(0.5, 0.5, 0.5)
+        cr.show_text("Periodo")
+        
+        cr.move_to(margin, wh - margin)
+        cr.set_source_rgb(0.0, 0.0, 0.0)
+        cr.show_text("g/m².mes")
+
+        cr.translate(titmaxw, 0)
+        
+        # Casillas de Periodos
+        ln = len(self.model.gmeses)
+        ew = (1.0 * ww - titmaxw) / ln
+        ismeses = ln == 12
+        gmax = max(self.model.gmeses)
+        k = (1.0 * wh / gmax) if gmax else 0.0        
         
         for i, condensa in enumerate(self.model.gmeses):
             # Rectángulos de fondo
