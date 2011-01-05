@@ -362,21 +362,16 @@ class CRuler(gtk.DrawingArea):
     Los valores de condensación se representan con un decimal.  
     """
     __gtype_name__ = 'CRuler'
-    WHEIGHT = 30 # Altura en píxeles del control
 
     def __init__(self):
         self.model = None
         super(CRuler, self).__init__()
-        self.set_size_request(-1, self.WHEIGHT)
         self.connect("expose-event", self.expose)
 
     def expose(self, widget, event):
         cr = widget.window.cairo_create()
         cr.select_font_face("sans-serif")
-        cr.set_font_size(8)
         cr.set_line_width(1)
-        x, y, twidth, theight, dx, dy = cr.text_extents("ENE")
-        
         wh = self.allocation.height
         ww = self.allocation.width
         ln = len(self.model.gmeses)
@@ -384,6 +379,11 @@ class CRuler(gtk.DrawingArea):
         ismeses = ln == 12
         gmax = max(self.model.gmeses)
         k = (1.0 * wh / gmax) if gmax else 0.0
+        
+        # wh = margin + font_size + 1.2 x margin + font_size + margin
+        cr.set_font_size(wh / 2.5)
+        margin = wh / 6.4
+        x, y, twidth, theight, dx, dy = cr.text_extents("ENE")
         
         for i, condensa in enumerate(self.model.gmeses):
             # Rectángulos de fondo
@@ -398,7 +398,7 @@ class CRuler(gtk.DrawingArea):
             cr.set_source_rgb(0.4, 0.8, 0.9)
             cr.fill()
             # Nombres meses
-            cr.move_to((i + 0.5) * ew - twidth / 2.0, (wh + theight) / 3.0)
+            cr.move_to((i + 0.5) * ew - twidth / 2.0, theight + margin)
             cr.set_source_rgb(0.5, 0.5, 0.5)
             if ismeses:
                 cr.show_text(MESES[i][:3].upper())
@@ -407,7 +407,7 @@ class CRuler(gtk.DrawingArea):
             # Cantidad condensada
             txt = "%.1f" % condensa
             x, y, width, height, dx, dy = cr.text_extents(txt)
-            cr.move_to((i + 0.5) * ew - width / 2.0, 1.2 * (wh + height) / 2.0)
+            cr.move_to((i + 0.5) * ew - width / 2.0, wh - margin)
             cr.set_source_rgb(0.0, 0.0, 0.0)
             cr.show_text(txt)
 
