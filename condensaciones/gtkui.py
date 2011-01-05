@@ -266,8 +266,6 @@ class GtkCondensa(object):
                "GPLv2 o posterior.\n"
                "Copyright (c) 2009-2010 Rafael Villar Burke\n") % today
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'nota')
-        while gtk.events_pending():
-            gtk.main_iteration()
 
     def openhtmlreport(self, widget):
         htmlreport.htmlreport(self.ui, self.model)
