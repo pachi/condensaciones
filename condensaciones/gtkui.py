@@ -253,7 +253,7 @@ class GtkCondensa(object):
         if m.ci:
             meses = "[" + ", ".join("%i" % i for i, value in enumerate(m.glist)
                                     if value) + "]"
-            txt = ("\nMeses con condensaciones intersticiales: %s\n") % meses
+            txt = ("\nPeriodos con condensaciones intersticiales: %s\n") % meses
             tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'resultados')
         # Nota copyright
         today = datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")
