@@ -385,6 +385,7 @@ class CRuler(gtk.DrawingArea):
     def __init__(self):
         self.model = None
         super(CRuler, self).__init__()
+        self.set_size_request(-1, 25)
         self.connect("expose-event", self.expose)
 
     def expose(self, widget, event):
