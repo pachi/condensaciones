@@ -411,8 +411,8 @@ class CRuler(gtk.DrawingArea):
             cr.set_source_rgb(0.0, 0.0, 0.0)
             cr.show_text(txt)
 
+        # Líneas laterales
         for i in range(1, ln):
-            # Linea lateral
             cr.move_to(round(i * ew) + 0.5, 0)
             cr.line_to(round(i * ew) + 0.5, wh)
             cr.set_source_rgb(0, 0, 0)
