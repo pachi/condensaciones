@@ -64,18 +64,14 @@ class  PTCanvasTestCase(unittest.TestCase):
         win = gtk.Window()
         vbox = gtk.VBox()
         ptc = CPTCanvas()
-        pc = CPCanvas()
         cc = CCCanvas()
         r = CRuler()
         ptc.model = self.model
-        pc.model = self.model
         cc.model = self.model
         r.model = self.model
         ptc.dibuja()
-        pc.dibuja()
         cc.dibuja()
         vbox.pack_start(ptc)
-        vbox.pack_start(pc)
         vbox.pack_start(cc)
         vbox.pack_start(r)
         win.add(vbox)

@@ -28,7 +28,7 @@ from pango import (WEIGHT_BOLD, SCALE_SMALL, SCALE_MEDIUM,
                    SCALE_LARGE, SCALE_X_LARGE, STYLE_ITALIC)
 import util
 import appmodel
-from ptcanvas import CPTCanvas, CPCanvas, CCCanvas
+from ptcanvas import CPTCanvas, CCCanvas
 import condensaicons
 import webbrowser, datetime
 import htmlreport
