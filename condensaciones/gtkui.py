@@ -38,6 +38,7 @@ class GtkCondensa(object):
     def __init__(self):
         """Inicialización de datos e interfaz"""
         self.model = appmodel.Model()
+        self.graficacondensaciones = CCCanvas() # Histograma de condensaciones
         self.ui = gtk.Builder()
         self.ui.add_from_file(util.get_resource('data', 'condensa.ui'))
         self.capasls = self.ui.get_object('capas_liststore')
@@ -46,9 +47,8 @@ class GtkCondensa(object):
         gtk.link_button_set_uri_hook(lambda b, u: webbrowser.open(u))
         # Elementos de la UI que no se pueden generar en Glade ----------------
         # Conecta modelos a gráficas
+        self.graficacondensaciones.model = self.model
         self.ui.get_object('prestemp_canvas').model = self.model
-        self.ui.get_object('presiones_canvas').model = self.model
-        self.ui.get_object('condensaciones_canvas').model = self.model
         self.ui.get_object('cruler').model = self.model
         # Marcas de texto para estilos en textbuffer --------------------------
         tb = self.ui.get_object('informe_txtbuffer')
@@ -107,7 +107,11 @@ class GtkCondensa(object):
         self.actualizapie()
         self.actualizacapas()
         gobject.idle_add(self.actualizagraficas)
-        gobject.idle_add(self.actualizainforme)
+        if self.ui.get_object('notebook').props.page == 3: #INFORME
+            # Debemos asegurarnos de actualizar las gráficas antes del informe
+            while gtk.events_pending():
+                gtk.main_iteration()
+            self.actualizainforme()
 
     def actualizacabecera(self):
         """Actualiza texto de cabecera"""
@@ -161,10 +165,9 @@ class GtkCondensa(object):
 
     def actualizagraficas(self):
         """Redibuja gráficos con nuevos datos"""
-        self.ui.get_object('prestemp_canvas').dibuja()
-        self.ui.get_object('presiones_canvas').dibuja()
-        self.ui.get_object('condensaciones_canvas').dibuja()
         self.ui.get_object('cruler').queue_draw()
+        self.ui.get_object('prestemp_canvas').dibuja()
+        self.graficacondensaciones.dibuja()
 
     #{ Pestaña de informe
 
@@ -172,7 +175,8 @@ class GtkCondensa(object):
         """Actualiza texto descripción de cerramiento en ventana principal"""
         m, ui = self.model, self.ui
         graficaprestemp = ui.get_object('prestemp_canvas')
-        graficapresiones = ui.get_object('presiones_canvas')
+        graficacondensaciones = self.graficacondensaciones
+        
         tb = ui.get_object('informe_txtbuffer')
         tb.props.text = ""
         # Denominación cerramiento
@@ -234,7 +238,7 @@ class GtkCondensa(object):
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'subtitulo')
         tb.insert_pixbuf(tb.get_end_iter(), graficaprestemp.pixbuf(600))
         tb.insert(tb.get_end_iter(), "\n\n")
-        tb.insert_pixbuf(tb.get_end_iter(), graficapresiones.pixbuf(600))
+        tb.insert_pixbuf(tb.get_end_iter(), graficacondensaciones.pixbuf(600))
         tb.insert(tb.get_end_iter(), "\n\n")
         # Resultados
         txt = "Resultados\n"
@@ -505,10 +509,6 @@ class GtkCondensa(object):
     #{ Retrollamadas generales
 
     def cambiahoja(self, notebook, page, pagenum):
-        """Cambia hoja activa en la interfaz y actualiza gráficas si procede"""
-        CRED, CAPAS, GRAFICAPT, GRAFICAPV, HISTOG, INFORME = 0, 1, 2, 3, 4, 5
-        if pagenum == GRAFICAPT or pagenum == GRAFICAPV:
-            self.actualizagraficas()
-        elif pagenum == INFORME:
-            self.actualizagraficas()
+        """Cambia hoja activa en la interfaz y actualiza informe si procede"""
+        if pagenum == 3: #INFORME
             self.actualizainforme()
