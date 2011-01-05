@@ -831,10 +831,11 @@
         </child>
         <child>
           <object class="CRuler" id="cruler">
-            <property name="height_request">30</property>
+            <property name="height_request">25</property>
             <property name="visible">True</property>
           </object>
           <packing>
+            <property name="expand">False</property>
             <property name="position">3</property>
           </packing>
         </child>
