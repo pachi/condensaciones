@@ -111,7 +111,7 @@ Los datos se organizan en tres líneas de texto:
 - los **parámetros higrotérmicos** más relevantes (transmitancia térmica `U` , factor de temperatura de la superficie interior `fRsi` y factor de temperatura de la superficie interior mínimo `fRsi,min`).
 - los valores de **humedad relativa** y **temperatura** exterior e interior usados en el cálculo.
 
-Además, el fondo de esta zona es verde si el cerramiento está libre de condensaciones, o rojo si se producen condensaciones en su interior.
+Además, el fondo de esta zona es *verde* si el cerramiento está libre de condensaciones, *anaranjado* si se producen condensaciones intersticiales o superficiales, o *rojo* si se producen condensaciones superficiales e intersticiales en el cerramiento.
 
 .. _ui_pestañas:
 
