@@ -50,9 +50,9 @@ __HTMLTEMPLATE = """
         <p>Ambiente interior (gráficas): %(ambienteinterior)s</p>
         <p>T: %(tempint).1f ºC, HR: %(HRint).1f %%</p>
         <br />
-        <img src="presionestempplot.png" alt="Gráfica de presiones y temperaturas" />
+        <img src="presionestempplot.png" alt="Gráfica de presiones y temperaturas" title="Gráfica de presiones y temperaturas" />
         <br /><br />
-        <img src="presionesplot.png" alt="Gráfica de presiones y presiones de vapor" />
+        <img src="condensacionesplot.png" alt="Gráfica de condensaciones por periodos" title="Gráfica de condensaciones por periodos" />
 
         <h2>Comportamiento higrotérmico y cumplimiento del CTE</h2>
         <h3>Condiciones de cálculo para la comprobación de condensaciones superficiales</h3>
@@ -124,14 +124,11 @@ def createreport(ui, model):
     today = datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")
     tempextlistci = ", ".join("%.1f" % clima.temp for clima in model.climaslist)
     HRextlistci = ", ".join("%.1f" % clima.HR for clima in model.climaslist)
-    cimeses = model.condensaintersticialesCTE()
-    cs = "Sí" if model.condensasuperficialesCTE() else "No"
-    ci = "Sí" if True in cimeses else "No"
-    if True in cimeses:
-        meses = "[" + ", ".join("%i" % i 
-                                for i, value in enumerate(cimeses) 
-                                if value is True) + "]"
-        cimeses = ("\nMeses con condensaciones intersticiales: %s\n") % meses
+    cs = "Sí" if model.cs else "No"
+    ci = "Sí" if model.ci else "No"
+    if model.ci:
+        meses = ", ".join("%i" % i for i, value in enumerate(model.glist) if value)
+        cimeses = ("\nPeriodos con condensaciones intersticiales: %s\n") % meses
     else:
         cimeses = ''
     s = __HTMLTEMPLATE % {'nombrecerramiento': model.c.nombre,
@@ -171,11 +168,11 @@ def createreport(ui, model):
     rfile.close()
     # Se dibujan y guardan todos los diagramas
     graficaprestemp = ui.get_object('prestemp_canvas')
-    graficapresiones = ui.get_object('presiones_canvas')
+    graficacondensaciones = ui.graficacondensaciones
     filename = util.get_resource('report','presionestempplot.png')
     graficaprestemp.save(filename)
-    filename = util.get_resource('report','presionesplot.png')
-    graficapresiones.save(filename)
+    filename = util.get_resource('report','condensacionesplot.png')
+    graficacondensaciones.save(filename)
 
 def htmlreport(ui, model):
     createreport(ui, model)

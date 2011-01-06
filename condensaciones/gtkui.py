@@ -38,8 +38,8 @@ class GtkCondensa(object):
     def __init__(self):
         """Inicialización de datos e interfaz"""
         self.model = appmodel.Model()
-        self.graficacondensaciones = CCCanvas() # Histograma de condensaciones
         self.ui = gtk.Builder()
+        self.ui.graficacondensaciones = CCCanvas() # Histograma de condensaciones
         self.ui.add_from_file(util.get_resource('data', 'condensa.ui'))
         self.capasls = self.ui.get_object('capas_liststore')
         self.capastv = self.ui.get_object('capas_treeview')
@@ -47,7 +47,7 @@ class GtkCondensa(object):
         gtk.link_button_set_uri_hook(lambda b, u: webbrowser.open(u))
         # Elementos de la UI que no se pueden generar en Glade ----------------
         # Conecta modelos a gráficas
-        self.graficacondensaciones.model = self.model
+        self.ui.graficacondensaciones.model = self.model
         self.ui.get_object('prestemp_canvas').model = self.model
         self.ui.get_object('cruler').model = self.model
         # Marcas de texto para estilos en textbuffer --------------------------
@@ -167,7 +167,7 @@ class GtkCondensa(object):
         """Redibuja gráficos con nuevos datos"""
         self.ui.get_object('cruler').queue_draw()
         self.ui.get_object('prestemp_canvas').dibuja()
-        self.graficacondensaciones.dibuja()
+        self.ui.graficacondensaciones.dibuja()
 
     #{ Pestaña de informe
 
@@ -175,7 +175,7 @@ class GtkCondensa(object):
         """Actualiza texto descripción de cerramiento en ventana principal"""
         m, ui = self.model, self.ui
         graficaprestemp = ui.get_object('prestemp_canvas')
-        graficacondensaciones = self.graficacondensaciones
+        graficacondensaciones = ui.graficacondensaciones
         
         tb = ui.get_object('informe_txtbuffer')
         tb.props.text = ""
