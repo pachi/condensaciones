@@ -66,15 +66,14 @@ class GraphData(object):
         self.T_se = self.temperaturas[1]
         self.T_si = self.temperaturas[-2]
 
-
-def _dibujacerramiento(ax, nombrecapas, xcapas, colordict):
+def _dibujacerramiento(ax, nombrecapas, xcapas):
     """Dibujado de cerramiento
     
     ax - ejes
     nombrecapas - nombres de capas del cerramiento
     xcapas - lista de coordenadas de interfases de capas
-    colordict - diccionario con colores según nombres de capa
     """
+    colordict = colores_capas(nombrecapas)
     # Etiquetas de exterior e interior
     ax.text(0.1, 0.92, 'exterior', transform=ax.transAxes,
             size=10, style='italic', ha='right')
@@ -129,7 +128,7 @@ class CPTCanvas(FigureCanvasGTKCairo):
         ax1.set_xlabel(u"Distancia [m]")
         ax1.set_ylabel(u"Presión de vapor [Pa]", fontdict=dict(color='b'))
         # Eliminamos márgenes de espesor de rotulos_s de capas límite 
-        _dibujacerramiento(ax1, d.nombres, d.rotulos_s[1:-1], d.color)
+        _dibujacerramiento(ax1, d.nombres, d.rotulos_s[1:-1])
         # Presiones, presiones de saturación y rótulos
         ax1.plot(d.rotulos_s, d.presiones, 'b-', lw=0.5)
         ax1.plot(d.rotulos_s, d.presiones_sat, 'k-', lw=0.5)
