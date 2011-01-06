@@ -57,7 +57,7 @@ if 'py2exe' in sys.argv:
     def ignore_files(adir, files):
         return set([f for f in files if (not f.endswith('.dll') and
                                          not os.path.isdir(os.path.join(adir,f)))])
-    GTKBASE = 'C:\winp\Python26\Lib\site-packages\gtk-2.0\runtime'
+    GTKBASE = 'C:/winp/Python26/Lib/site-packages/gtk-2.0/runtime/'
     shutil.copytree(GTKBASE + 'etc', './dist/etc')
     shutil.copytree(GTKBASE + 'lib', './dist/lib', ignore=ignore_files)
     shutil.copytree(GTKBASE + 'share/themes/MS-Windows', './dist/share/themes/MS-Windows')
