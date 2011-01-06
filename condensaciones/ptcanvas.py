@@ -49,16 +49,9 @@ class GraphData(object):
         self.presiones_sat = cerr.presionessat(climae.temp, climai.temp)
         self.nombres = cerr.nombres
         self.rotulos_s = add_margin(list(numpy.cumsum([0.0] + cerr.espesores)))
-        self.rotulos_ssat = numpy.cumsum([0.0] + cerr.S)
-        self.p_condensa = cerr.envolventec(climae.temp, climai.temp, climae.HR, climai.HR)
-        self.qc = cerr.cantidadc(self.p_condensa, cond_previa=[])
-        self.color = colores_capas(self.nombres)
-
         #nemotécnicas intermedias
         self.rotulo_se = self.rotulos_s[1]
         self.rotulo_si = self.rotulos_s[-2]
-        self.rotulo_ssate = self.rotulos_ssat[0]
-        self.rotulo_ssati = self.rotulos_ssat[-1]
         self.P_se = self.presiones[1]
         self.P_sat_se = self.presiones_sat[1]
         self.P_si = self.presiones[-2] #en superficie, no el aire
