@@ -186,22 +186,9 @@ Se representa el cerramiento, con espesores geométricos de las capas y una supe
 
 La línea de temperaturas se dibuja en rojo, la de presiones de vapor en azul, y en negro se indica la presión de vapor de saturación. En caso de existir condensaciones, se indica la zona afectada mediante un relleno en color rojo entre las líneas de presiones.
 
+También se resaltan en rojo las interfases en las que existen condensaciones, tanto procedentes de condensación previa como actual.
+
 .. _ui_gvapor:
-
-Diagrama de presiones de vapor
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Se representa el cerramiento con espesores de aire equivalente de cada capa, superponiendo la gráfica de presiones de vapor en el interior del cerramiento.
-
-La línea de presiones de vapor efectiva en cada capa se representa en trazo azul y la presión de vapor de saturación en una línea negra más gruesa.
-
-En caso de condensaciones se indica en línea de trazos la línea de presiones de vapor en ausencia de condensaciones. Además, se resaltan con una línea gruesa en rojo las interfases en las que se producen las condensaciones.
-
-.. figure:: _static/pantallazos/ui_05_vapor.png
-   :align: center
-   :scale: 75%
-
-.. _ui_informe:
 
 Informe de resultados
 ~~~~~~~~~~~~~~~~~~~~~
@@ -212,8 +199,9 @@ El informe de resultados incluye la información necesaria para la comprobación
 - Condiciones de humedad y temperatura usadas en los cálculos.
 - Parámetros de cálculo de las distintas capas y de resistencia superficial.
 - Parámetros higrotérmicos del cerramiento compuesto.
-- Gráficas de temperatura y presión efectiva y de presiones efectivas y de saturación.
-- Comprobaciones para la existencia de condensaciones superficiales e intersticiales según CTE.
+- Gráfica de temperatura y presión efectiva y de presiones efectivas y de saturación.
+- Histograma de condensaciones acumuladas en todo el cerramiento para cada periodo.
+- Comprobaciones de la existencia de condensaciones superficiales e intersticiales según CTE.
 
 .. figure:: _static/pantallazos/ui_06_informe.png
    :align: center
@@ -231,6 +219,8 @@ Barra de resultados generales
 -----------------------------
 
 Esta zona recoge la cantidad total de vapor condensado (en g/m²mes) y su distribución en capas.
+
+También incluye una barra de condensaciones por periodos en la que se representa cada uno de ellos con una casilla de fondo verde si no existen condensaciones o en fondo rojo cuando existan. En los periodos con condensación se incluye el dato de la cantidad total acumulada y un nivel de condensados tomando como nivel máximo el mes más desfavorable.
 
 .. _ui_estado:
 
