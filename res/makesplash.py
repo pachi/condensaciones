@@ -4,7 +4,7 @@
 #   makesplash.py
 #   Script to generate application splash image using a png background
 #
-#   Copyright (C) 2009-2010 por Rafael Villar Burke <pachi@rvburke.com>
+#   Copyright (C) 2009-2010 Rafael Villar Burke <pachi@rvburke.com>
 #
 #   This program is free software; you can redistribute it and/or
 #   modify it under the terms of the GNU General Public License
@@ -32,7 +32,7 @@ import pango, pangocairo
 import Image #PIL
 
 APPNAME = u"condensaciones"
-COPYTXT = u'© 2009-2010 Rafael Villar Burke [GPL v2+]'
+COPYTXT = u'© 2009-2011 Rafael Villar Burke [GPL v2+]'
 WEBTXT = u'http://www.rvburke.com'
 APPDESC = u"Aplicación para el cálculo de condensaciones y parámetros higrotérmicos en cerramientos"
 IMGCRED = u"Fotografía: © weimiwein CC-BY-SA"

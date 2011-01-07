@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 #encoding: utf-8
 #
-#   condensaciones.py
 #   Programa de cálculo de condensaciones según CTE
 #
-#   Copyright (C) 2009-2010 por Rafael Villar Burke <pachi@rvburke.com>
+#   Copyright (C) 2009-2011 Rafael Villar Burke <pachi@rvburke.com>
 #
 #   This program is free software; you can redistribute it and/or
 #   modify it under the terms of the GNU General Public License
