@@ -2,7 +2,7 @@
 Condensaciones
 ==============
 
-Condensaciones © 2009-2010 Rafael Villar Burke
+Condensaciones © 2009-2011 Rafael Villar Burke
 
 Cálculo de condensaciones superficiales e intersticiales en cerramientos,
 según formulación del CTE.
