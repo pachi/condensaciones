@@ -54,14 +54,20 @@ if 'py2exe' in sys.argv:
     shutil.copytree("MSVCCRT", "./dist/Microsoft.VC90.CRT")
 
     # Copy GTK+ runtime files
+    GTKBASE = 'C:/winp/Python26/Lib/site-packages/gtk-2.0/runtime/'
+    supportedlocale = 'es'.split()
+    emptydirs = ('./dist/lib/glade3', './dist/lib/locale', './dist/lib/gettext',
+                 './dist/lib/pkgconfig', './dist/lib/glib-2.0')
     def ignore_files(adir, files):
         return set([f for f in files if (not f.endswith('.dll') and
                                          not os.path.isdir(os.path.join(adir,f)))])
-    GTKBASE = 'C:/winp/Python26/Lib/site-packages/gtk-2.0/runtime/'
-    shutil.copytree(GTKBASE + 'etc', './dist/etc')
     shutil.copytree(GTKBASE + 'lib', './dist/lib', ignore=ignore_files)
+    for pth in emptydirs:
+        shutil.rmtree(pth, ignore_errors=True)
+    shutil.copytree(GTKBASE + 'etc', './dist/etc')
     shutil.copytree(GTKBASE + 'share/themes/MS-Windows', './dist/share/themes/MS-Windows')
-    shutil.copytree(GTKBASE + 'share/locale/es', './dist/share/locale/es')
+    for lc in supportedlocale:
+        shutil.copytree(GTKBASE + 'share/locale/' + lc, './dist/share/locale/' + lc)
 
     # Enable the MS-Windows theme.
     #f = open(os.path.join(self.exe_dir, 'etc', 'gtk-2.0', 'gtkrc'), 'w')
