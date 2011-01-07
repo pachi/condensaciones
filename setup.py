@@ -68,6 +68,7 @@ if 'py2exe' in sys.argv:
     shutil.copytree(GTKBASE + 'share/themes/MS-Windows', './dist/share/themes/MS-Windows')
     for lc in supportedlocale:
         shutil.copytree(GTKBASE + 'share/locale/' + lc, './dist/share/locale/' + lc)
+    shutil.copytree('docs/_build/html', './dist/htmldocs')
 
     # Enable the MS-Windows theme.
     #f = open(os.path.join(self.exe_dir, 'etc', 'gtk-2.0', 'gtkrc'), 'w')
