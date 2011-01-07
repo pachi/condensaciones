@@ -53,7 +53,10 @@ Cambios en la versión
 
 0.6 (Dic. 2010)
 ---------------
-- Mejora en el rendimiento general de la aplicación
-- El color asignado a un material se mantiene al reordenar las capas
-- Muestra los valores de condensación del clima actualmente seleccionado
-- Indica la localidad y mes activos
+- Mejora del rendimiento general de la aplicación
+- Inclusión de una barra de condensaciones totales para cada periodo
+- El encabezado indica ahora la localidad y periodo activo
+- La gráfica de condensación muestra los resultados del periodo activo
+- El color asignado a un material se conserva al cambiar el orden de capas
+- El informe incluye un histograma de condensaciones acumuladas en cada periodo
+- La ayuda en HTML está disponible en el menú de aplicaciones
