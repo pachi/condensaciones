@@ -373,15 +373,20 @@ class GtkCondensa(object):
             self.cerramientotv.set_cursor(cerri + 1)
 
     def cerramientoremove(self, widget):
-        """Elimina cerramiento de la lista de cerramientos"""
-        cerrtm, cerrtm_iter = self.cerramientotv.get_selection().get_selected()
-        if cerrtm_iter:
-            cerri = int(cerrtm.get_path(cerrtm_iter)[0])
-            self.model.cerramientoremove(cerri)
-            cerrtm.remove(cerrtm_iter)
-            self.ui.get_object('statusbar').push(0, "Eliminado cerramiento")
-            if cerri == 0: cerri = 1
-            self.cerramientotv.set_cursor(cerri - 1)
+        """Elimina cerramiento de la lista de cerramientos
+        
+        Al menos debe quedar un cerramiento"""
+        if len(self.model.cerramientosDB.nombres) == 1:
+            self.ui.get_object('statusbar').push(0, "Debe existir al menos un cerramiento")
+        else:
+            cerrtm, cerrtm_iter = self.cerramientotv.get_selection().get_selected()
+            if cerrtm_iter:
+                cerri = int(cerrtm.get_path(cerrtm_iter)[0])
+                self.model.cerramientoremove(cerri)
+                cerrtm.remove(cerrtm_iter)
+                self.ui.get_object('statusbar').push(0, "Eliminado cerramiento")
+                if cerri == 0: cerri = 1
+                self.cerramientotv.set_cursor(cerri - 1)
 
     def cerramientoup(self, widget):
         """Sube cerramiento en lista de cerramientos"""
