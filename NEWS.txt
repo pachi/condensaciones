@@ -60,3 +60,9 @@ Cambios en la versión
 - El color asignado a un material se conserva al cambiar el orden de capas
 - El informe incluye un histograma de condensaciones acumuladas en cada periodo
 - La ayuda en HTML está disponible en el menú de aplicaciones
+
+0.6.1 (May. 2011)
+-----------------
+- Corrige error en informe HTML con cámaras de aire
+- Evita error al eliminar todos los cerramientos de la BBDD
+- Evita error en selección de cerramiento activo al eliminar cerramientos
