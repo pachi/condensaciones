@@ -95,7 +95,7 @@ def capaslist(model):
           '<td class="center">%.3f</td><td class="center">%i</td>'
           '<td class="center">%.3f</td>'
           '</tr>')
-    _rows = "".join(_s % (i, nombre, e, K, R, mu, S)
+    _rows = "".join(_s % (i, nombre, e, K or 0.0, R, mu, S)
                     for i, (nombre, e, K, R, mu, S, color)
                     in model.capasdata())
     _r1 = ('<tr><td colspan="7" class="seprow"></td></tr>'
