@@ -28,9 +28,12 @@ from clima import MESES
 import cerramiento
 from util import get_resource, colores_capas
 
-cdb = cerramiento.CerramientosDB(get_resource('data', 'CerramientosDB.ini'))
-CLIMASDB = get_resource('data', 'ClimaCTE.ini')
-climasDB, climasnombres, climasdbconfig = clima.loadclimadb(CLIMASDB)
+CERRAMIENTOSPATH = get_resource('data', 'CerramientosDB.ini')
+CLIMASDBPATH = get_resource('data', 'ClimaCTE.ini')
+
+cdb = cerramiento.CerramientosDB(CERRAMIENTOSPATH)
+climasDB, climasnombres, climasdbconfig = clima.loadclimadb(CLIMASDBPATH)
+
 climae = climasDB['Climaext'][0] if 'Climaext' in climasDB else clima.Clima(5, 96)
 climai = climasDB['Climaint'][0] if 'Climaint' in climasDB else clima.Clima(20, 55)
 
