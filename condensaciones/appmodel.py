@@ -53,7 +53,7 @@ class Model(object):
     def localidad(self):
         """Localidad actual"""
         return self._localidad or 'Localidad genérica'
-    
+
     @localidad.setter
     def localidad(self, lname):
         """Actualiza localidad y lista de climas exteriores para la misma"""
@@ -76,7 +76,7 @@ class Model(object):
     def imes(self):
         """Mes actualmente activo de climaslist"""
         return self._imes
-    
+
     @imes.setter
     def imes(self, index):
         """Establece el mes activo en climaslist"""
@@ -105,7 +105,7 @@ class Model(object):
     @climai.setter
     def climai(self, value):
         """Setter de clima interior
-        
+
         value puede ser del tipo clima.Clima o una tupla (temp, HR)
         """
         clm = value if isinstance(value, clima.Clima) else clima.Clima(*value)
@@ -119,11 +119,11 @@ class Model(object):
     @property
     def fRsimin(self):
         """Factor de temperatura de la superficie interior mínimo
-        
+
         El CTE indica que se calcule para el mes de enero (DB-HE1 3.2.3.1)
         y, a falta de datos, un ambiente interior con temperatura 20ºC
         y HR según higrometría. En este caso tenemos datos suficientes.
-        
+
         TODO: comprobar que las resistencias superficiales son las correctas
         """
         te = self.climaslist[0].temp
@@ -141,7 +141,7 @@ class Model(object):
     def gmeses(self):
         """Lista de condensaciones acumuladas en cada mes"""
         return comprobaciones.gmeses(self.glist)
-        
+
     @property
     def cs(self):
         """Comprueba la existencia de condensaciones superficiales s/CTE"""
@@ -155,17 +155,17 @@ class Model(object):
     def set_cerramiento(self, cname):
         """Selecciona cerramiento activo a partir de su nombre"""
         self.c = self.cerramientosDB[cname]
-    
+
     def set_Rse(self, newRse):
         """Cambia Rse"""
         self.c.Rse = newRse
         self.modificado = True
-    
+
     def set_Rsi(self, newRsi):
         """Cambia Rsi"""
         self.c.Rsi = newRsi
         self.modificado = True
-    
+
     def set_capa(self, index, name, e):
         """Establece tupla de capa según índice. d es una tupla de datos"""
         #TODO: Con material resistivo pon espesor None, o espesor por defecto.
@@ -177,36 +177,36 @@ class Model(object):
     def capasdata(self):
         """Devuelve iterador por capa con:
             i, (nombre, espesor, K, R, mu, S, c)
-        """           
+        """
         cdict = colores_capas(self.c.nombres)
         colores = [cdict[nombre] for nombre in self.c.nombres]
-        
+
         # quitamos Rse, Rsi en c.R con c.R[1:-1]
         return enumerate(zip(self.c.nombres, self.c.espesores,
                              self.c.K, self.c.R[1:-1],
                              self.c.mu, self.c.S, colores))
-    
+
     # Acciones sobre capas ---------------------------------------------------
-    
+
     def capaadd(self, index):
         """Añade capa tras posición index"""
         ncapatuple = self.c.capas[index]
         self.c.capas.insert(index + 1, ncapatuple)
         self.modificado = True
-    
+
     def caparemove(self, index):
         """Elimina capa en posición index"""
         self.c.capas.pop(index)
         self.modificado = True
-    
+
     def capaswap(self, index1, index2):
         """Intercambia la posición de dos capas del cerramiento activo"""
-        cp = self.c.capas 
+        cp = self.c.capas
         cp[index1], cp[index2] = cp[index2], cp[index1]
         self.modificado = True
-    
+
     # Acciones sobre cerramientos --------------------------------------------
-    
+
     def cerramientoadd(self, index):
         """Añade y devuelve nuevo cerramiento tras posición index"""
         i = 1
@@ -218,12 +218,12 @@ class Model(object):
         newc = cerramiento.Cerramiento(newname, 'Nuevo cerramiento')
         self.cerramientosDB.insert(newc, index + 1)
         return newc
-    
+
     def cerramientoremove(self, index):
         """Elimina cerramiento en posición index"""
         oldname = self.cerramientosDB.nombres[index]
         del self.cerramientosDB[oldname]
-    
+
     def cerramientoswap(self, index1, index2):
         """Intercambia la posición de dos cerramientos"""
         ce = self.cerramientosDB.nombres
