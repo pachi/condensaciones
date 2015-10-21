@@ -28,7 +28,7 @@ import matplotlib
 matplotlib.use('GTKCairo')
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_gtkcairo import FigureCanvasGTKCairo
-from util import colores_capas, add_margin
+from util import colores_capas
 from clima import MESES
 
 class GraphData(object):
@@ -48,7 +48,11 @@ class GraphData(object):
                                         climae.HR, climai.HR)
         self.presiones_sat = cerr.presionessat(climae.temp, climai.temp)
         self.nombres = cerr.nombres
-        self.rotulos_s = add_margin(list(numpy.cumsum([0.0] + cerr.espesores)))
+
+        # Posición de rótulos de las capas y capas aire
+        _xpos = list(numpy.cumsum([0.0] + cerr.espesores))
+        self.rotulos_s = ([_xpos[0] - 0.025] + _xpos + [_xpos[-1] + 0.025])
+        
         #nemotécnicas intermedias
         self.rotulo_se = self.rotulos_s[1]
         self.rotulo_si = self.rotulos_s[-2]

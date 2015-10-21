@@ -57,6 +57,12 @@ def colores_capas(lista_capas):
         colordict[nombre] = color
     return colordict
 
-def add_margin(lista, margen_lateral=0.025):
-    "Añade a una lista númerica elementos final e inicial separados un margen"
-    return ([lista[0] - margen_lateral] + lista + [lista[-1] + margen_lateral])
+
+
+
+
+
+
+
+
+
