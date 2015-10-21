@@ -37,6 +37,7 @@ class GtkCondensa(object):
     """Aplicación"""
     def __init__(self):
         """Inicialización de datos e interfaz"""
+        self.cfg = util.loadconfig()
         self.model = appmodel.Model()
         self.ui = gtk.Builder()
         self.ui.graficacondensaciones = CCCanvas() # Histograma de condensaciones
