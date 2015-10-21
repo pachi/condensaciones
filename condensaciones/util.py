@@ -38,24 +38,24 @@ def get_main_dir():
                 raise ValueError, 'No se encuentra directorio base'
     return md
 
-APPROOT = get_main_dir() #os.path.dirname(__file__)
+APPROOT = get_main_dir()
 
 def get_resource(*path_list):
-    "Localiza un recurso del proyecto en base al directorio base del paquete"
+    """Localiza un recurso del proyecto en base al directorio base del paquete"""
     return os.path.abspath(os.path.join(APPROOT, *path_list))
 
 def stringify(alist, prec):
-    "Convierte lista de números a representación con precisión fija" 
+    """Convierte lista de números a representación con precisión fija"""
     _format = '%%.%if' % prec
     return "[" + ", ".join([_format % item for item in alist]) + "]"
 
 def colorlist(steps):
-    "Devuelte una lista de colores de n elementos"
+    """Devuelte una lista de colores de n elementos"""
     saltos = [x / float(steps) for x in range(steps)]
     return [colorsys.hls_to_rgb(salto, .6, .8) for salto in saltos]
 
 def colores_capas(lista_capas):
-    "Crea un diccionario asignando a cada capa un color"
+    """Crea un diccionario asignando a cada capa un color"""
     capas_distintas = sorted(set(lista_capas))
     colordict = {}
     for nombre, color in zip(capas_distintas, colorlist(len(capas_distintas))):
