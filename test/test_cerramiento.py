@@ -25,7 +25,6 @@
 import unittest
 from condensaciones.cerramiento import Cerramiento
 from condensaciones.clima import Clima
-#from condensaciones.util import stringify
 
 climae = Clima(5, 96) #T, HR
 climai = Clima(20.0, 55) #T, HR
@@ -37,6 +36,11 @@ capas1 = [(u"1/2 pie LP métrico o catalán 40 mm< G < 60 mm", 0.11),
           (u"EPS Poliestireno Expandido [ 0.037 W/[mK]]", 0.03),
           (u"Tabique de LH sencillo [40 mm < Espesor < 60 mm]", 0.03),
           (u"Enlucido de yeso 1000 < d < 1300", 0.01),]
+
+def stringify(alist, prec):
+    """Convierte lista de números a representación con precisión fija"""
+    _format = '%%.%if' % prec
+    return "[" + ", ".join([_format % item for item in alist]) + "]"
 
 class  CerramientoTestCase(unittest.TestCase):
     """Comprobaciones de condensación"""

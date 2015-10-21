@@ -44,11 +44,6 @@ def get_resource(*path_list):
     """Localiza un recurso del proyecto en base al directorio base del paquete"""
     return os.path.abspath(os.path.join(APPROOT, *path_list))
 
-def stringify(alist, prec):
-    """Convierte lista de números a representación con precisión fija"""
-    _format = '%%.%if' % prec
-    return "[" + ", ".join([_format % item for item in alist]) + "]"
-
 def colorlist(steps):
     """Devuelte una lista de colores de n elementos"""
     saltos = [x / float(steps) for x in range(steps)]
