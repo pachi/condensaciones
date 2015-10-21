@@ -21,7 +21,7 @@
 #   02110-1301, USA.
 """Módulo de utilidades varias"""
 
-import os, sys
+import os, sys, shutil
 import colorsys
 
 def get_main_dir():
@@ -57,11 +57,29 @@ def colores_capas(lista_capas):
         colordict[nombre] = color
     return colordict
 
+def checkuserdir(basedir=None):
+    """Localiza o crea el directorio de configuración y bases de datos
 
+    Usa por defecto el directorio condensaciones en el home del usario"""
+    DEFAULTUSERPATH = os.path.join(os.path.expanduser('~'), 'condensaciones')
+    CONFIGFILES = ['Condensaciones.ini', 'CerramientosDB.ini', 'MaterialesDB.ini', 'ClimasDB.ini']
 
+    udir = basedir if basedir is not None else DEFAULTUSERPATH
 
+    if not os.path.exists(udir):
+        os.makedirs(udir)
+    for cfile in CONFIGFILES:
+        ucfile = os.path.join(udir, cfile)
+        if not os.path.exists(ucfile):
+            shutil.copy(get_resource('data', cfile), ucfile)
 
+    return udir
 
+def loadconfig(basedir=None):
+    """Carga configuración desde directorio de usuario"""
+    udir = checkuserdir(basedir)
+    
+    return udir
 
 
 
