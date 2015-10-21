@@ -44,13 +44,14 @@ def get_resource(*path_list):
     """Localiza un recurso del proyecto en base al directorio base del paquete"""
     return os.path.abspath(os.path.join(APPROOT, *path_list))
 
-def colorlist(steps):
-    """Devuelte una lista de colores de n elementos"""
-    saltos = [x / float(steps) for x in range(steps)]
-    return [colorsys.hls_to_rgb(salto, .6, .8) for salto in saltos]
-
 def colores_capas(lista_capas):
     """Crea un diccionario asignando a cada capa un color"""
+
+    def colorlist(steps):
+        """Devuelte una lista de colores de n elementos"""
+        saltos = [x / float(steps) for x in range(steps)]
+        return [colorsys.hls_to_rgb(salto, .6, .8) for salto in saltos]
+
     capas_distintas = sorted(set(lista_capas))
     colordict = {}
     for nombre, color in zip(capas_distintas, colorlist(len(capas_distintas))):
