@@ -29,7 +29,7 @@ import cerramiento
 from util import get_resource, colores_capas
 
 CERRAMIENTOSPATH = get_resource('data', 'CerramientosDB.ini')
-CLIMASDBPATH = get_resource('data', 'ClimaCTE.ini')
+CLIMASDBPATH = get_resource('data', 'ClimasDB.ini')
 
 cdb = cerramiento.CerramientosDB(CERRAMIENTOSPATH)
 climasDB, climasnombres, climasdbconfig = clima.loadclimadb(CLIMASDBPATH)

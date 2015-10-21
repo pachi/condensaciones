@@ -89,7 +89,7 @@ def unescape(data):
     """
     return data.replace("&lb;", "[").replace("&rb;", "]").replace("&amp;", "&")
 
-def loadclimadb(filename='ClimaCTE.ini'):
+def loadclimadb(filename='ClimasDB.ini'):
     """Lee una base de datos de climas
 
     La base de datos proviene de un archivo en formato ConfigObj
@@ -128,7 +128,7 @@ def loadclimadb(filename='ClimaCTE.ini'):
     return climas, cnames, dbconf
 
 def saveclimasdb(climas, nameorder=None, configdata=None,
-                 filename='ClimaCTE.ini'):
+                 filename='ClimasDB.ini'):
     """Guarda una base de datos de climas
 
     La base de datos se almacena en formato ConfigObj
