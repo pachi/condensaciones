@@ -125,7 +125,33 @@ class CPTCanvas(FigureCanvasGTKCairo):
         ax1.set_xlabel(u"Distancia [m]")
         ax1.set_ylabel(u"Presión de vapor [Pa]", fontdict=dict(color='b'))
         # Eliminamos márgenes de espesor de rotulos_s de capas límite 
-        _dibujacerramiento(ax1, d.nombres, d.rotulos_s[1:-1])
+        #_dibujacerramiento(ax1, d.nombres, d.rotulos_s[1:-1])
+
+        colordict = colores_capas(d.nombres)
+
+        # Etiquetas de exterior e interior
+        ax1.text(0.1, 0.92, 'exterior', transform=ax1.transAxes,
+                size=10, style='italic', ha='right')
+        ax1.text(0.9, 0.92, 'interior', transform=ax1.transAxes,
+                size=10, style='italic', ha='left')
+        ax1.text(.5,.92,'www.rvburke.com', transform=ax1.transAxes,
+                 color='0.5', size=8, ha='center')
+
+        # Rellenos de materiales
+        rotuloanterior = d.rotulos_s[0]
+        for _i, (capa, rotulo) in enumerate(zip(d.nombres, d.rotulos_s[1:])):
+            ax1.axvspan(rotuloanterior, rotulo,
+                       fc=colordict[capa], alpha=0.25, ymin=.05, ymax=.9)
+            ax1.text((rotulo + rotuloanterior) / 2.0, 0.0, "%i" % _i,
+                    size=8, style='italic', ha='center')
+            rotuloanterior = rotulo
+        
+        # Lineas de tramos de cerramiento
+        ax1.axvline(d.rotulos_s[0], lw=2, color='k', ymin=.05, ymax=.9)
+        for rotulo in d.rotulos_s[1:-1]:
+            ax1.axvline(rotulo, color='0.5', ymin=.05, ymax=.9)
+        ax1.axvline(d.rotulos_s[-1], lw=2, color='k', ymin=.05, ymax=.9)
+
         # Presiones, presiones de saturación y rótulos
         ax1.plot(d.rotulos_s, d.presiones, 'b-', lw=0.5)
         ax1.plot(d.rotulos_s, d.presiones_sat, 'k-', lw=0.5)
