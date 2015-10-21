@@ -59,7 +59,7 @@ Bibliotecas predefinidas (materiales, cerramientos y climas)
 
 **Condensaciones** se distribuye con una base de datos de materiales de ejemplo (``MaterialesDB``), obtenida de la conversión del archivo de materiales de LIDER_ usando la aplicación ``importDB``.
 
-También incluye una base de datos de cerramientos (``CerramientosDB``) y una base de datos de climas (``ClimaCTE``) con los datos climáticos de las capitales de provincia españolas, según el `Código Técnico de la Edificación (CTE)`_.
+También incluye una base de datos de cerramientos (``CerramientosDB``) y una base de datos de climas (``ClimasDB``) con los datos climáticos de las capitales de provincia españolas, según el `Código Técnico de la Edificación (CTE)`_.
 
 Estas bibliotecas se encuentran en el directorio ``data`` de la aplicación.
 
