@@ -92,7 +92,7 @@ class CPTCanvas(FigureCanvasGTKCairo):
         ax1.text(0.9, 0.92, u'interior',
                  transform=ax1.transAxes,
                  size=10, style='italic', ha='left')
-        ax1.text(0.5, 0.92, u'www.rvburke.com',
+        ax1.text(0.5, 0.92, u'Condensaciones v%s - www.rvburke.com' % config.version,
                  transform=ax1.transAxes,
                  color='0.5', size=8, ha='center')
 
