@@ -35,7 +35,7 @@ class GraphData(object):
     """Almacén de datos para dibujado de gráficas"""
     def __init__(self, model):
         """Inicializa el almacén de datos
-        
+
         cerr - objeto Cerramiento
         climae - objeto Clima para datos del exterior
         cliai - objeto Clima para datos del interior
@@ -52,7 +52,7 @@ class GraphData(object):
         # Posición de rótulos de las capas y capas aire
         _xpos = list(numpy.cumsum([0.0] + cerr.espesores))
         self.rotulos_s = ([_xpos[0] - 0.025] + _xpos + [_xpos[-1] + 0.025])
-        
+
         #nemotécnicas intermedias
         self.rotulo_se = self.rotulos_s[1]
         self.rotulo_si = self.rotulos_s[-2]
@@ -78,48 +78,55 @@ class CPTCanvas(FigureCanvasGTKCairo):
     def dibuja(self, width=600, height=400):
         """Representa Presiones de saturación vs. Presiones de vapor o
         temperaturas.
-        
+
         El eje horizontal representa distancia desde la cara exterior del
         cerramiento [m].
-        
+
         El eje vertical izquierdo tiene unidades de presión de vapor [Pa]
         El eje vertical derecho tiene unidades de temperatura [ºC]
-        
+
         d - GraphData, contiene los datos para dibujar las gráficas
         """
         d = GraphData(self.model)
-        # Eje vertical de presiones
+        # ========= Eje vertical de presiones
         ax1 = self.ax1
         ax1.clear()  # Limpia imagen de datos anteriores
-        
+
         ax1.set_title(u"Presiones de vapor y temperaturas", size='large')
         ax1.set_xlabel(u"Distancia [m]")
         ax1.set_ylabel(u"Presión de vapor [Pa]", fontdict=dict(color='b'))
-        # Eliminamos márgenes de espesor de rotulos_s de capas límite 
+        # Eliminamos márgenes de espesor de rotulos_s de capas límite
         #_dibujacerramiento(ax1, d.nombres, d.rotulos_s[1:-1])
 
         # Etiquetas de exterior e interior
-        ax1.text(0.1, 0.92, 'exterior', transform=ax1.transAxes,
-                size=10, style='italic', ha='right')
-        ax1.text(0.9, 0.92, 'interior', transform=ax1.transAxes,
-                size=10, style='italic', ha='left')
-        ax1.text(.5,.92,'www.rvburke.com', transform=ax1.transAxes,
+        ax1.text(0.1, 0.92, u'exterior',
+                       transform=ax1.transAxes,
+                       size=10, style='italic', ha='right')
+        ax1.text(0.9, 0.92, u'interior',
+                 transform=ax1.transAxes,
+                 size=10, style='italic', ha='left')
+        ax1.text(0.5, 0.92, u'www.rvburke.com',
+                 transform=ax1.transAxes,
                  color='0.5', size=8, ha='center')
 
         # Rellenos de materiales
         rotuloanterior = d.rotulos_s[0]
         for _i, (rotulo, color) in enumerate(zip(d.rotulos_s[1:-1], self.model.c.colores)):
             ax1.axvspan(rotuloanterior, rotulo,
-                       fc=color, alpha=0.25, ymin=.05, ymax=.9)
-            ax1.text((rotulo + rotuloanterior) / 2.0, 0.0, "%i" % _i,
-                    size=8, style='italic', ha='center')
+                        fc=color, alpha=0.25, ymin=0.05, ymax=0.9)
+            ax1.text((rotulo + rotuloanterior) / 2.0, 0.0,
+                     "%i" % _i,
+                     size=8, style='italic', ha='center')
             rotuloanterior = rotulo
-        
+
         # Lineas de tramos de cerramiento
-        ax1.axvline(d.rotulos_s[0], lw=2, color='k', ymin=.05, ymax=.9)
+        ax1.axvline(d.rotulos_s[0], lw=2, color='k',
+                    ymin=.05, ymax=.9)
         for rotulo in d.rotulos_s[1:-1]:
-            ax1.axvline(rotulo, color='0.5', ymin=.05, ymax=.9)
-        ax1.axvline(d.rotulos_s[-1], lw=2, color='k', ymin=.05, ymax=.9)
+            ax1.axvline(rotulo, color='0.5',
+                        ymin=.05, ymax=.9)
+            ax1.axvline(d.rotulos_s[-1], lw=2, color='k',
+                        ymin=.05, ymax=.9)
 
         # Presiones, presiones de saturación y rótulos
         ax1.plot(d.rotulos_s, d.presiones, 'b-', lw=0.5)
@@ -131,11 +138,11 @@ class CPTCanvas(FigureCanvasGTKCairo):
             va1, va2 = 'baseline', 'top'
         ax1.annotate(u'$P_{n}$ = %iPa' % d.P_si,
                      xy=(d.rotulo_si, d.P_si),
-                     xytext=(+5,0), textcoords='offset points', ha='left',
+                     xytext=(+5, 0), textcoords='offset points', ha='left',
                      va=va1, color='b', size='small')
         ax1.annotate(u'$P_{sat}$ = %iPa' % d.P_sat_si,
                      xy=(d.rotulo_si, d.P_sat_si),
-                     xytext=(+5,0), textcoords='offset points', ha='left',
+                     xytext=(+5, 0), textcoords='offset points', ha='left',
                      va=va2, color='k', size='small')
         # Rótulos de lineas de presiones exteriores
         if d.P_sat_se > d.P_se:
@@ -144,11 +151,11 @@ class CPTCanvas(FigureCanvasGTKCairo):
             va1, va2 = 'baseline', 'top'
         ax1.annotate(u'$P_{n}$ = %iPa' % d.P_se,
                      xy=(d.rotulo_se, d.P_se),
-                     xytext=(-5,0), textcoords='offset points', ha='right',
+                     xytext=(-5, 0), textcoords='offset points', ha='right',
                      va=va1, color='b', size='small')
         ax1.annotate(u'$P_{sat}$ = %iPa' % d.P_sat_se,
                      xy=(d.rotulo_se, d.P_sat_se),
-                     xytext=(-5,0), textcoords='offset points', ha='right',
+                     xytext=(-5, 0), textcoords='offset points', ha='right',
                      va=va2, color='k', size='small')
         # Relleno de zona de condensación (psat <= presiones)
         nsteps = 200
@@ -164,7 +171,8 @@ class CPTCanvas(FigureCanvasGTKCairo):
         # añadimos 1 al índice porque rotulos_s tiene margen
         for i, gi in self.model.glist[self.model.imes]:
             ax1.axvline(d.rotulos_s[i+1], lw=1.5, color='r', ymin=.05, ymax=.9)
-        # Eje vertical de temperaturas
+
+        # ======== Eje vertical de temperaturas
         ax2 = self.ax2
         ax2.clear()  # Limpia imagen de datos anteriores
         ax2.set_ylabel(u"Temperatura [°C]", fontdict=dict(color='r'))
@@ -172,11 +180,11 @@ class CPTCanvas(FigureCanvasGTKCairo):
         ax2.plot(d.rotulos_s, d.temperaturas, 'r', lw=1.5)
         ax2.annotate(u'$T_{se}$=%.1f°C' % d.T_se,
                      xy=(d.rotulo_se, d.T_se),
-                     xytext=(-5,0), textcoords='offset points', ha='right',
+                     xytext=(-5, 0), textcoords='offset points', ha='right',
                      size='small')
         ax2.annotate(u'$T_{si}$=%.1f°C' % d.T_si,
                      xy=(d.rotulo_si, d.T_si),
-                     xytext=(5,5), textcoords='offset points', ha='left',
+                     xytext=(5, 5), textcoords='offset points', ha='left',
                      size='small')
         ax2.yaxis.tick_right()
         # Dejar margen fuera de zona de trazado
@@ -201,10 +209,10 @@ class CPTCanvas(FigureCanvasGTKCairo):
 
 class CCCanvas(FigureCanvasGTKCairo):
     """Diagrama de condensaciones
-    
+
     Dibuja un histograma con las condensaciones de cada periodo.
     Cuando existan 12 periodos en el modelo, considera que se trata de meses.
-    
+
     Es necesario conectar el modelo al control, asignando el modelo del que se
     leen los datos en la propiedad model.
     """
@@ -220,8 +228,8 @@ class CCCanvas(FigureCanvasGTKCairo):
 
     def dibuja(self, width=600, height=200):
         """Representa histograma de condensaciones totales en cada mes
-        
-        El eje horizontal representa los periodos [meses] y el eje vertical la  
+
+        El eje horizontal representa los periodos [meses] y el eje vertical la
         condensación existente [g/m²mes]
         """
         # -- dibujo ---
@@ -253,7 +261,7 @@ class CCCanvas(FigureCanvasGTKCairo):
 
 def get_pixbuf_from_canvas(canvas, destwidth=None):
     """Devuelve un pixbuf a partir de un canvas de Matplotlib
-    
+
     destwidth - ancho del pixbuf de destino
     """
     w, h = canvas.get_width_height()
@@ -261,7 +269,7 @@ def get_pixbuf_from_canvas(canvas, destwidth=None):
     destheight = h * destwidth / w
     #Antes de mostrarse la gráfica en una de las pestañas no existe el _pixmap
     #pero al generar el informe queremos que se dibuje en uno fuera de pantalla
-    oldpixmap = canvas._pixmap if hasattr(canvas, '_pixmap') else None        
+    oldpixmap = canvas._pixmap if hasattr(canvas, '_pixmap') else None
     pixmap = gtk.gdk.Pixmap(None, w, h, depth=24)
     canvas._renderer.set_pixmap(pixmap) # mpl backend_gtkcairo
     canvas._render_figure(pixmap, w, h) # mpl backend_gtk
@@ -276,13 +284,13 @@ def get_pixbuf_from_canvas(canvas, destwidth=None):
 
 class CRuler(gtk.DrawingArea):
     """Barra de condensaciones en interfases
-    
+
     El control dibuja una casilla por cada elemento en condensalist
     (model.gmeses) y la colorea en verde si el elemento es cero o en rojo si es
     mayor que cero. Además, se resalta el periodo actualmente seleccionado, que
     se toma de imes (model.imes)
-    
-    Los valores de condensación se representan con un decimal.  
+
+    Los valores de condensación se representan con un decimal.
     """
     __gtype_name__ = 'CRuler'
 
@@ -302,29 +310,29 @@ class CRuler(gtk.DrawingArea):
         cr.set_font_size(wh / 2.5)
         margin = wh / 6.4
         x, y, twidth, theight, dx, dy = cr.text_extents("ENE")
-        
+
         # Rótulos laterales de leyenda
         x, y, t1width, t1height, dx, dy = cr.text_extents("Periodo")
         x, y, t2width, t2height, dx, dy = cr.text_extents("g/m².mes")
         titmaxw = max(t1width, t2width) + 2.0 * margin
-        
+
         cr.move_to(margin, theight + margin)
         cr.set_source_rgb(0.5, 0.5, 0.5)
-        cr.show_text("Periodo")
-        
+        cr.show_text(u"Periodo")
+
         cr.move_to(margin, wh - margin)
         cr.set_source_rgb(0.0, 0.0, 0.0)
-        cr.show_text("g/m².mes")
+        cr.show_text(u"g/m².mes")
 
         cr.translate(titmaxw, 0)
-        
+
         # Casillas de Periodos
         ln = len(self.model.gmeses)
         ew = (1.0 * ww - titmaxw) / ln
         ismeses = ln == 12
         gmax = max(self.model.gmeses)
-        k = (1.0 * wh / gmax) if gmax else 0.0        
-        
+        k = (1.0 * wh / gmax) if gmax else 0.0
+
         for i, condensa in enumerate(self.model.gmeses):
             # Rectángulos de fondo
             cr.rectangle(i * ew, 0, ew, wh)
@@ -334,7 +342,7 @@ class CRuler(gtk.DrawingArea):
                 cr.set_source_rgb(0.666667, 0.8, 0.666667) #AACCAA COLOR_OK
             cr.fill()
             # Rectángulos de cantidad condensada (histograma)
-            cr.rectangle(i * ew , wh, ew, -k * condensa)
+            cr.rectangle(i * ew, wh, ew, -k * condensa)
             cr.set_source_rgb(0.4, 0.8, 0.9)
             cr.fill()
             # Nombres meses
@@ -373,7 +381,17 @@ class CondensaIconFactory(gtk.IconFactory):
         icons = {'condensa-application': 'drop.png',
                  'condensa-cerramientos': 'cerramientos.png',
                  'condensa-clima': 'clima.png',}
-        for id, filename in icons.items():
+        for iid, filename in icons.items():
             iconfile = config.appresource('icons', filename)
             iconset = gtk.IconSet(gtk.gdk.pixbuf_new_from_file(iconfile))
-            self.add(id, iconset)
+            self.add(iid, iconset)
+
+
+
+
+
+
+
+
+
+
