@@ -1,0 +1,55 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+    <head>
+        <META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8" />
+        <title>Informe</title>
+        <link rel="stylesheet" type="text/css" href="style.css" />
+    </head>
+    <body><div class="container">
+        <h1>Informe de resultados</h1>
+
+        <h2>Descripción del cerramiento</h2>
+        <h3>Cerramiento 1</h3>
+        <h4>1/2' LP + EPS 3cm + LH + Yeso</h4>
+        <table><thead><tr><th>i</th><th>Descripción de la capa</th><th class="center">espesor<br />[m]</th><th class="center">K<br />[W/mK]</th><th class="center">R<br />[m²K/W]</th><th class="center">μ<br />[-]</th><th class="center">S<br />[m]</th></tr></thead><tbody><tr><td class="index">0</td><td class="name">1/2 pie LP métrico o catalán 40 mm< G < 60 mm</td><td class="center">0.110</td><td class="center">0.667</td><td class="center">0.165</td><td class="center">10</td><td class="center">1.100</td></tr><tr><td class="index">1</td><td class="name">Mortero de áridos ligeros [vermiculita perlita]</td><td class="center">0.010</td><td class="center">0.410</td><td class="center">0.024</td><td class="center">10</td><td class="center">0.100</td></tr><tr><td class="index">2</td><td class="name">EPS Poliestireno Expandido [ 0.037 W/[mK]]</td><td class="center">0.030</td><td class="center">0.037</td><td class="center">0.800</td><td class="center">20</td><td class="center">0.600</td></tr><tr><td class="index">3</td><td class="name">Tabique de LH sencillo [40 mm < Espesor < 60 mm]</td><td class="center">0.030</td><td class="center">0.445</td><td class="center">0.067</td><td class="center">10</td><td class="center">0.300</td></tr><tr><td class="index">4</td><td class="name">Enlucido de yeso 1000 < d < 1300</td><td class="center">0.010</td><td class="center">0.570</td><td class="center">0.018</td><td class="center">6</td><td class="center">0.060</td></tr> <tr><td colspan="7" class="seprow"></td></tr><tr><td></td><td class="right">Totales capas:</td><td class="center bold">0.190</td><td></td><td class="center bold">1.244</td><td></td><td class="center bold">2.160</td></tr> <tr><td></td><td class="right">Resistencia superficial exterior - Rse:</td><td></td><td></td><td class="center bold">0.040</td></tr> <tr><td></td><td class="right">Resistencia superficial interior - Rsi:</td><td></td><td></td><td class="center bold">0.130</td></tr> <tr><td colspan="7" class="seprow"></td></tr><tr><td></td><td class="right">Totales cerramiento:</td><td></td><td></td><td class="center bold">1.244</td></tr></tbody></table>
+        <h3>Transmitancia térmica total: U = 0.804 [W/m²K]</h3>
+
+        <h2>Gráficas de presión, temperatura y presión de saturación</h2>
+        <h3>Condiciones de cálculo seleccionadas</h3>
+        <p>Ambiente exterior (gráficas): Burgos [Enero]</p>
+        <p>T: 2.6 ºC, HR: 86.0 %</p>
+        <p>Ambiente interior (gráficas): Predefinido</p>
+        <p>T: 20.0 ºC, HR: 55.0 %</p>
+        <br />
+        <img src="presionestempplot.png" alt="Gráfica de presiones y temperaturas" title="Gráfica de presiones y temperaturas" />
+        <br /><br />
+        <img src="condensacionesplot.png" alt="Gráfica de condensaciones por periodos" title="Gráfica de condensaciones por periodos" />
+
+        <h2>Comportamiento higrotérmico y cumplimiento del CTE</h2>
+        <h3>Condiciones de cálculo para la comprobación de condensaciones superficiales</h3>
+        <p>Exterior - T: 2.6 ºC, HR: 86.0 %</p>
+        <p>Interior - T: 20.0 ºC, HR: 55.0 %</p>
+        <h3>Condiciones de cálculo para la comprobación de condensaciones intersticiales</h3>
+        <p>Exterior - T [ºC]: 2.6, 3.9, 5.7, 7.6, 11.2, 15.0, 18.4, 18.3, 15.8, 11.1, 5.8, 3.2, HR [%]: 86.0, 80.0, 73.0, 72.0, 69.0, 67.0, 61.0, 62.0, 67.0, 76.0, 83.0, 86.0</p>
+        <p>Interior - T: 20.0 ºC, HR: 55.0 %</p>
+        
+        <h3>Factores de resistencia superficial</h3>
+        <p>f_Rsi = 0.80</p>
+        <p>f_Rsimin = 0.66</p>
+
+        <h3>Existencia de condensaciones</h3>
+        <p>¿Existen condensaciones superficiales?: No</p>
+        <p>¿Existen condensaciones intersticiales?: Sí</p>
+
+        <p>
+Periodos con condensaciones intersticiales: 0, 1, 2, 11
+</p>
+        <hr />
+        <p>Informe generado por <a href="http://www.rvburke.com/condensaciones.html">Condensa</a> el 22/05/2014 - 17:58:19</p>
+        <p>'Condensa' es software libre que se distribuye bajo licencia GPLv2 o posterior.</p>
+        <p>Copyright (c) 2009-2010 Rafael Villar Burke</p>
+        </div>
+    </body>
+</html>
