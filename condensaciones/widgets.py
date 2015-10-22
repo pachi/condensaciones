@@ -195,6 +195,9 @@ class CPTCanvas(FigureCanvasGTKCairo):
         ymin, ymax = ax2.get_ylim()
         length = ymax - ymin
         ax2.set_ylim(ymin - 0.1 * length, ymax + 0.2 * length)
+        # BUGFIX: http://stackoverflow.com/questions/27216812/matplotlib-cant-re-draw-first-axis-after-clearing-second-using-twinx-and-cla
+        ax2.patch.set_visible(False)
+
         # Tamaño
         self.set_size_request(width, height)
         self.draw()
