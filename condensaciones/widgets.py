@@ -54,7 +54,6 @@ class GraphData(object):
         self.rotulos_s = ([_xpos[0] - 0.025] + _xpos + [_xpos[-1] + 0.025])
 
         #nemotécnicas intermedias
-        self.rotulo_se = self.rotulos_s[1]
         self.rotulo_si = self.rotulos_s[-2]
         self.P_se = self.presiones[1]
         self.P_sat_se = self.presiones_sat[1]
@@ -152,11 +151,11 @@ class CPTCanvas(FigureCanvasGTKCairo):
         else:
             va1, va2 = 'baseline', 'top'
         ax1.annotate(u'$P_{n}$ = %iPa' % d.P_se,
-                     xy=(d.rotulo_se, d.P_se),
+                     xy=(d.rotulos_s[1], d.P_se),
                      xytext=(-5, 0), textcoords='offset points', ha='right',
                      va=va1, color='b', size='small')
         ax1.annotate(u'$P_{sat}$ = %iPa' % d.P_sat_se,
-                     xy=(d.rotulo_se, d.P_sat_se),
+                     xy=(d.rotulos_s[1], d.P_sat_se),
                      xytext=(-5, 0), textcoords='offset points', ha='right',
                      va=va2, color='k', size='small')
         # Relleno de zona de condensación (psat <= presiones)
@@ -183,7 +182,7 @@ class CPTCanvas(FigureCanvasGTKCairo):
         # Curva de temperaturas y rótulos
         ax2.plot(d.rotulos_s, d.temperaturas, 'r', lw=1.5)
         ax2.annotate(u'$T_{se}$=%.1f°C' % d.T_se,
-                     xy=(d.rotulo_se, d.T_se),
+                     xy=(d.rotulos_s[1], d.T_se),
                      xytext=(-5, 0), textcoords='offset points', ha='right',
                      size='small')
         ax2.annotate(u'$T_{si}$=%.1f°C' % d.T_si,
