@@ -125,8 +125,8 @@ class CPTCanvas(FigureCanvasGTKCairo):
         for rotulo in d.rotulos_s[1:-1]:
             ax1.axvline(rotulo, color='0.5',
                         ymin=.05, ymax=.9)
-            ax1.axvline(d.rotulos_s[-1], lw=2, color='k',
-                        ymin=.05, ymax=.9)
+        ax1.axvline(d.rotulos_s[-1], lw=2, color='k',
+                    ymin=.05, ymax=.9)
 
         # Presiones, presiones de saturación y rótulos
         ax1.plot(d.rotulos_s, d.presiones, 'b-', lw=0.5)
