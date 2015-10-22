@@ -100,8 +100,8 @@ class CPTCanvas(FigureCanvasGTKCairo):
 
         # Etiquetas de exterior e interior
         ax1.text(0.1, 0.92, u'exterior',
-                       transform=ax1.transAxes,
-                       size=10, style='italic', ha='right')
+                 transform=ax1.transAxes,
+                 size=10, style='italic', ha='right')
         ax1.text(0.9, 0.92, u'interior',
                  transform=ax1.transAxes,
                  size=10, style='italic', ha='left')
@@ -165,7 +165,7 @@ class CPTCanvas(FigureCanvasGTKCairo):
         newx = [xmin + n * xstep for n in range(nsteps)]
         newpres = numpy.interp(newx, d.rotulos_s, d.presiones)
         newpressat = numpy.interp(newx, d.rotulos_s, d.presiones_sat)
-        ax1.fill_between(newx, newpres, newpressat, where=newpressat<newpres,
+        ax1.fill_between(newx, newpres, newpressat, where=(newpressat < newpres),
                          facecolor='red')
         # Lineas rojas de interfases con condensaciones en el mes actual
         # añadimos 1 al índice porque rotulos_s tiene margen
