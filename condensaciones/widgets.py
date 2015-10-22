@@ -30,6 +30,7 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_gtkcairo import FigureCanvasGTKCairo
 from util import colores_capas
 from clima import MESES
+from util import config
 
 class GraphData(object):
     """Almacén de datos para dibujado de gráficas"""
@@ -62,35 +63,6 @@ class GraphData(object):
         self.P_sat_si = self.presiones_sat[-2] #en superficie, no el aire
         self.T_se = self.temperaturas[1]
         self.T_si = self.temperaturas[-2]
-
-def _dibujacerramiento(ax, nombrecapas, xcapas):
-    """Dibujado de cerramiento
-    
-    ax - ejes
-    nombrecapas - nombres de capas del cerramiento
-    xcapas - lista de coordenadas de interfases de capas
-    """
-    colordict = colores_capas(nombrecapas)
-    # Etiquetas de exterior e interior
-    ax.text(0.1, 0.92, 'exterior', transform=ax.transAxes,
-            size=10, style='italic', ha='right')
-    ax.text(0.9, 0.92, 'interior', transform=ax.transAxes,
-            size=10, style='italic', ha='left')
-    ax.text(.5,.92,'www.rvburke.com', transform=ax.transAxes,
-            color='0.5', size=8, ha='center')
-    # Lineas de tramos de cerramiento
-    ax.axvline(xcapas[0], lw=2, color='k', ymin=.05, ymax=.9)
-    for rotulo in xcapas[1:-1]:
-        ax.axvline(rotulo, color='0.5', ymin=.05, ymax=.9)
-    ax.axvline(xcapas[-1], lw=2, color='k', ymin=.05, ymax=.9)
-    # Rellenos de materiales
-    rotuloanterior = xcapas[0]
-    for _i, (capa, rotulo) in enumerate(zip(nombrecapas, xcapas[1:])):
-        ax.axvspan(rotuloanterior, rotulo,
-                   fc=colordict[capa], alpha=0.25, ymin=.05, ymax=.9)
-        ax.text((rotulo + rotuloanterior) / 2.0, 0.0, "%i" % _i,
-                size=8, style='italic', ha='center')
-        rotuloanterior = rotulo
 
 class CPTCanvas(FigureCanvasGTKCairo):
     """Diagrama de presiones de saturación frente a presiones o temperaturas"""
@@ -395,3 +367,16 @@ class CRuler(gtk.DrawingArea):
             cr.rectangle(round(self.model.imes*ew)+1.5, 0.5, ew-2.0, wh-0.5)
             cr.set_source_rgb(1.0, 0.2, 0.2)
             cr.stroke()
+
+class CondensaIconFactory(gtk.IconFactory):
+    def __init__(self, widget):
+        """IconFactory para los iconos personalizados."""
+        gtk.IconFactory.__init__(self)
+        self.add_default()
+        icons = {'condensa-application': 'drop.png',
+                 'condensa-cerramientos': 'cerramientos.png',
+                 'condensa-clima': 'clima.png',}
+        for id, filename in icons.items():
+            iconfile = config.appresource('icons', filename)
+            iconset = gtk.IconSet(gtk.gdk.pixbuf_new_from_file(iconfile))
+            self.add(id, iconset)

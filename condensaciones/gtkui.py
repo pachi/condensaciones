@@ -28,8 +28,7 @@ from pango import (WEIGHT_BOLD, SCALE_SMALL, SCALE_MEDIUM,
                    SCALE_LARGE, SCALE_X_LARGE, STYLE_ITALIC)
 import util
 import appmodel
-from ptcanvas import CPTCanvas, CCCanvas
-import condensaicons
+from widgets import CPTCanvas, CCCanvas, CondensaIconFactory
 import webbrowser, datetime
 import htmlreport
 
@@ -61,7 +60,7 @@ class GtkCondensa(object):
         tb.create_tag("resultados", scale=SCALE_MEDIUM, foreground='blue')
         tb.create_tag("nota", scale=SCALE_SMALL)
         # Iconos de aplicación y de botones de herramientas -------------------
-        self.icons = condensaicons.IconFactory(self)
+        self.icons = CondensaIconFactory(self)
         self.ui.get_object('cerramselectbtn').set_stock_id('condensa-cerramientos')
         self.ui.get_object('climaselectbtn').set_stock_id('condensa-clima')
         # Carga datos de materiales, cerramientos y clima
