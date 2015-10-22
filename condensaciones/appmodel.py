@@ -22,11 +22,8 @@
 #   02110-1301, USA.
 """Modelo de la aplicación Condensaciones"""
 
-import comprobaciones
-import clima
-from clima import MESES
-import cerramiento
-from util import config
+from . import comprobaciones, clima, cerramiento
+from .util import config
 
 cdb = cerramiento.CerramientosDB(config.paths['cerramientosdb'])
 climasdb, climasnombres, climasdbconfig = clima.loadclimadb(config.paths['climasdb'])
@@ -69,7 +66,7 @@ class Model(object):
 
     @property
     def ambienteexterior(self):
-        mes = MESES[self.imes] if len(self.climaslist) == 12 else str(self.imes)
+        mes = clima.MESES[self.imes] if len(self.climaslist) == 12 else str(self.imes)
         return "%s [%s]" % (self.localidad, mes)
 
     @property

@@ -22,12 +22,11 @@
 #   02110-1301, USA.
 """Cerramiento - Clase para la modelización de un cerramiento tipo."""
 
-import numpy
-import psicrom
-import material
-import configobj
 import colorsys
-from util import config
+import numpy
+import configobj
+from . import psicrom, material
+from .util import config
 
 mdb = material.MaterialesDB(config.paths['materialesdb'])
 

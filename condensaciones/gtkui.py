@@ -22,15 +22,14 @@
 #   02110-1301, USA.
 """Interfaz de usuario de Condensaciones en GTK+"""
 
+import webbrowser, datetime
 import gobject
 import gtk
 from pango import (WEIGHT_BOLD, SCALE_SMALL, SCALE_MEDIUM,
                    SCALE_LARGE, SCALE_X_LARGE, STYLE_ITALIC)
-from util import config
-import appmodel
-from widgets import CPTCanvas, CCCanvas, CondensaIconFactory
-import webbrowser, datetime
-import htmlreport
+from . import appmodel, htmlreport
+from .util import config
+from .widgets import CPTCanvas, CCCanvas, CondensaIconFactory
 
 class GtkCondensa(object):
     """Aplicación"""

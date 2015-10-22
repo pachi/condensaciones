@@ -28,8 +28,9 @@ import matplotlib
 matplotlib.use('GTKCairo')
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_gtkcairo import FigureCanvasGTKCairo
-from clima import MESES
-from util import config
+
+from .clima import MESES
+from .util import config
 
 class CPTCanvas(FigureCanvasGTKCairo):
     """Diagrama de presiones de saturación frente a presiones o temperaturas"""

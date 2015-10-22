@@ -23,7 +23,7 @@
 """Informe html de cálculo de condensaciones"""
 
 import webbrowser, datetime
-from util import config
+from .util import config
 
 __HTMLTEMPLATE = """
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
