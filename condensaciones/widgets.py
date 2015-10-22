@@ -88,10 +88,12 @@ class CPTCanvas(FigureCanvasGTKCairo):
         d - GraphData, contiene los datos para dibujar las gráficas
         """
         d = GraphData(self.model)
-        # ========= Eje vertical de presiones
-        ax1 = self.ax1
+        ax1 = self.ax1 # presiones
+        ax2 = self.ax2 # temperaturas
         ax1.clear()  # Limpia imagen de datos anteriores
+        ax2.clear()  # Limpia imagen de datos anteriores
 
+        # ========= Eje vertical de presiones
         ax1.set_title(u"Presiones de vapor y temperaturas", size='large')
         ax1.set_xlabel(u"Distancia [m]")
         ax1.set_ylabel(u"Presión de vapor [Pa]", fontdict=dict(color='b'))
@@ -171,10 +173,12 @@ class CPTCanvas(FigureCanvasGTKCairo):
         # añadimos 1 al índice porque rotulos_s tiene margen
         for i, gi in self.model.glist[self.model.imes]:
             ax1.axvline(d.rotulos_s[i+1], lw=1.5, color='r', ymin=.05, ymax=.9)
-
+        # Dejar margen fuera de zona de trazado
+        ymin, ymax = ax1.get_ylim()
+        length = ymax - ymin
+        ax1.set_ylim(ymin - 0.1 * length, ymax + 0.2 * length)
+            
         # ======== Eje vertical de temperaturas
-        ax2 = self.ax2
-        ax2.clear()  # Limpia imagen de datos anteriores
         ax2.set_ylabel(u"Temperatura [°C]", fontdict=dict(color='r'))
         # Curva de temperaturas y rótulos
         ax2.plot(d.rotulos_s, d.temperaturas, 'r', lw=1.5)
@@ -187,10 +191,6 @@ class CPTCanvas(FigureCanvasGTKCairo):
                      xytext=(5, 5), textcoords='offset points', ha='left',
                      size='small')
         ax2.yaxis.tick_right()
-        # Dejar margen fuera de zona de trazado
-        ymin, ymax = ax1.get_ylim()
-        length = ymax - ymin
-        ax1.set_ylim(ymin - 0.1 * length, ymax + 0.2 * length)
         # Dejar margen fuera de zona de trazado
         ymin, ymax = ax2.get_ylim()
         length = ymax - ymin
