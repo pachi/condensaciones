@@ -96,14 +96,15 @@ class CPTCanvas(FigureCanvasGTKCairo):
                  color='0.5', size=8, ha='center')
 
         # Rellenos de materiales
-        #ymin, ymax = ax1.get_ylim()
-        ypos=1000 #XXX
+        # x in data coords, y in axes coords
+        ax1trans = matplotlib.transforms.blended_transform_factory(
+            ax1.transData, ax1.transAxes)
         rotuloanterior = x_s[1]
         for _i, (rotulo, color) in enumerate(zip(x_s[2:-1], m.c.colores)):
             ax1.axvspan(rotuloanterior, rotulo,
                         fc=color, alpha=0.25, ymin=0.05, ymax=0.9)
-            ax1.text((rotulo + rotuloanterior) / 2.0, ypos,
-                     "%i" % _i,
+            ax1.text((rotulo + rotuloanterior) / 2.0, 0.075,
+                     "%i" % _i, transform=ax1trans,
                      size=8, style='italic', ha='center')
             rotuloanterior = rotulo
 
