@@ -26,9 +26,10 @@ import numpy
 import psicrom
 import material
 import configobj
-from util import get_resource
+import colorsys
+from util import config
 
-mdb = material.MaterialesDB(get_resource('data', 'MaterialesDB.ini'))
+mdb = material.MaterialesDB(config.paths['materialesdb'])
 
 class Cerramiento(object):
     """Clase para modelizar un cerramiento tipo, multicapa, con cada capa definida
@@ -85,6 +86,20 @@ class Cerramiento(object):
         """Lista de nombres de las capas"""
         return [nombre for nombre, e in self.capas]
 
+    @property
+    def colores(self):
+        """Diccionario de colores para las capas, según nombre de capa"""
+        def colorlist(steps):
+            """Devuelte una lista de colores de n elementos"""
+            saltos = [x / float(steps) for x in range(steps)]
+            return [colorsys.hls_to_rgb(salto, .6, .8) for salto in saltos]
+
+        capas_distintas = sorted(set(self.nombres))
+        colordict = {}
+        for nombre, color in zip(capas_distintas, colorlist(len(capas_distintas))):
+            colordict[nombre] = color
+        return [colordict[nombre] for nombre in self.nombres]
+        
     @property
     def espesores(self):
         """Lista de espesores de las capas [m]"""
