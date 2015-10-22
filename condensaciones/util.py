@@ -22,7 +22,6 @@
 """Módulo de utilidades varias"""
 
 import os, sys, shutil
-import colorsys
 
 def get_main_dir():
     """Find main dir even for py2exe frozen modules"""
@@ -31,57 +30,50 @@ def get_main_dir():
     else:
         # normal run
         md = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-        # test run
+        # test run XXX: revisar, ya que se ha movido test
         if not os.path.isdir(os.path.join(md, 'data')):
             md = os.path.abspath(os.path.join(md, '..'))
             if not os.path.isdir(os.path.join(md, 'data')):
-                raise ValueError, 'No se encuentra directorio base'
+                raise ValueError('No se encuentra directorio base')
     return md
 
-APPROOT = get_main_dir()
+class AppConfig(object):
+    def __init__(self):
+        self.maindir = get_main_dir()
+        self.userdir = self._userdir()
+        self.paths = {
+            'mainconf': self.appresource('Condensaciones.ini'),
+            'cerramientosdb': self.userresource('CerramientosDB.ini'),
+            'climasdb': self.userresource('ClimasDB.ini'),
+            'materialesdb': self.userresource('MaterialesDB.ini')
+        }
 
-def get_resource(*path_list):
-    """Localiza un recurso del proyecto en base al directorio base del paquete"""
-    return os.path.abspath(os.path.join(APPROOT, *path_list))
+    @property
+    def datadir(self):
+        return os.path.join(self.maindir, 'data')
+            
+    def _userdir(self):
+        """Localiza o crea el directorio de configuración y bases de datos
 
-def colores_capas(lista_capas):
-    """Crea un diccionario asignando a cada capa un color"""
+        Usa por defecto el directorio condensaciones en el home del usario
+        """
+        CONFIGFILES = ['Condensaciones.ini', 'CerramientosDB.ini',
+                       'MaterialesDB.ini', 'ClimasDB.ini']
+        udir = os.path.join(os.path.expanduser('~'), 'condensaciones')
+        if not os.path.exists(udir):
+            os.makedirs(udir)
+        for cfile in CONFIGFILES:
+            ucfile = os.path.join(udir, cfile)
+            if not os.path.exists(ucfile):
+                shutil.copy(self.appresource(cfile), ucfile)
+        return udir
 
-    def colorlist(steps):
-        """Devuelte una lista de colores de n elementos"""
-        saltos = [x / float(steps) for x in range(steps)]
-        return [colorsys.hls_to_rgb(salto, .6, .8) for salto in saltos]
+    def appresource(self, *path_list):
+        """Localiza un recurso del programa"""
+        return os.path.join(self.datadir, *path_list)
 
-    capas_distintas = sorted(set(lista_capas))
-    colordict = {}
-    for nombre, color in zip(capas_distintas, colorlist(len(capas_distintas))):
-        colordict[nombre] = color
-    return colordict
+    def userresource(self, *path_list):
+        """Localiza un recurso del usuario"""
+        return os.path.join(self.userdir, *path_list)
 
-def checkuserdir(basedir=None):
-    """Localiza o crea el directorio de configuración y bases de datos
-
-    Usa por defecto el directorio condensaciones en el home del usario"""
-    DEFAULTUSERPATH = os.path.join(os.path.expanduser('~'), 'condensaciones')
-    CONFIGFILES = ['Condensaciones.ini', 'CerramientosDB.ini', 'MaterialesDB.ini', 'ClimasDB.ini']
-
-    udir = basedir if basedir is not None else DEFAULTUSERPATH
-
-    if not os.path.exists(udir):
-        os.makedirs(udir)
-    for cfile in CONFIGFILES:
-        ucfile = os.path.join(udir, cfile)
-        if not os.path.exists(ucfile):
-            shutil.copy(get_resource('data', cfile), ucfile)
-
-    return udir
-
-def loadconfig(basedir=None):
-    """Carga configuración desde directorio de usuario"""
-    udir = checkuserdir(basedir)
-    
-    return udir
-
-
-
-
+config = AppConfig()

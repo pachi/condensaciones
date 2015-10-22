@@ -28,7 +28,6 @@ import matplotlib
 matplotlib.use('GTKCairo')
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_gtkcairo import FigureCanvasGTKCairo
-from util import colores_capas
 from clima import MESES
 from util import config
 
@@ -99,8 +98,6 @@ class CPTCanvas(FigureCanvasGTKCairo):
         # Eliminamos márgenes de espesor de rotulos_s de capas límite 
         #_dibujacerramiento(ax1, d.nombres, d.rotulos_s[1:-1])
 
-        colordict = colores_capas(d.nombres)
-
         # Etiquetas de exterior e interior
         ax1.text(0.1, 0.92, 'exterior', transform=ax1.transAxes,
                 size=10, style='italic', ha='right')
@@ -111,9 +108,9 @@ class CPTCanvas(FigureCanvasGTKCairo):
 
         # Rellenos de materiales
         rotuloanterior = d.rotulos_s[0]
-        for _i, (capa, rotulo) in enumerate(zip(d.nombres, d.rotulos_s[1:])):
+        for _i, (rotulo, color) in enumerate(zip(d.rotulos_s[1:-1], self.model.c.colores)):
             ax1.axvspan(rotuloanterior, rotulo,
-                       fc=colordict[capa], alpha=0.25, ymin=.05, ymax=.9)
+                       fc=color, alpha=0.25, ymin=.05, ymax=.9)
             ax1.text((rotulo + rotuloanterior) / 2.0, 0.0, "%i" % _i,
                     size=8, style='italic', ha='center')
             rotuloanterior = rotulo

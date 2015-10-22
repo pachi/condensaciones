@@ -26,16 +26,13 @@ import comprobaciones
 import clima
 from clima import MESES
 import cerramiento
-from util import get_resource, colores_capas
+from util import config
 
-CERRAMIENTOSPATH = get_resource('data', 'CerramientosDB.ini')
-CLIMASDBPATH = get_resource('data', 'ClimasDB.ini')
+cdb = cerramiento.CerramientosDB(config.paths['cerramientosdb'])
+climasdb, climasnombres, climasdbconfig = clima.loadclimadb(config.paths['climasdb'])
 
-cdb = cerramiento.CerramientosDB(CERRAMIENTOSPATH)
-climasDB, climasnombres, climasdbconfig = clima.loadclimadb(CLIMASDBPATH)
-
-climae = climasDB['Climaext'][0] if 'Climaext' in climasDB else clima.Clima(5, 96)
-climai = climasDB['Climaint'][0] if 'Climaint' in climasDB else clima.Clima(20, 55)
+climae = climasdb['Climaext'][0] if 'Climaext' in climasdb else clima.Clima(5, 96)
+climai = climasdb['Climaint'][0] if 'Climaint' in climasdb else clima.Clima(20, 55)
 
 class Model(object):
     def __init__(self):
@@ -48,7 +45,7 @@ class Model(object):
         self.cerramientosDB = cdb
         # cerramiento actual
         self.c = self.cerramientosDB[self.cerramientosDB.nombres[0]]
-        self.climasDB = climasDB
+        self.climasDB = climasdb
         self.climas = climasnombres
         self.modificado = False # ¿Existen cambios sin guardar?
 
@@ -181,13 +178,10 @@ class Model(object):
         """Devuelve iterador por capa con:
             i, (nombre, espesor, K, R, mu, S, c)
         """
-        cdict = colores_capas(self.c.nombres)
-        colores = [cdict[nombre] for nombre in self.c.nombres]
-
         # quitamos Rse, Rsi en c.R con c.R[1:-1]
         return enumerate(zip(self.c.nombres, self.c.espesores,
                              self.c.K, self.c.R[1:-1],
-                             self.c.mu, self.c.S, colores))
+                             self.c.mu, self.c.S, self.c.colores))
 
     # Acciones sobre capas ---------------------------------------------------
 

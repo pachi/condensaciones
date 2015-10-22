@@ -23,7 +23,7 @@
 """Informe html de cálculo de condensaciones"""
 
 import webbrowser, datetime
-import util
+from util import config
 
 __HTMLTEMPLATE = """
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
@@ -162,18 +162,28 @@ def createreport(ui, model):
                           'today': today,
                           }
     
-    filename = util.get_resource('report', 'report.html')
+    filename = config.appresource('report', 'report.html')
     rfile = open(filename, "w")
     rfile.write(s)
     rfile.close()
     # Se dibujan y guardan todos los diagramas
     graficaprestemp = ui.get_object('prestemp_canvas')
     graficacondensaciones = ui.graficacondensaciones
-    filename = util.get_resource('report','presionestempplot.png')
+    filename = config.appresource('report','presionestempplot.png')
     graficaprestemp.save(filename)
-    filename = util.get_resource('report','condensacionesplot.png')
+    filename = config.appresource('report','condensacionesplot.png')
     graficacondensaciones.save(filename)
 
 def htmlreport(ui, model):
     createreport(ui, model)
-    webbrowser.open(util.get_resource('report', 'report.html'))
+    webbrowser.open(config.appresource('report', 'report.html'))
+
+
+
+
+
+
+
+
+
+

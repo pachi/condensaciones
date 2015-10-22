@@ -26,7 +26,7 @@ import gobject
 import gtk
 from pango import (WEIGHT_BOLD, SCALE_SMALL, SCALE_MEDIUM,
                    SCALE_LARGE, SCALE_X_LARGE, STYLE_ITALIC)
-import util
+from util import config
 import appmodel
 from widgets import CPTCanvas, CCCanvas, CondensaIconFactory
 import webbrowser, datetime
@@ -36,11 +36,11 @@ class GtkCondensa(object):
     """Aplicación"""
     def __init__(self):
         """Inicialización de datos e interfaz"""
-        self.cfg = util.loadconfig()
+        self.cfg = config
         self.model = appmodel.Model()
         self.ui = gtk.Builder()
         self.ui.graficacondensaciones = CCCanvas() # Histograma de condensaciones
-        self.ui.add_from_file(util.get_resource('data', 'condensa.ui'))
+        self.ui.add_from_file(config.appresource('condensa.ui'))
         self.capasls = self.ui.get_object('capas_liststore')
         self.capastv = self.ui.get_object('capas_treeview')
         self.ui.connect_signals(self)
