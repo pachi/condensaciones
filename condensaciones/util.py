@@ -31,11 +31,8 @@ def find_main_dir():
     else:
         # normal run
         md = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-        # test run XXX: revisar, ya que se ha movido test
         if not os.path.isdir(os.path.join(md, 'data')):
-            md = os.path.abspath(os.path.join(md, '..'))
-            if not os.path.isdir(os.path.join(md, 'data')):
-                raise ValueError('No se encuentra directorio base')
+            raise ValueError('No se encuentra directorio base')
     return md
 
 def find_or_create_userdir(datadir=None):
