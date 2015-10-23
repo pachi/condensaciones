@@ -117,12 +117,12 @@ class GtkCondensa(object):
         m, ui = self.model, self.ui
         ui.get_object('nombre_cerramiento').props.label = m.c.nombre
         ui.get_object('descripcion_cerramiento').props.label = m.c.descripcion
-        txt_t1 = ('U = %.2f W/m²K, f<sub>Rsi</sub> ='
-                  ' %.2f, f<sub>Rsi,min</sub> = %.2f'
+        txt_t1 = (u'U = %.2f W/m²K, f<sub>Rsi</sub> ='
+                  u' %.2f, f<sub>Rsi,min</sub> = %.2f'
                   ) % (m.c.U, m.fRsi, m.fRsimin)
         ui.get_object('csubtitulo1').props.label = txt_t1
-        txt_t2 = ('%s: T<sub>ext</sub> = %.2f°C, HR<sub>ext</sub> = %.1f%%, '
-                  '%s: T<sub>int</sub> = %.2f°C, HR<sub>int</sub> = %.1f%%'
+        txt_t2 = (u'%s: T<sub>ext</sub> = %.2f°C, HR<sub>ext</sub> = %.1f%%, '
+                  u'%s: T<sub>int</sub> = %.2f°C, HR<sub>int</sub> = %.1f%%'
                   ) % (m.ambienteexterior, m.climae.temp, m.climae.HR,
                        m.ambienteinterior, m.climai.temp, m.climai.HR)
         ui.get_object('csubtitulo2').props.label = txt_t2
@@ -141,8 +141,8 @@ class GtkCondensa(object):
     def actualizapie(self):
         """Actualiza pie de ventana principal"""
         m, ui = self.model, self.ui
-        txt = ("Condensación en interfases (%s): " % m.ambienteexterior +
-               ", ".join(["%.2f (%i)" % (x, i) for i, x in m.glist[m.imes]]))
+        txt = (u"Condensación en interfases (%s): " % m.ambienteexterior +
+               u", ".join([u"%.2f (%i)" % (x, i) for i, x in m.glist[m.imes]]))
         ui.get_object('pie').props.label = txt
 
     def actualizacapas(self):
@@ -180,90 +180,90 @@ class GtkCondensa(object):
         tb.props.text = ""
         # Denominación cerramiento
         tb.insert_with_tags_by_name(tb.get_start_iter(),
-                                    "%s\n" % m.c.nombre, 'titulo')
+                                    u"%s\n" % m.c.nombre, 'titulo')
         tb.insert_with_tags_by_name(tb.get_end_iter(),
-                                    "%s\n\n" % m.c.descripcion, 'titulo2')
+                                    u"%s\n\n" % m.c.descripcion, 'titulo2')
         # Condiciones ambientales
-        txt = "Condiciones de cálculo\n"
+        txt = u"Condiciones de cálculo\n"
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'subtitulo')
-        txt = "Ambiente exterior (gráficas): %s\n" % m.ambienteexterior
+        txt = u"Ambiente exterior (gráficas): %s\n" % m.ambienteexterior
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'capa')
-        txt = ("Temperatura exterior: %.1f ºC\n"
-               "Humedad relativa exterior: %.1f %%\n\n"
+        txt = (u"Temperatura exterior: %.1f ºC\n"
+               u"Humedad relativa exterior: %.1f %%\n\n"
                ) % (m.climae.temp, m.climae.HR)
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'datoscapa')
-        txt = "Ambiente interior (gráficas): %s\n" % m.ambienteinterior
+        txt = u"Ambiente interior (gráficas): %s\n" % m.ambienteinterior
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'capa')
-        txt = ("Temperatura interior: %.1f ºC\n"
-               "Humedad relativa interior: %.1f %%\n\n"
+        txt = (u"Temperatura interior: %.1f ºC\n"
+               u"Humedad relativa interior: %.1f %%\n\n"
                ) % (m.climai.temp, m.climai.HR)
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'datoscapa')
-        txt = ("Resistencia superficial exterior: %.2f m²K/W\n"
-               "Resistencia superficial exterior: %.2f m²K/W\n\n"
+        txt = (u"Resistencia superficial exterior: %.2f m²K/W\n"
+               u"Resistencia superficial exterior: %.2f m²K/W\n\n"
                ) % (m.c.Rse, m.c.Rsi)
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'capa')
         #
-        txt = ("Condiciones de cálculo para la comprobación de condensaciones"
-               " superficiales\n")
+        txt = (u"Condiciones de cálculo para la comprobación de condensaciones"
+               u" superficiales\n")
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'capa')
-        txt = ("Exterior - T: %.1f ºC, HR: %.1f %%\n"
-               "Interior - T: %.1f ºC, HR: %.1f %%\n\n"
+        txt = (u"Exterior - T: %.1f ºC, HR: %.1f %%\n"
+               u"Interior - T: %.1f ºC, HR: %.1f %%\n\n"
                ) % (m.climaslist[0].temp, m.climaslist[0].HR,
                     20.0, m.climai.HR)
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'datoscapa')
         #
-        txt = ("Condiciones de cálculo para la comprobación de condensaciones"
-               " intersticiales\n")
+        txt = (u"Condiciones de cálculo para la comprobación de condensaciones"
+               u" intersticiales\n")
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'capa')
-        tempextlist = ", ".join("%.1f" % clima.temp for clima in m.climaslist)
-        hrextlist = ", ".join("%.1f" % clima.HR for clima in m.climaslist)
-        txt = ("Exterior - \n\tT [ºC]: %s\n\tHR [%%]: %s\n"
-               "Interior - T [ºC]: %.1f, HR [%%]: %.1f\n\n"
+        tempextlist = u", ".join(u"%.1f" % clima.temp for clima in m.climaslist)
+        hrextlist = u", ".join(u"%.1f" % clima.HR for clima in m.climaslist)
+        txt = (u"Exterior - \n\tT [ºC]: %s\n\tHR [%%]: %s\n"
+               u"Interior - T [ºC]: %.1f, HR [%%]: %.1f\n\n"
                ) % (tempextlist, hrextlist, 20.0, m.climai.HR)
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'datoscapa')
         # Cerramiento
-        txt = "Descripción del cerramiento\n"
+        txt = u"Descripción del cerramiento\n"
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'subtitulo')
         for i, (nombre, e, K, R, mu, S, color) in m.capasdata():
-            txt = "%i - %s:\n" % (i, nombre)
+            txt = u"%i - %s:\n" % (i, nombre)
             tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'capa')
-            txt = ("%.3f [m]\nR=%.3f [m²K/W]\n"
-                   "μ=%i\nS=%.3f [m]\n" % (e, R, mu, S))
+            txt = (u"%.3f [m]\nR=%.3f [m²K/W]\n"
+                   u"μ=%i\nS=%.3f [m]\n" % (e, R, mu, S))
             tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'datoscapa')
-        txt = "Espesor total del cerramiento: %.3f m\n\n" % m.c.e
+        txt = u"Espesor total del cerramiento: %.3f m\n\n" % m.c.e
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'capa')
         # Gráficas
-        txt = "Gráficas\n"
+        txt = u"Gráficas\n"
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'subtitulo')
         tb.insert_pixbuf(tb.get_end_iter(), graficaprestemp.pixbuf(600))
         tb.insert(tb.get_end_iter(), "\n\n")
         tb.insert_pixbuf(tb.get_end_iter(), graficacondensaciones.pixbuf(600))
         tb.insert(tb.get_end_iter(), "\n\n")
         # Resultados
-        txt = "Resultados\n"
+        txt = u"Resultados\n"
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'subtitulo')
-        txt = ("R_total: %.3f [m²K/W]\nS_total = %.3f [m]\n"
-               "Transmitancia térmica total: U = %.3f [W/m²K]\n"
-               "f_Rsi = %.2f\nf_Rsimin = %.2f\n\n"
+        txt = (u"R_total: %.3f [m²K/W]\nS_total = %.3f [m]\n"
+               u"Transmitancia térmica total: U = %.3f [W/m²K]\n"
+               u"f_Rsi = %.2f\nf_Rsimin = %.2f\n\n"
                ) % (m.c.R_total, m.c.S_total, m.c.U, m.fRsi, m.fRsimin)
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'resultados')
         # Condensaciones
-        cs = "Sí" if m.cs else "No"
-        ci = "Sí" if m.ci else "No"
-        txt = ("\n¿Existen condensaciones superficiales?: %s\n"
-               "¿Existen condensaciones intersticiales?: %s\n") % (cs, ci)
+        cs = u"Sí" if m.cs else u"No"
+        ci = u"Sí" if m.ci else u"No"
+        txt = (u"\n¿Existen condensaciones superficiales?: %s\n"
+               u"¿Existen condensaciones intersticiales?: %s\n") % (cs, ci)
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'resultados')
         if m.ci:
-            meses = ", ".join("%i" % i for i, value in enumerate(m.glist) if value)
-            txt = ("\nPeriodos con condensaciones intersticiales: %s\n") % meses
+            meses = u", ".join(u"%i" % i for i, value in enumerate(m.glist) if value)
+            txt = (u"\nPeriodos con condensaciones intersticiales: %s\n") % meses
             tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'resultados')
         # Nota copyright
         today = datetime.datetime.now().strftime("%d/%m/%Y - %H:%M:%S")
-        txt = ("\n\nInforme generado por 'Condensa' "
-               "(www.rvburke.com/condensaciones.html) el %s\n\n"
-               "'Condensa' es software libre que se distribuye bajo licencia "
-               "GPLv2 o posterior.\n"
-               "Copyright (c) 2009-2010 Rafael Villar Burke\n") % today
+        txt = (u"\n\nInforme generado por 'Condensa' "
+               u"(www.rvburke.com/condensaciones.html) el %s\n\n"
+               u"'Condensa' es software libre que se distribuye bajo licencia "
+               u"GPLv2 o posterior.\n"
+               u"Copyright (c) 2009-2010 Rafael Villar Burke\n") % today
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'nota')
 
     def openhtmlreport(self, widget):

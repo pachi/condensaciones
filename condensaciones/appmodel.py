@@ -49,7 +49,7 @@ class Model(object):
     @property
     def localidad(self):
         """Localidad actual"""
-        return self._localidad or 'Localidad genérica'
+        return self._localidad or u'Localidad genérica'
 
     @localidad.setter
     def localidad(self, lname):
@@ -62,12 +62,12 @@ class Model(object):
 
     @property
     def ambienteinterior(self):
-        return 'Predefinido'
+        return u'Predefinido'
 
     @property
     def ambienteexterior(self):
-        mes = clima.MESES[self.imes] if len(self.climaslist) == 12 else str(self.imes)
-        return "%s [%s]" % (self.localidad, mes)
+        mes = clima.MESES[self.imes] if len(self.climaslist) == 12 else u"%i" % (self.imes)
+        return u"%s [%s]" % (self.localidad, mes)
 
     @property
     def imes(self):
