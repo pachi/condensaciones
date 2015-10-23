@@ -50,29 +50,32 @@ def find_or_create_userdir(datadir=None):
             ucfile = os.path.join(udir, cfile)
             if not os.path.exists(ucfile):
                 shutil.copy(os.path.join(datadir, cfile), ucfile)
+    reportdir = os.path.join(udir, 'report')
+    if not os.path.exists(reportdir):
+        os.makedirs(reportdir)
+    if not os.path.exists(os.path.join(reportdir, 'style.css')):
+        shutil.copy(os.path.join(datadir, 'report', 'style.css'), reportdir)
     return udir
 
 class AppConfig(object):
     def __init__(self):
-        maindir = find_main_dir()
-        userdir = find_or_create_userdir(maindir)
+        self.maindir = find_main_dir()
+        self.datadir = os.path.join(self.maindir, 'data')
+        self.userdir = find_or_create_userdir(self.datadir)
         self.paths = {
-            'maindir': maindir,
-            'datadir': os.path.join(maindir, 'data'),
-            'userdir': userdir,
-            'mainconf': os.path.join(userdir, 'Condensaciones.ini'),
-            'cerramientosdb': os.path.join(userdir, 'CerramientosDB.ini'),
-            'climasdb': os.path.join(userdir, 'ClimasDB.ini'),
-            'materialesdb': os.path.join(userdir, 'MaterialesDB.ini')
+            'mainconf': os.path.join(self.userdir, 'Condensaciones.ini'),
+            'cerramientosdb': os.path.join(self.userdir, 'CerramientosDB.ini'),
+            'climasdb': os.path.join(self.userdir, 'ClimasDB.ini'),
+            'materialesdb': os.path.join(self.userdir, 'MaterialesDB.ini')
         }
         self.version = __version__
 
     def appresource(self, *path_list):
         """Localiza un recurso del programa"""
-        return os.path.join(self.paths['datadir'], *path_list)
+        return os.path.join(self.datadir, *path_list)
 
     def userresource(self, *path_list):
         """Localiza un recurso del usuario"""
-        return os.path.join(self.paths['userdir'], *path_list)
+        return os.path.join(self.userdir, *path_list)
 
 config = AppConfig()
