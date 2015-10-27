@@ -31,8 +31,21 @@ from .util import config
 mdb = material.MaterialesDB(config.paths['materialesdb'])
 
 class Cerramiento(object):
-    """Clase para modelizar un cerramiento tipo, multicapa, con cada capa definida
-    por su material y sus propiedades físicas.
+    """Clase para modelizar un cerramiento multicapa
+
+    Cada capa está definida por su material y sus propiedades físicas.
+
+    El cerramiento tiene las siguientes propiedades:
+
+    - nombre: nombre que identifica el cerramiento
+    - descripcion: descripción de la composición cerramiento
+    - capas: lista de tuplas que definen el material y espesor de cada capa,
+             ordenando las capas de exterior a interior.
+             Por defecto tiene una capa de espesor 0.03m y material "Material".
+    - Rse: resistencia superficial exterior [m²K/W] (0,04 m²K/W)
+    - Rsi: resistencia superficial interior [m²K/W] (0,13 m²K/W)
+    - tipo: disposición del cerramiento (horizontal, vertical, cubierta, etc), que
+            define de forma implícita sus resistencias superficiales.
     """
     #: BBDD de materiales (tipo: MaterialesDB)
     matDB = mdb
@@ -55,29 +68,16 @@ class Cerramiento(object):
         vertical, cubierta, etc) y que sirve para definir de forma
         implícita sus valores de resistencia superficial.
         """
-        #: Nombre del cerramiento (str)
         self.nombre = nombre
-        #: Descripción somera de la composición del cerramiento
         self.descripcion = descripcion
-        #: lista de tuplas con la descripción de las capas que forman
-        #: el cerramiento. Cada tupla define una capa, identificada por
-        #: su nombre y su espesor. La lista se ordena de exterior a
-        #: interior.
         #: Si no se define, se usa una capa de espesor 0,3m y material
         #: el primero de la base de datos.
         self.capas = capas if capas else [(self.matDB.nombres[0], 0.3)]
         for nombre, e in self.capas:
             if nombre not in self.matDB.nombres:
                 raise ValueError('Material desconocido: %s' % nombre)
-        #: Resistencia superficial exterior [m²K/W]
-        #: Si no se indica valor, se usa 0,04 m²K/W.
         self.Rse = Rse if Rse else 0.04
-        #: Resistencia superficial interior [m²K/W]
-        #: Si no se indica valor, se usa 0,13 m²K/W.
         self.Rsi = Rsi if Rsi else 0.13
-        #: Tipo de cerramiento en relación a su disposición (horizontal,
-        #: vertical, cubierta, etc) y que sirve para definir de forma
-        #: implícita sus valores de resistencia superficial.
         self.tipo = tipo
 
     @property
