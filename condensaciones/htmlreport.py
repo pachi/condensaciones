@@ -22,7 +22,7 @@
 #   02110-1301, USA.
 """Informe html de cálculo de condensaciones"""
 
-import webbrowser, datetime
+import datetime
 from .util import config
 
 __HTMLTEMPLATE = u"""
@@ -162,29 +162,14 @@ def createreport(ui, model):
                           #
                           u'today': today
                           }
-    
-    filename = config.appresource('report', 'report.html')
+    filename = config.userresource('report', 'report.html')
     rfile = open(filename, "w")
     rfile.write(s.encode('utf-8'))
     rfile.close()
     # Se dibujan y guardan todos los diagramas
     graficaprestemp = ui.get_object('prestemp_canvas')
     graficacondensaciones = ui.graficacondensaciones
-    filename = config.appresource('report','presionestempplot.png')
+    filename = config.userresource('report','presionestempplot.png')
     graficaprestemp.save(filename)
-    filename = config.appresource('report','condensacionesplot.png')
+    filename = config.userresource('report','condensacionesplot.png')
     graficacondensaciones.save(filename)
-
-def htmlreport(ui, model):
-    createreport(ui, model)
-    webbrowser.open(config.appresource('report', 'report.html'))
-
-
-
-
-
-
-
-
-
-

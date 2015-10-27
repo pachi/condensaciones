@@ -23,10 +23,11 @@
 """Interfaz de usuario de Condensaciones en GTK+"""
 
 import webbrowser, datetime
-import gobject
-import gtk
-from pango import (WEIGHT_BOLD, SCALE_SMALL, SCALE_MEDIUM,
-                   SCALE_LARGE, SCALE_X_LARGE, STYLE_ITALIC)
+
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk, Gdk, GdkPixbuf, GObject, Pango
+
 from . import appmodel, htmlreport
 from .util import config
 from .widgets import CPTCanvas, CCCanvas, CondensaIconFactory
@@ -37,13 +38,12 @@ class GtkCondensa(object):
         """Inicialización de datos e interfaz"""
         self.cfg = config
         self.model = appmodel.Model()
-        self.ui = gtk.Builder()
+        self.ui = Gtk.Builder()
         self.ui.graficacondensaciones = CCCanvas() # Histograma de condensaciones
         self.ui.add_from_file(config.appresource('condensa.ui'))
         self.capasls = self.ui.get_object('capas_liststore')
         self.capastv = self.ui.get_object('capas_treeview')
         self.ui.connect_signals(self)
-        gtk.link_button_set_uri_hook(lambda b, u: webbrowser.open(u))
         # Elementos de la UI que no se pueden generar en Glade ----------------
         # Conecta modelos a gráficas
         self.ui.graficacondensaciones.model = self.model
@@ -51,13 +51,13 @@ class GtkCondensa(object):
         self.ui.get_object('cruler').model = self.model
         # Marcas de texto para estilos en textbuffer --------------------------
         tb = self.ui.get_object('informe_txtbuffer')
-        tb.create_tag("titulo", weight=WEIGHT_BOLD, scale=SCALE_X_LARGE)
-        tb.create_tag("titulo2", style=STYLE_ITALIC, scale=SCALE_LARGE)
-        tb.create_tag("subtitulo", weight=WEIGHT_BOLD, scale=SCALE_LARGE,)
-        tb.create_tag("capa", weight=WEIGHT_BOLD, foreground="#777777")
-        tb.create_tag("datoscapa", style=STYLE_ITALIC, indent=30)
-        tb.create_tag("resultados", scale=SCALE_MEDIUM, foreground='blue')
-        tb.create_tag("nota", scale=SCALE_SMALL)
+        tb.create_tag("titulo", weight=Pango.Weight.BOLD, size=1.44)
+        tb.create_tag("titulo2", style=Pango.Style.ITALIC, size=1.2)
+        tb.create_tag("subtitulo", weight=Pango.Weight.BOLD, size=1.2)
+        tb.create_tag("capa", weight=Pango.Weight.BOLD, foreground="#777777")
+        tb.create_tag("datoscapa", style=Pango.Style.ITALIC, indent=30)
+        tb.create_tag("resultados", size=1.0, foreground='blue')
+        tb.create_tag("nota", size=0.83)
         # Iconos de aplicación y de botones de herramientas -------------------
         self.icons = CondensaIconFactory(self)
         self.ui.get_object('cerramselectbtn').set_stock_id('condensa-cerramientos')
@@ -86,12 +86,12 @@ class GtkCondensa(object):
 
     def quit(self, w, *args):
         """Salir de la aplicación"""
-        gtk.main_quit()
+        Gtk.main_quit()
 
     def main(self):
         """Arranca la aplicación"""
         self.ui.get_object('window').show_all()
-        gtk.main()
+        Gtk.main()
 
     #{ Funcionaes de actualización de datos en interfaz
 
@@ -105,11 +105,11 @@ class GtkCondensa(object):
         self.actualizacabecera()
         self.actualizapie()
         self.actualizacapas()
-        gobject.idle_add(self.actualizagraficas)
+        GObject.idle_add(self.actualizagraficas)
         if self.ui.get_object('notebook').props.page == 3: #INFORME
             # Debemos asegurarnos de actualizar las gráficas antes del informe
-            while gtk.events_pending():
-                gtk.main_iteration()
+            while Gtk.events_pending():
+                Gtk.main_iteration()
             self.actualizainforme()
 
     def actualizacabecera(self):
@@ -129,14 +129,14 @@ class GtkCondensa(object):
         ci, cs = m.ci, m.cs
         if ci and cs:
             # El cerramiento condensa en las condiciones ambientales actuales
-            state_color = gtk.gdk.color_parse("#CCAAAA") # rojo COLOR_BAD
+            state_color = "#CCAAAA" # rojo COLOR_BAD
         elif ci or cs:
             # El cerramiento condensa en las condiciones CTE (enero para
             # cond. superficiales y todos los meses para cond. intersticiales
-            state_color = gtk.gdk.color_parse("#FFDD77") # naranja COLOR_SEE
+            state_color = "#FFDD77" # naranja COLOR_SEE
         else:
-            state_color = gtk.gdk.color_parse("#AACCAA") # verde COLOR_OK
-        ui.get_object('cfondo').modify_bg(gtk.STATE_NORMAL, state_color)
+            state_color = "#AACCAA" # verde COLOR_OK
+        ui.get_object('cfondo').modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse(state_color))
 
     def actualizapie(self):
         """Actualiza pie de ventana principal"""
@@ -153,13 +153,11 @@ class GtkCondensa(object):
         ui.get_object('espesortotal').props.label = "%.3f" % m.c.e
         self.capasls.clear()
         for i, (nombre, e, K, R, mu, S, color) in m.capasdata():
-            def _rgba2rgb(r, g, b, a=0.25):
-                """Composición de color r,g,b [0-1] sobre blanco con alpha"""
-                return a * r + (1 - a), a * g + (1 - a), a * b + (1 - a)
-            color = str(gtk.gdk.Color(*_rgba2rgb(*color)))
+            r, g, b = color
+            colorstr = "rgba(%i,%i,%i,0.25)" % (int(255*r), int(255*g), int(255*b))
             d = ("%i" % i, nombre, "%.3f" % e,
                  "-" if not K else "%.4f" % K,
-                 "%.4f" % R, "%i" % mu, "%.3f" % S, color)
+                 "%.4f" % R, "%i" % mu, "%.3f" % S, colorstr)
             self.capasls.append(d)
 
     def actualizagraficas(self):
@@ -173,8 +171,13 @@ class GtkCondensa(object):
     def actualizainforme(self):
         """Actualiza texto descripción de cerramiento en ventana principal"""
         m, ui = self.model, self.ui
-        graficaprestemp = ui.get_object('prestemp_canvas')
-        graficacondensaciones = ui.graficacondensaciones
+
+        pppath = config.userresource('report', 'presionestempplot.png')
+        ui.get_object('prestemp_canvas').save(pppath)
+        cppath = config.userresource('report', 'condensacionesplot.png')
+        ui.graficacondensaciones.save(cppath)
+
+        pixbuf = ui.graficacondensaciones.pixbuf(600)
         
         tb = ui.get_object('informe_txtbuffer')
         tb.props.text = ""
@@ -235,10 +238,12 @@ class GtkCondensa(object):
         # Gráficas
         txt = u"Gráficas\n"
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'subtitulo')
-        tb.insert_pixbuf(tb.get_end_iter(), graficaprestemp.pixbuf(600))
-        tb.insert(tb.get_end_iter(), "\n\n")
-        tb.insert_pixbuf(tb.get_end_iter(), graficacondensaciones.pixbuf(600))
-        tb.insert(tb.get_end_iter(), "\n\n")
+        tb.insert_pixbuf(tb.get_end_iter(),
+                         GdkPixbuf.Pixbuf.new_from_file(pppath))
+        tb.insert(tb.get_end_iter(), u"\n\n")
+        tb.insert_pixbuf(tb.get_end_iter(),
+                         GdkPixbuf.Pixbuf.new_from_file(cppath))
+        tb.insert(tb.get_end_iter(), u"\n\n")
         # Resultados
         txt = u"Resultados\n"
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'subtitulo')
@@ -267,7 +272,9 @@ class GtkCondensa(object):
         tb.insert_with_tags_by_name(tb.get_end_iter(), txt, 'nota')
 
     def openhtmlreport(self, widget):
-        htmlreport.htmlreport(self.ui, self.model)
+        htmlreport.createreport(self.ui, self.model)
+        report = 'file://' + config.userresource('report', 'report.html')
+        webbrowser.open(report)
 
     #{ Retrollamadas del diálogo de selección de ambientes
 
@@ -284,7 +291,7 @@ class GtkCondensa(object):
         ti.props.text = "%.2f" % m.climai.temp
         hri.props.text = "%.2f" % m.climai.HR
         resultado = adialog.run()
-        if resultado == gtk.RESPONSE_ACCEPT:
+        if resultado == Gtk.ResponseType.ACCEPT:
             if not ui.get_object('localidadcb').props.sensitive:
                 m.climae = float(te.props.text), float(hre.props.text)
             m.climai = float(ti.props.text), float(hri.props.text)
@@ -334,8 +341,8 @@ class GtkCondensa(object):
         if not ui.get_object('lblselected').props.label in m.cerramientosDB.nombres:
             self.cerramientotv.set_cursor(0)
         resultado = ui.get_object('cerramiento_dlg').run()
-        # gtk.RESPONSE_ACCEPT vs gtk.RESPONSE_CANCEL
-        if resultado == gtk.RESPONSE_ACCEPT:
+        # Gtk.ResponseType.ACCEPT vs Gtk.ResponseType.CANCEL
+        if resultado == Gtk.ResponseType.ACCEPT:
             nombrecerr = ui.get_object('lblselected').props.label
             m.set_cerramiento(nombrecerr)
             msg = "Seleccionado nuevo cerramiento activo: %s" % nombrecerr

@@ -22,24 +22,24 @@
 #   02110-1301, USA.
 """Módulo de dibujo y controles gráficos de la interfaz de usuario"""
 
-import gtk
+from gi.repository import Gtk, Gdk, GdkPixbuf
 import numpy
 import matplotlib
-matplotlib.use('GTKCairo')
+matplotlib.use('GTK3Cairo')
 from matplotlib.figure import Figure
-from matplotlib.backends.backend_gtkcairo import FigureCanvasGTKCairo
+from matplotlib.backends.backend_gtk3cairo import FigureCanvasGTK3Cairo
 
 from .clima import MESES
 from .util import config
 
-class CPTCanvas(FigureCanvasGTKCairo):
+class CPTCanvas(FigureCanvasGTK3Cairo):
     """Diagrama de presiones de saturación frente a presiones o temperaturas"""
     __gtype_name__ = 'CPTCanvas'
 
     def __init__(self):
         self.model = None
         self.fig = Figure()
-        FigureCanvasGTKCairo.__init__(self, self.fig)
+        FigureCanvasGTK3Cairo.__init__(self, self.fig)
         self.fig.set_facecolor('w') # Fondo blanco en vez de gris
         self.ax1 = self.fig.add_subplot(111) # 1 fila, 1 columna, dibujo 1
         self.ax2 = self.ax1.twinx()
@@ -199,7 +199,7 @@ class CPTCanvas(FigureCanvasGTKCairo):
         """Guardar y mostrar gráfica"""
         self.fig.savefig(filename)
 
-class CCCanvas(FigureCanvasGTKCairo):
+class CCCanvas(FigureCanvasGTK3Cairo):
     """Diagrama de condensaciones
 
     Dibuja un histograma con las condensaciones de cada periodo.
@@ -213,7 +213,7 @@ class CCCanvas(FigureCanvasGTKCairo):
     def __init__(self):
         self.model = None
         self.fig = Figure()
-        FigureCanvasGTKCairo.__init__(self, self.fig)
+        FigureCanvasGTK3Cairo.__init__(self, self.fig)
         self.fig.set_facecolor('w') # Fondo blanco en vez de gris
         self.ax1 = self.fig.add_subplot(111) # 1 fila, 1 columna, dibujo 1
         self.fig.subplots_adjust(bottom=0.22) # Incrementar margen inferior
@@ -256,25 +256,36 @@ def get_pixbuf_from_canvas(canvas, destwidth=None):
 
     destwidth - ancho del pixbuf de destino
     """
-    w, h = canvas.get_width_height()
+    surface = canvas.fig.canvas
+    allocation = surface.get_allocation()
+    w = allocation.width
+    h = allocation.height
+
     destwidth = destwidth if destwidth else w
     destheight = h * destwidth / w
+
+    pixbuf = Gdk.pixbuf_get_from_window(canvas.get_window(), 0, 0, w, h)
+    #TODO: ¿cómo obtenemos un pixmap?
+    
+    #canvas._renderer.set_pixmap(pixmap) # mpl backend_gtkcairo
+    #canvas._render_figure(pixmap, w, h) # mpl backend_gtk    
+    
     #Antes de mostrarse la gráfica en una de las pestañas no existe el _pixmap
     #pero al generar el informe queremos que se dibuje en uno fuera de pantalla
-    oldpixmap = canvas._pixmap if hasattr(canvas, '_pixmap') else None
-    pixmap = gtk.gdk.Pixmap(None, w, h, depth=24)
-    canvas._renderer.set_pixmap(pixmap) # mpl backend_gtkcairo
-    canvas._render_figure(pixmap, w, h) # mpl backend_gtk
-    if oldpixmap:
-        canvas._renderer.set_pixmap(oldpixmap)
-    cm = pixmap.get_colormap()
-    pixbuf = gtk.gdk.Pixbuf(gtk.gdk.COLORSPACE_RGB, False, 8, w, h)
-    pixbuf.get_from_drawable(pixmap, cm, 0, 0, 0, 0, -1, -1)
-    scaledpixbuf = pixbuf.scale_simple(destwidth, destheight,
-                                       gtk.gdk.INTERP_HYPER)
-    return scaledpixbuf
+    # oldpixmap = canvas._pixmap if hasattr(canvas, '_pixmap') else None
+    # pixmap = GdkPixbuf.Pixmap(None, w, h, depth=24)
+    # canvas._renderer.set_pixmap(pixmap) # mpl backend_gtkcairo
+    # canvas._render_figure(pixmap, w, h) # mpl backend_gtk
+    # if oldpixmap:
+    #     canvas._renderer.set_pixmap(oldpixmap)
+    # cm = pixmap.get_colormap()
+    # pixbuf = GdPixbuf.Pixbuf(GdkPixbuf.Colorspace.RGB, False, 8, w, h)
+    # pixbuf.get_from_drawable(pixmap, cm, 0, 0, 0, 0, -1, -1)
+    # scaledpixbuf = pixbuf.scale_simple(destwidth, destheight,
+    #                                    GdkPixbuf.InterpType.HYPER)
+    # return scaledpixbuf
 
-class CRuler(gtk.DrawingArea):
+class CRuler(Gtk.DrawingArea):
     """Barra de condensaciones en interfases
 
     El control dibuja una casilla por cada elemento en condensalist
@@ -290,15 +301,14 @@ class CRuler(gtk.DrawingArea):
         self.model = None
         super(CRuler, self).__init__()
         self.set_size_request(-1, 25)
-        self.connect("expose-event", self.expose)
+        self.connect("draw", self.draw)
 
-    def expose(self, widget, event):
-        wh = self.allocation.height
-        ww = self.allocation.width
-        cr = widget.window.cairo_create()
+    def draw(self, widget, cr):
+        allocation = self.get_allocation()    
+        wh = allocation.height
+        ww = allocation.width
         cr.set_line_width(1)
         cr.select_font_face("sans-serif")
-        # wh = margin + font_size + 1.2 x margin + font_size + margin
         cr.set_font_size(wh / 2.5)
         margin = wh / 6.4
         x, y, twidth, theight, dx, dy = cr.text_extents("ENE")
@@ -365,17 +375,17 @@ class CRuler(gtk.DrawingArea):
             cr.set_source_rgb(1.0, 0.2, 0.2)
             cr.stroke()
 
-class CondensaIconFactory(gtk.IconFactory):
+class CondensaIconFactory(Gtk.IconFactory):
     def __init__(self, widget):
         """IconFactory para los iconos personalizados."""
-        gtk.IconFactory.__init__(self)
+        Gtk.IconFactory.__init__(self)
         self.add_default()
         icons = {'condensa-application': 'drop.png',
                  'condensa-cerramientos': 'cerramientos.png',
                  'condensa-clima': 'clima.png',}
         for iid, filename in icons.items():
             iconfile = config.appresource('icons', filename)
-            iconset = gtk.IconSet(gtk.gdk.pixbuf_new_from_file(iconfile))
+            iconset = Gtk.IconSet(GdkPixbuf.Pixbuf.new_from_file(iconfile))
             self.add(iid, iconset)
 
 
