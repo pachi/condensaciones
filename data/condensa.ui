@@ -48,6 +48,134 @@
       </row>
     </data>
   </object>
+  <object class="GtkListStore" id="cerramientos_liststore">
+    <columns>
+      <!-- column-name nombre -->
+      <column type="gchararray"/>
+      <!-- column-name muro -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkImage" id="image1">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-missing-image</property>
+  </object>
+  <object class="GtkListStore" id="localidadesls">
+    <columns>
+      <!-- column-name localidad -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">default</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="materiales_liststore">
+    <columns>
+      <!-- column-name nombre -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkListStore" id="mesesls">
+    <columns>
+      <!-- column-name mes -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">enero</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">febrero</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">marzo</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">abril</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">mayo</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">junio</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">julio</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">agosto</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">septiembre</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">octubre</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">noviembre</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">diciembre</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkTextTagTable" id="texttagtable1">
+    <child type="tag">
+      <object class="GtkTextTag" id="tag_titulo">
+        <property name="font">Normal</property>
+        <property name="weight">700</property>
+        <property name="size_points">14.4</property>
+      </object>
+    </child>
+    <child type="tag">
+      <object class="GtkTextTag" id="tag_titulo2">
+        <property name="font">Italic</property>
+        <property name="stretch">semi-expanded</property>
+        <property name="size_points">12</property>
+      </object>
+    </child>
+    <child type="tag">
+      <object class="GtkTextTag" id="tag_subtitulo">
+        <property name="font">Normal</property>
+        <property name="weight">700</property>
+        <property name="size_points">12</property>
+      </object>
+    </child>
+    <child type="tag">
+      <object class="GtkTextTag" id="tag_capa">
+        <property name="foreground_rgba">rgb(119,119,119)</property>
+        <property name="font">Normal</property>
+        <property name="weight">700</property>
+        <property name="size_points">10</property>
+      </object>
+    </child>
+    <child type="tag">
+      <object class="GtkTextTag" id="tag_datoscapa">
+        <property name="font">Italic</property>
+        <property name="size_points">10</property>
+        <property name="indent">30</property>
+      </object>
+    </child>
+    <child type="tag">
+      <object class="GtkTextTag" id="tag_resultados">
+        <property name="foreground">blue</property>
+        <property name="font">Normal</property>
+        <property name="size_points">10</property>
+      </object>
+    </child>
+    <child type="tag">
+      <object class="GtkTextTag" id="tag_nota">
+        <property name="font">Normal</property>
+        <property name="size_points">8</property>
+      </object>
+    </child>
+  </object>
+  <object class="GtkTextBuffer" id="informe_txtbuffer">
+    <property name="tag_table">texttagtable1</property>
+  </object>
   <object class="GtkWindow" id="window">
     <property name="width_request">650</property>
     <property name="can_focus">False</property>
@@ -797,6 +925,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="wrap_mode">word-char</property>
+                        <property name="buffer">informe_txtbuffer</property>
                       </object>
                     </child>
                   </object>
@@ -967,7 +1096,7 @@
                                 <property name="entry_text_column">0</property>
                                 <signal name="changed" handler="localidadchanged" swapped="no"/>
                                 <child internal-child="entry">
-                                  <object class="GtkEntry" id="combobox-entry1">
+                                  <object class="GtkEntry" id="localidadc">
                                     <property name="can_focus">False</property>
                                   </object>
                                 </child>
@@ -1011,7 +1140,7 @@
                                 <property name="entry_text_column">0</property>
                                 <signal name="changed" handler="meschanged" swapped="no"/>
                                 <child internal-child="entry">
-                                  <object class="GtkEntry" id="combobox-entry2">
+                                  <object class="GtkEntry" id="mesc">
                                     <property name="can_focus">False</property>
                                   </object>
                                 </child>
@@ -1320,14 +1449,6 @@
       <action-widget response="-6">cancelbutton1</action-widget>
     </action-widgets>
   </object>
-  <object class="GtkListStore" id="cerramientos_liststore">
-    <columns>
-      <!-- column-name nombre -->
-      <column type="gchararray"/>
-      <!-- column-name muro -->
-      <column type="gchararray"/>
-    </columns>
-  </object>
   <object class="GtkDialog" id="cerramiento_dlg">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
@@ -1582,72 +1703,5 @@
       <action-widget response="-3">btnacepta</action-widget>
       <action-widget response="-6">btncancela</action-widget>
     </action-widgets>
-  </object>
-  <object class="GtkImage" id="image1">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-missing-image</property>
-  </object>
-  <object class="GtkTextBuffer" id="informe_txtbuffer"/>
-  <object class="GtkListStore" id="localidadesls">
-    <columns>
-      <!-- column-name localidad -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">default</col>
-      </row>
-    </data>
-  </object>
-  <object class="GtkListStore" id="materiales_liststore">
-    <columns>
-      <!-- column-name nombre -->
-      <column type="gchararray"/>
-    </columns>
-  </object>
-  <object class="GtkListStore" id="mesesls">
-    <columns>
-      <!-- column-name mes -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes">enero</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">febrero</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">marzo</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">abril</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">mayo</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">junio</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">julio</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">agosto</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">septiembre</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">octubre</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">noviembre</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">diciembre</col>
-      </row>
-    </data>
   </object>
 </interface>
