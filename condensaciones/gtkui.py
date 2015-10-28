@@ -117,12 +117,12 @@ class GtkCondensa(object):
         m, ui = self.model, self.ui
         ui.get_object('nombre_cerramiento').props.label = m.c.nombre
         ui.get_object('descripcion_cerramiento').props.label = m.c.descripcion
-        txt_t1 = (u'U = %.2f W/m²K, f<sub>Rsi</sub> ='
-                  u' %.2f, f<sub>Rsi,min</sub> = %.2f'
+        txt_t1 = (u"<span color='#0000'>U = %.2f W/m²K, f<sub>Rsi</sub> ="
+                  u" %.2f, f<sub>Rsi,min</sub> = %.2f</span>"
                   ) % (m.c.U, m.fRsi, m.fRsimin)
         ui.get_object('csubtitulo1').props.label = txt_t1
-        txt_t2 = (u'%s: T<sub>ext</sub> = %.2f°C, HR<sub>ext</sub> = %.1f%%, '
-                  u'%s: T<sub>int</sub> = %.2f°C, HR<sub>int</sub> = %.1f%%'
+        txt_t2 = (u"<span color='#0000'>%s: T<sub>ext</sub> = %.2f°C, HR<sub>ext</sub> = %.1f%%, "
+                  u"%s: T<sub>int</sub> = %.2f°C, HR<sub>int</sub> = %.1f%%</span>"
                   ) % (m.ambienteexterior, m.climae.temp, m.climae.HR,
                        m.ambienteinterior, m.climai.temp, m.climai.HR)
         ui.get_object('csubtitulo2').props.label = txt_t2
