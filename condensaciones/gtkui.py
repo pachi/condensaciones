@@ -126,6 +126,9 @@ class GtkCondensa(object):
                   ) % (m.ambienteexterior, m.climae.temp, m.climae.HR,
                        m.ambienteinterior, m.climai.temp, m.climai.HR)
         ui.get_object('csubtitulo2').props.label = txt_t2
+
+        # Ver estilos para hacer esto
+        # https://github.com/GNOME/pitivi/blob/master/pitivi/timeline/elements.py
         ci, cs = m.ci, m.cs
         if ci and cs:
             # El cerramiento condensa en las condiciones ambientales actuales
@@ -325,8 +328,8 @@ class GtkCondensa(object):
             self._setclimaext()
         else:
             m.localidad = None
-            ui.get_object('tempextentry').props.text = m.climae.temp
-            ui.get_object('hrextentry').props.text = m.climae.HR
+            ui.get_object('tempextentry').props.text = "%.1f" % m.climae.temp
+            ui.get_object('hrextentry').props.text = "%i" % m.climae.HR
 
     #{ Retrollamadas del diálogo de selección de cerramientos
 
