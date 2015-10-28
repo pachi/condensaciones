@@ -72,7 +72,7 @@ def fRsimin(tempext, tempint=20.0, hrint=55.0):
             temp_si_min = 265.5 * _k / (21.875 - _k)
         return temp_si_min
     if tempint == tempext:
-        raise ValueError('La temperatura exterior e interior son iguales')
+        raise ValueError('La temperatura exterior e interior es igual')
     return (tempsimin(hrint) - tempext) / (tempint - tempext)
 
 def testcondensas(cerr, temp_ext, temp_int, HR_int):
