@@ -400,26 +400,3 @@ class CRuler(Gtk.DrawingArea):
             cr.rectangle(round(self.model.imes*ew)+1.5, 0.5, ew-2.0, wh-0.5)
             cr.set_source_rgb(1.0, 0.2, 0.2)
             cr.stroke()
-
-class CondensaIconFactory(Gtk.IconFactory):
-    def __init__(self, widget):
-        """IconFactory para los iconos personalizados."""
-        Gtk.IconFactory.__init__(self)
-        self.add_default()
-        icons = {'condensa-application': 'drop.png',
-                 'condensa-cerramientos': 'cerramientos.png',
-                 'condensa-clima': 'clima.png',}
-        for iid, filename in icons.items():
-            iconfile = config.appresource('icons', filename)
-            iconset = Gtk.IconSet(GdkPixbuf.Pixbuf.new_from_file(iconfile))
-            self.add(iid, iconset)
-
-
-
-
-
-
-
-
-
-

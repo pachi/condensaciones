@@ -30,7 +30,7 @@ from gi.repository import Gtk, Gdk, GdkPixbuf, GObject, Pango
 
 from . import appmodel, htmlreport
 from .util import config
-from .widgets import CPTCanvas, CCCanvas, CondensaIconFactory
+from .widgets import CPTCanvas, CCCanvas
 
 class GtkCondensa(object):
     """Aplicación"""
@@ -48,10 +48,6 @@ class GtkCondensa(object):
         # Conecta modelos a gráficas
         self.ui.get_object('prestemp_canvas').model = self.model
         self.ui.get_object('cruler').model = self.model
-        # Iconos de aplicación y de botones de herramientas -------------------
-        self.icons = CondensaIconFactory(self)
-        self.ui.get_object('cerramselectbtn').set_stock_id('condensa-cerramientos')
-        self.ui.get_object('climaselectbtn').set_stock_id('condensa-clima')
         # Carga datos de materiales, cerramientos y clima
         self.materialesls = self.ui.get_object('materiales_liststore')
         for material in self.model.c.matDB.nombres:
