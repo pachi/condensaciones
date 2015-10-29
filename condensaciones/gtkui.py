@@ -39,14 +39,14 @@ class GtkCondensa(object):
         self.cfg = config
         self.model = appmodel.Model()
         self.ui = Gtk.Builder()
-        self.ui.graficacondensaciones = CCCanvas() # Histograma de condensaciones
+        self.ui.graficacondensaciones = CCCanvas(self.model) # Histograma de condensaciones
         self.ui.add_from_file(config.appresource('condensa.ui'))
         self.capasls = self.ui.get_object('capas_liststore')
         self.capastv = self.ui.get_object('capas_treeview')
         self.ui.connect_signals(self)
         # Elementos de la UI que no se pueden generar en Glade ----------------
         # Conecta modelos a gráficas
-        self.ui.graficacondensaciones.model = self.model
+        #self.ui.graficacondensaciones.model = self.model
         self.ui.get_object('prestemp_canvas').model = self.model
         self.ui.get_object('cruler').model = self.model
         # Marcas de texto para estilos en textbuffer --------------------------
