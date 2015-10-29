@@ -44,7 +44,7 @@ DATA_FILES = [('', 'README.txt NEWS.txt INSTALL.txt COPYING.txt'.split()),
               ('data', glob('data/*.ini')),
               ('data', ['data/splash.png']),
               ('data/icons', glob('data/icons/*.png')),
-              ('report', ['report/style.css'])]
+              ('data/report', ['data/report/style.css', 'data/report/report.html'])]
 
 if 'py2exe' in sys.argv:
     import py2exe
