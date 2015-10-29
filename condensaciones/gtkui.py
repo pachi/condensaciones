@@ -48,8 +48,6 @@ class GtkCondensa(object):
         # Conecta modelos a gráficas
         self.ui.get_object('prestemp_canvas').model = self.model
         self.ui.get_object('cruler').model = self.model
-        # Marcas de texto para estilos en textbuffer --------------------------
-        tb = self.ui.get_object('informe_txtbuffer')
         # Iconos de aplicación y de botones de herramientas -------------------
         self.icons = CondensaIconFactory(self)
         self.ui.get_object('cerramselectbtn').set_stock_id('condensa-cerramientos')
