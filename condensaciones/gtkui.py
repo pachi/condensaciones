@@ -204,36 +204,35 @@ class GtkCondensa(object):
         # condensacionespb = ui.graficacondensaciones.pixbuf(600)
 
         # Denominación cerramiento
-        tb.insert_with_tags(tb.get_start_iter(), u"%s\n" % m.c.nombre, titulo)
+        addtxt(u"%s\n" % m.c.nombre, titulo)
         addtxt(u"%s\n\n" % m.c.descripcion, titulo2)
         # Condiciones ambientales
         addtxt(u"Condiciones de cálculo\n", subtitulo)
         addtxt(u"Ambiente exterior (gráficas): %s\n" % m.ambienteexterior, capa)
         addtxt((u"Temperatura exterior: %.1f ºC\n"
-                u"Humedad relativa exterior: %.1f %%\n\n") % (
-                    m.climae.temp, m.climae.HR), datoscapa)
+                u"Humedad relativa exterior: %.1f %%\n\n")
+               % (m.climae.temp, m.climae.HR), datoscapa)
         addtxt(u"Ambiente interior (gráficas): %s\n" % m.ambienteinterior, capa)
         addtxt((u"Temperatura interior: %.1f ºC\n"
-                u"Humedad relativa interior: %.1f %%\n\n") % (
-                    m.climai.temp, m.climai.HR), datoscapa)
+                u"Humedad relativa interior: %.1f %%\n\n")
+               % (m.climai.temp, m.climai.HR), datoscapa)
         addtxt((u"Resistencia superficial exterior: %.2f m²K/W\n"
-                u"Resistencia superficial exterior: %.2f m²K/W\n\n") % (
-                    m.c.Rse, m.c.Rsi), capa)
+                u"Resistencia superficial exterior: %.2f m²K/W\n\n")
+               % (m.c.Rse, m.c.Rsi), capa)
         #
         addtxt((u"Condiciones de cálculo para la comprobación de condensaciones"
                 u" superficiales\n"), capa)
         addtxt((u"Exterior - T: %.1f ºC, HR: %.1f %%\n"
-                u"Interior - T: %.1f ºC, HR: %.1f %%\n\n") % (
-                    m.climaslist[0].temp, m.climaslist[0].HR, 20.0, m.climai.HR),
-               datoscapa)
+                u"Interior - T: %.1f ºC, HR: %.1f %%\n\n")
+               % (m.climaslist[0].temp, m.climaslist[0].HR, 20.0, m.climai.HR), datoscapa)
         #
         addtxt((u"Condiciones de cálculo para la comprobación de condensaciones"
                 u" intersticiales\n"), capa)
         tempextlist = u", ".join(u"%.1f" % clima.temp for clima in m.climaslist)
         hrextlist = u", ".join(u"%.1f" % clima.HR for clima in m.climaslist)
         addtxt((u"Exterior - \n\tT [ºC]: %s\n\tHR [%%]: %s\n"
-                u"Interior - T [ºC]: %.1f, HR [%%]: %.1f\n\n") % (
-                    tempextlist, hrextlist, 20.0, m.climai.HR), datoscapa)
+                u"Interior - T [ºC]: %.1f, HR [%%]: %.1f\n\n")
+               % (tempextlist, hrextlist, 20.0, m.climai.HR), datoscapa)
         # Cerramiento
         addtxt(u"Descripción del cerramiento\n", subtitulo)
         for i, (nombre, e, K, R, mu, S, color) in m.capasdata():
@@ -244,15 +243,15 @@ class GtkCondensa(object):
         # Gráficas
         addtxt(u"Gráficas\n", subtitulo)
         tb.insert_pixbuf(tb.get_end_iter(), presionespb)
-        addtxt(u"\n\n", nota)
+        addtxt(u"\n")
         tb.insert_pixbuf(tb.get_end_iter(), condensacionespb)
-        addtxt(u"\n\n", nota)
+        addtxt(u"\n")
         # Resultados
         addtxt(u"Resultados\n", subtitulo)
         addtxt((u"R_total: %.3f [m²K/W]\nS_total = %.3f [m]\n"
                 u"Transmitancia térmica total: U = %.3f [W/m²K]\n"
-                u"f_Rsi = %.2f\nf_Rsimin = %.2f\n\n") % (
-                    m.c.R_total, m.c.S_total, m.c.U, m.fRsi, m.fRsimin), resultados)
+                u"f_Rsi = %.2f\nf_Rsimin = %.2f\n\n")
+               % (m.c.R_total, m.c.S_total, m.c.U, m.fRsi, m.fRsimin), resultados)
         # Condensaciones
         cs = u"Sí" if m.cs else u"No"
         ci = u"Sí" if m.ci else u"No"
@@ -328,8 +327,8 @@ class GtkCondensa(object):
             self._setclimaext()
         else:
             m.localidad = None
-            ui.get_object('tempextentry').props.text = "%.1f" % m.climae.temp
-            ui.get_object('hrextentry').props.text = "%i" % m.climae.HR
+            ui.get_object('tempextentry').props.text = "%.f" % m.climae.temp
+            ui.get_object('hrextentry').props.text = "%.f" % m.climae.HR
 
     #{ Retrollamadas del diálogo de selección de cerramientos
 
