@@ -46,7 +46,6 @@ class GtkCondensa(object):
         self.ui.connect_signals(self)
         # Elementos de la UI que no se pueden generar en Glade ----------------
         # Conecta modelos a gráficas
-        #self.ui.graficacondensaciones.model = self.model
         self.ui.get_object('prestemp_canvas').model = self.model
         self.ui.get_object('cruler').model = self.model
         # Marcas de texto para estilos en textbuffer --------------------------
