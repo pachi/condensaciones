@@ -27,12 +27,12 @@ import numpy
 import matplotlib
 matplotlib.use('GTK3Cairo')
 from matplotlib.figure import Figure
-from matplotlib.backends.backend_gtk3cairo import FigureCanvasGTK3Cairo
+from matplotlib.backends.backend_gtk3cairo import FigureCanvasGTK3Cairo as FigureCanvas
 
 from .clima import MESES
 from .util import config
 
-class CPTCanvas(FigureCanvasGTK3Cairo):
+class CPTCanvas(FigureCanvas):
     """Diagrama de presiones de saturación frente a presiones o temperaturas"""
     __gtype_name__ = 'CPTCanvas'
 
@@ -199,7 +199,7 @@ class CPTCanvas(FigureCanvasGTK3Cairo):
         """Guardar y mostrar gráfica"""
         self.fig.savefig(filename)
 
-class CCCanvas(FigureCanvasGTK3Cairo):
+class CCCanvas(FigureCanvas):
     """Diagrama de condensaciones
 
     Dibuja un histograma con las condensaciones de cada periodo.
