@@ -51,13 +51,6 @@ class GtkCondensa(object):
         self.ui.get_object('cruler').model = self.model
         # Marcas de texto para estilos en textbuffer --------------------------
         tb = self.ui.get_object('informe_txtbuffer')
-        # tb.create_tag("titulo", weight=Pango.Weight.BOLD, size=1.44)
-        # tb.create_tag("titulo2", style=Pango.Style.ITALIC, size=1.2)
-        # tb.create_tag("subtitulo", weight=Pango.Weight.BOLD, size=1.2)
-        # tb.create_tag("capa", weight=Pango.Weight.BOLD, foreground="#777777")
-        # tb.create_tag("datoscapa", style=Pango.Style.ITALIC, indent=30)
-        # tb.create_tag("resultados", size=1.0, foreground='blue')
-        # tb.create_tag("nota", size=0.83)
         # Iconos de aplicación y de botones de herramientas -------------------
         self.icons = CondensaIconFactory(self)
         self.ui.get_object('cerramselectbtn').set_stock_id('condensa-cerramientos')
