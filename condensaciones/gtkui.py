@@ -175,7 +175,8 @@ class GtkCondensa(object):
         """Actualiza texto descripción de cerramiento en ventana principal"""
         m, ui = self.model, self.ui
         tb = ui.get_object('informe_txtbuffer')
-        tb.props.text = ""
+        presionespb = ui.get_object('prestemp_canvas').pixbuf(600)
+        condensacionespb = ui.graficacondensaciones.pixbuf(600)
         
         #etiquetas
         titulo = ui.get_object('tag_titulo')
@@ -193,16 +194,8 @@ class GtkCondensa(object):
             else:
                 tb.insert(enditer, txt)
 
-        pppath = config.userresource('report', 'presionestempplot.png')
-        ui.get_object('prestemp_canvas').save(pppath)
-        cppath = config.userresource('report', 'condensacionesplot.png')
-        ui.graficacondensaciones.save(cppath)
-        presionespb = GdkPixbuf.Pixbuf.new_from_file(pppath)
-        condensacionespb = GdkPixbuf.Pixbuf.new_from_file(cppath)
-
-        # presionespb = ui.get_object('prestemp_canvas').pixbuf(600)
-        # condensacionespb = ui.graficacondensaciones.pixbuf(600)
-
+        # Reset
+        tb.props.text = ""
         # Denominación cerramiento
         addtxt(u"%s\n" % m.c.nombre, titulo)
         addtxt(u"%s\n\n" % m.c.descripcion, titulo2)

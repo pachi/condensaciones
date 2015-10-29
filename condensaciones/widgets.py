@@ -22,7 +22,8 @@
 #   02110-1301, USA.
 """Módulo de dibujo y controles gráficos de la interfaz de usuario"""
 
-from gi.repository import Gtk, Gdk, GdkPixbuf
+import cStringIO
+from gi.repository import GObject, Gtk, GdkPixbuf
 import numpy
 import matplotlib
 matplotlib.use('GTK3Cairo')
@@ -36,15 +37,34 @@ class CPTCanvas(FigureCanvas):
     """Diagrama de presiones de saturación frente a presiones o temperaturas"""
     __gtype_name__ = 'CPTCanvas'
 
-    def __init__(self):
-        self.model = None
-        self.fig = Figure()
-        FigureCanvasGTK3Cairo.__init__(self, self.fig)
-        self.fig.set_facecolor('w') # Fondo blanco en vez de gris
-        self.ax1 = self.fig.add_subplot(111) # 1 fila, 1 columna, dibujo 1
-        self.ax2 = self.ax1.twinx()
+    # XXX: usaríamos la señal así
+    #self.emit("plot-changed")
+    # Conectamos a la señal con:
+    # CPTcanvasinstance.connect("plot-changed", self.changedcallback)
+    # La retrollamada es:
+    #def changedcallback(self, canvas):
+    #    self.queue_draw()
+    __gsignals__ = {
+        # Signal our values changed, and a redraw will be needed
+        "plot-changed": (GObject.SIGNAL_RUN_LAST, None, ()),
+    }
 
-    def dibuja(self, width=600, height=400):
+    def __init__(self, width=600, height=400):
+        self.model = None
+        figure = Figure()
+        FigureCanvas.__init__(self, figure)
+        figure.set_facecolor('w') # Fondo blanco en vez de gris
+        self.ax1 = figure.add_subplot(111) # 1 fila, 1 columna, dibujo 1
+        self.ax2 = self.ax1.twinx()
+        # This seems to also be necessary for transparency ..
+        figure.patch.set_visible(False)
+        
+        self.props.visible = True
+        # Tamaño
+        self.set_size_request(width, height)
+        self.queue_draw()
+
+    def dibuja(self):
         """Representa Presiones de saturación vs. Presiones de vapor o
         temperaturas.
 
@@ -187,17 +207,20 @@ class CPTCanvas(FigureCanvas):
         # BUGFIX: http://stackoverflow.com/questions/27216812/matplotlib-cant-re-draw-first-axis-after-clearing-second-using-twinx-and-cla
         ax2.patch.set_visible(False)
 
-        # Tamaño
-        self.set_size_request(width, height)
-        self.draw()
+        # XXX: Ver si va...
+        # para conectar luego con CPTcanvasinstance.connect("plot-changed", callback)
+        self.emit("plot-changed")
 
     def pixbuf(self, destwidth=600):
         """Obtén un pixbuf a partir del canvas actual"""
         return get_pixbuf_from_canvas(self, destwidth)
 
-    def save(self, filename='presionestempplot.png'):
+    def save(self, filename='presionestempplot.png', dpi=100):
         """Guardar y mostrar gráfica"""
-        self.fig.savefig(filename)
+        self.print_figure(filename,
+                          format='png',
+                          facecolor='w',
+                          dpi=dpi)
 
 class CCCanvas(FigureCanvas):
     """Diagrama de condensaciones
@@ -210,15 +233,27 @@ class CCCanvas(FigureCanvas):
     """
     __gtype_name__ = 'CCCanvas'
 
-    def __init__(self):
-        self.model = None
-        self.fig = Figure()
-        FigureCanvasGTK3Cairo.__init__(self, self.fig)
-        self.fig.set_facecolor('w') # Fondo blanco en vez de gris
-        self.ax1 = self.fig.add_subplot(111) # 1 fila, 1 columna, dibujo 1
-        self.fig.subplots_adjust(bottom=0.22) # Incrementar margen inferior
+    def __init__(self, model=None, width=600, height=200):
+        self.model = model
+        figure = Figure()
+        FigureCanvas.__init__(self, figure)
+        figure.set_facecolor('w') # Fondo blanco en vez de gris
+        self.ax1 = figure.add_subplot(111) # 1 fila, 1 columna, dibujo 1
+        figure.subplots_adjust(bottom=0.22) # Incrementar margen inferior
+        # This seems to also be necessary for transparency ..
+        figure.patch.set_visible(False)
+        
+        self.props.visible = True
+        #self.dibuja()
+        # Tamaño
+        self.set_size_request(width, height)
+        self.queue_draw()
+        #XXX: ver cómo cambiar dibuja a do_draw(self, cr) y quitamos las llamadas explícitas
+        
+    def do_draw(self, cr):
+        self.dibuja()
 
-    def dibuja(self, width=600, height=200):
+    def dibuja(self):
         """Representa histograma de condensaciones totales en cada mes
 
         El eje horizontal representa los periodos [meses] y el eje vertical la
@@ -238,52 +273,43 @@ class CCCanvas(FigureCanvas):
         ax1.bar(x_c, y_c, width=1.0, align='center', fc='b', ec='k')
         ax1.set_xticks(x_c)
         ax1.set_xticklabels(x_names, size='small', rotation=20)
-        # Tamaño
-        self.set_size_request(width, height)
-        self.draw()
+        #self.queue_draw()
 
     def pixbuf(self, destwidth=600):
         """Obtén un pixbuf a partir del canvas actual"""
         return get_pixbuf_from_canvas(self, destwidth)
 
-    def save(self, filename='condensacionesplot.png'):
+    def save(self, filename='condensacionesplot.png', dpi=100):
         """Guardar y mostrar gráfica"""
-        self.fig.savefig(filename)
+        self.print_figure(filename,
+                          format='png',
+                          facecolor='w',
+                          dpi=dpi)
 
-
-def get_pixbuf_from_canvas(canvas, destwidth=None):
+def get_pixbuf_from_canvas(widget, destwidth=None):
     """Devuelve un pixbuf a partir de un canvas de Matplotlib
 
     destwidth - ancho del pixbuf de destino
     """
-    surface = canvas.fig.canvas
-    allocation = surface.get_allocation()
-    w = allocation.width
-    h = allocation.height
 
-    destwidth = destwidth if destwidth else w
-    destheight = h * destwidth / w
+    if destwidth:
+        figwidthpx = widget.figure.get_figwidth() * widget.figure.dpi
+        scalefactor = float(destwidth) / figwidthpx
+        dpi = widget.figure.dpi * scalefactor
+    else:
+        dpi = widget.figure.dpi
 
-    pixbuf = Gdk.pixbuf_get_from_window(canvas.get_window(), 0, 0, w, h)
-    #TODO: ¿cómo obtenemos un pixmap?
-    
-    #canvas._renderer.set_pixmap(pixmap) # mpl backend_gtkcairo
-    #canvas._render_figure(pixmap, w, h) # mpl backend_gtk    
-    
-    #Antes de mostrarse la gráfica en una de las pestañas no existe el _pixmap
-    #pero al generar el informe queremos que se dibuje en uno fuera de pantalla
-    # oldpixmap = canvas._pixmap if hasattr(canvas, '_pixmap') else None
-    # pixmap = GdkPixbuf.Pixmap(None, w, h, depth=24)
-    # canvas._renderer.set_pixmap(pixmap) # mpl backend_gtkcairo
-    # canvas._render_figure(pixmap, w, h) # mpl backend_gtk
-    # if oldpixmap:
-    #     canvas._renderer.set_pixmap(oldpixmap)
-    # cm = pixmap.get_colormap()
-    # pixbuf = GdPixbuf.Pixbuf(GdkPixbuf.Colorspace.RGB, False, 8, w, h)
-    # pixbuf.get_from_drawable(pixmap, cm, 0, 0, 0, 0, -1, -1)
-    # scaledpixbuf = pixbuf.scale_simple(destwidth, destheight,
-    #                                    GdkPixbuf.InterpType.HYPER)
-    # return scaledpixbuf
+    fd = cStringIO.StringIO()
+    widget.figure.savefig(fd, format="png", facecolor='w', dpi=dpi)
+    contents = fd.getvalue()
+    fd.close()
+
+    loader = GdkPixbuf.PixbufLoader.new_with_type("png")
+    loader.write(contents)
+    pixbuf = loader.get_pixbuf()
+    loader.close()
+
+    return pixbuf
 
 class CRuler(Gtk.DrawingArea):
     """Barra de condensaciones en interfases
@@ -301,9 +327,9 @@ class CRuler(Gtk.DrawingArea):
         self.model = None
         super(CRuler, self).__init__()
         self.set_size_request(-1, 25)
-        self.connect("draw", self.draw)
+        self.queue_draw()
 
-    def draw(self, widget, cr):
+    def do_draw(self, cr):
         allocation = self.get_allocation()    
         wh = allocation.height
         ww = allocation.width
