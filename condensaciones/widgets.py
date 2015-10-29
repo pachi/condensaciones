@@ -54,7 +54,7 @@ class CPTCanvas(FigureCanvas):
         figure = Figure()
         FigureCanvas.__init__(self, figure)
         figure.set_facecolor('w') # Fondo blanco en vez de gris
-        self.ax1 = figure.add_subplot(111) # 1 fila, 1 columna, dibujo 1
+        self.ax1 = figure.add_subplot(111, axisbg='None') # 1 fila, 1 columna, dibujo 1
         self.ax2 = self.ax1.twinx()
         # This seems to also be necessary for transparency ..
         figure.patch.set_visible(False)
@@ -238,7 +238,7 @@ class CCCanvas(FigureCanvas):
         figure = Figure()
         FigureCanvas.__init__(self, figure)
         figure.set_facecolor('w') # Fondo blanco en vez de gris
-        self.ax1 = figure.add_subplot(111) # 1 fila, 1 columna, dibujo 1
+        self.ax1 = figure.add_subplot(111, axisbg='None') # 1 fila, 1 columna, dibujo 1
         figure.subplots_adjust(bottom=0.22) # Incrementar margen inferior
         # This seems to also be necessary for transparency ..
         figure.patch.set_visible(False)
