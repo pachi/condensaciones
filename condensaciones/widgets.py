@@ -54,11 +54,24 @@ class CPTCanvas(FigureCanvas):
         figure = Figure()
         FigureCanvas.__init__(self, figure)
         figure.set_facecolor('w') # Fondo blanco en vez de gris
+
         self.ax1 = figure.add_subplot(111, axisbg='None') # 1 fila, 1 columna, dibujo 1
+        self.ax1.yaxis.label.set_color('b')
+        self.ax1.tick_params(axis='y', colors='b')
+        self.ax1.tick_params(axis='x', labelsize='10')
+        self.ax1.spines["right"].set_visible(False)
+        self.ax1.spines["top"].set_visible(False)
+        self.ax1.spines["bottom"].set_visible(False)
+        self.ax1.spines["left"].set_edgecolor('b')
+
         self.ax2 = self.ax1.twinx()
-        # This seems to also be necessary for transparency ..
-        figure.patch.set_visible(False)
-        
+        self.ax2.yaxis.label.set_color('r')
+        self.ax2.tick_params(axis='y', colors='r')
+        self.ax2.spines["left"].set_visible(False)
+        self.ax2.spines["top"].set_visible(False)
+        self.ax2.spines["bottom"].set_visible(False)
+        self.ax2.spines["right"].set_edgecolor('r')
+
         self.props.visible = True
         # Tamaño
         self.set_size_request(width, height)
@@ -100,12 +113,9 @@ class CPTCanvas(FigureCanvas):
         ax2.clear()  # Limpia imagen de datos anteriores
 
         # ========= Eje vertical de presiones
-        ax1.set_title(u"Presiones de vapor y temperaturas", size='large')
-        ax1.set_xlabel(u"Distancia [m]")
+        ax1.set_title(u"Presión de vapor y temperatura", size='large')
+        ax1.set_xlabel(u"Espesor [m]")
         ax1.set_ylabel(u"Presión de vapor [Pa]", fontdict=dict(color='b'))
-        # Eliminamos márgenes de espesor de x_s de capas límite
-
-        # Etiquetas de exterior e interior
         ax1.text(0.1, 0.92, u'exterior',
                  transform=ax1.transAxes,
                  size=10, style='italic', ha='right')
@@ -240,9 +250,6 @@ class CCCanvas(FigureCanvas):
         figure.set_facecolor('w') # Fondo blanco en vez de gris
         self.ax1 = figure.add_subplot(111, axisbg='None') # 1 fila, 1 columna, dibujo 1
         figure.subplots_adjust(bottom=0.22) # Incrementar margen inferior
-        # This seems to also be necessary for transparency ..
-        figure.patch.set_visible(False)
-        
         self.props.visible = True
         #self.dibuja()
         # Tamaño
