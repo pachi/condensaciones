@@ -4,7 +4,7 @@
 #   makesplash.py
 #   Script to generate application splash image using a png background
 #
-#   Copyright (C) 2009-2010 Rafael Villar Burke <pachi@rvburke.com>
+#   Copyright (C) 2009-2015 Rafael Villar Burke <pachi@rvburke.com>
 #
 #   This program is free software; you can redistribute it and/or
 #   modify it under the terms of the GNU General Public License

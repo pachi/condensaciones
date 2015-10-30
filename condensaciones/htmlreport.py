@@ -74,7 +74,7 @@ __HTMLTEMPLATE = u"""
         <hr />
         <p>Informe generado por <a href="http://www.rvburke.com/condensaciones.html">Condensa</a> el %(today)s</p>
         <p>'Condensa' es software libre que se distribuye bajo licencia GPLv2 o posterior.</p>
-        <p>Copyright (c) 2009-2010 Rafael Villar Burke</p>
+        <p>Copyright (c) 2009-2015 Rafael Villar Burke</p>
         </div>
     </body>
 </html>

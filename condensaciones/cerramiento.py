@@ -331,7 +331,7 @@ CERRAMIENTOSDBHEADER = """#   Biblioteca de Cerramientos para Condensa
 #
 #   Condensa - Programa de cálculo de condensaciones según CTE
 #
-#   Copyright (C) 2009-2010, Rafael Villar Burke <pachi@rvburke.com>
+#   Copyright (C) 2009-2015, Rafael Villar Burke <pachi@rvburke.com>
 #
 #   Cada sección se denomina con el nombre del cerramiento e incluye:
 #   - descripcion: descripción del cerramiento

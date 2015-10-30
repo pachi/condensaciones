@@ -42,6 +42,6 @@ if args:
     print "Convertidos %i materiales en %i grupos" % (nmats, ngroups)
 else:
     print "Importa BBDD de LIDER/CALENER para Condensaciones"
-    print "Copyright (C) 2007-2010 Rafael Villar Burke <pachi@rvburke.com>"
+    print "Copyright (C) 2007-2015 Rafael Villar Burke <pachi@rvburke.com>"
     print
     parser.print_help()

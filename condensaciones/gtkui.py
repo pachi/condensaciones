@@ -258,7 +258,7 @@ class GtkCondensa(object):
                 u"(www.rvburke.com/condensaciones.html) el %s\n\n"
                 u"'Condensa' es software libre que se distribuye bajo licencia "
                 u"GPLv2 o posterior.\n"
-                u"Copyright (c) 2009-2010 Rafael Villar Burke\n") % today, nota)
+                u"Copyright (c) 2009-2015 Rafael Villar Burke\n") % today, nota)
 
     def openhtmlreport(self, widget):
         htmlreport.createreport(self.ui, self.model)
