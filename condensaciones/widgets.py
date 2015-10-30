@@ -53,12 +53,12 @@ class CPTCanvas(FigureCanvas):
         self.model = None
         figure = Figure()
         FigureCanvas.__init__(self, figure)
-        figure.set_facecolor('w') # Fondo blanco en vez de gris
+        figure.set_facecolor('w')
 
-        self.ax1 = figure.add_subplot(111, axisbg='None') # 1 fila, 1 columna, dibujo 1
+        self.ax1 = figure.add_subplot(111, axisbg='#F4F4F4')
         self.ax1.yaxis.label.set_color('b')
         self.ax1.tick_params(axis='y', colors='b')
-        self.ax1.tick_params(axis='x', labelsize='10')
+        self.ax1.tick_params(axis='x', labelsize='10', top=False)
         self.ax1.spines["right"].set_visible(False)
         self.ax1.spines["top"].set_visible(False)
         self.ax1.spines["bottom"].set_visible(False)
@@ -122,7 +122,7 @@ class CPTCanvas(FigureCanvas):
         ax1.text(0.9, 0.92, u'interior',
                  transform=ax1.transAxes,
                  size=10, style='italic', ha='left')
-        ax1.text(0.5, 0.92, u'Condensaciones v%s - www.rvburke.com' % config.version,
+        ax1.text(0.5, 0.95, u'Condensaciones v%s - www.rvburke.com' % config.version,
                  transform=ax1.transAxes,
                  color='0.5', size=8, ha='center')
 
@@ -247,8 +247,13 @@ class CCCanvas(FigureCanvas):
         self.model = model
         figure = Figure()
         FigureCanvas.__init__(self, figure)
-        figure.set_facecolor('w') # Fondo blanco en vez de gris
-        self.ax1 = figure.add_subplot(111, axisbg='None') # 1 fila, 1 columna, dibujo 1
+        figure.set_facecolor('w')
+        
+        self.ax1 = figure.add_subplot(111, axisbg='#F4F4F4')
+        self.ax1.spines["right"].set_visible(False)
+        self.ax1.spines["top"].set_visible(False)
+        self.ax1.tick_params(axis='y', right=False)
+        self.ax1.tick_params(axis='x', top=False)
         figure.subplots_adjust(bottom=0.22) # Incrementar margen inferior
         self.props.visible = True
         #self.dibuja()
