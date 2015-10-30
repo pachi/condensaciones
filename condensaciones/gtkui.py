@@ -48,24 +48,30 @@ class GtkCondensa(object):
         # Conecta modelos a gráficas
         self.ui.get_object('prestemp_canvas').model = self.model
         self.ui.get_object('cruler').model = self.model
+
         # Carga datos de materiales, cerramientos y clima
         self.materialesls = self.ui.get_object('materiales_liststore')
         for material in self.model.c.matDB.nombres:
             self.materialesls.append((material,))
+
         self.cerramientotv = self.ui.get_object('cerramientotv')
+
         self.cerramientosls = self.ui.get_object('cerramientos_liststore')
         for nombre in self.model.cerramientosDB.nombres:
             descripcion = self.model.cerramientosDB[nombre].descripcion
             self.cerramientosls.append((nombre, descripcion))
+
         self.localidadesls = self.ui.get_object('localidadesls')
         self.localidadesls.clear()
         for nombrelocalidad in self.model.climas:
             self.localidadesls.append((nombrelocalidad,))
         self.ui.get_object('localidadcb').props.active = 0
+
         n = len(self.model.c.matDB.nombres)
         m = len(self.model.cerramientosDB.nombres)
         r = len(self.model.climas)
         msg = "Cargados %i materiales, %i cerramientos, %i climas"  % (n, m, r)
+
         self.actualiza(msg)
 
     #{ Funciones generales de aplicación
