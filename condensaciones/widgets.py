@@ -276,7 +276,7 @@ class CCCanvas(FigureCanvas):
         N = len(self.model.climaslist)
         x_c = numpy.arange(N)
         y_c = self.model.gmeses
-        x_names = [mes[:3] for mes in MESES] if N == 12 else [str(i) for i in range(N)]
+        x_names = [mes[:3] for mes in MESES] if N == 12 else [str(i+1) for i in range(N)]
         ax1.bar(x_c, y_c, width=1.0, align='center', fc='b', ec='k')
         ax1.set_xticks(x_c)
         ax1.set_xticklabels(x_names, size='small', rotation=20)
