@@ -674,6 +674,7 @@
                 </child>
                 <child>
                   <object class="GtkTreeView" id="capas_treeview">
+                    <property name="name">capas_treeview</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="model">capas_liststore</property>

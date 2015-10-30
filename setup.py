@@ -42,6 +42,7 @@ os.mkdir("dist")
 DATA_FILES = [('', 'README.txt NEWS.txt INSTALL.txt COPYING.txt'.split()),
               ('data', glob('data/*.ui')),
               ('data', glob('data/*.ini')),
+              ('data', glob('data/*.css')),
               ('data', ['data/splash.png']),
               ('data/icons', glob('data/icons/*.png')),
               ('data/report', ['data/report/style.css', 'data/report/report.html'])]

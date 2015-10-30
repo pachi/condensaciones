@@ -38,6 +38,13 @@ class GtkCondensa(object):
         """Inicialización de datos e interfaz"""
         self.cfg = config
         self.model = appmodel.Model()
+
+        provider = Gtk.CssProvider()
+        provider.load_from_path(config.appresource('style.css'))
+        Gtk.StyleContext.add_provider_for_screen(Gdk.Screen.get_default(),
+                                      provider,
+                                      Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+
         self.ui = Gtk.Builder()
         self.ui.graficacondensaciones = CCCanvas(self.model) # Histograma de condensaciones
         self.ui.add_from_file(config.appresource('condensa.ui'))

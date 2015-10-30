@@ -3,5 +3,6 @@ recursive-include data *.ini
 recursive-include data *.ui
 recursive-include data *.png
 recursive-include data *.ico
+recursive-include data *.css
 include data/report/*.css
 include data/report/*.html
