@@ -47,40 +47,49 @@ DATA_FILES = [('', 'README.txt NEWS.txt INSTALL.txt COPYING.txt'.split()),
               ('data/icons', glob('data/icons/*.png')),
               ('data/report', ['data/report/style.css', 'data/report/report.html'])]
 
+# Configuration for py2exe build
 if 'py2exe' in sys.argv:
     import py2exe
     from matplotlib import get_py2exe_datafiles
+
+    def gtk_ignores(adir, files):
+        """add files which are not .dll files to the ignore set"""
+        return set([f for f in files if (not f.endswith('.dll') and
+                                         not os.path.isdir(os.path.join(adir,f)))])
 
     # Copy MSVC Runtime
     shutil.copytree("MSVCCRT", "./dist/Microsoft.VC90.CRT")
 
     # Copy GTK+ runtime files
     GTKBASE = 'C:/winp/Python26/Lib/site-packages/gtk-2.0/runtime/'
-    supportedlocale = 'es'.split()
-    killdirs = ('./dist/lib/glade3', './dist/lib/locale', './dist/lib/gettext',
-                 './dist/lib/pkgconfig', './dist/lib/glib-2.0/codegen',
-		 './dist/lib/glib-2.0/gdb', './dist/lib/glib-2.0/gettext')
-    def ignore_files(adir, files):
-        return set([f for f in files if (not f.endswith('.dll') and
-                                         not os.path.isdir(os.path.join(adir,f)))])
-    shutil.copytree(GTKBASE + 'lib', './dist/lib', ignore=ignore_files)
-    for pth in killdirs:
-        shutil.rmtree(pth, ignore_errors=True)
+    shutil.copytree(GTKBASE + 'lib', './dist/lib', ignore=gtk_ignores)
     shutil.copytree(GTKBASE + 'etc', './dist/etc')
     shutil.copytree(GTKBASE + 'share/themes/MS-Windows', './dist/share/themes/MS-Windows')
-    for lc in supportedlocale:
+    # locales
+    supportedlocales = 'es'.split()
+    for lc in supportedlocales:
         shutil.copytree(GTKBASE + 'share/locale/' + lc, './dist/share/locale/' + lc)
+    # docs
     shutil.copytree('docs/_build/html', './dist/htmldocs')
+
+    # Prune unneeded dirs. TODO: do this in gtk_ignores, see recipe: http://stackoverflow.com/questions/3812849/how-to-check-whether-a-directory-is-a-sub-directory-of-another-directory
+    killdirs = ('./dist/lib/glade3', './dist/lib/locale', './dist/lib/gettext',
+                './dist/lib/pkgconfig', './dist/lib/glib-2.0/codegen',
+		        './dist/lib/glib-2.0/gdb', './dist/lib/glib-2.0/gettext')
+    for pth in killdirs:
+        shutil.rmtree(pth, ignore_errors=True)
 
     # Enable the MS-Windows theme.
     #f = open(os.path.join(self.exe_dir, 'etc', 'gtk-2.0', 'gtkrc'), 'w')
     #print >>f, 'gtk-theme-name = "MS-Windows"'
     #f.close()
 
+    # Prepare NSI installer configuration file
     nsifile = open("setup.nsi.in", "rb").read()
     nsifile = nsifile.replace("@VERSION@", __version__)
     open("setup.nsi", "wb").write(nsifile)
 
+    # Configure Py2exe
     PY2EXE_PACKAGES = ['encodings', 'matplotlib', 'pytz']
     PY2EXE_INCLUDES = 'cairo,pango,pangocairo,atk,gobject,gio'
     PY2EXE_EXCLUDES = ('_wxagg _fltkagg _cocoaagg _gtkagg _tkagg email logging '
@@ -106,6 +115,7 @@ if 'py2exe' in sys.argv:
                                    #'optimize': 2
                                    }},
               'data_files': DATA_FILES + get_py2exe_datafiles()}
+# Configuration for alternate builds (non-py2exe)
 else:
     kwargs = {'data_files': DATA_FILES}
 
